@@ -16,7 +16,7 @@
     "@types/react-grid-layout": "^1.3.5",
     "@xstate/react": "^4.1.1",
     "axios": "^1.9.0",
-    "dataviz-components": "^0.1.3",
+    "dataviz-components": "^0.2.0",
     "dayjs": "^1.11.12",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",

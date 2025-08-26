@@ -1,5 +1,5 @@
 import React from "react";
-import FormBuilder from "../../form-builder/FormBuilder";
+import FormBuilder from "../../drag-n-drop/FormBuilder";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 

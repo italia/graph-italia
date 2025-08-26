@@ -13,6 +13,7 @@ import HomePage from "./pages/Home";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import VerifyPage from "./pages/auth/VerifyPage";
+import RecoverPage from "./pages/auth/RecoverPage";
 
 const router = createBrowserRouter([
   {
@@ -76,6 +77,14 @@ const router = createBrowserRouter([
   {
     path: "/verify/:uid",
     element: <VerifyPage />,
+  },
+  {
+    path: "/recover-password",
+    element: <RecoverPage action={"recover"} />,
+  },
+  {
+    path: "/change-password",
+    element: <RecoverPage action={"change"} />,
   },
 ]);
 

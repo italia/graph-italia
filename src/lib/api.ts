@@ -3,7 +3,7 @@ axios.defaults.withCredentials = true;
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-let headers: HeadersInit | undefined = { "Content-Type": "application/json" };
+// let headers: HeadersInit | undefined = { "Content-Type": "application/json" };
 
 /** getSuggestions */
 export async function getSuggestions(inputData: (string | number)[][]) {
@@ -185,6 +185,18 @@ export async function activate() {
     }
   } catch (error: any) {
     console.log("changePasssword ERROR", error?.message);
+    throw error;
+  }
+}
+
+export async function recoverPasssword(email: string) {
+  try {
+    const response = await axios.post(`${SERVER_URL}/auth/recover`, { email });
+    if (response.status === 200) {
+      return true;
+    }
+  } catch (error: any) {
+    console.log("recoverPasssword ERROR", error?.message);
     throw error;
   }
 }

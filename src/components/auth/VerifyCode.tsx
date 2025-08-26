@@ -2,7 +2,6 @@ import { useState } from "react";
 import * as api from "../../lib/api";
 import VerificationInput from "react-verification-input";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function VerifyCode({
   uid = "",
   onCheckDone,
