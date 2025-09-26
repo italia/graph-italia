@@ -1,55 +1,55 @@
-import Layout from "../components/layout";
+import Layout from '../components/layout';
 
 export default function Landing() {
   const faqs = [
     {
       id: 1,
-      question: "What is skishu?",
-      answer: "Skishu is you divinity...",
+      question: 'What is skishu?',
+      answer: 'Skishu is you divinity...',
     },
     {
       id: 2,
-      question: "Shamalaya?",
-      answer: "Yes we can ....",
+      question: 'Shamalaya?',
+      answer: 'Yes we can ....',
     },
 
     {
       id: 3,
-      question: "Who am I?",
-      answer: "Roots of creation...",
+      question: 'Who am I?',
+      answer: 'Roots of creation...',
     },
   ];
 
   const features = [
     {
-      name: "Upload & Parse Your Data in Seconds",
+      name: 'Upload & Parse Your Data in Seconds',
       description:
-        "Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks.",
+        'Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks.',
     },
     {
-      name: "Customizable Chart Creation",
+      name: 'Customizable Chart Creation',
       description:
         "Choose how to represent your data by selecting which columns to display as series, and easily define your X and Y axes. Dataviz offers a range of chart types: <b>Bar </b>, <b>Line</b> , <b>Pie</b> charts and <b>Geographical Maps</b> (Geomap), No matter the type, you have full control over your data's presentation!",
     },
     {
-      name: "Intuitive Filtering & Data Selection",
+      name: 'Intuitive Filtering & Data Selection',
       description:
-        "Only want to display specific data points? No problem. Use our simple filtering options to select which columns or data sets to include in your visualization, ensuring clarity and focus in your chart.",
+        'Only want to display specific data points? No problem. Use our simple filtering options to select which columns or data sets to include in your visualization, ensuring clarity and focus in your chart.',
     },
     {
-      name: "Fine-Tune Chart Parameters",
+      name: 'Fine-Tune Chart Parameters',
       description:
-        "Tweak and customize each aspect of your chart. From colors to data labels, control every detail to ensure your chart perfectly fits your needs and looks great.",
+        'Tweak and customize each aspect of your chart. From colors to data labels, control every detail to ensure your chart perfectly fits your needs and looks great.',
     },
     {
-      name: "Save, Edit & Reuse Your Charts",
+      name: 'Save, Edit & Reuse Your Charts',
       description:
-        "Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips.",
+        'Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips.',
     },
     {
-      name: "Publish & Embed Your Charts",
+      name: 'Publish & Embed Your Charts',
       description:
-        "Share your work with the world! Once your chart is ready, publish it directly from Dataviz and get an embed code to seamlessly integrate your visualizations into any website or platform.",
+        'Share your work with the world! Once your chart is ready, publish it directly from Dataviz and get an embed code to seamlessly integrate your visualizations into any website or platform.',
     },
   ];
 
@@ -89,7 +89,7 @@ export default function Landing() {
           <div className='mx-auto max-w-6xl pb-32  lg:pb-56  '>
             <div className='hidden sm:mb-8 sm:flex sm:justify-center'>
               <div className='relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20'>
-                This project is in heavy design/development.{" "}
+                This project is in heavy design/development.{' '}
                 <a href='#' className='font-semibold text-primary'>
                   <span aria-hidden='true' className='absolute inset-0' />
                   Get Involved <span aria-hidden='true'>&rarr;</span>
@@ -107,7 +107,7 @@ export default function Landing() {
                 interface to bring your numbers to life.
               </p>
               <div className='mt-10 flex items-center justify-center gap-x-6'>
-                <a href='/enter' className='btn btn-primary'>
+                <a href='/login' className='btn btn-primary'>
                   Get started
                 </a>
               </div>
@@ -159,7 +159,7 @@ export default function Landing() {
               <ul>
                 <li>Begin by logging into your Dataviz account.</li>
                 <li>
-                  On the dashboard, locate and click the{" "}
+                  On the dashboard, locate and click the{' '}
                   <strong>"Create New Chart"</strong> button to start a new
                   project.
                 </li>
@@ -172,12 +172,12 @@ export default function Landing() {
                   <ul>
                     <li>
                       <strong>Sample Data</strong>: Select from a set of sample
-                      data provided by Dataviz. Click{" "}
+                      data provided by Dataviz. Click{' '}
                       <strong>"Use Sample Data"</strong> to explore how the tool
                       works.
                     </li>
                     <li>
-                      <strong>Generate Data</strong>: Click on{" "}
+                      <strong>Generate Data</strong>: Click on{' '}
                       <strong>"Generate Data"</strong> in the delegate section
                       to create a simple CSV dataset automatically.
                     </li>
@@ -225,7 +225,7 @@ export default function Landing() {
               <h3>Step 4: Save Your Chart</h3>
               <ul>
                 <li>
-                  Once you're satisfied with your chart, click{" "}
+                  Once you're satisfied with your chart, click{' '}
                   <strong>"Save"</strong> to store it for future editing.
                 </li>
                 <li>

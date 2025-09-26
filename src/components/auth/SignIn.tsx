@@ -1,36 +1,42 @@
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import * as api from "../../lib/api";
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import * as api from '../../lib/api';
+import { useUserStore } from '../../store/user_store';
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
+  const { setUser } = useUserStore();
   let navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({});
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const onSubmit = async (submittedData: any) => {
-    setMessage("");
+    setMessage('');
     const { email, password } = submittedData;
     try {
-      const rememberMe = submittedData["remember-me"] ?? false;
+      const rememberMe = submittedData['remember-me'] ?? false;
       const result = await api.login({ email, password, rememberMe });
+      console.log('Login result', result);
       if (result) {
-        navigate("/home");
+        const user = await api.getUser();
+        // console.log(user);
+        setUser(user);
+        navigate('/home');
       } else {
-        setMessage("Error while logging in");
+        setMessage('Error while logging in');
       }
     } catch (error) {
-      console.error("Error:", error);
-      setMessage("" + error);
+      console.error('Error:', error);
+      setMessage('' + error);
     }
   };
 
   function handleRecoverFlow() {
-    navigate("/recover-password");
+    navigate('/recover-password');
   }
 
   return (
@@ -59,9 +65,9 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     required
                     autoComplete='email'
                     className='w-full rounded-md'
-                    {...register("email", { required: true })}
+                    {...register('email', { required: true })}
                   />
-                  {errors["email"] && (
+                  {errors['email'] && (
                     <span className='text-error'>This field is required</span>
                   )}
                 </div>
@@ -81,9 +87,9 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     required
                     autoComplete='current-password'
                     className='w-full rounded-md'
-                    {...register("password", { required: true })}
+                    {...register('password', { required: true })}
                   />
-                  {errors["password"] && (
+                  {errors['password'] && (
                     <span className='text-danger'>This field is required</span>
                   )}
                 </div>
@@ -95,7 +101,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     id='remember-me'
                     type='checkbox'
                     className='h-4 w-4 rounded'
-                    {...register("remember-me")}
+                    {...register('remember-me')}
                   />
                   <label
                     htmlFor='remember-me'

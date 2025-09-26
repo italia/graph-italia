@@ -1,66 +1,83 @@
-import { useState, useEffect } from "react";
-import * as api from "../../lib/api";
+import { useEffect } from 'react';
+import { logout } from '../../lib/api';
+import { useUserStore } from '../../store/user_store';
 
 export default function Header() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [authorized, setAuthorized] = useState<boolean>(false);
-
-  // const logged = auth.useAuth();
+  const { user, clearUser, checkSession } = useUserStore();
+  const handleLogout = async () => {
+    console.log('Logging out user...');
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      clearUser();
+    }
+    window.location.href = '/';
+  };
 
   useEffect(() => {
-    setLoading(true);
-    checkAuthAndRedir();
+    checkSession();
   }, []);
 
-  async function checkAuthAndRedir() {
-    try {
-      const response = await api.getUser();
-      console.log("RESPONSE", response);
-      if (response) {
-        setAuthorized(true);
-        // window.location.href = "/home";
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }
-  async function logoutAndRedir() {
-    await api.logout();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-  }
+  // const [loading, setLoading] = useState<boolean>(false);
+  // const [authorized, setAuthorized] = useState<boolean>(false);
+  // const logged = auth.useAuth();
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   checkAuthAndRedir();
+  // }, []);
+
+  // async function checkAuthAndRedir() {
+  //   try {
+  //     const response = await api.getUser();
+  //     console.log('RESPONSE', response);
+  //     if (response) {
+  //       setAuthorized(true);
+  //       // window.location.href = "/home";
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+  // async function logoutAndRedir() {
+  //   await api.logout();
+  //   setTimeout(() => {
+  //     window.location.reload();
+  //   }, 1000);
+  // }
 
   const menu = [
     {
-      name: "Home",
-      link: "/",
+      name: 'Home',
+      link: '/',
     },
     {
-      name: "My Charts",
-      link: "/home",
+      name: 'My Charts',
+      link: '/home',
     },
     {
-      name: "My Dashboards",
-      link: "/dashboards",
+      name: 'My Dashboards',
+      link: '/dashboards',
     },
     {
-      name: "Tools",
-      link: "",
+      name: 'Tools',
+      link: '',
       subMenu: [
         {
-          name: "Generate Data",
-          link: "/generate-data",
+          name: 'Generate Data',
+          link: '/generate-data',
         },
         {
-          name: "Load Remote Data",
-          link: "/load-data",
+          name: 'Load Remote Data',
+          link: '/load-data',
         },
         {
-          name: "Check GeoJSon File",
-          link: "/geo",
+          name: 'Check GeoJSon File',
+          link: '/geo',
         },
       ],
     },
@@ -154,15 +171,22 @@ export default function Header() {
         </ul>
       </div>
       <div className='navbar-end px-4'>
-        {loading && <div className='pulse'>...</div>}
-        {!authorized ? (
-          <a className='btn btn-ghost' href='/enter'>
-            Sign In / Up
-          </a>
+        {user ? (
+          <div>
+            <span className='px-2'>
+              <button
+                className='btn btn-default btn-sm'
+                onClick={() => handleLogout()}
+              >
+                logout
+              </button>
+              <span className='px-2'>{user.name}</span>
+            </span>
+          </div>
         ) : (
-          <button className='btn btn-ghost' onClick={() => logoutAndRedir()}>
-            Logout
-          </button>
+          <a href='/login' className='btn btn-ghost btn-sm'>
+            Login
+          </a>
         )}
       </div>
     </div>

@@ -1,8 +1,8 @@
-import * as auth from "./auth";
+import * as auth from './auth';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-let headers: HeadersInit | undefined = { "Content-Type": "application/json" };
+let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
-const DASHBOARD_API_PATH = `${SERVER_URL}/dashboards`
+const DASHBOARD_API_PATH = `${SERVER_URL}/dashboards`;
 
 export interface DashboardDetail {
   name: string;
@@ -14,28 +14,23 @@ export interface DashboardDetail {
       y: number;
       w: number;
       h: number;
-    }
+    };
     chart: {
-      id: string
-    }
-  }[]
+      id: string;
+    };
+  }[];
 }
 
 /** Get a chart */
 export async function getChart(id: string) {
-  const token = auth.getAuth();
-  if (!token) return null;
   const response = await fetch(`${SERVER_URL}/charts/${id}`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
     },
   });
 
-  if (response.status === 401) {
-    return auth.logout();
-  }
   if (response.status === 200) {
     const data = await response.json();
     return data;
@@ -44,19 +39,14 @@ export async function getChart(id: string) {
   }
 }
 export async function getCharts() {
-  const token = auth.getAuth();
-  if (!token) return null;
   const response = await fetch(`${SERVER_URL}/charts`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
     },
   });
 
-  if (response.status === 401) {
-    return auth.logout();
-  }
   if (response.status === 200) {
     const data = await response.json();
     return data;
@@ -67,19 +57,14 @@ export async function getCharts() {
 
 /* List */
 export async function getDashboards() {
-  const token = auth.getAuth();
-  if (!token) return null;
   const response = await fetch(DASHBOARD_API_PATH, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
     },
   });
 
-  if (response.status === 401) {
-    return auth.logout();
-  }
   if (response.status === 200) {
     const data = await response.json();
     return data;
@@ -89,86 +74,77 @@ export async function getDashboards() {
 }
 
 export async function findById(id: string) {
-  const token = auth.getAuth();
-  if (!token) return null;
   const response = await fetch(`${DASHBOARD_API_PATH}/${id}`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
     },
   });
 
-  if (response.status === 401) {
-    return auth.logout();
-  }
   if (response.status === 200) {
     const data = await response.json();
     return data as DashboardDetail;
   }
 
-  throw new Error('Server error')
+  throw new Error('Server error');
 }
 
-export async function updateSlots(id: string, body: {
-  slots: {
-    chartId: string;
-    settings: {
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-      i: string;
-    }
-  }[]
-}) {
-  const token = auth.getAuth();
-  if (!token) return null;
-
+export async function updateSlots(
+  id: string,
+  body: {
+    slots: {
+      chartId: string;
+      settings: {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+        i: string;
+      };
+    }[];
+  }
+) {
   const response = await fetch(`${DASHBOARD_API_PATH}/${id}/slots`, {
     method: 'PUT',
     body: JSON.stringify(body),
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
-    }
+      // Authorization: `Bearer ${token}`,
+    },
   });
 
   return response.status === 200;
-};
+}
 
 export async function deleteDashaboard(id: string) {
-  const token = auth.getAuth();
-  if (!token) return null;
-
   const response = await fetch(`${DASHBOARD_API_PATH}/${id}`, {
     method: 'DELETE',
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
-    }
+      // Authorization: `Bearer ${token}`,
+    },
   });
 
-  return response.status === 204
-
+  return response.status === 204;
 }
 
-export async function createDashboard(payload: { name: string, description: string }) {
-  const token = auth.getAuth();
-  if (!token) return null;
-
+export async function createDashboard(payload: {
+  name: string;
+  description: string;
+}) {
   const body = JSON.stringify(payload);
 
   const response = await fetch(`${DASHBOARD_API_PATH}`, {
     method: 'POST',
     headers: {
       ...headers,
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
     },
-    body
+    body,
   });
 
   const { id } = await response.json();
 
-  return { id } as { id: string }
+  return { id } as { id: string };
 }

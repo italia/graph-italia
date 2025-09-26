@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { Panel, PanelGroup } from "react-resizable-panels";
-import { useNavigate } from "react-router-dom";
-import DashboardList from "../../components/dashboard/DashboardList";
-import Layout from "../../components/layout";
-import ConfirmDialog from "../../components/layout/ConfirmDialog";
-import GenericDialog from "../../components/layout/GenericDialog";
-import Loading from "../../components/layout/Loading";
-import * as auth from "../../lib/auth";
-import * as api from "../../lib/dashaboard-api";
-import useDashboardsStoreState from "../../lib/dashboardListStore";
-import { FieldDataType } from "../../types";
+import { useEffect, useState } from 'react';
+import { Panel, PanelGroup } from 'react-resizable-panels';
+import { useNavigate } from 'react-router-dom';
+import DashboardList from '../../components/dashboard/DashboardList';
+import Layout from '../../components/layout';
+import ConfirmDialog from '../../components/layout/ConfirmDialog';
+import GenericDialog from '../../components/layout/GenericDialog';
+import Loading from '../../components/layout/Loading';
+import * as auth from '../../lib/auth';
+import * as api from '../../lib/dashaboard-api';
+import useDashboardsStoreState from '../../lib/dashboardListStore';
+import { FieldDataType } from '../../types';
 
 function DashboardsPage() {
   const { list, setList } = useDashboardsStoreState((state) => state);
@@ -126,7 +126,7 @@ function DashboardsPage() {
 
   useEffect(() => {
     // if (!auth.isAuth()) {
-      window.location.href = "/enter";
+    window.location.href = '/login';
     // }
     fetchDashboards();
   }, []);
@@ -142,7 +142,7 @@ function DashboardsPage() {
               ) : (
                 <>
                   <h4 className='text-4xl font-bold'>
-                    {list && list.length ? "My Dashboards" : "Welcome"}
+                    {list && list.length ? 'My Dashboards' : 'Welcome'}
                   </h4>
                   <div>
                     <div className='flex my-5 gap-4'>
@@ -158,7 +158,7 @@ function DashboardsPage() {
                     list={list}
                     handleDeleteDashboard={deleteClickHandler}
                     handleEditDashboard={(item) => {
-                      editClickHandler(item.id ?? "");
+                      editClickHandler(item.id ?? '');
                     }}
                     handleViewDashboard={viewClickHandler}
                   ></DashboardList>
@@ -169,7 +169,7 @@ function DashboardsPage() {
               <GenericDialog
                 toggle={showCreateModal}
                 title='Aggiungi Dashboard'
-                labels={{ confirm: "Aggiungi", cancel: "Annulla" }}
+                labels={{ confirm: 'Aggiungi', cancel: 'Annulla' }}
                 confirmCb={() => {
                   if (!newDashboard) {
                     return;

@@ -1,90 +1,113 @@
-import { createBrowserRouter } from "react-router-dom";
-import AboutPage from "./pages/AboutPage";
-import AuthPage from "./pages/auth/AuthPage";
-import DashboardCreatePage from "./pages/dashboard/DashboardCreatePage";
-import DashboardEditPage from "./pages/dashboard/DashboardEditPage";
-import DashboardsPage from "./pages/dashboard/DashboardListPage";
-import DashboardViewPage from "./pages/show/ShowDashboardPage";
-import EmbedChartPage from "./pages/embed/EmbedChartPage";
-import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
-import GenerateDataPage from "./pages/utility/GenerateDataPage";
-import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
-import HomePage from "./pages/Home";
-import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
-import ShowChartPage from "./pages/show/ShowChartPage";
-import VerifyPage from "./pages/auth/VerifyPage";
-import RecoverPage from "./pages/auth/RecoverPage";
+import { createBrowserRouter } from 'react-router-dom';
+import AboutPage from './pages/AboutPage';
+import AuthPage from './pages/auth/AuthPage';
+import DashboardCreatePage from './pages/dashboard/DashboardCreatePage';
+import DashboardEditPage from './pages/dashboard/DashboardEditPage';
+import DashboardsPage from './pages/dashboard/DashboardListPage';
+import DashboardViewPage from './pages/show/ShowDashboardPage';
+import EmbedChartPage from './pages/embed/EmbedChartPage';
+import EmbedDashboardPage from './pages/embed/EmbedDashboardPage';
+import GenerateDataPage from './pages/utility/GenerateDataPage';
+import GeoMapUtilsPage from './pages/utility/GeoMapUtilsPage';
+import HomePage from './pages/Home';
+import LoadDataPage from './pages/utility/LoadRemoteDataPage';
+import ShowChartPage from './pages/show/ShowChartPage';
+import VerifyPage from './pages/auth/VerifyPage';
+import RecoverPage from './pages/auth/RecoverPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 const router = createBrowserRouter([
+  //PRIVATE PART
   {
-    path: "/",
+    path: '/home',
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    ),
+  },
+  //list dashboard page
+  {
+    path: '/dashboards',
+    element: (
+      <ProtectedRoute>
+        <DashboardsPage />
+      </ProtectedRoute>
+    ),
+  },
+  //create dashboard page
+  {
+    path: '/dashboards/create',
+    element: (
+      <ProtectedRoute>
+        <DashboardCreatePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/dashboards/:id/edit',
+    element: (
+      <ProtectedRoute>
+        <DashboardEditPage />
+      </ProtectedRoute>
+    ),
+  },
+  //PUBLIC PART
+  {
+    path: '/',
     element: <AboutPage />,
   },
+  //AUTH STUFF
   {
-    path: "/home",
-    element: <HomePage />,
-  },
-  {
-    path: "/enter",
+    path: '/login',
     element: <AuthPage />,
   },
+  {
+    path: '/verify/:uid',
+    element: <VerifyPage />,
+  },
+  {
+    path: '/recover-password',
+    element: <RecoverPage action={'recover'} />,
+  },
+  {
+    path: '/change-password',
+    element: <RecoverPage action={'change'} />,
+  },
+  //TOOLS
   //load data page
   {
-    path: "/load-data",
+    path: '/load-data',
     element: <LoadDataPage />,
   },
   //generate data page
   {
-    path: "/generate-data",
+    path: '/generate-data',
     element: <GenerateDataPage />,
   },
+  {
+    path: '/geo',
+    element: <GeoMapUtilsPage />,
+  },
+
+  // DISPLAY PART
   //show chart page
   {
-    path: "/chart/:id",
+    path: '/chart/:id',
     element: <ShowChartPage />,
   },
   //embed chart page
   {
-    path: "/embed/:id",
+    path: '/embed/:id',
     element: <EmbedChartPage />,
   },
   {
-    path: "/dashboards/create",
-    element: <DashboardCreatePage />,
-  },
-  {
-    path: "/dashboards/:id/edit",
-    element: <DashboardEditPage />,
-  },
-  {
-    path: "/dashboards/:id/view",
+    path: '/dashboards/:id/view',
     element: <DashboardViewPage />,
   },
   {
-    path: "/dashboards/:id/embed",
+    path: '/dashboards/:id/embed',
     element: <EmbedDashboardPage />,
-  },
-  //list dashboard page
-  {
-    path: "/dashboards",
-    element: <DashboardsPage />,
-  },
-  //create dashboard page
-  {
-    path: "/geo",
-    element: <GeoMapUtilsPage />,
-  },
-  {
-    path: "/verify/:uid",
-    element: <VerifyPage />,
-  },
-  {
-    path: "/recover-password",
-    element: <RecoverPage action={"recover"} />,
-  },
-  {
-    path: "/change-password",
-    element: <RecoverPage action={"change"} />,
   },
 ]);
 
