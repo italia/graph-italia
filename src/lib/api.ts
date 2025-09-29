@@ -165,10 +165,10 @@ export async function verify({ uid, code }: { uid: string; code: string }) {
 
 export async function changePasssword({ password }: { password: string }) {
   try {
-    const response = await axios.post(`${SERVER_URL}/auth/pwd`, {
+    const response = await axios.put(`${SERVER_URL}/auth/pwd`, {
       password,
     });
-    if (response.status === 200) {
+    if (response.status === 204) {
       return true;
     }
   } catch (error: any) {

@@ -1,12 +1,11 @@
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import * as api from "../../lib/api";
+import { useForm } from 'react-hook-form';
+
+import { useState } from 'react';
+import * as api from '../../lib/api';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function SignUp({ onDone }: { onDone: () => void }) {
-  let navigate = useNavigate();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const {
     register,
     handleSubmit,
@@ -15,10 +14,10 @@ function SignUp({ onDone }: { onDone: () => void }) {
   } = useForm({});
 
   const onSubmit = async (submittedData: any) => {
-    setMessage("");
+    setMessage('');
     const { password, confirm_password } = submittedData;
     if (password !== confirm_password) {
-      setMessage("Passwords do not match");
+      setMessage('Passwords do not match');
       return;
     }
     console.log(submittedData);
@@ -26,12 +25,12 @@ function SignUp({ onDone }: { onDone: () => void }) {
     try {
       const result = await api.changePasssword({ password });
       if (result) {
-        navigate("/home");
+        onDone();
       } else {
-        setMessage("Error while changing password");
+        setMessage('Error while changing password');
       }
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
       setMessage((error as any).message ?? error);
     }
   };
@@ -41,7 +40,7 @@ function SignUp({ onDone }: { onDone: () => void }) {
       <div className='mx-auto w-full max-w-sm lg:w-96'>
         <div>
           <h2 className='mt-8 text-2xl font-bold leading-9 tracking-tight text-content'>
-            Sign up
+            Choose a new Password
           </h2>
         </div>
 
@@ -62,9 +61,9 @@ function SignUp({ onDone }: { onDone: () => void }) {
                     required
                     autoComplete='current-password'
                     className='w-full rounded-md'
-                    {...register("password", { required: true })}
+                    {...register('password', { required: true })}
                   />
-                  {errors["password"] && (
+                  {errors['password'] && (
                     <p className='text-error'>This field is required</p>
                   )}
                 </div>
@@ -83,9 +82,9 @@ function SignUp({ onDone }: { onDone: () => void }) {
                     type='password'
                     required
                     className='w-full rounded-md'
-                    {...register("confirm_password", { required: true })}
+                    {...register('confirm_password', { required: true })}
                   />
-                  {errors["confirm_password"] && (
+                  {errors['confirm_password'] && (
                     <p className='text-error'>This field is required</p>
                   )}
                 </div>

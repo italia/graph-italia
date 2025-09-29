@@ -33,7 +33,10 @@ export const useUserStore = create<UserState>()(
         /**
          * Clears the current user from the state.
          */
-        clearUser: () => set({ user: null }),
+        clearUser: () => {
+          console.log('Clear User');
+          set({ user: null });
+        },
 
         /**
          * Checks if the current user's session has expired.
