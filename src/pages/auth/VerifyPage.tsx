@@ -38,6 +38,10 @@ function AuthPage() {
     navigate('/home');
   }
 
+  function handleAskAnotherCode() {
+    navigate('/recover-password');
+  }
+
   if (!uid) return <div>Error</div>;
 
   return (
@@ -48,6 +52,7 @@ function AuthPage() {
             <VerifyCode
               uid={uid}
               onCheckDone={(result: boolean) => handleResult(result)}
+              onAskAnotherCode={() => handleAskAnotherCode()}
             />
           )}
           {isValid && <div>The code is Valid.</div>}

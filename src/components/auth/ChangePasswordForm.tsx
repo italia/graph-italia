@@ -1,9 +1,38 @@
 import { useForm } from 'react-hook-form';
-
 import { useState } from 'react';
 import * as api from '../../lib/api';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+const passwordSchema = z
+  .string()
+  .min(8, { message: 'Password must be at least 8 characters long' })
+  // .max(20, { message: maxLengthErrorMessage })
+  .refine((password) => /[A-Z]/.test(password), {
+    message: 'Password must have at least one uppercase letter',
+  })
+  .refine((password) => /[a-z]/.test(password), {
+    message: 'Password must have at least one lowercase letter',
+  })
+  .refine((password) => /[0-9]/.test(password), {
+    message: 'Must contain a number',
+  })
+  .refine((password) => /[!@#$%^&*]/.test(password), {
+    message: 'Must contain at least one special character',
+  });
+
+export const updatePasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
 function SignUp({ onDone }: { onDone: () => void }) {
   const [message, setMessage] = useState('');
   const {
@@ -11,15 +40,20 @@ function SignUp({ onDone }: { onDone: () => void }) {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({});
+  } = useForm({
+    resolver: zodResolver(updatePasswordSchema),
+  });
 
   const onSubmit = async (submittedData: any) => {
     setMessage('');
-    const { password, confirm_password } = submittedData;
-    if (password !== confirm_password) {
-      setMessage('Passwords do not match');
-      return;
-    }
+    const { password, confirmPassword } = submittedData;
+    // if (password !== confirmPassword) {
+    //   setmessage('passwords do not match');
+    //   return;
+    // }
+    const isValid = updatePasswordSchema.parse(submittedData);
+    console.log('isValid', isValid);
+
     console.log(submittedData);
     console.log(SERVER_URL);
     try {
@@ -58,10 +92,9 @@ function SignUp({ onDone }: { onDone: () => void }) {
                   <input
                     id='password'
                     type='password'
-                    required
-                    autoComplete='current-password'
+                    placeholder='new password'
                     className='w-full rounded-md'
-                    {...register('password', { required: true })}
+                    {...register('password')}
                   />
                   {errors['password'] && (
                     <p className='text-error'>This field is required</p>
@@ -80,11 +113,11 @@ function SignUp({ onDone }: { onDone: () => void }) {
                   <input
                     id='confirm-password'
                     type='password'
-                    required
                     className='w-full rounded-md'
-                    {...register('confirm_password', { required: true })}
+                    placeholder=""
+                    {...register('confirmPassword')}
                   />
-                  {errors['confirm_password'] && (
+                  {errors['confirmPassword'] && (
                     <p className='text-error'>This field is required</p>
                   )}
                 </div>

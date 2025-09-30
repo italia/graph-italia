@@ -2,15 +2,20 @@ import { useState, useEffect } from 'react';
 import { PinInput } from 'react-input-pin-code';
 
 import * as api from '../../lib/api';
+import { useUserStore } from '../../store/user_store';
 
 export default function VerifyCodeComponent({
   uid = '',
   onCheckDone,
+  onAskAnotherCode,
 }: {
   uid: string;
   onCheckDone: (result: boolean) => void;
+  onAskAnotherCode: () => void;
 }) {
   const [values, setValues] = useState(['', '', '', '', '', '']);
+  const { setUser } = useUserStore();
+  const [showState, setShowState] = useState<boolean | undefined>(false);
 
   async function handleCheck(value: string) {
     if (!value) {
@@ -18,6 +23,11 @@ export default function VerifyCodeComponent({
     }
     try {
       const result = await api.verify({ uid, code: value });
+      console.log('verify result', result);
+      setShowState(true);
+      const user = await api.getUser();
+      console.log(user);
+      setUser(user);
       return onCheckDone(result);
     } catch (error) {
       console.log('error', error);
@@ -47,12 +57,13 @@ export default function VerifyCodeComponent({
             <PinInput
               values={values}
               onChange={(value, index, values) => setValues(values)}
+              showState={showState}
             />
 
             <div className='text-sm leading-6 my-4'>
               Resend code? &nbsp;
               <button
-                onClick={() => console.log('.')}
+                onClick={() => onAskAnotherCode()}
                 className='link font-semibold text-primary'
               >
                 send another code
