@@ -6,7 +6,6 @@ import Layout from '../../components/layout';
 import ConfirmDialog from '../../components/layout/ConfirmDialog';
 import GenericDialog from '../../components/layout/GenericDialog';
 import Loading from '../../components/layout/Loading';
-import * as auth from '../../lib/auth';
 import * as api from '../../lib/dashaboard-api';
 import useDashboardsStoreState from '../../lib/dashboardListStore';
 import { FieldDataType } from '../../types';
@@ -29,6 +28,7 @@ function DashboardsPage() {
       const data = await api.getDashboards();
       setList(data);
     } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -70,9 +70,7 @@ function DashboardsPage() {
     if (!selectedItem) {
       return;
     }
-
     const { id } = selectedItem;
-
     if (id) {
       try {
         const data = await api.deleteDashaboard(id);
@@ -125,9 +123,7 @@ function DashboardsPage() {
   }
 
   useEffect(() => {
-    // if (!auth.isAuth()) {
-    window.location.href = '/login';
-    // }
+    // window.location.href = '/login';
     fetchDashboards();
   }, []);
 
