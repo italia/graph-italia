@@ -14,13 +14,15 @@ export default function VerifyCodeComponent({
   onAskAnotherCode: () => void;
 }) {
   const [values, setValues] = useState(['', '', '', '', '', '']);
+  const [message, setMessage] = useState('');
   const { setUser } = useUserStore();
-  const [showState, setShowState] = useState<boolean | undefined>(false);
+  const [showState, setShowState] = useState<boolean>(false);
 
   async function handleCheck(value: string) {
     if (!value) {
       return;
     }
+    setMessage('');
     try {
       const result = await api.verify({ uid, code: value });
       console.log('verify result', result);
@@ -31,6 +33,7 @@ export default function VerifyCodeComponent({
       return onCheckDone(result);
     } catch (error) {
       console.log('error', error);
+      setMessage('Error code invalid or expired');
     }
   }
 
@@ -59,7 +62,9 @@ export default function VerifyCodeComponent({
               onChange={(value, index, values) => setValues(values)}
               showState={showState}
             />
-
+            {message && (
+              <div className='text-error mt-2 text-md'>{message}</div>
+            )}
             <div className='text-sm leading-6 my-4'>
               Resend code? &nbsp;
               <button

@@ -34,7 +34,7 @@ function AuthPage() {
   }
 
   function redirectHome() {
-    alert('changed');
+    // alert('changed');
     navigate('/home');
   }
 
