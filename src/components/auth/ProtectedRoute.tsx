@@ -1,14 +1,18 @@
 // src/components/auth/ProtectedRoute.tsx
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useUserStore } from "../../store/user_store";
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useUserStore } from '../../store/user_store';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user } = useUserStore();
+  const { user, checkSession } = useUserStore();
+
+  useEffect(() => {
+    if (user) checkSession();
+  }, []);
 
   if (!user) {
     // If no user is logged in, redirect to the /login page

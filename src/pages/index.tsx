@@ -1,6 +1,9 @@
 import Layout from '../components/layout';
+import { useUserStore } from '../store/user_store';
 
 export default function Landing() {
+  const { user } = useUserStore();
+
   const faqs = [
     {
       id: 1,
@@ -107,7 +110,7 @@ export default function Landing() {
                 interface to bring your numbers to life.
               </p>
               <div className='mt-10 flex items-center justify-center gap-x-6'>
-                <a href='/login' className='btn btn-primary'>
+                <a href={user ? '/home' : '/login'} className='btn btn-primary'>
                   Get started
                 </a>
               </div>

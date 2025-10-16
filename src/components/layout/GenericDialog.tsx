@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface GenericDialogProps {
   title: string;
@@ -19,8 +19,8 @@ export default function GenericDialog({
   confirmCb,
   cancelCb,
   labels = {
-    confirm: "Si",
-    cancel: "No",
+    confirm: 'Confirm',
+    cancel: 'Cancel',
   },
 }: GenericDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -36,15 +36,15 @@ export default function GenericDialog({
   }, [toggle, ref, children]);
 
   return (
-    <dialog ref={ref} className="modal">
-      <div className="modal-box">
-        <h3 className="font-bold text-lg">{title}</h3>
+    <dialog ref={ref} className='modal'>
+      <div className='modal-box'>
+        <h3 className='font-bold text-lg'>{title}</h3>
         <div>{children}</div>
-        <div className="modal-action">
-          <button className="btn btn-outline" onClick={() => cancelCb()}>
+        <div className='modal-action'>
+          <button className='btn btn-outline' onClick={() => cancelCb()}>
             {labels.cancel}
           </button>
-          <button className="btn btn-primary" onClick={() => confirmCb()}>
+          <button className='btn btn-primary' onClick={() => confirmCb()}>
             {labels.confirm}
           </button>
         </div>

@@ -58,7 +58,7 @@ export const useUserStore = create<UserState>()(
       {
         // Configuration for the persist middleware
         name: 'user-storage', // Unique name for the localStorage key
-        storage: createJSONStorage(() => localStorage), // Use localStorage for persistence
+        storage: createJSONStorage(() => sessionStorage), // Use localStorage for persistence
       }
     )
   )

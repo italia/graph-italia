@@ -1,17 +1,17 @@
-import React from "react";
-import { Responsive, WidthProvider } from "react-grid-layout";
-import { Panel, PanelGroup } from "react-resizable-panels";
-import { Link, useParams } from "react-router-dom";
-import Layout from "../../components/layout";
-import Dialog from "../../components/layout/Dialog";
-import Loading from "../../components/layout/Loading";
+import React from 'react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Panel, PanelGroup } from 'react-resizable-panels';
+import { Link, useParams } from 'react-router-dom';
+import Layout from '../../components/layout';
+import Dialog from '../../components/layout/Dialog';
+import Loading from '../../components/layout/Loading';
 // import RenderChart from "../../components/RenderCellChart";
-import { RenderChart } from "dataviz-components";
-import * as api from "../../lib/dashaboard-api";
+import { RenderChart } from 'dataviz-components';
+import * as api from '../../lib/api';
 import useDashboardEditStore, {
   ChartLookup,
   TChartRef,
-} from "../../store/dashboard-edit.store";
+} from '../../store/dashboard-edit.store';
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
@@ -49,15 +49,15 @@ function ChartSelection(props: ChartSelectionProps) {
       {charts && (
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "start",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'start',
           }}
         >
-          <label style={{ width: "200px" }}>Select a chart type:</label>
+          <label style={{ width: '200px' }}>Select a chart type:</label>
           <select
             className='select select-primary my-2 p-2'
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             value={chart?.id}
             onChange={(e) => {
               const chartId = e.target.value;

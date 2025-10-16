@@ -1,26 +1,26 @@
-import { useState, useEffect } from "react";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { useMachine } from "@xstate/react";
-import { RenderChart, DataTable, type FieldDataType } from "dataviz-components";
+import { useState, useEffect } from 'react';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { useMachine } from '@xstate/react';
+import { RenderChart, DataTable, type FieldDataType } from 'dataviz-components';
 
-import { getAvailablePalettes, getPalette, transposeData } from "../lib/utils";
-import Layout from "../components/layout";
+import { getAvailablePalettes, getPalette, transposeData } from '../lib/utils';
+import Layout from '../components/layout';
 // import RenderChart from "../components/RenderChart";
-import SelectChart from "../components/SelectChart";
-import ChartOptions from "../components/ChartOptions";
-import ChartSave from "../components/ChartSave";
-import Loading from "../components/layout/Loading";
-import QuickstartInfo from "../components/layout/QuickstartInfo";
-import ChartList from "../components/ChartList";
-import Steps from "../components/layout/Steps";
+import SelectChart from '../components/SelectChart';
+import ChartOptions from '../components/ChartOptions';
+import ChartSave from '../components/ChartSave';
+import Loading from '../components/layout/Loading';
+import QuickstartInfo from '../components/layout/QuickstartInfo';
+import ChartList from '../components/ChartList';
+import Steps from '../components/layout/Steps';
 
-import useStoreState from "../lib/storeState";
-import useChartsStoreState from "../lib/chartListStore";
-import stepMachine from "../lib/stepMachine";
-import { dataToCSV, downloadCSV } from "../lib/downloadUtils";
-import * as auth from "../lib/auth";
-import * as api from "../lib/api";
-import ChooseLoader from "../components/load-data/ChooseLoader";
+import useStoreState from '../lib/storeState';
+import useChartsStoreState from '../lib/chartListStore';
+import stepMachine from '../lib/stepMachine';
+import { dataToCSV, downloadCSV } from '../lib/downloadUtils';
+import * as auth from '../lib/auth';
+import * as api from '../lib/api';
+import ChooseLoader from '../components/load-data/ChooseLoader';
 
 function Home() {
   const [state, send] = useMachine(stepMachine);
@@ -88,54 +88,54 @@ function Home() {
     }
     // setChart("");
     setData(d);
-    send({ type: "CONFIG" });
+    send({ type: 'CONFIG' });
   }
   const haveData =
     data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
     setData(d);
-    send({ type: "NEXT" });
+    send({ type: 'NEXT' });
   }
   function handleSetRemoteData(d: any) {
-    console.log("handleSetRemoteData", d);
+    console.log('handleSetRemoteData', d);
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
     setData(d.data);
     setTimeout(() => {
-      send({ type: "CONFIG" });
+      send({ type: 'CONFIG' });
     }, 100);
   }
 
   function handleLoadChart(item: FieldDataType) {
-    send({ type: "CONFIG" });
+    send({ type: 'CONFIG' });
     loadItem(item);
   }
 
   function handleDeleteChart(id?: string) {
     if (!id) return;
-    console.log("delete chart?", id);
+    console.log('delete chart?', id);
 
-    const sure = confirm("Are you sure you want to delete this chart?");
+    const sure = confirm('Are you sure you want to delete this chart?');
     if (!sure) return;
 
     return api
       .deleteChart(id)
       .then(() => fetchCharts())
-      .then(() => send({ type: "IDLE" }));
+      .then(() => send({ type: 'IDLE' }));
   }
   function handleSaveChart() {
-    fetchCharts().then(() => send({ type: "IDLE" }));
+    fetchCharts().then(() => send({ type: 'IDLE' }));
     setTimeout(() => {
       resetItem();
     }, 100);
   }
 
   function getStepIndex() {
-    if (state.matches("idle")) return 0;
-    if (state.matches("input")) return 1;
-    if (state.matches("config")) return 2;
-    if (state.matches("done")) return 3;
+    if (state.matches('idle')) return 0;
+    if (state.matches('input')) return 1;
+    if (state.matches('config')) return 2;
+    if (state.matches('done')) return 3;
     return 0;
   }
 
@@ -153,14 +153,14 @@ function Home() {
         <PanelResizeHandle className='bg-primary w-1' />
         <Panel defaultSize={30} minSize={30} className='bg-base-100'>
           <div className='p-4'>
-            {state.matches("idle") && (
+            {state.matches('idle') && (
               <div className='container'>
                 {loading ? (
                   <Loading />
                 ) : (
                   <>
                     <h4 className='text-4xl font-bold'>
-                      {list && list.length ? "My Charts" : "Welcome"}
+                      {list && list.length ? 'My Charts' : 'Welcome'}
                     </h4>
 
                     {!data && (!list || list?.length === 0) && (
@@ -171,7 +171,7 @@ function Home() {
                         {!data && (
                           <div
                             className='btn btn-primary'
-                            onClick={() => send({ type: "INPUT" })}
+                            onClick={() => send({ type: 'INPUT' })}
                           >
                             + Create New chart
                           </div>
@@ -179,7 +179,7 @@ function Home() {
                         {data && (
                           <div
                             className='btn btn-primary'
-                            onClick={() => send({ type: "CONFIG" })}
+                            onClick={() => send({ type: 'CONFIG' })}
                           >
                             Congfigure chart
                           </div>
@@ -188,7 +188,7 @@ function Home() {
                           <div
                             className='btn btn-outline btn-primary'
                             onClick={() => {
-                              send({ type: "IDLE" });
+                              send({ type: 'IDLE' });
                               resetItem();
                             }}
                           >
@@ -207,7 +207,7 @@ function Home() {
               </div>
             )}
 
-            {state.matches("input") && (
+            {state.matches('input') && (
               <div className='container'>
                 <h4 className='text-4xl font-bold'>Upload your data</h4>
                 <ChooseLoader
@@ -218,7 +218,7 @@ function Home() {
               </div>
             )}
 
-            {state.matches("config") && (
+            {state.matches('config') && (
               <div className='container'>
                 <h4 className='text-4xl font-bold'>Configure Chart</h4>
                 <SelectChart setChart={setChart} chart={chart} />
@@ -230,7 +230,7 @@ function Home() {
                 />
               </div>
             )}
-            {state.matches("done") && (
+            {state.matches('done') && (
               <div className='container'>
                 <h4 className='text-4xl font-bold'>Save Chart</h4>
                 Give a name to your chart and save it
@@ -263,7 +263,7 @@ function Home() {
                   reset={reset}
                   transpose={transpose}
                   download={() => {
-                    downloadCSV(dataToCSV(data), "selected-data-" + Date.now());
+                    downloadCSV(dataToCSV(data), 'selected-data-' + Date.now());
                   }}
                 />
                 {chart && (
@@ -279,7 +279,7 @@ function Home() {
                       <div className='w-full flex justify-end'>
                         <button
                           className='my-5 btn btn-primary'
-                          onClick={() => send({ type: "DONE" })}
+                          onClick={() => send({ type: 'DONE' })}
                         >
                           SAVE / EXPORT
                         </button>

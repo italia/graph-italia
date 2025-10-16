@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { useNavigate } from 'react-router-dom';
-import DashboardList from '../../components/dashboard/DashboardList';
+
+import type { FieldDataType } from '../../types';
+
+import * as api from '../../lib/api';
 import Layout from '../../components/layout';
+import Loading from '../../components/layout/Loading';
+import DashboardList from '../../components/DashboardList';
 import ConfirmDialog from '../../components/layout/ConfirmDialog';
 import GenericDialog from '../../components/layout/GenericDialog';
-import Loading from '../../components/layout/Loading';
-import * as api from '../../lib/dashaboard-api';
 import useDashboardsStoreState from '../../lib/dashboardListStore';
-import { FieldDataType } from '../../types';
 
 function DashboardsPage() {
   const { list, setList } = useDashboardsStoreState((state) => state);
@@ -21,6 +23,7 @@ function DashboardsPage() {
     description: string;
   }>();
   const [selectedItem, setSelectedItem] = useState<FieldDataType>();
+  const navigate = useNavigate();
 
   async function fetchDashboards() {
     setLoading(true);
@@ -40,8 +43,6 @@ function DashboardsPage() {
   }) {
     return await api.createDashboard(payload);
   }
-
-  const navigate = useNavigate();
 
   function createClickHandler() {
     setShowCreateModal(true);
@@ -83,6 +84,7 @@ function DashboardsPage() {
     }
     closeDeleteModal();
   }
+
   function dialogCancelModalHandler() {
     closeDeleteModal();
   }
@@ -97,7 +99,6 @@ function DashboardsPage() {
     description: string;
   }) {
     const response = await createDashboard(payload);
-
     if (!response) {
       return;
     }

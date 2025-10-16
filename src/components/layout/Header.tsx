@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import { logout } from '../../lib/api';
 import { useUserStore } from '../../store/user_store';
 
 export default function Header() {
-  const { user, clearUser, checkSession } = useUserStore();
+  const { user, clearUser } = useUserStore();
   const handleLogout = async () => {
     console.log('Logging out user...');
     try {
@@ -16,51 +15,13 @@ export default function Header() {
     window.location.href = '/';
   };
 
-  useEffect(() => {
-    checkSession();
-  }, []);
-
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const [authorized, setAuthorized] = useState<boolean>(false);
-  // const logged = auth.useAuth();
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   checkAuthAndRedir();
-  // }, []);
-
-  // async function checkAuthAndRedir() {
-  //   try {
-  //     const response = await api.getUser();
-  //     console.log('RESPONSE', response);
-  //     if (response) {
-  //       setAuthorized(true);
-  //       // window.location.href = "/home";
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-  // async function logoutAndRedir() {
-  //   await api.logout();
-  //   setTimeout(() => {
-  //     window.location.reload();
-  //   }, 1000);
-  // }
-
   const menu = [
     {
-      name: 'Home',
-      link: '/',
-    },
-    {
-      name: 'My Charts',
+      name: 'Charts',
       link: '/home',
     },
     {
-      name: 'My Dashboards',
+      name: 'Dashboards',
       link: '/dashboards',
     },
     {

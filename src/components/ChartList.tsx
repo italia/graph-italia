@@ -1,9 +1,11 @@
-import { useState } from "react";
-import dayjs from "dayjs";
-import { type FieldDataType } from "dataviz-components";
+import { useState } from 'react';
+import dayjs from 'dayjs';
+import { type FieldDataType } from 'dataviz-components';
 
-import Dialog from "./layout/Dialog";
+import Dialog from './layout/Dialog';
 // import RenderChart from "./RenderChart";
+
+type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
 type ChartListProps = {
   list: FieldDataType[] | [];
@@ -23,14 +25,14 @@ export default function ChartList({
   return (
     <div className='flex flex-col gap-2'>
       {list?.map((item) => {
-        const updatedAt = (item as any).updatedAt || "";
+        const updatedAt = item.updatedAt || '';
         // const pic = picList.find((i) => i.id === item.id);
         return (
           <div className='w-full' key={item.id}>
             <div className='flex flex-wrap gap-2 border p-2'>
-              {item.preview && (
+              {(item as FieldDataTypeWithPreview).preview && (
                 <img
-                  src={item.preview}
+                  src={(item as FieldDataTypeWithPreview).preview}
                   alt='chart'
                   style={{
                     maxWidth: 160,
@@ -44,30 +46,30 @@ export default function ChartList({
                 <span>
                   {updatedAt && (
                     <small className={`text-xxs text-content opacity-70 pr-4`}>
-                      {dayjs(updatedAt).format("DD/MM/YYYY HH:mm")}
+                      {dayjs(updatedAt).format('DD/MM/YYYY HH:mm')}
                     </small>
                   )}
                   <small
                     className={`text-xxs text-content opacity-70 pr-4 ${
-                      item.publish ? "text-success" : "text-content"
+                      item.publish ? 'text-success' : 'text-content'
                     }`}
                   >
-                    {item.publish ? "public" : "private"}
+                    {item.publish ? 'public' : 'private'}
                   </small>
 
                   <small
                     className={`text-xxs text-content opacity-70 pr-4 ${
-                      item.isRemote ? "text-primary" : "text-content"
+                      item.isRemote ? 'text-primary' : 'text-content'
                     }`}
                   >
-                    {item.isRemote ? "remote" : ""}
+                    {item.isRemote ? 'remote' : ''}
                   </small>
                 </span>
               </div>
               <div className='flex gap-2'>
                 <button
                   className='btn btn-outline btn-error btn-sm'
-                  onClick={() => handleDeleteChart(item.id || "")}
+                  onClick={() => handleDeleteChart(item.id || '')}
                 >
                   DELETE
                 </button>
@@ -77,7 +79,7 @@ export default function ChartList({
                       className='btn btn-outline  btn-sm'
                       onClick={() =>
                         setShow(
-                          `<iframe src="${window.location.origin}/embed/${item.id}" width="100%" height="400px" frameborder="0"></iframe>`
+                          `<iframe src="${window.location.origin}/charts/${item.id}/embed" width="100%" height="400px" frameborder="0"></iframe>`
                         )
                       }
                     >
@@ -86,7 +88,7 @@ export default function ChartList({
                     <a
                       className='btn btn-outline btn-success btn-sm'
                       target='_blank'
-                      href={`/chart/${item.id}`}
+                      href={`/charts/${item.id}/view`}
                     >
                       VIEW
                     </a>

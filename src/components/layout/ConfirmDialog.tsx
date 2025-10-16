@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
 interface ConfirmDialog {
   title: string;
@@ -30,16 +30,16 @@ export default function ConfirmDialog({
   }, [toggle, ref, children]);
 
   return (
-    <dialog ref={ref} className="modal">
-      <div className="modal-box">
-        <h3 className="font-bold text-lg">{title}</h3>
+    <dialog ref={ref} className='modal'>
+      <div className='modal-box'>
+        <h3 className='font-bold text-lg'>{title}</h3>
         <div>{message}</div>
-        <div className="modal-action">
-          <button className="btn btn-outline" onClick={() => cancelCb()}>
+        <div className='modal-action'>
+          <button className='btn btn-outline' onClick={() => cancelCb()}>
             No
           </button>
-          <button className="btn btn-primary" onClick={() => confirmCb()}>
-            Si
+          <button className='btn btn-primary' onClick={() => confirmCb()}>
+            Yes
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import dayjs from "dayjs";
-import { FieldDataType } from "../../types";
+import dayjs from 'dayjs';
+import type { FieldDataType } from '../types';
 
 type DashboardListProps = {
   list: FieldDataType[] | [];
@@ -17,8 +17,8 @@ export default function DashboardList({
   return (
     <div>
       {list?.map((item) => {
-        const createdAt = (item as any).createddAt || "";
-        const updatedAt = (item as any).updatedAt || "";
+        const createdAt = (item as any).createddAt || '';
+        const updatedAt = (item as any).updatedAt || '';
         return (
           <div
             key={item.id}
@@ -28,18 +28,18 @@ export default function DashboardList({
               <div className='text-lg'>{item.name}</div>
               {createdAt && (
                 <small className={`text-xxs text-content opacity-70 pr-4`}>
-                  {dayjs(createdAt).format("DD/MM/YYYY HH:mm")}
+                  {dayjs(createdAt).format('DD/MM/YYYY HH:mm')}
                 </small>
               )}
               {updatedAt && (
                 <small className={`text-xxs text-content opacity-70 pr-4`}>
-                  {dayjs(updatedAt).format("DD/MM/YYYY HH:mm")}
+                  {dayjs(updatedAt).format('DD/MM/YYYY HH:mm')}
                 </small>
               )}
             </div>
             <button
               className='btn btn-outline btn-success btn-sm'
-              onClick={() => handleViewDashboard(item.id ?? "")}
+              onClick={() => handleViewDashboard(item.id ?? '')}
             >
               VIEW
             </button>
@@ -51,7 +51,7 @@ export default function DashboardList({
             </button>
             <button
               className='btn btn-outline btn-error btn-sm'
-              onClick={() => handleDeleteDashboard(item.id || "")}
+              onClick={() => handleDeleteDashboard(item.id || '')}
             >
               DELETE
             </button>
