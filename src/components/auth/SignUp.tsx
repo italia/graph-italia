@@ -1,12 +1,11 @@
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import * as api from "../../lib/api";
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import * as api from '../../lib/api';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
   let navigate = useNavigate();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const {
     register,
     handleSubmit,
@@ -15,23 +14,22 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
   } = useForm({});
 
   const onSubmit = async (submittedData: any) => {
-    setMessage("");
+    setMessage('');
     const { email, password, confirm_password } = submittedData;
     if (password !== confirm_password) {
-      setMessage("Passwords do not match");
+      setMessage('Passwords do not match');
       return;
     }
     console.log(submittedData);
-    console.log(SERVER_URL);
     try {
       const result = await api.register({ email, password });
       if (result) {
-        navigate("/home");
+        navigate('/home');
       } else {
-        setMessage("Error while registering");
+        setMessage('Error while registering');
       }
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
       setMessage((error as any).message ?? error);
     }
   };
@@ -58,13 +56,13 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                 <div className='mt-2 form-control'>
                   <input
                     id='email'
-                    {...register("email", { required: true })}
+                    {...register('email', { required: true })}
                     type='email'
                     required
                     autoComplete='email'
                     className='w-full rounded-md'
                   />
-                  {errors["email"] && (
+                  {errors['email'] && (
                     <p className='text-error'>This field is required</p>
                   )}
                 </div>
@@ -84,9 +82,9 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                     required
                     autoComplete='current-password'
                     className='w-full rounded-md'
-                    {...register("password", { required: true })}
+                    {...register('password', { required: true })}
                   />
-                  {errors["password"] && (
+                  {errors['password'] && (
                     <p className='text-error'>This field is required</p>
                   )}
                 </div>
@@ -105,9 +103,9 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                     type='password'
                     required
                     className='w-full rounded-md'
-                    {...register("confirm_password", { required: true })}
+                    {...register('confirm_password', { required: true })}
                   />
-                  {errors["confirm_password"] && (
+                  {errors['confirm_password'] && (
                     <p className='text-error'>This field is required</p>
                   )}
                 </div>
@@ -118,23 +116,23 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                   id='policy'
                   type='checkbox'
                   className='h-4 w-4 rounded'
-                  {...register("policy-acknologment", { required: true })}
+                  {...register('policy-acknologment', { required: true })}
                 />
                 <label
                   htmlFor='policy'
                   className='ml-3 block text-sm leading-6 '
                 >
-                  I accept the{" "}
+                  I accept the{' '}
                   <a
                     className='link link-primary font-semibold'
                     target='_blank'
                     href='/policy'
                   >
                     policy
-                  </a>{" "}
+                  </a>{' '}
                   agreement.
                 </label>
-                {errors["policy-acknologment"] && (
+                {errors['policy-acknologment'] && (
                   <p className='pl-4 text-error'>Must accept to register!!</p>
                 )}
               </div>

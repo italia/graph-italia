@@ -4,8 +4,6 @@ import * as api from '../../lib/api';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-
 const passwordSchema = z
   .string()
   .min(8, { message: 'Password must be at least 8 characters long' })
@@ -52,7 +50,6 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
     console.log('isValid', isValid);
 
     console.log(submittedData);
-    console.log(SERVER_URL);
     try {
       const result = await api.changePasssword({ password });
       if (result) {

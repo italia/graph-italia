@@ -1,7 +1,9 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3003';
+const SERVER_URL = `${
+  import.meta.env.VITE_SERVER_URL || 'http://localhost:3003'
+}/api`;
 // let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
 /** getSuggestions */
