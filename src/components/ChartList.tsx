@@ -3,6 +3,14 @@ import dayjs from 'dayjs';
 import { type FieldDataType } from 'dataviz-components';
 
 import Dialog from './layout/Dialog';
+import {
+  FaChartBar,
+  FaChartLine,
+  FaChartPie,
+  FaMapMarkerAlt,
+  FaRegListAlt,
+  FaRegMap,
+} from 'react-icons/fa';
 // import RenderChart from "./RenderChart";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
@@ -41,6 +49,17 @@ export default function ChartList({
                   className='m-2'
                 />
               )}
+
+              {item.chart === 'bar' && <FaChartBar fill={'#06c'} size={24} />}
+              {item.chart === 'line' && <FaChartLine fill={'#06c'} size={24} />}
+              {item.chart === 'pie' ||
+                (item.chart === 'donut' && <FaChartPie fill={'#06c'} />)}
+              {item.chart === 'geo' && <FaRegMap fill={'#06c'} size={24} />}
+              {item.chart === 'map' && (
+                <FaMapMarkerAlt fill={'#06c'} size={24} />
+              )}
+              {item.chart === 'kpi' && <FaRegListAlt fill={'#06c'} size={24} />}
+
               <div className='grow flex flex-col justify-start  pb-4'>
                 <div className='text-md'>{item.name}</div>
                 <span>

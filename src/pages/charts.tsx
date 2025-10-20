@@ -197,7 +197,7 @@ function Home() {
                         )}
                       </div>
                       <ChartList
-                        list={list}
+                        list={list as FieldDataType[]}
                         handleLoadChart={handleLoadChart}
                         handleDeleteChart={handleDeleteChart}
                       />
@@ -260,11 +260,10 @@ function Home() {
               <div className='p-4'>
                 <DataTable
                   data={data as any}
-                  reset={reset}
-                  transpose={transpose}
-                  download={() => {
-                    downloadCSV(dataToCSV(data), 'selected-data-' + Date.now());
-                  }}
+                  // transpose={transpose}
+                  // download={() => {
+                  //   downloadCSV(dataToCSV(data), 'selected-data-' + Date.now());
+                  // }}
                 />
                 {chart && (
                   <>
