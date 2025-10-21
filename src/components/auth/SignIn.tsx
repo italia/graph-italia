@@ -95,36 +95,24 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 </div>
               </div>
 
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center'>
-                  <input
-                    id='remember-me'
-                    type='checkbox'
-                    className='h-4 w-4 rounded'
-                    {...register('remember-me')}
-                  />
-                  <label
-                    htmlFor='remember-me'
-                    className='ml-3 block text-sm leading-6 '
-                  >
-                    Remember me
-                  </label>
-                </div>
-
-                <div className='text-sm leading-6'>
-                  <button
-                    onClick={() => handleRecoverFlow()}
-                    className='link font-semibold link-primary'
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-              </div>
               {message && <p className='text-error'>{message}</p>}
               <div>
                 <button type='submit' className='btn btn-primary w-full'>
                   Sign in
                 </button>
+              </div>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center'></div>
+
+                <div className='text-sm leading-6'>
+                  <a
+                    href='#'
+                    onClick={() => handleRecoverFlow()}
+                    className='link font-semibold link-primary'
+                  >
+                    Forgot password?
+                  </a>
+                </div>
               </div>
             </form>
           </div>

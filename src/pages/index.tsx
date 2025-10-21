@@ -146,10 +146,9 @@ export default function Landing() {
               </dl>
             </div>
           </div>
-
-          <div className='bg-primary px-10 sm:mx-auto w-full py-12'>
-            <div className='rounded-md mx-auto max-w-6xl p-12 prose bg-base-100'>
-              <h2 className='text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+          <div className='bg-primary  sm:px-10 sm:mx-auto w-full py-12'>
+            <div className='rounded-md mx-auto max-w-6xl p-12 prose bg-base-100  text-content'>
+              <h2 className='text-3xl font-bold tracking-tight  sm:text-4xl '>
                 Quick Start Guide: Creating Your First Chart with Dataviz
               </h2>
               <p>
@@ -252,9 +251,10 @@ export default function Landing() {
             </div>
           </div>
 
+          {/*
           <div className='space-y-2 mx-auto max-w-4xl pb-32 sm:pb-48 lg:pb-56'>
-            <h2 className='text-4xl font-bold'>FAQS</h2>
-            {faqs.map((faq) => (
+          <h2 className='text-4xl font-bold'>FAQS</h2>
+          {faqs.map((faq) => (
               <details
                 className='group [&_summary::-webkit-details-marker]:hidden'
                 key={faq.id}
@@ -282,8 +282,9 @@ export default function Landing() {
                   {faq.answer}
                 </p>
               </details>
-            ))}
+              ))}
           </div>
+             */}
         </div>
 
         {/* <div className="my-5">

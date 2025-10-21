@@ -8,12 +8,14 @@ import EmbedChartPage from './pages/embed/EmbedChartPage';
 import EmbedDashboardPage from './pages/embed/EmbedDashboardPage';
 import GenerateDataPage from './pages/utility/GenerateDataPage';
 import GeoMapUtilsPage from './pages/utility/GeoMapUtilsPage';
-import HomePage from './pages/charts';
 import LoadDataPage from './pages/utility/LoadRemoteDataPage';
 import ShowChartPage from './pages/show/ShowChartPage';
 import VerifyPage from './pages/auth/VerifyPage';
 import RecoverPage from './pages/auth/RecoverPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+
+import HomePage from './pages/home';
+import EditChartPage from './pages/charts/edit';
 
 const router = createBrowserRouter([
   //PRIVATE PART
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <HomePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/charts/:id/edit',
+    element: (
+      <ProtectedRoute>
+        <EditChartPage />
       </ProtectedRoute>
     ),
   },
