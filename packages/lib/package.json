@@ -1,0 +1,14 @@
+{
+  "name": "dataviz-lib",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.19"
+  }
+}
