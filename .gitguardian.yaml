@@ -1,2 +1,2 @@
 paths-ignore:
-  - ".devcontainer/*"
+  - ".devcontainer/compose.yml"
