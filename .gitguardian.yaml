@@ -1,2 +1,5 @@
-paths-ignore:
-  - ".devcontainer/compose.yml"
+version: 2
+secret:
+  # Exclude files and paths by globbing
+  ignored_paths:
+    - ".devcontainer/compose.yml"
