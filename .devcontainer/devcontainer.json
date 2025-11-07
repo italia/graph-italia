@@ -1,0 +1,54 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/bun-postgresql
+{
+  "name": "Dataviz",
+  "dockerComposeFile": "compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "installYarnUsingApt": true,
+      "version": "lts",
+      "pnpmVersion": "none",
+      "nvmVersion": "latest"
+    }
+  },
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "oven.bun-vscode",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "ckolkman.vscode-postgres",
+        "Prisma.prisma"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll": true,
+          "source.fixAll.eslint": true,
+          "source.organizeImports": true,
+          "addMissingImports": true
+        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[prisma]": {
+          "editor.defaultFormatter": "Prisma.prisma"
+        },
+        "[yaml]": {
+          "editor.autoIndent": "advanced"
+        },
+        "[dockercompose]": {
+          "editor.autoIndent": "advanced"
+        },
+        "[github-actions-workflow]": {
+          "editor.autoIndent": "advanced"
+        }
+      }
+    }
+  }
+}
