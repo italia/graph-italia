@@ -1,0 +1,22 @@
+meta {
+  name: delete
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:3003/dashboards/cm7af645r0001tql1aeb1vew2
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTc0bHRjcngwMDAwMTJ4b2YxMzhneGRnIiwiaWF0IjoxNzM5NTUwMDIwLCJleHAiOjE3NDAxNTQ4MjB9.SwrXmd_XICrLCmG2uQ6RS4OfVXQbE0pL_dJxJyRpYUM
+}
+
+body:json {
+  {
+      "name": "Dashboard 1 aggiornata",
+      "description": "Descrizione della D1"
+  }
+}

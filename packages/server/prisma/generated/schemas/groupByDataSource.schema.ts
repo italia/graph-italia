@@ -1,0 +1,13 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { DataSourceWhereInputObjectSchema as DataSourceWhereInputObjectSchema } from './objects/DataSourceWhereInput.schema';
+import { DataSourceOrderByWithAggregationInputObjectSchema as DataSourceOrderByWithAggregationInputObjectSchema } from './objects/DataSourceOrderByWithAggregationInput.schema';
+import { DataSourceScalarWhereWithAggregatesInputObjectSchema as DataSourceScalarWhereWithAggregatesInputObjectSchema } from './objects/DataSourceScalarWhereWithAggregatesInput.schema';
+import { DataSourceScalarFieldEnumSchema } from './enums/DataSourceScalarFieldEnum.schema';
+import { DataSourceCountAggregateInputObjectSchema as DataSourceCountAggregateInputObjectSchema } from './objects/DataSourceCountAggregateInput.schema';
+import { DataSourceMinAggregateInputObjectSchema as DataSourceMinAggregateInputObjectSchema } from './objects/DataSourceMinAggregateInput.schema';
+import { DataSourceMaxAggregateInputObjectSchema as DataSourceMaxAggregateInputObjectSchema } from './objects/DataSourceMaxAggregateInput.schema';
+
+export const DataSourceGroupBySchema: z.ZodType<Prisma.DataSourceGroupByArgs> = z.object({ where: DataSourceWhereInputObjectSchema.optional(), orderBy: z.union([DataSourceOrderByWithAggregationInputObjectSchema, DataSourceOrderByWithAggregationInputObjectSchema.array()]).optional(), having: DataSourceScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(DataSourceScalarFieldEnumSchema), _count: z.union([ z.literal(true), DataSourceCountAggregateInputObjectSchema ]).optional(), _min: DataSourceMinAggregateInputObjectSchema.optional(), _max: DataSourceMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.DataSourceGroupByArgs>;
+
+export const DataSourceGroupByZodSchema = z.object({ where: DataSourceWhereInputObjectSchema.optional(), orderBy: z.union([DataSourceOrderByWithAggregationInputObjectSchema, DataSourceOrderByWithAggregationInputObjectSchema.array()]).optional(), having: DataSourceScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(DataSourceScalarFieldEnumSchema), _count: z.union([ z.literal(true), DataSourceCountAggregateInputObjectSchema ]).optional(), _min: DataSourceMinAggregateInputObjectSchema.optional(), _max: DataSourceMaxAggregateInputObjectSchema.optional() }).strict();

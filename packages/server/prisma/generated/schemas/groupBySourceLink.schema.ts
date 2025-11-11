@@ -1,0 +1,13 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { SourceLinkWhereInputObjectSchema as SourceLinkWhereInputObjectSchema } from './objects/SourceLinkWhereInput.schema';
+import { SourceLinkOrderByWithAggregationInputObjectSchema as SourceLinkOrderByWithAggregationInputObjectSchema } from './objects/SourceLinkOrderByWithAggregationInput.schema';
+import { SourceLinkScalarWhereWithAggregatesInputObjectSchema as SourceLinkScalarWhereWithAggregatesInputObjectSchema } from './objects/SourceLinkScalarWhereWithAggregatesInput.schema';
+import { SourceLinkScalarFieldEnumSchema } from './enums/SourceLinkScalarFieldEnum.schema';
+import { SourceLinkCountAggregateInputObjectSchema as SourceLinkCountAggregateInputObjectSchema } from './objects/SourceLinkCountAggregateInput.schema';
+import { SourceLinkMinAggregateInputObjectSchema as SourceLinkMinAggregateInputObjectSchema } from './objects/SourceLinkMinAggregateInput.schema';
+import { SourceLinkMaxAggregateInputObjectSchema as SourceLinkMaxAggregateInputObjectSchema } from './objects/SourceLinkMaxAggregateInput.schema';
+
+export const SourceLinkGroupBySchema: z.ZodType<Prisma.SourceLinkGroupByArgs> = z.object({ where: SourceLinkWhereInputObjectSchema.optional(), orderBy: z.union([SourceLinkOrderByWithAggregationInputObjectSchema, SourceLinkOrderByWithAggregationInputObjectSchema.array()]).optional(), having: SourceLinkScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(SourceLinkScalarFieldEnumSchema), _count: z.union([ z.literal(true), SourceLinkCountAggregateInputObjectSchema ]).optional(), _min: SourceLinkMinAggregateInputObjectSchema.optional(), _max: SourceLinkMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.SourceLinkGroupByArgs>;
+
+export const SourceLinkGroupByZodSchema = z.object({ where: SourceLinkWhereInputObjectSchema.optional(), orderBy: z.union([SourceLinkOrderByWithAggregationInputObjectSchema, SourceLinkOrderByWithAggregationInputObjectSchema.array()]).optional(), having: SourceLinkScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(SourceLinkScalarFieldEnumSchema), _count: z.union([ z.literal(true), SourceLinkCountAggregateInputObjectSchema ]).optional(), _min: SourceLinkMinAggregateInputObjectSchema.optional(), _max: SourceLinkMaxAggregateInputObjectSchema.optional() }).strict();

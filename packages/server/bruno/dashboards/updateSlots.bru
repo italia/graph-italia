@@ -1,0 +1,42 @@
+meta {
+  name: updateSlots
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:3003/dashboards/cm7504wzw000111bx3fpm2ndk/slots
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTc0bHRjcngwMDAwMTJ4b2YxMzhneGRnIiwiaWF0IjoxNzQxODUzODg0LCJleHAiOjE3NDI0NTg2ODR9.UV5U-ihvIjXf-9LnyfdAMw0zLP2TVlADpK_xD4YfHOg
+}
+
+body:json {
+  {
+      "slots": [
+        {
+          "chartId": "cm7aqx7pn000773g5lx8xxc97",
+          "settings":    { "w": 2,"h": 1, "x": 0, "y": 0, "i": "item-0"  }
+        },
+        {
+          "chartId": "cm74pz8p5000157p7l6z6esbe",
+          "settings":    { "w": 2,"h": 1, "x": 2, "y": 0, "i": "item-1"  }
+        },
+        {
+          "chartId": "cm7aqw6ec000173g5293rn81q",
+          "settings":    { "w": 2,"h": 1, "x": 0, "y": 1, "i": "item-2"  }
+        },
+        {
+          "chartId": "cm7aqwied000373g5tyecarys",
+          "settings":    { "w": 1,"h": 1, "x": 2, "y": 1, "i": "item-3"  }
+        },
+        {
+          "chartId": "cm7aqwws0000573g5i6q3inum",
+          "settings":    { "w": 1,"h": 1, "x": 3, "y": 1, "i": "item-4"  }
+        }   
+      ]
+  }
+}

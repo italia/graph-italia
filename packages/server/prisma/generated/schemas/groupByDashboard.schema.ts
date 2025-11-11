@@ -1,0 +1,13 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { DashboardWhereInputObjectSchema as DashboardWhereInputObjectSchema } from './objects/DashboardWhereInput.schema';
+import { DashboardOrderByWithAggregationInputObjectSchema as DashboardOrderByWithAggregationInputObjectSchema } from './objects/DashboardOrderByWithAggregationInput.schema';
+import { DashboardScalarWhereWithAggregatesInputObjectSchema as DashboardScalarWhereWithAggregatesInputObjectSchema } from './objects/DashboardScalarWhereWithAggregatesInput.schema';
+import { DashboardScalarFieldEnumSchema } from './enums/DashboardScalarFieldEnum.schema';
+import { DashboardCountAggregateInputObjectSchema as DashboardCountAggregateInputObjectSchema } from './objects/DashboardCountAggregateInput.schema';
+import { DashboardMinAggregateInputObjectSchema as DashboardMinAggregateInputObjectSchema } from './objects/DashboardMinAggregateInput.schema';
+import { DashboardMaxAggregateInputObjectSchema as DashboardMaxAggregateInputObjectSchema } from './objects/DashboardMaxAggregateInput.schema';
+
+export const DashboardGroupBySchema: z.ZodType<Prisma.DashboardGroupByArgs> = z.object({ where: DashboardWhereInputObjectSchema.optional(), orderBy: z.union([DashboardOrderByWithAggregationInputObjectSchema, DashboardOrderByWithAggregationInputObjectSchema.array()]).optional(), having: DashboardScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(DashboardScalarFieldEnumSchema), _count: z.union([ z.literal(true), DashboardCountAggregateInputObjectSchema ]).optional(), _min: DashboardMinAggregateInputObjectSchema.optional(), _max: DashboardMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.DashboardGroupByArgs>;
+
+export const DashboardGroupByZodSchema = z.object({ where: DashboardWhereInputObjectSchema.optional(), orderBy: z.union([DashboardOrderByWithAggregationInputObjectSchema, DashboardOrderByWithAggregationInputObjectSchema.array()]).optional(), having: DashboardScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(DashboardScalarFieldEnumSchema), _count: z.union([ z.literal(true), DashboardCountAggregateInputObjectSchema ]).optional(), _min: DashboardMinAggregateInputObjectSchema.optional(), _max: DashboardMaxAggregateInputObjectSchema.optional() }).strict();

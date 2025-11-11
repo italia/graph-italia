@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "prisma-zod-generator"
+  pureModels = true
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  password String
+  verifyed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Chart      Chart[]
+  Dashboard  Dashboard[]
+  DataSource DataSource[]
+
+  Code Code[]
+}
+
+model Code {
+  id     String @id @default(cuid())
+  code   String
+  expire Int    @default(60)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DataSource {
+  id          String  @id @default(cuid())
+  name        String?
+  description String? @default("")
+  data        Json
+  rules       Json?
+  publish     Boolean @default(false)
+  isTrasposed Boolean @default(false)
+
+  remoteUrl String?
+  isRemote  Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  SourceLink SourceLink[]
+}
+
+model Chart {
+  id          String  @id @default(cuid())
+  name        String?
+  description String? @default("")
+  chart       String
+  config      Json?
+  data        Json?
+  publish     Boolean @default(false)
+
+  remoteUrl String?
+  isRemote  Boolean @default(false)
+  preview   String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  slot Slot[]
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  SourceLink SourceLink[]
+}
+
+model SourceLink {
+  dataSource   DataSource @relation(fields: [dataSourceId], references: [id])
+  dataSourceId String
+  chart        Chart      @relation(fields: [chartId], references: [id])
+  chartId      String
+  config       Json?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@id([dataSourceId, chartId])
+}
+
+model Dashboard {
+  id          String  @id @default(cuid())
+  name        String?
+  description String? @default("")
+  publish     Boolean @default(false)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  slots Slot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Slot {
+  dashboard   Dashboard @relation(fields: [dashboardId], references: [id])
+  dashboardId String
+  chart       Chart     @relation(fields: [chartId], references: [id])
+  chartId     String
+  settings    Json?
+  name        String?
+  description String?   @default("")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@id([dashboardId, chartId])
+}

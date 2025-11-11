@@ -1,0 +1,12 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { SourceLinkOrderByWithRelationInputObjectSchema as SourceLinkOrderByWithRelationInputObjectSchema } from './objects/SourceLinkOrderByWithRelationInput.schema';
+import { SourceLinkWhereInputObjectSchema as SourceLinkWhereInputObjectSchema } from './objects/SourceLinkWhereInput.schema';
+import { SourceLinkWhereUniqueInputObjectSchema as SourceLinkWhereUniqueInputObjectSchema } from './objects/SourceLinkWhereUniqueInput.schema';
+import { SourceLinkCountAggregateInputObjectSchema as SourceLinkCountAggregateInputObjectSchema } from './objects/SourceLinkCountAggregateInput.schema';
+import { SourceLinkMinAggregateInputObjectSchema as SourceLinkMinAggregateInputObjectSchema } from './objects/SourceLinkMinAggregateInput.schema';
+import { SourceLinkMaxAggregateInputObjectSchema as SourceLinkMaxAggregateInputObjectSchema } from './objects/SourceLinkMaxAggregateInput.schema';
+
+export const SourceLinkAggregateSchema: z.ZodType<Prisma.SourceLinkAggregateArgs> = z.object({ orderBy: z.union([SourceLinkOrderByWithRelationInputObjectSchema, SourceLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: SourceLinkWhereInputObjectSchema.optional(), cursor: SourceLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), SourceLinkCountAggregateInputObjectSchema ]).optional(), _min: SourceLinkMinAggregateInputObjectSchema.optional(), _max: SourceLinkMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.SourceLinkAggregateArgs>;
+
+export const SourceLinkAggregateZodSchema = z.object({ orderBy: z.union([SourceLinkOrderByWithRelationInputObjectSchema, SourceLinkOrderByWithRelationInputObjectSchema.array()]).optional(), where: SourceLinkWhereInputObjectSchema.optional(), cursor: SourceLinkWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), SourceLinkCountAggregateInputObjectSchema ]).optional(), _min: SourceLinkMinAggregateInputObjectSchema.optional(), _max: SourceLinkMaxAggregateInputObjectSchema.optional() }).strict();
