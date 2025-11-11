@@ -19,7 +19,7 @@ const whitelist = process.env.DOMAINS?.split(",") || [
   `${HOST}:${PORT}`,
 ];
 const UPLOAD_SIZE_LIMIT = process.env.UPLOAD_SIZE_LIMIT || "15mb";
-const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "/api";
+const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const app = express();
 
 app.use(helmet());
