@@ -48,7 +48,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: "Dockerfile.app"
+          file: "packages/server/Dockerfile.app"
           platforms: linux/amd64
           context: .
           push: ${{ github.event_name != 'pull_request' }}
