@@ -8,6 +8,11 @@
     "packages/webapp"
   ],
   "scripts": {
+    "dev": "bun run dev:webapp & bun run dev:server",
+    "dev:webapp": "bun run --elide-lines=0 --filter @dataviz/webapp dev",
+    "dev:server": "bun run --elide-lines=0 --filter @dataviz/server dev",
+    "build": "bun run --filter '*' build",
+    "build:webapp": "bun run --filter @dataviz/webapp build",
     "clean": "rm -rf node_modules packages/app/node_modules packages/server/node_modules bun.lockb packages/app/bun.lockb packages/bserver/bun.lockb"
   }
 }
