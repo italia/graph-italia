@@ -1,12 +1,11 @@
 {
-  "name": "workspaces",
+  "name": "dataviz",
   "private": "true",
   "module": "index.ts",
   "type": "module",
   "workspaces": [
-    "packages/lib",
-    "packages/app",
-    "packages/server"
+    "packages/server",
+    "packages/webapp"
   ],
   "scripts": {
     "clean": "rm -rf node_modules packages/app/node_modules packages/server/node_modules bun.lockb packages/app/bun.lockb packages/bserver/bun.lockb"
