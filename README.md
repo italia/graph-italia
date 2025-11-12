@@ -1,15 +1,6 @@
-# workspaces
+# Dataviz
 
-To install dependencies:
+License
+Copyright© 2023-present - Presidenza del Consiglio dei Ministri
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v0.4.0. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+The source code is released under the BSD license (SPDX code: BSD-3-Clause)
