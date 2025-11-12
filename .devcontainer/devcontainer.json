@@ -5,6 +5,7 @@
   "dockerComposeFile": "compose.yml",
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "postCreateCommand": "sh ./.devcontainer/postCreateCommand.sh",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "azureDnsAutoDetection": true,
