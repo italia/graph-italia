@@ -14,5 +14,8 @@
     "build": "bun run --filter '*' build",
     "build:webapp": "bun run --filter @dataviz/webapp build",
     "clean": "rm -rf node_modules packages/app/node_modules packages/server/node_modules bun.lockb packages/app/bun.lockb packages/bserver/bun.lockb"
+  },
+  "devDependencies": {
+    "bun-types": "1.3.2"
   }
 }
