@@ -12,6 +12,13 @@
       "installDockerComposeSwitch": true,
       "version": "latest",
       "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "installYarnUsingApt": true,
+      "version": "20",
+      "pnpmVersion": "none",
+      "nvmVersion": "latest"
     }
   },
   "customizations": {
