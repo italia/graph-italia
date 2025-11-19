@@ -1,9 +1,9 @@
 import SampleBarchart from "./SampleBarchart";
-import SamplePiechart from "./SamplePiechart";
-import SampleLinechart from "./SampleLinechart";
 import SampleGeomapchart from "./SampleGeomapchart";
-import SampleMap from "./SampleMap";
 import SampleKpis from "./SampleKpis";
+import SampleLinechart from "./SampleLinechart";
+import SampleMap from "./SampleMap";
+import SamplePiechart from "./SamplePiechart";
 
 import "dataviz-components/dist/style.css";
 import SampleTable from "./SampleTable";
