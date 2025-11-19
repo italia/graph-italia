@@ -1,0 +1,65 @@
+{
+  "name": "dataviz-components",
+  "description": "A simple React component library.",
+  "version": "0.2.2",
+  "keywords": [
+    "react",
+    "typescript",
+    "component",
+    "library",
+    "dataviz",
+    "echarts"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamdigitale/dataviz-components.git"
+  },
+  "bugs": {
+    "url": "https://github.com/teamdigitale/dataviz-components/issues"
+  },
+  "homepage": "https://github.com/teamdigitale/dataviz-components/tree/main",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/react": "^19.0.10",
+    "dayjs": "*",
+    "echarts": "*",
+    "echarts-for-react": "*",
+    "ol": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-error-boundary": "*",
+    "react-markdown": "*",
+    "remark-gfm": "*",
+    "rollup": "^4.35.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-import-css": "^3.5.8",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "typescript": "^5.8.2"
+  },
+  "peerDependencies": {
+    "dayjs": "^1.11.13",
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
+    "ol": "^10.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-error-boundary": "^6.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  }
+}

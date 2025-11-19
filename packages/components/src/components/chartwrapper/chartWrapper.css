@@ -1,0 +1,235 @@
+/* Container */
+.cw-container {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 16px 16px;
+}
+
+/* Typography */
+.cw-title {
+  margin: 0 0 8px 0;
+  font-size: 1.375rem; /* ~22px */
+  font-weight: 600;
+  color: #111827; /* near black */
+}
+
+.cw-subtitle {
+  margin: 0 0 12px 0;
+  color: #374151; /* gray-700 */
+  line-height: 1.4;
+  font-size: 1rem;
+}
+
+/* Tabs */
+.cw-tabs {
+  width: 100%;
+  background: transparent;
+}
+
+.cw-tablist {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.cw-tablist > li {
+  flex: 1 1 0;
+  display: flex;
+  min-width: 0;
+}
+
+.cw-tab {
+  position: relative;
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #4b5563; /* gray-600 */
+  padding: 10px 2px;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  transition: color 120ms ease, border-color 120ms ease;
+  width: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.cw-tab:hover {
+  color: #111827;
+}
+
+.cw-tab[aria-selected="true"] {
+  color: #2563eb; /* active text color */
+  border-bottom-color: #2563eb; /* blue-600 */
+  font-weight: 600;
+}
+
+.cw-tabpanel {
+  padding: 16px 0;
+}
+
+/* Chart */
+.cw-chart {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Footer text below chart */
+.cw-footer {
+  padding: 24px 0;
+  color: #6b7280; /* gray-500 */
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Panels wrapper and fade transition */
+.cw-panels {
+  position: relative;
+}
+
+/* Non-absolute panels with fade-in on enter */
+.cw-tabpanel {
+  display: none;
+  height: 100%;
+  overflow: auto;
+}
+.cw-tabpanel.is-active {
+  display: flex;
+  flex-direction: column;
+  animation: cw-fade-in 200ms ease;
+}
+
+@keyframes cw-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Bottom meta and actions row */
+.cw-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0 12px;
+}
+
+@media (min-width: 992px) {
+  .cw-bottom {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.cw-source {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+.cw-source-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #111827;
+}
+.cw-source-content p {
+  font-size: 0.95rem;
+  color: #374151;
+  margin: 0;
+}
+
+.cw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+}
+
+.cw-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+.cw-btn:disabled,
+.cw-btn[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cw-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.3);
+}
+
+.cw-btn--primary {
+  background-color: #0066cc; /* primary */
+  color: #ffffff;
+  border-color: #0066cc;
+}
+.cw-btn--primary:hover {
+  background-color: #005bb8;
+  border-color: #005bb8;
+}
+.cw-btn--primary:active {
+  background-color: #004c99;
+  border-color: #004c99;
+}
+
+.cw-btn--secondary {
+  background-color: #ffffff;
+  color: #0066cc;
+  border-color: #0066cc;
+}
+
+.cw-btn--secondary:hover {
+  background-color: rgba(0, 102, 204, 0.08);
+  border-color: #005bb8;
+  color: #005bb8;
+}
+.cw-btn--secondary:active {
+  background-color: rgba(0, 102, 204, 0.16);
+  border-color: #004c99;
+  color: #004c99;
+}
+
+.cw-btn .cw-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.cw-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* Info tab meta row */
+.cw-meta {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: #374151;
+}

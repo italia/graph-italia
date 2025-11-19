@@ -1,0 +1,110 @@
+.mid-table-outer {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.mid-table-wrapper {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* hide scrollbars across browsers, keep scrolling */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mid-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+.mid-table th,
+.mid-table td {
+  vertical-align: top;
+  white-space: nowrap;
+  padding: 0.75rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.mid-table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  text-align: left;
+}
+
+.mid-table tbody th {
+  text-align: left;
+  font-weight: 600;
+}
+
+.mid-table tbody td {
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+.mid-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+/* WebKit: hide scrollbars but keep scroll functionality */
+.mid-table-wrapper::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Overlay arrow buttons for horizontal scroll */
+.mid-scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cfcfcf;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease-in-out;
+}
+
+.mid-scroll-btn:hover {
+  background: #ffffff;
+}
+
+.mid-scroll-btn:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.mid-scroll-btn--left {
+  left: 6px;
+}
+
+.mid-scroll-btn--right {
+  right: 6px;
+}
+
+.mid-scroll-btn.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media screen and (max-width: 800px) {
+  .mid-table th,
+  .mid-table td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+

@@ -1,0 +1,88 @@
+@import 'ol/ol.css';
+
+.map-container-wrapper {
+  flex-grow: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.map-container-wrapper>.map-container {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+.map-container {
+  background: #000;
+}
+
+.ol-popup {
+  color: #000;
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  /* Default if not offset by JS */
+  min-width: 180px;
+  transform: translateX(-50%);
+  /* Helps center it if 'left' is anchor point */
+  transition: opacity 0.2s, visibility 0.2s;
+  opacity: 1;
+  visibility: visible;
+  z-index: 100;
+  /* Ensure it's above map elements */
+}
+
+.ol-popup:after,
+.ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.ol-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 50%;
+  margin-left: -10px;
+}
+.ol-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 50%;
+  margin-left: -11px;
+}
+/* When popup is hidden via setPosition(undefined) by OpenLayers,
+   or by our React state if we want to control visibility more directly */
+.ol-popup.ol-hidden {
+  /* OpenLayers might add this class if element has no position */
+  opacity: 0;
+  visibility: hidden;
+}
+
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font-size: 1.5em;
+  color: #333;
+}
+.ol-popup-closer:after {
+  content: "[x]";
+}
+
+.ol-popup-content h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+}
+.ol-popup-content p {
+  margin-bottom: 3px;
+  font-size: 0.9em;
+}

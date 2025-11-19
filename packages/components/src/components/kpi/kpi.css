@@ -1,0 +1,74 @@
+.kpi-group,
+.kpi-group.div {
+  box-sizing: border-box;
+  font-size: medium;
+}
+.kpi-group-vertical,
+.kpi-group-horizontal {
+  display: flex;
+  align-items: center;
+  overflow-y: scroll;
+}
+
+.kpi-group-horizontal {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.kpi-group-vertical {
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.kpi-group-item {
+  padding: 4px;
+  display: block;
+  overflow: hidden;
+  min-width: 350px;
+  height: max-content;
+  width: max-content;
+}
+
+.kpi-group-vertical {
+  .kpi-group-item {
+    width: 100%;
+    height: max-content;
+  }
+}
+
+.kpi-item {
+  width: 100%;
+}
+
+.kpi-group-horizontal::-webkit-scrollbar {
+  height: 8px;
+}
+/*
+.kpi-group-horizontal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.kpi-group-horizontal::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.kpi-group-horizontal::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
+
+@media screen and (max-width: 800px) {
+  .kpi-group-vertical,
+  .kpi-group-horizontal {
+    display: block;
+
+  }
+  .kpi-group-item {
+    width: 100%;
+    height: max-content;
+    overflow-x: scroll;
+  }
+}
