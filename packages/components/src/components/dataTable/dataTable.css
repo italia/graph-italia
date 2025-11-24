@@ -4,6 +4,26 @@
   max-width: 100%;
 }
 
+.mid-table-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.mid-table-filter-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  color: #333;
+  cursor: pointer;
+}
+
+.mid-table-filter-btn:hover {
+  background-color: #f1f3f5;
+}
+
 .mid-table-wrapper {
   display: block;
   width: 100%;
@@ -99,6 +119,61 @@
   pointer-events: auto;
 }
 
+.mid-table-filter-panel {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 3;
+  min-width: 220px;
+  max-width: 280px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 0.875rem;
+}
+
+.mid-table-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.mid-table-filter-title {
+  font-weight: 600;
+}
+
+.mid-table-filter-close {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.mid-table-filter-body {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem 0.5rem;
+}
+
+.mid-table-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+}
+
+.mid-table-filter-item input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.mid-table-filter-label {
+  cursor: pointer;
+}
+
 @media screen and (max-width: 800px) {
   .mid-table th,
   .mid-table td {
@@ -106,5 +181,3 @@
     font-size: 0.9rem;
   }
 }
-
-

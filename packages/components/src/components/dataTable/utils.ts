@@ -1,5 +1,5 @@
-import React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
+import React from "react";
 
 export type MatrixType = (string | number)[][];
 
@@ -14,10 +14,8 @@ export type DataTableProps = {
   data: MatrixType;
   id?: string;
   formatNumber?: (n: number) => string;
-  prefix?: string;
-  suffix?: string;
-  excludeColumnsFromPrefixSuffix?: string[];
   formatValue?: (value: unknown, ctx: FormatValueContext) => React.ReactNode;
+  showFilters?: boolean;
 };
 
 export const defaultFormatNumber = (n: number) =>
@@ -27,7 +25,9 @@ export function extractHeaderRow(data: MatrixType): (string | number)[] {
   return Array.isArray(data) && data.length > 0 ? data[0] : [];
 }
 
-export function getFirstColumnId(headerRow: (string | number)[]): string | undefined {
+export function getFirstColumnId(
+  headerRow: (string | number)[]
+): string | undefined {
   return headerRow && headerRow.length > 0 ? String(headerRow[0]) : undefined;
 }
 
@@ -50,24 +50,13 @@ type CreateColumnsOptions = {
   headerRow: (string | number)[];
   firstColumnId: string | undefined;
   format: (n: number) => string;
-  prefix?: string;
-  suffix?: string;
-  excludeColumnsFromPrefixSuffix?: string[];
   formatValue?: (value: unknown, ctx: FormatValueContext) => React.ReactNode;
 };
 
 export function createTableColumns(
   options: CreateColumnsOptions
 ): ColumnDef<Record<string, unknown>>[] {
-  const {
-    headerRow,
-    firstColumnId,
-    format,
-    prefix,
-    suffix,
-    excludeColumnsFromPrefixSuffix,
-    formatValue,
-  } = options;
+  const { headerRow, firstColumnId, format, formatValue } = options;
 
   return headerRow.map((headerCell) => {
     const key = String(headerCell);
@@ -95,15 +84,7 @@ export function createTableColumns(
 
         if (typeof value === "number") {
           const formatted = format(value as number);
-          const isExcluded =
-            excludeColumnsFromPrefixSuffix &&
-            excludeColumnsFromPrefixSuffix.includes(info.column.id);
-          if (isExcluded) {
-            return formatted;
-          }
-          const prefixStr = prefix ?? "";
-          const suffixStr = suffix ?? "";
-          return `${prefixStr}${formatted}${suffixStr}`;
+          return formatted;
         }
 
         return value as React.ReactNode;
@@ -183,12 +164,23 @@ export function useHorizontalScrollArrows() {
     const el = wrapperRef.current;
     if (!el) return;
     const amount = getScrollAmount(el.clientWidth);
-    el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
+    el.scrollBy({
+      left: direction === "left" ? -amount : amount,
+      behavior: "smooth",
+    });
   };
 
   const showLeftArrow = !isScrolling && canScrollLeft;
   const showRightArrow = !isScrolling && canScrollRight;
-  return { wrapperRef, canScrollLeft, canScrollRight, showLeftArrow, showRightArrow, isScrolling, scrollBy };
+  return {
+    wrapperRef,
+    canScrollLeft,
+    canScrollRight,
+    showLeftArrow,
+    showRightArrow,
+    isScrolling,
+    scrollBy,
+  };
 }
 
 export function useFadePresence(targetVisible: boolean, durationMs = 180) {
@@ -217,5 +209,3 @@ export function useFadePresence(targetVisible: boolean, durationMs = 180) {
 
   return { present, visible };
 }
-
-

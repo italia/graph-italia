@@ -1,39 +1,47 @@
-import React from "react";
 import {
-  useReactTable,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import {
   getCoreRowModel,
-  flexRender,
   getSortedRowModel,
+  useReactTable,
   type SortingState,
+  type VisibilityState,
 } from "@tanstack/react-table";
+import React, { useEffect } from "react";
+import "./dataTable.css";
+import { DataTableContent } from "./DataTableContent";
+import { DataTableToolbar } from "./DataTableToolbar";
+import ScrollButton from "./ScrollButton";
 import {
-  useHorizontalScrollArrows,
-  useFadePresence,
-  type DataTableProps,
+  convertMatrixToTableData,
+  createTableColumns,
   defaultFormatNumber,
   extractHeaderRow,
   getFirstColumnId,
-  convertMatrixToTableData,
-  createTableColumns,
-  getSortIndicator,
+  useFadePresence,
+  useHorizontalScrollArrows,
+  type DataTableProps,
 } from "./utils";
-import ScrollButton from "./ScrollButton";
-import "./dataTable.css";
 
-export default function DataTable({
-  data,
-  id,
-  formatNumber,
-  prefix,
-  suffix,
-  excludeColumnsFromPrefixSuffix,
-  formatValue,
-}: DataTableProps) {
+type TableRecord = Record<string, unknown>;
+
+export default function DataTable(props: DataTableProps) {
+  const { data, id, formatNumber, formatValue, showFilters = true } = props;
+
   const { wrapperRef, showLeftArrow, showRightArrow, scrollBy } =
     useHorizontalScrollArrows();
   const leftFade = useFadePresence(showLeftArrow, 180);
   const rightFade = useFadePresence(showRightArrow, 180);
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [isFilterOpen, setIsFilterOpen] = React.useState(false);
 
   const hasData = Array.isArray(data) && data.length > 0;
   const headerRow = React.useMemo(() => extractHeaderRow(data), [data]);
@@ -52,20 +60,9 @@ export default function DataTable({
         headerRow,
         firstColumnId,
         format,
-        prefix,
-        suffix,
-        excludeColumnsFromPrefixSuffix,
         formatValue,
       }),
-    [
-      headerRow,
-      firstColumnId,
-      format,
-      prefix,
-      suffix,
-      excludeColumnsFromPrefixSuffix,
-      formatValue,
-    ]
+    [headerRow, firstColumnId, format, formatValue]
   );
 
   const tableData = React.useMemo(
@@ -73,14 +70,41 @@ export default function DataTable({
     [data, headerRow]
   );
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 0,
+      },
+    })
+  );
+
   const table = useReactTable({
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    state: { sorting },
+    state: { sorting, columnOrder, columnVisibility },
     onSortingChange: setSorting,
+    onColumnOrderChange: setColumnOrder,
+    onColumnVisibilityChange: setColumnVisibility,
   });
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setColumnOrder((prev) => {
+      const oldIndex = prev.indexOf(active.id as string);
+      const newIndex = prev.indexOf(over.id as string);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      return arrayMove(prev, oldIndex, newIndex);
+    });
+  };
+
+  useEffect(() => {
+    if (headerRow && headerRow.length > 0) {
+      setColumnOrder(headerRow.map((h) => String(h)));
+    }
+  }, [headerRow]);
 
   if (!hasData) {
     return null;
@@ -88,87 +112,22 @@ export default function DataTable({
 
   return (
     <div className="mid-table-outer">
-      <div className="mid-table-wrapper" ref={wrapperRef}>
-        <table className="mid-table">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, i) => {
-                  const sorted = header.column.getIsSorted() as
-                    | "asc"
-                    | "desc"
-                    | false;
-                  return (
-                    <th
-                      scope="col"
-                      key={`${id ?? ""}-th_${header.id}_${i}`}
-                      onClick={header.column.getToggleSortingHandler()}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          header.column.getToggleSortingHandler()?.(e);
-                        }
-                      }}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                      }}
-                      tabIndex={0}
-                      style={{ cursor: "pointer" }}
-                      aria-sort={
-                        sorted === "asc"
-                          ? "ascending"
-                          : sorted === "desc"
-                          ? "descending"
-                          : "none"
-                      }
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}{" "}
-                      {getSortIndicator(sorted)}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={`${id ?? ""}-tr_${row.id}`}>
-                {row.getVisibleCells().map((cell, index) => {
-                  const isFirstColumn = firstColumnId
-                    ? cell.column.id === firstColumnId
-                    : index === 0;
-                  if (isFirstColumn) {
-                    return (
-                      <th
-                        scope="row"
-                        key={`${id ?? ""}-r-th_${cell.id}_${index}`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </th>
-                    );
-                  }
-                  return (
-                    <td key={`${id ?? ""}-r-td_${cell.id}_${index}`}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTableToolbar
+        table={table as any}
+        showFilters={showFilters}
+        isFilterOpen={isFilterOpen}
+        onToggleFilters={() => setIsFilterOpen((prev) => !prev)}
+        onCloseFilters={() => setIsFilterOpen(false)}
+      />
+      <DataTableContent
+        table={table as any}
+        id={id}
+        firstColumnId={firstColumnId}
+        wrapperRef={wrapperRef as React.RefObject<HTMLDivElement | null>}
+        columnOrder={columnOrder}
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+      />
       {leftFade.present && (
         <ScrollButton
           side="left"
