@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.ts";
 import chartRouter from "./routes/charts.ts";
 import dashRouter from "./routes/dashboards.ts";
 import suggestionsRouter from "./routes/hints.ts";
+// import seedUsers from "./seeds/seed-users.ts";
 
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
@@ -31,11 +32,6 @@ app.use(
 app.use(cookieParser());
 app.use(middlewares.checkAuth);
 app.use(express.json({ limit: UPLOAD_SIZE_LIMIT }));
-
-app.get(["/", `${ROUTES_PREFIX}/`], async (req, res) => {
-	res.json({ status: "ok", message: "^^" });
-});
-
 app.use(`${ROUTES_PREFIX}/auth`, authRouter as Router);
 app.use(`${ROUTES_PREFIX}/charts`, chartRouter as Router);
 app.use(`${ROUTES_PREFIX}/dashboards`, dashRouter as Router);
