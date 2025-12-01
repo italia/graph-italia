@@ -1,5 +1,5 @@
 {
-  "name": "@dataviz/components",
+  "name": "dataviz-components",
   "description": "A simple React component library.",
   "version": "0.2.2",
   "keywords": [
@@ -20,12 +20,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/teamdigitale/dataviz-components.git"
+    "url": "git+https://github.com/italia/dataviz.git"
   },
   "bugs": {
-    "url": "https://github.com/teamdigitale/dataviz-components/issues"
+    "url": "https://github.com/italia/dataviz.git/issues"
   },
-  "homepage": "https://github.com/teamdigitale/dataviz-components/tree/main",
+  "homepage": "https://github.com/italia/dataviz/tree/main/packages/components#readme",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",

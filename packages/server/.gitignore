@@ -177,3 +177,5 @@ dist
 .vercel
 
 data
+
+/lib/generated/prisma
