@@ -29,8 +29,6 @@ import {
   type DataTableProps,
 } from "./utils";
 
-type TableRecord = Record<string, unknown>;
-
 export default function DataTable(props: DataTableProps) {
   const { data, id, formatNumber, formatValue, showFilters = true } = props;
 
