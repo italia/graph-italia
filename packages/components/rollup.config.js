@@ -1,12 +1,12 @@
-import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 // import dts from "rollup-plugin-dts";
 
 // const packageJson = require("./package.json");
-import packageJson from "./package.json"  with { type: "json" };
 import css from "rollup-plugin-import-css";
+import packageJson from "./package.json" with { type: "json" };
 
 export default [
   {
@@ -26,8 +26,7 @@ export default [
     plugins: [
       css({
         minify: true,
-        output: "style.css", // Output CSS file
-      }), // Handles CSS imports
+      }),
       peerDepsExternal(), // Excludes peer dependencies from the bundle
       resolve(), // Resolves node modules
       commonjs(), // Converts CommonJS modules to ES6
