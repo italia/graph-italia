@@ -56,14 +56,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-server.outputs.tags }}
           labels: ${{ steps.meta-server.outputs.labels }}
-          cache-from: |
-            type=gha
-            type=registry,ref=ghcr.io/teamdigitale/dataviz-srv:main
-          cache-to: |
-            type=gha,mode=max
-            type=registry,ref=ghcr.io/teamdigitale/dataviz-srv:main,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   docker-build-webapp:
     runs-on: ubuntu-latest
@@ -107,11 +101,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-webapp.outputs.tags }}
           labels: ${{ steps.meta-webapp.outputs.labels }}
-          cache-from: |
-            type=gha
-            type=registry,ref=ghcr.io/teamdigitale/dataviz-webapp:main
-          cache-to: |
-            type=gha,mode=max
-            type=registry,ref=ghcr.io/teamdigitale/dataviz-webapp:main,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

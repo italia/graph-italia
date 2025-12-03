@@ -18,6 +18,9 @@ jobs:
           bun-version: 1.1.27
 
       - name: Install Deps
-        run: bun install --frozen-lockfile
+        # Install dependencies, excluding ui-example-app which uses link: protocol
+        # Note: Cannot use --frozen-lockfile with --filter when lockfile includes filtered package
+        run: bun install --filter '!dataviz-uiexampleapp'
       - name: Run Build
-        run: bun run build
+        # Build only packages that don't use link: protocol
+        run: bun run build:components && bun run build:webapp

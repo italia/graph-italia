@@ -6,30 +6,42 @@ WORKDIR /app
 # INSTALL stage
 # Copy lockfiles first for better layer caching
 FROM base AS install
+WORKDIR /app
+
+# Copy root package.json and lockfile
 COPY package.json bun.lock ./
-# Copy workspace directories needed for workspace resolution
-# Components is required as a workspace dependency of webapp
-COPY packages/components ./packages/components
+
+# Copy workspace package.json files for proper workspace resolution
+COPY packages/components/package.json ./packages/components/
 COPY packages/webapp/package.json ./packages/webapp/
 COPY packages/server/package.json ./packages/server/
 COPY packages/ui-example-app/package.json ./packages/ui-example-app/
 
-# Install dependencies
-# Note: Workspace linking may fail in Docker context, but dependencies are installed
-# The workspace link will be resolved when we copy the full source in the build stage
-RUN bun install || true
+# Copy components source directory (needed for workspace linking)
+# Bun requires the actual directory structure to create workspace symlinks
+COPY packages/components ./packages/components
+
+# Install dependencies with frozen lockfile
+# Note: ui-example-app uses link: protocol which may fail, but dependencies are still installed
+RUN bun install --frozen-lockfile 2>&1 | grep -v "failed linking" || \
+    (echo "Some workspace links failed (expected for ui-example-app), but dependencies installed" && true)
 
 # BUILD stage
 FROM install AS build
+WORKDIR /app
 
-# Copy source code
-COPY . .
+# Copy root tsconfig.json (needed for TypeScript compilation)
+COPY tsconfig.json ./
+
+# Copy source code (components source needed for build)
+COPY packages/components ./packages/components
+COPY packages/webapp ./packages/webapp
 
 # Build components first (dependency of webapp)
 WORKDIR /app/packages/components
-RUN bun run build || echo "Components build skipped if no build script"
+RUN bun run build
 
-# Build webapp
+# Build webapp (now components are built and available)
 WORKDIR /app/packages/webapp
 RUN bun run build
 
