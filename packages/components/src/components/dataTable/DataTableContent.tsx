@@ -7,6 +7,7 @@ import type { Header, Table } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import React from "react";
 import { SortableHeaderCell } from "./SortableHeaderCell";
+import { getSortIndicator } from "./utils";
 
 type TableRecord = Record<string, unknown>;
 
@@ -18,6 +19,8 @@ type DataTableContentProps = {
   columnOrder: string[];
   sensors: any;
   onDragEnd: (event: DragEndEvent) => void;
+  enableColumnReorder?: boolean;
+  reorderColumnAriaLabel?: string;
 };
 
 export function DataTableContent({
@@ -28,20 +31,17 @@ export function DataTableContent({
   columnOrder,
   sensors,
   onDragEnd,
+  enableColumnReorder = false,
+  reorderColumnAriaLabel = "Riordina colonna",
 }: DataTableContentProps) {
-  return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={onDragEnd}
-    >
-      <div className="mid-table-wrapper" ref={wrapperRef}>
-        <table className="mid-table">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+  const renderTable = () => (
+    <div className="mid-table-wrapper" ref={wrapperRef}>
+      <table className="mid-table">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {enableColumnReorder ? (
                 <SortableContext
-                  // Se columnOrder è vuoto (inizializzazione), usa l'ordine corrente della tabella
                   items={
                     columnOrder.length
                       ? columnOrder
@@ -53,46 +53,97 @@ export function DataTableContent({
                     <SortableHeaderCell
                       key={header.id}
                       header={header as Header<TableRecord, unknown>}
+                      reorderAriaLabel={reorderColumnAriaLabel}
                     />
                   ))}
                 </SortableContext>
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={`${id ?? ""}-tr_${row.id}`}>
-                {row.getVisibleCells().map((cell, index) => {
-                  const isFirstColumn = firstColumnId
-                    ? cell.column.id === firstColumnId
-                    : index === 0;
-                  if (isFirstColumn) {
-                    return (
-                      <th
-                        scope="row"
-                        key={`${id ?? ""}-r-th_${cell.id}_${index}`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </th>
-                    );
-                  }
+              ) : (
+                headerGroup.headers.map((header) => {
+                  const sorted = header.column.getIsSorted() as
+                    | "asc"
+                    | "desc"
+                    | false;
+                  const sortHandler = header.column.getToggleSortingHandler();
+
                   return (
-                    <td key={`${id ?? ""}-r-td_${cell.id}_${index}`}>
+                    <th
+                      key={header.id}
+                      scope="col"
+                      aria-sort={
+                        sorted === "asc"
+                          ? "ascending"
+                          : sorted === "desc"
+                          ? "descending"
+                          : "none"
+                      }
+                      onClick={(e) => {
+                        sortHandler?.(e);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          sortHandler?.(e as any);
+                        }
+                      }}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <span style={{ cursor: "pointer" }}>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}{" "}
+                          {getSortIndicator(sorted)}
+                        </span>
+                      )}
+                    </th>
+                  );
+                })
+              )}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={`${id ?? ""}-tr_${row.id}`}>
+              {row.getVisibleCells().map((cell, index) => {
+                const isFirstColumn = firstColumnId
+                  ? cell.column.id === firstColumnId
+                  : index === 0;
+                if (isFirstColumn) {
+                  return (
+                    <th
+                      scope="row"
+                      key={`${id ?? ""}-r-th_${cell.id}_${index}`}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </td>
+                    </th>
                   );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                }
+                return (
+                  <td key={`${id ?? ""}-r-td_${cell.id}_${index}`}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  return enableColumnReorder ? (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={onDragEnd}
+    >
+      {renderTable()}
     </DndContext>
+  ) : (
+    renderTable()
   );
 }

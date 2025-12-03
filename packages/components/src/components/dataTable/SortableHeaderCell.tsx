@@ -9,9 +9,13 @@ type TableRecord = Record<string, unknown>;
 
 export type SortableHeaderProps = {
   header: Header<TableRecord, unknown>;
+  reorderAriaLabel: string;
 };
 
-export function SortableHeaderCell({ header }: SortableHeaderProps) {
+export function SortableHeaderCell({
+  header,
+  reorderAriaLabel,
+}: SortableHeaderProps) {
   const sorted = header.column.getIsSorted() as "asc" | "desc" | false;
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -39,8 +43,8 @@ export function SortableHeaderCell({ header }: SortableHeaderProps) {
         sorted === "asc"
           ? "ascending"
           : sorted === "desc"
-            ? "descending"
-            : "none"
+          ? "descending"
+          : "none"
       }
       onClick={(e) => {
         sortHandler?.(e);
@@ -63,7 +67,6 @@ export function SortableHeaderCell({ header }: SortableHeaderProps) {
         {...attributes}
         {...listeners}
         onClick={(e) => {
-          // Evita di triggerare anche il sort quando si clicca sulla maniglia
           e.stopPropagation();
         }}
         style={{
@@ -73,7 +76,7 @@ export function SortableHeaderCell({ header }: SortableHeaderProps) {
           border: "none",
           padding: 0,
         }}
-        aria-label="Riordina colonna"
+        aria-label={reorderAriaLabel}
       >
         🟰
       </button>

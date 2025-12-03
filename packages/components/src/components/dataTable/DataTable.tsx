@@ -30,7 +30,31 @@ import {
 } from "./utils";
 
 export default function DataTable(props: DataTableProps) {
-  const { data, id, formatNumber, formatValue, showFilters = true } = props;
+  const {
+    data,
+    id,
+    formatNumber,
+    formatValue,
+    showFilters = false,
+    enableColumnReorder = false,
+    enableExportCsv = false,
+    labels,
+  } = props;
+
+  const resolvedLabels = {
+    filterColumnsButton: labels?.filterColumnsButton ?? "Filtra colonne",
+    filterColumnsAriaLabel:
+      labels?.filterColumnsAriaLabel ?? "Mostra o nascondi filtri colonne",
+    columnVisibilityTitle:
+      labels?.columnVisibilityTitle ?? "Mostra / nascondi colonne",
+    columnVisibilityCloseAriaLabel:
+      labels?.columnVisibilityCloseAriaLabel ?? "Chiudi filtri colonne",
+    exportCsvButton: labels?.exportCsvButton ?? "Esporta CSV",
+    scrollLeftAriaLabel: labels?.scrollLeftAriaLabel ?? "Scorri a sinistra",
+    scrollRightAriaLabel: labels?.scrollRightAriaLabel ?? "Scorri a destra",
+    reorderColumnAriaLabel:
+      labels?.reorderColumnAriaLabel ?? "Riordina colonna",
+  };
 
   const { wrapperRef, showLeftArrow, showRightArrow, scrollBy } =
     useHorizontalScrollArrows();
@@ -117,6 +141,10 @@ export default function DataTable(props: DataTableProps) {
         isFilterOpen={isFilterOpen}
         onToggleFilters={() => setIsFilterOpen((prev) => !prev)}
         onCloseFilters={() => setIsFilterOpen(false)}
+        filterButtonLabel={resolvedLabels.filterColumnsButton}
+        filterButtonAriaLabel={resolvedLabels.filterColumnsAriaLabel}
+        panelTitle={resolvedLabels.columnVisibilityTitle}
+        panelCloseAriaLabel={resolvedLabels.columnVisibilityCloseAriaLabel}
       />
       <DataTableContent
         table={table as any}
@@ -126,12 +154,19 @@ export default function DataTable(props: DataTableProps) {
         columnOrder={columnOrder}
         sensors={sensors}
         onDragEnd={handleDragEnd}
+        enableColumnReorder={enableColumnReorder}
       />
-      <DataTableExport table={table as any} id={id} />
+      {enableExportCsv && (
+        <DataTableExport
+          table={table as any}
+          id={id}
+          buttonLabel={resolvedLabels.exportCsvButton}
+        />
+      )}
       {leftFade.present && (
         <ScrollButton
           side="left"
-          ariaLabel="Scorri a sinistra"
+          ariaLabel={resolvedLabels.scrollLeftAriaLabel}
           onClick={() => scrollBy("left")}
           visible={leftFade.visible}
         />
@@ -139,7 +174,7 @@ export default function DataTable(props: DataTableProps) {
       {rightFade.present && (
         <ScrollButton
           side="right"
-          ariaLabel="Scorri a destra"
+          ariaLabel={resolvedLabels.scrollRightAriaLabel}
           onClick={() => scrollBy("right")}
           visible={rightFade.visible}
         />

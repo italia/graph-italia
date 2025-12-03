@@ -10,12 +10,26 @@ export type FormatValueContext = {
   isFirstColumn: boolean;
 };
 
+export type DataTableLabels = {
+  filterColumnsButton?: string;
+  filterColumnsAriaLabel?: string;
+  columnVisibilityTitle?: string;
+  columnVisibilityCloseAriaLabel?: string;
+  exportCsvButton?: string;
+  scrollLeftAriaLabel?: string;
+  scrollRightAriaLabel?: string;
+  reorderColumnAriaLabel?: string;
+};
+
 export type DataTableProps = {
   data: MatrixType;
   id?: string;
   formatNumber?: (n: number) => string;
   formatValue?: (value: unknown, ctx: FormatValueContext) => React.ReactNode;
   showFilters?: boolean;
+  enableColumnReorder?: boolean;
+  enableExportCsv?: boolean;
+  labels?: DataTableLabels;
 };
 
 export const defaultFormatNumber = (n: number) =>

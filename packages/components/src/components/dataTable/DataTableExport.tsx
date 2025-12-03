@@ -6,9 +6,14 @@ type TableRecord = Record<string, unknown>;
 type DataTableExportProps = {
   table: Table<TableRecord>;
   id?: string;
+  buttonLabel: string;
 };
 
-export function DataTableExport({ table, id }: DataTableExportProps) {
+export function DataTableExport({
+  table,
+  id,
+  buttonLabel,
+}: DataTableExportProps) {
   const handleExportCsv = () => {
     if (typeof window === "undefined" || typeof document === "undefined") {
       return;
@@ -79,7 +84,7 @@ export function DataTableExport({ table, id }: DataTableExportProps) {
         className="mid-table-export-btn"
         onClick={handleExportCsv}
       >
-        Esporta CSV
+        {buttonLabel}
       </button>
     </div>
   );

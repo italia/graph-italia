@@ -7,12 +7,16 @@ type ColumnVisibilityPanelProps = {
   table: Table<TableRecord>;
   isOpen: boolean;
   onClose: () => void;
+  title: string;
+  closeAriaLabel: string;
 };
 
 export function ColumnVisibilityPanel({
   table,
   isOpen,
   onClose,
+  title,
+  closeAriaLabel,
 }: ColumnVisibilityPanelProps) {
   if (!isOpen) return null;
 
@@ -28,14 +32,12 @@ export function ColumnVisibilityPanel({
   return (
     <div className="mid-table-filter-panel">
       <div className="mid-table-filter-header">
-        <span className="mid-table-filter-title">
-          Mostra / nascondi colonne
-        </span>
+        <span className="mid-table-filter-title">{title}</span>
         <button
           type="button"
           className="mid-table-filter-close"
           onClick={onClose}
-          aria-label="Chiudi filtri colonne"
+          aria-label={closeAriaLabel}
         >
           ×
         </button>

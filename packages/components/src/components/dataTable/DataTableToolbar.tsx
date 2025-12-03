@@ -10,6 +10,10 @@ type DataTableToolbarProps = {
   isFilterOpen: boolean;
   onToggleFilters: () => void;
   onCloseFilters: () => void;
+  filterButtonLabel: string;
+  filterButtonAriaLabel: string;
+  panelTitle: string;
+  panelCloseAriaLabel: string;
 };
 
 export function DataTableToolbar({
@@ -18,6 +22,10 @@ export function DataTableToolbar({
   isFilterOpen,
   onToggleFilters,
   onCloseFilters,
+  filterButtonLabel,
+  filterButtonAriaLabel,
+  panelTitle,
+  panelCloseAriaLabel,
 }: DataTableToolbarProps) {
   if (!showFilters) return null;
 
@@ -29,15 +37,17 @@ export function DataTableToolbar({
           className="mid-table-filter-btn"
           onClick={onToggleFilters}
           aria-expanded={isFilterOpen}
-          aria-label="Mostra o nascondi filtri colonne"
+          aria-label={filterButtonAriaLabel}
         >
-          Filtra colonne
+          {filterButtonLabel}
         </button>
       </div>
       <ColumnVisibilityPanel
         table={table}
         isOpen={isFilterOpen}
         onClose={onCloseFilters}
+        title={panelTitle}
+        closeAriaLabel={panelCloseAriaLabel}
       />
     </>
   );
