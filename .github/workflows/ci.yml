@@ -27,7 +27,7 @@ jobs:
           mv packages/ui-example-app.bak packages/ui-example-app || true
       - name: Run Build
         # Build only packages that don't use link: protocol
-        # Run build directly in package directories to ensure node_modules/.bin is in PATH
+        # Use subshells to ensure we return to workspace root even if build fails
         run: |
-          cd packages/components && bun run build && cd ../..
-          cd packages/webapp && bun run build && cd ../..
+          (cd packages/components && bun run build)
+          (cd packages/webapp && bun run build)
