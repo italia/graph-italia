@@ -15,6 +15,7 @@ import {
 import React, { useEffect } from "react";
 import "./dataTable.css";
 import { DataTableContent } from "./DataTableContent";
+import { DataTableExport } from "./DataTableExport";
 import { DataTableToolbar } from "./DataTableToolbar";
 import ScrollButton from "./ScrollButton";
 import {
@@ -128,6 +129,7 @@ export default function DataTable(props: DataTableProps) {
         sensors={sensors}
         onDragEnd={handleDragEnd}
       />
+      <DataTableExport table={table as any} id={id} />
       {leftFade.present && (
         <ScrollButton
           side="left"
