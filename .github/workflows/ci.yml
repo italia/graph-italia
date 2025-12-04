@@ -16,6 +16,12 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.1.27
+      
+      - name: Setup Node.js
+        # Rollup requires Node.js to run (it's a Node.js binary)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Install Deps
         # Temporarily exclude ui-example-app which uses link: protocol (not suitable for CI)
