@@ -7,33 +7,28 @@ on:
   pull_request:
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.1.27
       
-      - name: Setup Node.js
-        # Rollup requires Node.js to run (it's a Node.js binary)
-        uses: actions/setup-node@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build and Test
+        # Use Dockerfile.test to ensure consistent environment with production
+        # This replicates the exact same build process as production Dockerfiles
+        uses: docker/build-push-action@v6
         with:
-          node-version: '20'
-
-      - name: Install Deps
-        # Temporarily exclude ui-example-app which uses link: protocol (not suitable for CI)
-        # Bun 1.1.27 doesn't support --filter with negation, so we move the directory temporarily
-        # The lockfile may still reference link: dependencies, but main packages install successfully
-        run: |
-          mv packages/ui-example-app packages/ui-example-app.bak || true
-          bun install --frozen-lockfile 2>&1 | grep -v "failed linking" || true
-          mv packages/ui-example-app.bak packages/ui-example-app || true
-      - name: Run Build
-        # Build only packages that don't use link: protocol
-        # Use subshells to ensure we return to workspace root even if build fails
-        run: |
-          (cd packages/components && bun run build)
-          (cd packages/webapp && bun run build)
+          context: .
+          file: ./Dockerfile.test
+          push: false
+          tags: dataviz-test:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      # Future: Add test execution step when tests are implemented
+      # - name: Run Tests
+      #   run: |
+      #     docker run --rm dataviz-test:${{ github.sha }} bun test

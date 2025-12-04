@@ -37,11 +37,11 @@ COPY tsconfig.json ./
 COPY packages/components ./packages/components
 COPY packages/webapp ./packages/webapp
 
-# Build components first (dependency of webapp)
+# Build components (using absolute path to rollup from root node_modules)
 WORKDIR /app/packages/components
-RUN bun run build
+RUN bun /app/node_modules/rollup/dist/bin/rollup -c
 
-# Build webapp (now components are built and available)
+# Build webapp
 WORKDIR /app/packages/webapp
 RUN bun run build
 

@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/italia/dataviz/tree/main/packages/components#readme",
   "scripts": {
-    "build": "bun ../../node_modules/.bin/rollup -c",
-    "dev": "bun ../../node_modules/.bin/rollup -c -w",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
