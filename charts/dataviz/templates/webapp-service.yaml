@@ -10,7 +10,7 @@ spec:
   type: {{ .Values.webapp.service.type }}
   ports:
     - port: {{ .Values.webapp.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.webapp.containerPort | default 80 }}
       protocol: TCP
       name: http
   selector:
