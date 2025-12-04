@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
-import { dataToCSV, downloadPng, downloadCSV } from "../../lib/downloadUtils";
-import DataTable from "../dataTable/DataTable";
-import { FieldDataType, InfosType } from "../../types";
 import type { EChartsType } from "echarts";
+import React, { useEffect, useRef, useState } from "react";
+import { dataToCSV, downloadCSV, downloadPng } from "../../lib/downloadUtils";
+import { FieldDataType, InfosType } from "../../types";
+import DataTable from "../dataTable/DataTable";
 import RenderChart from "../RenderChart";
 import "./chartWrapper.css";
 import {
@@ -59,7 +59,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   } = info;
 
   const tabs = [labelTabChart, labelTabData, labelTabInfo];
-  const { config } = data;
+  const { config, chart } = data;
   const [echartInstance, setEchartInstance] = useState<EChartsType | null>(
     null
   );
@@ -136,7 +136,12 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             aria-hidden={activeTab !== 0}
             className={`cw-tabpanel ${activeTab === 0 ? "is-active" : ""}`}
           >
-            <div key={id} className="cw-chart" ref={wrapRef}>
+            {/* Chart wrapper: add type-based modifier class, e.g. cw-chart--pie, cw-chart--bar, cw-chart--line, ... */}
+            <div
+              key={id}
+              className={`cw-chart cw-chart--${chart || "other"}`}
+              ref={wrapRef}
+            >
               <RenderChart
                 id={id}
                 {...data}

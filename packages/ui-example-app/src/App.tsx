@@ -8,6 +8,10 @@ import SamplePiechart from "./SamplePiechart";
 import "dataviz-components/dist/style.css";
 import SampleTable from "./SampleTable";
 import SampleWrapper from "./SampleWrapper";
+import SampleWrapperBar from "./SampleWrapperBar";
+import SampleWrapperGeomap from "./SampleWrapperGeomap";
+import SampleWrapperLine from "./SampleWrapperLine";
+import SampleWrapperPie from "./SampleWrapperPie";
 
 export default function App() {
   return (
@@ -15,6 +19,22 @@ export default function App() {
       <div style={{ marginTop: 50, minHeight: 900 }}>
         <h3>Sample Wrapper</h3>
         <SampleWrapper />
+        <div style={{ marginTop: 40 }}>
+          <h4>Bar Chart con ChartWrapper</h4>
+          <SampleWrapperBar />
+        </div>
+        <div style={{ marginTop: 40 }}>
+          <h4>Line Chart con ChartWrapper</h4>
+          <SampleWrapperLine />
+        </div>
+        <div style={{ marginTop: 40 }}>
+          <h4>Pie Chart con ChartWrapper</h4>
+          <SampleWrapperPie />
+        </div>
+        <div style={{ marginTop: 40 }}>
+          <h4>Geo Map con ChartWrapper</h4>
+          <SampleWrapperGeomap />
+        </div>
       </div>
       <div style={{ marginTop: 50 }}>
         <h3>Table</h3>

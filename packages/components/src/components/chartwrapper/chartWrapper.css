@@ -85,6 +85,11 @@
   min-height: 0;
 }
 
+/* Chart type modifiers */
+.cw-chart--pie {
+  margin-bottom: 32px;
+}
+
 /* Footer text below chart */
 .cw-footer {
   padding: 24px 0;
@@ -111,8 +116,12 @@
 }
 
 @keyframes cw-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Bottom meta and actions row */
@@ -171,7 +180,8 @@
   line-height: 1.2;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+  transition: background-color 120ms ease, color 120ms ease,
+    border-color 120ms ease, box-shadow 120ms ease;
 }
 .cw-btn:disabled,
 .cw-btn[aria-disabled="true"] {
