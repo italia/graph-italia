@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState } from "react";
 import ReactEcharts, { type EChartsOption } from "echarts-for-react";
-import type { ChartPropsType, FieldDataType } from "../../types";
+import React, { useEffect, useRef, useState } from "react";
 import { formatTooltip } from "../../lib/utils";
+import type { ChartPropsType, FieldDataType } from "../../types";
 
 function PieChart({
   id,
@@ -125,8 +125,8 @@ function PieChart({
       ? true
       : data.config.responsive;
   const chartHeight = responsive && isMobile ? (h / 100) * 80 : h;
-  const height = rowHeight ? "100%" : chartHeight;
-  const minHeight = rowHeight ? chartHeight : "auto";
+  const height = rowHeight ? "100%" : `${chartHeight}px`;
+  const minHeight = rowHeight ? rowHeight : "auto";
   return (
     <div key={id} id={"chart_" + id}>
       <ReactEcharts
