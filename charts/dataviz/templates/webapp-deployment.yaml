@@ -1,0 +1,60 @@
+{{- if .Values.webapp.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dataviz.fullname" . }}-webapp
+  labels:
+    {{- include "dataviz.labels" . | nindent 4 }}
+    component: webapp
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      component: webapp
+  template:
+    metadata:
+      labels:
+        {{- include "dataviz.selectorLabels" . | nindent 8 }}
+        component: webapp
+      annotations:
+        checksum/image-pull-secret: {{ if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}{{ .Values.imagePullSecret.token | sha256sum }}{{ else }}""{{ end }}
+    spec:
+      {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
+      imagePullSecrets:
+        - name: {{ include "dataviz.fullname" . }}-image-pull-secret
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.webapp.securityContext | nindent 8 }}
+      volumes:
+        - name: webapp-config
+          configMap:
+            name: {{ include "dataviz.fullname" . }}-webapp-config
+        {{- if .Values.webapp.volumes }}
+        {{- toYaml .Values.webapp.volumes | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: webapp
+          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}/{{ .Values.webapp.image.repository }}:{{ .Values.webapp.image.tag }}"
+          imagePullPolicy: {{ .Values.webapp.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.webapp.containerSecurityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: webapp-config
+              mountPath: /usr/share/nginx/html/config.json
+              subPath: config.json
+              readOnly: true
+            {{- if .Values.webapp.volumeMounts }}
+            {{- toYaml .Values.webapp.volumeMounts | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.webapp.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.webapp.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.webapp.readinessProbe | nindent 12 }}
+{{- end }}

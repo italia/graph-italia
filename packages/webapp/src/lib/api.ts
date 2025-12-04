@@ -1,14 +1,32 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
-const SERVER_URL = `${
-  import.meta.env.VITE_SERVER_URL || 'http://localhost:3003'
-}/api`;
+// Runtime configuration loaded from ConfigMap (in Kubernetes) or from /config.json
+// The config is loaded at app startup in main.tsx and stored in window.__ENV__
+// Falls back to import.meta.env (from .env file at build-time) for development, then to default
+const getServerUrl = (): string => {
+  // Priority 1: Runtime config from ConfigMap (/config.json)
+  if (typeof window !== 'undefined' && window.__ENV__?.VITE_SERVER_URL) {
+    return window.__ENV__.VITE_SERVER_URL;
+  }
+  // Priority 2: Build-time env from .env file (for local development)
+  if (import.meta.env.VITE_SERVER_URL) {
+    return import.meta.env.VITE_SERVER_URL;
+  }
+  // Priority 3: Default fallback
+  return 'http://localhost:3003';
+};
+
+// Use a getter function instead of a constant to ensure it's recalculated
+// when window.__ENV__ is updated after config.json is loaded
+const getServerUrlWithApi = (): string => {
+  return `${getServerUrl()}/api`;
+};
 // let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
 /** getSuggestions */
 export async function getSuggestions(inputData: (string | number)[][]) {
-  const url = `${SERVER_URL}/hints/`;
+  const url = `${getServerUrlWithApi()}/hints/`;
   const data = JSON.stringify(inputData.slice(0, 5));
   const response = await axios.post(url, data);
   console.log('hints', response.status);
@@ -23,7 +41,7 @@ export async function getSuggestions(inputData: (string | number)[][]) {
 
 /** List */
 export async function getCharts() {
-  const response = await axios.get(`${SERVER_URL}/charts`);
+  const response = await axios.get(`${getServerUrlWithApi()}/charts`);
 
   if (response.status === 401) {
     // return auth.logout();
@@ -38,7 +56,7 @@ export async function getCharts() {
 
 /** Get a chart */
 export async function getChart(id: string) {
-  const response = await axios.get(`${SERVER_URL}/charts/${id}`, {
+  const response = await axios.get(`${getServerUrlWithApi()}/charts/${id}`, {
     method: 'GET',
   });
   if (response.status === 200) {
@@ -50,7 +68,7 @@ export async function getChart(id: string) {
 }
 
 export async function showChart(id: string) {
-  const response = await axios(`${SERVER_URL}/charts/show/${id}`, {
+  const response = await axios(`${getServerUrlWithApi()}/charts/show/${id}`, {
     method: 'GET',
   });
   if (response.status === 200) {
@@ -65,7 +83,7 @@ export async function showChart(id: string) {
 
 /** Upsert */
 export async function upsertChart(payload: any, id?: string) {
-  const url = id ? `${SERVER_URL}/charts/${id}` : `${SERVER_URL}/charts/`;
+  const url = id ? `${getServerUrlWithApi()}/charts/${id}` : `${getServerUrlWithApi()}/charts/`;
   const method = id ? 'PUT' : 'POST';
 
   let response = await (method === 'PUT'
@@ -80,7 +98,7 @@ export async function upsertChart(payload: any, id?: string) {
 
 /** Delete */
 export async function deleteChart(id: string) {
-  const response = await axios.delete(`${SERVER_URL}/charts/${id}`);
+  const response = await axios.delete(`${getServerUrlWithApi()}/charts/${id}`);
   console.log('deleteChart', response.status);
   if (response.status === 401) {
     return logout();
@@ -102,7 +120,7 @@ export async function login({
   password: string;
   rememberMe?: boolean;
 }) {
-  const response = await axios.post(`${SERVER_URL}/auth/login`, {
+  const response = await axios.post(`${getServerUrlWithApi()}/auth/login`, {
     email,
     password,
   });
@@ -126,7 +144,7 @@ export async function register({
   password: string;
 }) {
   try {
-    const response = await axios.post(`${SERVER_URL}/auth/register`, {
+    const response = await axios.post(`${getServerUrlWithApi()}/auth/register`, {
       email,
       password,
     });
@@ -142,7 +160,7 @@ export async function register({
 }
 /** get user data */
 export async function getUser() {
-  const response = await axios(`${SERVER_URL}/auth/user`, {
+  const response = await axios(`${getServerUrlWithApi()}/auth/user`, {
     method: 'GET',
   });
   console.log('response status', response.status);
@@ -153,7 +171,7 @@ export async function getUser() {
 /** verify pin */
 export async function verify({ uid, code }: { uid: string; code: string }) {
   try {
-    const response = await axios.post(`${SERVER_URL}/auth/verify`, {
+    const response = await axios.post(`${getServerUrlWithApi()}/auth/verify`, {
       uid,
       code,
     });
@@ -169,7 +187,7 @@ export async function verify({ uid, code }: { uid: string; code: string }) {
 /** change pwd */
 export async function changePasssword({ password }: { password: string }) {
   try {
-    const response = await axios.put(`${SERVER_URL}/auth/pwd`, {
+    const response = await axios.put(`${getServerUrlWithApi()}/auth/pwd`, {
       password,
     });
     if (response.status === 204) {
@@ -183,7 +201,7 @@ export async function changePasssword({ password }: { password: string }) {
 
 export async function activate() {
   try {
-    const response = await axios.post(`${SERVER_URL}/auth/init`);
+    const response = await axios.post(`${getServerUrlWithApi()}/auth/init`);
     if (response.status === 200) {
       return true;
     }
@@ -195,7 +213,7 @@ export async function activate() {
 /** ask pin code */
 export async function recoverPasssword(email: string) {
   try {
-    const response = await axios.post(`${SERVER_URL}/auth/recover`, { email });
+    const response = await axios.post(`${getServerUrlWithApi()}/auth/recover`, { email });
     if (response.status === 200) {
       return true;
     }
@@ -206,7 +224,7 @@ export async function recoverPasssword(email: string) {
 }
 /** logout */
 export function logout() {
-  return axios.get(`${SERVER_URL}/auth/logout`);
+  return axios.get(`${getServerUrlWithApi()}/auth/logout`);
 }
 
 /** DAHSBOARDS calls */
@@ -231,7 +249,7 @@ export interface DashboardDetail {
 /* List */
 
 export async function getDashboards() {
-  const response = await axios.get(`${SERVER_URL}/dashboards`);
+  const response = await axios.get(`${getServerUrlWithApi()}/dashboards`);
   if (response.status === 200) {
     return response.data;
   } else {
@@ -240,7 +258,7 @@ export async function getDashboards() {
 }
 
 export async function findDashboardById(id: string) {
-  const response = await axios.get(`${SERVER_URL}/dashboards/${id}`);
+  const response = await axios.get(`${getServerUrlWithApi()}/dashboards/${id}`);
   if (response.status === 200) {
     return response.data as DashboardDetail;
   }
@@ -263,14 +281,14 @@ export async function updateSlots(
   }
 ) {
   const response = await axios.put(
-    `${SERVER_URL}/dashboards/${id}/slots`,
+    `${getServerUrlWithApi()}/dashboards/${id}/slots`,
     body
   );
   return response.status === 200;
 }
 
 export async function deleteDashaboard(id: string) {
-  const response = await axios.delete(`${SERVER_URL}/dashboards/${id}`);
+  const response = await axios.delete(`${getServerUrlWithApi()}/dashboards/${id}`);
   console.log('response status', response.status);
   return response.status === 204;
 }
@@ -279,6 +297,6 @@ export async function createDashboard(payload: {
   name: string;
   description: string;
 }) {
-  const response = await axios.post(`${SERVER_URL}/dashboards`, payload);
+  const response = await axios.post(`${getServerUrlWithApi()}/dashboards`, payload);
   return { id: response.data.id } as { id: string };
 }

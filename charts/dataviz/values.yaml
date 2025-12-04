@@ -1,0 +1,230 @@
+# Default values for dataviz
+# This is a template file - actual values should be stored in the cluster
+# and reused with --reuse-values flag
+
+replicaCount: 1
+
+imageRegistry: ghcr.io
+imageRepository: italia
+
+# Image pull secret for private registry (optional)
+# If imagePullSecret.token is set, a secret will be created automatically
+imagePullSecret:
+  enabled: false
+  token: ""  # GitHub Personal Access Token or GITHUB_TOKEN
+  username: ""  # Optional, defaults to github.repository_owner
+
+webapp:
+  enabled: true
+  image:
+    repository: dataviz-webapp
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+  config:
+    # Runtime configuration via ConfigMap
+    # This allows using the same build image across different environments
+    serverUrl: ""  # e.g., "http://dataviz-server:3003" or "https://api.example.com"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  # Horizontal Pod Autoscaler
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101  # nginx user
+    fsGroup: 101
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  # Volumes for readonly root filesystem
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: var-tmp
+      emptyDir: {}
+    - name: var-cache-nginx
+      emptyDir: {}
+    - name: var-run-nginx
+      emptyDir: {}
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: var-tmp
+      mountPath: /var/tmp
+    - name: var-cache-nginx
+      mountPath: /var/cache/nginx
+    - name: var-run-nginx
+      mountPath: /var/run
+  # Health check configuration
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+server:
+  enabled: true
+  image:
+    repository: dataviz-srv
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 3003
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  env:
+    # These are example values - actual values should be set in the cluster
+    PORT: "3003"
+    HOST: ""
+    DOMAINS: ""
+    UPLOAD_SIZE_LIMIT: "15mb"
+    ROUTES_PREFIX: ""
+    DATABASE_URL: ""
+    # Add other environment variables as needed
+  # Horizontal Pod Autoscaler
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000  # bun user
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  # Volumes for readonly root filesystem
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: var-tmp
+      emptyDir: {}
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: var-tmp
+      mountPath: /var/tmp
+  # Health check configuration
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Unified Ingress configuration
+# Supports both single host with paths and multiple hosts
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  # Single host mode: set host and paths
+  # If host is set, paths will be used for routing
+  host: ""  # e.g., "dataviz.example.com"
+  paths:
+    webapp:
+      path: "/"
+      pathType: Prefix
+    server:
+      path: "/api"
+      pathType: Prefix
+  # Multiple hosts mode: set hosts array
+  # If hosts array is set, it takes precedence over single host mode
+  hosts: []
+    # - host: webapp.dataviz.example.com
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       service: webapp
+    # - host: api.dataviz.example.com
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       service: server
+  tls: []
+    # - secretName: dataviz-tls
+    #   hosts:
+    #     - dataviz.example.com
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1  # Alternative to minAvailable
+
+# Network Policy
+networkPolicy:
+  enabled: false
+  allowSameNamespace: true
+  allowDNS: true
+  ingressNamespace: "ingress-nginx"
+  ingress: []
+    # - from:
+    #     - namespaceSelector:
+    #         matchLabels:
+    #           name: monitoring
+  egress: []
+    # - to:
+    #     - namespaceSelector:
+    #         matchLabels:
+    #           name: database
+    #   ports:
+    #     - protocol: TCP
+    #       port: 5432
+
+# Global settings
+global:
+  namespace: ""

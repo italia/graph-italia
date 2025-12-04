@@ -1,0 +1,58 @@
+{{- if .Values.server.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dataviz.fullname" . }}-server
+  labels:
+    {{- include "dataviz.labels" . | nindent 4 }}
+    component: server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      component: server
+  template:
+    metadata:
+      labels:
+        {{- include "dataviz.selectorLabels" . | nindent 8 }}
+        component: server
+      annotations:
+        checksum/image-pull-secret: {{ if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}{{ .Values.imagePullSecret.token | sha256sum }}{{ else }}""{{ end }}
+    spec:
+      {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
+      imagePullSecrets:
+        - name: {{ include "dataviz.fullname" . }}-image-pull-secret
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.server.securityContext | nindent 8 }}
+      {{- if .Values.server.volumes }}
+      volumes:
+        {{- toYaml .Values.server.volumes | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: server
+          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.server.containerSecurityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 3003
+              protocol: TCP
+          env:
+            {{- range $key, $value := .Values.server.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- if .Values.server.volumeMounts }}
+          volumeMounts:
+            {{- toYaml .Values.server.volumeMounts | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.server.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.server.readinessProbe | nindent 12 }}
+{{- end }}
