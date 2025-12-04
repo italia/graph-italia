@@ -35,6 +35,10 @@ export type DataTableProps = {
 export const defaultFormatNumber = (n: number) =>
   new Intl.NumberFormat("it-IT").format(n);
 
+function getColumnId(index: number): string {
+  return `col_${index}`;
+}
+
 export function extractHeaderRow(data: MatrixType): (string | number)[] {
   return Array.isArray(data) && data.length > 0 ? data[0] : [];
 }
@@ -42,7 +46,7 @@ export function extractHeaderRow(data: MatrixType): (string | number)[] {
 export function getFirstColumnId(
   headerRow: (string | number)[]
 ): string | undefined {
-  return headerRow && headerRow.length > 0 ? String(headerRow[0]) : undefined;
+  return headerRow && headerRow.length > 0 ? getColumnId(0) : undefined;
 }
 
 export function convertMatrixToTableData(
@@ -72,17 +76,17 @@ export function createTableColumns(
 ): ColumnDef<Record<string, unknown>>[] {
   const { headerRow, firstColumnId, format, formatValue } = options;
 
-  return headerRow.map((headerCell) => {
-    const key = String(headerCell);
+  return headerRow.map((headerCell, index) => {
+    const headerLabel = String(headerCell);
+    const columnId = getColumnId(index);
+
     return {
-      id: key,
-      accessorKey: key,
-      header: key,
+      id: columnId,
+      accessorFn: (row) => row[headerLabel],
+      header: headerLabel,
       cell: (info) => {
         const value = info.getValue() as unknown;
-        const colIndex = headerRow.findIndex(
-          (h) => String(h) === info.column.id
-        );
+        const colIndex = index;
         const isFirstCol = firstColumnId
           ? info.column.id === firstColumnId
           : colIndex === 0;
