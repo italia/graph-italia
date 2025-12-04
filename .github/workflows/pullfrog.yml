@@ -1,18 +1,23 @@
 name: Pullfrog
+
 on:
   workflow_dispatch:
     inputs:
       prompt:
         type: string
         description: 'Agent prompt'
+        required: true
   workflow_call:
     inputs:
       prompt:
         description: 'Agent prompt'
         type: string
+        required: true
 
 permissions:
   id-token: write
+  contents: read
+  pull-requests: write
 
 jobs:
   agent-run:
@@ -21,9 +26,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-      - name: Run agent
+          fetch-depth: 0
+      
+      - name: Run Pullfrog agent
         uses: pullfrog/action@v0
         with:
-          prompt: ${{ github.event.inputs.prompt }}
+          prompt: ${{ inputs.prompt || github.event.inputs.prompt }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

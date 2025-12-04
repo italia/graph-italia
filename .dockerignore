@@ -1,16 +1,8 @@
-# Security: Exclude sensitive files
-.env
-.env.*
-*.pem
-*.key
-*.crt
-secrets/
-.secrets
-
 # Git
 .git
 .gitignore
 .gitattributes
+.github
 
 # Documentation
 *.md
@@ -20,12 +12,17 @@ CHANGELOG.md
 docs/
 
 # Development files
+.env
+.env.local
+.env.*.local
+*.log
+*.log.*
+.DS_Store
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Test files
 **/__tests__/
@@ -42,23 +39,36 @@ coverage/
 **/dist/
 **/build/
 **/node_modules/
-**/.cache/
 **/.next/
+**/.cache/
 **/.turbo/
+
+# Lockfiles (will be copied explicitly)
+# bun.lock
+# bun.lockb
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
 # CI/CD
 .github/
 .gitlab-ci.yml
 Jenkinsfile
+.circleci/
 
 # Docker
 Dockerfile*
 docker-compose*.yml
 .dockerignore
 
-# Logs
-*.log
-logs/
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Temporary files
 *.tmp
@@ -66,14 +76,26 @@ logs/
 tmp/
 temp/
 
-# TypeScript config (not needed at runtime)
+# Secrets and sensitive files
+*.pem
+*.key
+*.crt
+secrets/
+.secrets
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Misc
+.editorconfig
+.prettierrc*
+.eslintrc*
 tsconfig*.json
 !tsconfig.json
 
-# Source maps (not needed in production)
-*.map
-
-# Development tools
-.eslintrc*
-.prettierrc*
-.editorconfig

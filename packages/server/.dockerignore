@@ -1,17 +1,77 @@
-#.dockerignore
+# Security: Exclude sensitive files
+.env
+.env.*
+*.pem
+*.key
+*.crt
+secrets/
+.secrets
 
-node_modules
-Dockerfile*
-docker-compose*
-.dockerignore
+# Git
 .git
 .gitignore
+.gitattributes
+
+# Documentation
+*.md
 README.md
 LICENSE
-.vscode
-Makefile
-helm-charts
-.env
-.editorconfig
-.idea
-coverage*
+CHANGELOG.md
+docs/
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test files
+**/__tests__/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/test/
+**/tests/
+coverage/
+.nyc_output/
+
+# Build artifacts (will be rebuilt in Docker)
+**/dist/
+**/build/
+**/node_modules/
+**/.cache/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# Database files (local)
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Seeds (not needed in production image)
+seeds/
+
+# TypeScript config (not needed at runtime)
+tsconfig*.json
+!tsconfig.json

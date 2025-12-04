@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust BUN_VERSION as desired
-FROM imbios/bun-node:1-20-slim as base
+FROM imbios/bun-node:1-20-slim AS base
 
 LABEL fly_launch_runtime="Bun/Prisma"
 
@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV="production"
 
 # Throw-away build stage to reduce size of final image
-FROM base as build
+FROM base AS build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
@@ -20,7 +20,7 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link bun.lockb package.json ./
-RUN bun install --ci
+RUN bun install --ci --frozen-lockfile
 
 # Generate Prisma Client
 COPY --link prisma .
