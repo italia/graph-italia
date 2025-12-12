@@ -1,8 +1,11 @@
-import express, { Router } from "express";
-import helmet from "helmet";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import * as middlewares from "./lib/middlewares.ts";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
+import { logger } from "hono/logger";
+import type { JwtVariables } from "hono/jwt";
+
+// import cookieParser from "cookie-parser";
+// import * as middlewares from "./lib/middlewares.ts";
 import authRouter from "./routes/auth.ts";
 import chartRouter from "./routes/charts.ts";
 import dashRouter from "./routes/dashboards.ts";
@@ -15,36 +18,69 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 	HOST,
 	`${HOST}:${PORT}`,
 ];
-const UPLOAD_SIZE_LIMIT = process.env.UPLOAD_SIZE_LIMIT || "15mb";
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
-const app = express();
+const isDev = process.env.NODE_ENV !== "production";
 
-app.use(helmet());
+type Payload = {
+	sub: string;
+	eml: string;
+};
+
+export type Variables = JwtVariables<Payload>;
+type Bindings = {
+	TOKEN: string;
+};
+const app = new Hono<{ Bindings: Bindings; Variables: Variables }>().basePath(
+	ROUTES_PREFIX,
+);
+
+app.use(logger());
+// app.use(csrf());
 app.use(
-	cors({
-		origin: whitelist,
-		credentials: true,
-		methods: ["OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE"],
+	csrf({
+		origin: isDev
+			? ["http://localhost:4000", "http://localhost:3003"]
+			: process.env.HOST,
 	}),
 );
 
-app.use(cookieParser());
-app.use(middlewares.checkAuth);
-app.use(express.json({ limit: UPLOAD_SIZE_LIMIT }));
+if (isDev) {
+	app.use(
+		"/*",
+		cors({
+			origin: whitelist,
+			credentials: true,
+			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			allowHeaders: ["Content-Type", "Authorization"],
+		}),
+	);
+}
 
-app.get(["/", `${ROUTES_PREFIX}/`], async (req, res) => {
-	res.json({ status: "ok", message: "^^" });
+// app.use(cookieParser());
+// app.use(middlewares.checkAuth);
+// app.use(express.json({ limit: UPLOAD_SIZE_LIMIT }));
+
+app.get(`/`, (c) => c.json({ status: "ok", message: "^^" }));
+app.route(`/auth`, authRouter);
+app.route(`/charts`, chartRouter);
+app.route(`/dashboards`, dashRouter);
+app.route(`/hints`, suggestionsRouter);
+
+app.notFound((c) => {
+	return c.text("Custom 404 Message", 404);
 });
-
-app.use(`${ROUTES_PREFIX}/auth`, authRouter as Router);
-app.use(`${ROUTES_PREFIX}/charts`, chartRouter as Router);
-app.use(`${ROUTES_PREFIX}/dashboards`, dashRouter as Router);
-app.use(`${ROUTES_PREFIX}/hints`, suggestionsRouter as Router);
-
-app.use(middlewares.notFound);
-app.use(middlewares.errorHandler);
-app.listen(PORT, () => {
-	console.log(`Listening on port ${PORT}...`);
+app.onError((err, c) => {
+	console.error(`${err}`);
+	return c.text("Custom Error Message", 500);
 });
+// app.onError((errorHandler) => {
+// 	console.log(errorHandler.message, errorHandler.cause);
+// 	throw new HTTPException(500, errorHandler);
+// });
 
-export default app;
+const server = {
+	// hostname: process.env.HOST || "0.0.0.0",
+	port: PORT,
+	fetch: app.fetch,
+};
+export default server;
