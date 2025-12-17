@@ -120,9 +120,6 @@ jobs:
     environment:
       name: production
     steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-
       - name: ⚓ Setup Helm
         uses: azure/setup-helm@v4
         with:
@@ -166,7 +163,7 @@ jobs:
             oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
             --version ${{ needs.prepare.outputs.version }} \
             --namespace dataviz \
-            -f ./charts/dataviz/values.yaml \
+            --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
             --wait \
@@ -190,9 +187,6 @@ jobs:
       contents: read
       packages: read
     steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-
       - name: ⚓ Setup Helm
         uses: azure/setup-helm@v4
         with:
@@ -236,7 +230,7 @@ jobs:
             oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
             --version ${{ needs.prepare.outputs.version }} \
             --namespace dataviz-test \
-            -f ./charts/dataviz/values-test.yaml \
+            --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
             --wait \
