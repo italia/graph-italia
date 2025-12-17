@@ -136,6 +136,11 @@ jobs:
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
+      - name: 🛠️ Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.0'
+
       - name: 🔗 Setup Kubernetes credentials
         run: |
           mkdir -p ~/.kube
@@ -199,6 +204,11 @@ jobs:
       - name: 🔐 Login to Helm Registry
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+
+      - name: 🛠️ Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.0'
 
       - name: 🔗 Setup Kubernetes credentials
         run: |
