@@ -29,6 +29,11 @@ webapp:
     #   value: "applications"
     #   effect: "NoSchedule"
   affinity: {}
+  # Prometheus metrics scraping
+  prometheus:
+    enabled: false
+    port: 8080
+    path: "/nginx_status"
   service:
     type: ClusterIP
     port: 80
@@ -115,6 +120,11 @@ server:
     #   value: "applications"
     #   effect: "NoSchedule"
   affinity: {}
+  # Prometheus metrics scraping
+  prometheus:
+    enabled: false
+    port: 3003
+    path: "/metrics"
   service:
     type: ClusterIP
     port: 3003

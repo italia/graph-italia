@@ -19,6 +19,11 @@ spec:
         component: webapp
       annotations:
         checksum/image-pull-secret: {{ if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}{{ .Values.imagePullSecret.token | sha256sum }}{{ else }}""{{ end }}
+        {{- if .Values.webapp.prometheus.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.webapp.prometheus.port | default 8080 }}"
+        prometheus.io/path: "{{ .Values.webapp.prometheus.path | default "/nginx_status" }}"
+        {{- end }}
     spec:
       {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
       imagePullSecrets:
