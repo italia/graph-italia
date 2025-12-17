@@ -3,11 +3,13 @@ import { Hono } from "hono";
 import * as z from "zod";
 import db from "../lib/db";
 import { zValidator } from "@hono/zod-validator";
-
-import { requireUser, validateRequest } from "../lib/middlewares";
+import { checkAuth, requireUser } from "../lib/middlewares-hono";
 import type { ParsedToken } from "../types";
 
 const router = new Hono();
+
+// Apply auth check middleware to all routes
+router.use("*", checkAuth);
 
 const detailSchema = z.object({
 	id: z.string({
@@ -44,162 +46,150 @@ const updateChartSchema = z.object({
 });
 
 /** Index */
-router.get("/", async (req: any, res, next) => {
+router.get("/", async (c) => {
 	try {
-		const user: ParsedToken = req.user;
+		const user = c.get("user") as ParsedToken | null;
+		if (!user) {
+			return c.json({ error: "Unauthorized" }, 401);
+		}
 		const id = user.userId;
 		const results = await db.findChartsByUSerId(id);
-		return res.json(results);
+		return c.json(results);
 	} catch (err) {
-		next(err);
+		console.error("Charts index error:", err);
+		return c.json({ error: "Internal error" }, 500);
 	}
 });
 
 /** Get :ID */
-router.get("/:id", zValidator("data", detailSchema), async (c) => {
-	const id = c.req.params.id;
-	const user: ParsedToken = c.req.user;
-	const { data } = c.req.body;
-	const result = await db.findChartById(id);
-	c.json(result);
-	return res.json({ user, data });
+router.get("/:id", zValidator("param", detailSchema), async (c) => {
+	try {
+		const { id } = c.req.valid("param");
+		const result = await db.findChartById(id);
+		return c.json(result);
+	} catch (err) {
+		console.error("Chart get error:", err);
+		return c.json({ error: "Internal error" }, 500);
+	}
 });
 
-/** Show :ID */
-router.get(
-	"/show/:id",
-	validateRequest({ params: detailSchema }),
-	async (req: any, res, next) => {
-		try {
-			const id = req.params.id;
-			let result = await db.findChartById(id);
-			if (result?.publish !== true) {
-				return res.json({
-					error: { message: "Not Authorized, This chart is not public" },
-				});
-			}
-			if (result?.isRemote && result?.remoteUrl) {
-				const lastUpdate = new Date(result.updatedAt);
-				const now = Date.now();
-				const diff = now - lastUpdate.getTime();
-				// console.log("Diff", diff / 1000 / 60, "minutes");
-				const isToUpdate = diff > 1000 * 60 * 60 * 24;
-				if (isToUpdate) {
-					//refresh data.
-					const remote = await axios.get("" + result.remoteUrl);
-					if (remote.data) {
-						await db.updateChart(id, { data: remote.data });
-						result = await db.findChartById(id);
-					}
+/** Show :ID (public) */
+router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
+	try {
+		const { id } = c.req.valid("param");
+		let result = await db.findChartById(id);
+		if (result?.publish !== true) {
+			return c.json({
+				error: { message: "Not Authorized, This chart is not public" },
+			}, 401);
+		}
+		if (result?.isRemote && result?.remoteUrl) {
+			const lastUpdate = new Date(result.updatedAt);
+			const now = Date.now();
+			const diff = now - lastUpdate.getTime();
+			const isToUpdate = diff > 1000 * 60 * 60 * 24;
+			if (isToUpdate) {
+				const remote = await axios.get("" + result.remoteUrl);
+				if (remote.data) {
+					await db.updateChart(id, { data: remote.data });
+					result = await db.findChartById(id);
 				}
 			}
-			return res.json(result);
-		} catch (err) {
-			next(err);
 		}
-	},
-);
+		return c.json(result);
+	} catch (err) {
+		console.error("Chart show error:", err);
+		return c.json({ error: "Internal error" }, 500);
+	}
+});
 
 /** Create */
-router.post(
-	"/",
-	// [validateRequest({ body: createChartSchema }), requireUser],
-	async (req: any, res: any, next: any) => {
-		try {
-			const { body } = req;
-			console.log("CREATE CHART", body);
+router.post("/", requireUser, zValidator("json", createChartSchema), async (c) => {
+	try {
+		const body = c.req.valid("json");
+		console.log("CREATE CHART", body);
 
-			const user: ParsedToken = req.user;
-			console.log("user?", user);
+		const user = c.get("user") as ParsedToken;
+		console.log("user?", user);
 
-			if (!req) throw new Error("empty data");
-
-			const chartData = {
-				userId: user.userId,
-				...body,
-			};
-			const result = await db.createChart(chartData);
-
-			return res.json(result);
-		} catch (err) {
-			console.log(err);
-			next(err);
-		}
-	},
-);
+		const chartData = {
+			userId: user.userId,
+			...body,
+		};
+		const result = await db.createChart(chartData);
+		return c.json(result, 201);
+	} catch (err) {
+		console.error("Chart create error:", err);
+		return c.json({ error: "Internal error" }, 500);
+	}
+});
 
 /** Publish */
-router.post(
-	"/publish/:id",
-	[validateRequest({ params: detailSchema }), requireUser],
-	async (req: any, res: any, next: any) => {
-		try {
-			const user: ParsedToken = req.user;
-			const chartId = req.params.id;
-			const chart = await db.findChartById(chartId);
-			if (!chart) {
-				return res.json({ message: "Not Found" }).status(404);
-			}
-			if (chart.userId !== user.userId) {
-				return res.json({ message: "Not Authorized" }).status(401);
-			}
-			const result = await db.publishChart(chartId, !chart?.publish);
-			return res.json({ published: result.publish });
-		} catch (err) {
-			next(err);
+router.post("/publish/:id", requireUser, zValidator("param", detailSchema), async (c) => {
+	try {
+		const user = c.get("user") as ParsedToken;
+		const { id: chartId } = c.req.valid("param");
+		const chart = await db.findChartById(chartId);
+		if (!chart) {
+			return c.json({ message: "Not Found" }, 404);
 		}
-	},
-);
+		if (chart.userId !== user.userId) {
+			return c.json({ message: "Not Authorized" }, 401);
+		}
+		const result = await db.publishChart(chartId, !chart?.publish);
+		return c.json({ published: result.publish });
+	} catch (err) {
+		console.error("Chart publish error:", err);
+		return c.json({ error: "Internal error" }, 500);
+	}
+});
 
 /** Delete ID */
-router.delete(
-	"/:id",
-	[validateRequest({ params: detailSchema }), requireUser],
-	async (req: any, res: any, next: any) => {
-		try {
-			const user: ParsedToken = req.user;
-			const chartId = req.params.id;
-			const chart = await db.findChartById(chartId);
-			if (!chart) {
-				return res.json({ message: "Not Found" }).status(404);
-			}
-			if (chart.userId !== user.userId) {
-				return res.json({ message: "Not Authorized" }).status(401);
-			}
-			const result = await db.deleteChart(chartId);
-			return res.json(result);
-		} catch (err) {
-			next(err);
+router.delete("/:id", requireUser, zValidator("param", detailSchema), async (c) => {
+	try {
+		const user = c.get("user") as ParsedToken;
+		const { id: chartId } = c.req.valid("param");
+		const chart = await db.findChartById(chartId);
+		if (!chart) {
+			return c.json({ message: "Not Found" }, 404);
 		}
-	},
-);
+		if (chart.userId !== user.userId) {
+			return c.json({ message: "Not Authorized" }, 401);
+		}
+		const result = await db.deleteChart(chartId);
+		return c.json(result);
+	} catch (err) {
+		console.error("Chart delete error:", err);
+		return c.json({ error: "Internal error" }, 500);
+	}
+});
 
 /** Update ID */
 router.put(
 	"/:id",
-	[
-		validateRequest({ body: updateChartSchema }),
-		validateRequest({ params: detailSchema }),
-		requireUser,
-	],
-	async (req: any, res: any, next: any) => {
+	requireUser,
+	zValidator("param", detailSchema),
+	zValidator("json", updateChartSchema),
+	async (c) => {
 		try {
-			const user: ParsedToken = req.user;
-			const chartId = req.params.id;
+			const user = c.get("user") as ParsedToken;
+			const { id: chartId } = c.req.valid("param");
+			const chartData = c.req.valid("json");
+			
 			const chart = await db.findChartById(chartId);
 			if (!chart) {
-				return res.json({ message: "Not Found" }).status(404);
+				return c.json({ message: "Not Found" }, 404);
 			}
 			if (chart.userId !== user.userId) {
-				return res.json({ message: "Not Authorized" }).status(401);
+				return c.json({ message: "Not Authorized" }, 401);
 			}
-			const chartData = req.body;
 			const result = await db.updateChart(chartId, chartData);
-			return res.json(result);
+			return c.json(result);
 		} catch (err) {
-			next(err);
+			console.error("Chart update error:", err);
+			return c.json({ error: "Internal error" }, 500);
 		}
-	},
+	}
 );
 
 export default router;

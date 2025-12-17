@@ -2,10 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
-import type { JwtVariables } from "hono/jwt";
 
-// import cookieParser from "cookie-parser";
-// import * as middlewares from "./lib/middlewares.ts";
 import authRouter from "./routes/auth.ts";
 import chartRouter from "./routes/charts.ts";
 import dashRouter from "./routes/dashboards.ts";
@@ -21,18 +18,13 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV !== "production";
 
-type Payload = {
-	sub: string;
-	eml: string;
+// Variables stored in Hono context
+type Variables = {
+	user: any;
+	token: string;
 };
 
-export type Variables = JwtVariables<Payload>;
-type Bindings = {
-	TOKEN: string;
-};
-const app = new Hono<{ Bindings: Bindings; Variables: Variables }>().basePath(
-	ROUTES_PREFIX,
-);
+const app = new Hono<{ Variables: Variables }>().basePath(ROUTES_PREFIX);
 
 app.use(logger());
 // app.use(csrf());
