@@ -8,11 +8,11 @@ const HOST = process.env.HOST_URL || "/";
 const APP_URL = process.env.APP_URL || "/";
 const COPY = "Dataviz";
 
-async function sendMail(addresses: string[], html: string) {
+async function sendMail(addresses: string[], html: string, subject: string = "Activate Account") {
   const obj = {
-    from: SENDER_EMAIL,
-    to: addresses.join(";"),
-    subject: "Activate Account",
+    from: `${COPY} <${SENDER_EMAIL}>`,
+    to: addresses,
+    subject,
   };
   const result = await resend.emails.send({
     ...obj,
@@ -34,7 +34,7 @@ export function sendActivationEmail(user: User, pin: string) {
 
 export async function sendResetPasswordEmail(user: User, pin: string) {
   const html = resetTemplate(user.id, pin);
-  return sendMail([user.email], html);
+  return sendMail([user.email], html, "Reset Password");
 }
 
 function resetTemplate(uid: string, pin: string) {

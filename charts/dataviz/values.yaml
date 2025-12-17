@@ -20,6 +20,15 @@ webapp:
     repository: dataviz-webapp
     pullPolicy: IfNotPresent
     tag: "latest"
+  # Node scheduling (optional)
+  nodeSelector: {}
+    # agentpool: applications
+  tolerations: []
+    # - key: "workload"
+    #   operator: "Equal"
+    #   value: "applications"
+    #   effect: "NoSchedule"
+  affinity: {}
   service:
     type: ClusterIP
     port: 80
@@ -97,6 +106,15 @@ server:
     repository: dataviz-srv
     pullPolicy: IfNotPresent
     tag: "latest"
+  # Node scheduling (optional)
+  nodeSelector: {}
+    # agentpool: applications
+  tolerations: []
+    # - key: "workload"
+    #   operator: "Equal"
+    #   value: "applications"
+    #   effect: "NoSchedule"
+  affinity: {}
   service:
     type: ClusterIP
     port: 3003
