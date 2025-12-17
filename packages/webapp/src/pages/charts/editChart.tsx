@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { useMachine } from "@xstate/react";
 import { RenderChart, DataTable, type FieldDataType } from "dataviz-components";
+import { Link, useParams } from "react-router-dom";
 
 import {
 	getAvailablePalettes,
@@ -9,6 +9,9 @@ import {
 	transposeData,
 } from "../../lib/utils";
 import Layout from "../../components/layout";
+import SelectChart from "../../components/SelectChart";
+import ChartOptions from "../../components/ChartOptions";
+import ChartSave from "../../components/ChartSave";
 import Loading from "../../components/layout/Loading";
 import QuickstartInfo from "../../components/layout/QuickstartInfo";
 import ChartList from "../../components/ChartList";
@@ -17,8 +20,10 @@ import useStoreState from "../../lib/storeState";
 import useChartsStoreState from "../../lib/chartListStore";
 import stepMachine from "../../lib/stepMachine";
 import * as api from "../../lib/api";
+import ChooseLoader from "../../components/load-data/ChooseLoader";
 
 function Home() {
+	const { id: paramId } = useParams();
 	const [state, send] = useMachine(stepMachine);
 	const {
 		config,
@@ -127,34 +132,96 @@ function Home() {
 		}, 100);
 	}
 
+	const item = paramId ? list.find((item) => item.id === paramId) : null;
+
 	return (
 		<Layout>
 			<div className="p-4">
-				<div className="container">
-					{loading ? (
-						<Loading />
-					) : (
-						<>
-							<h4 className="text-4xl font-bold">
-								{list && list.length ? "My Charts" : "Welcome"}
-							</h4>
-							{!data && (!list || list?.length === 0) && <QuickstartInfo />}
-							<div>
-								<div className="flex my-5 gap-4">
-									<a className="btn btn-primary" href="/create-chart">
-										+ Create New
-									</a>
-								</div>
-								<ChartList
-									list={list as FieldDataType[]}
-									handleLoadChart={handleLoadChart}
-									handleDeleteChart={handleDeleteChart}
-								/>
-							</div>
-						</>
-					)}
-				</div>
+				<Link to="/home" className="btn btn-primary">
+					&lt; Back
+				</Link>
+				<h1>EDIT KPI GROUP: ID = {paramId}</h1>
+				{item && <pre>{item.name}</pre>}
+				<h3>current state: {state.value}</h3>
+				{(state.matches("idle") || state.matches("input")) && (
+					<div className="container">
+						<h4 className="text-4xl font-bold">Upload your data</h4>
+						<ChooseLoader
+							handleUpload={handleUpload}
+							remoteUrl={remoteUrl}
+							handleSetRemoteData={handleSetRemoteData}
+						/>
+					</div>
+				)}
+				{state.matches("config") && (
+					<div className="container">
+						<h4 className="text-4xl font-bold">Configure Chart</h4>
+						<SelectChart setChart={setChart} chart={chart} />
+						<ChartOptions
+							config={config}
+							setConfig={setConfig}
+							chart={chart}
+							numSeries={(data as any)?.length - 1 || 0}
+						/>
+					</div>
+				)}
+				{state.matches("done") && (
+					<div className="container">
+						<h4 className="text-4xl font-bold">Save Chart</h4>
+						Give a name to your chart and save it
+						<ChartSave
+							item={{
+								id,
+								chart,
+								name,
+								description,
+								publish,
+								config,
+								data,
+								remoteUrl,
+								isRemote,
+								preview,
+							}}
+							handleSave={() => handleSaveChart()}
+						/>
+					</div>
+				)}
 			</div>
+
+			{haveData && (
+				<>
+					<div className="p-4">
+						<DataTable
+							data={data as any}
+							// transpose={transpose}
+							// download={() => {
+							//   downloadCSV(dataToCSV(data), 'selected-data-' + Date.now());
+							// }}
+						/>
+						{chart && (
+							<>
+								<RenderChart
+									chart={chart}
+									data={data}
+									config={config}
+									dataSource={null}
+									getPicture={(pic: string) => setPreview(pic)}
+								/>
+								{config && chart && (
+									<div className="w-full flex justify-end">
+										<button
+											className="my-5 btn btn-primary"
+											onClick={() => send({ type: "DONE" })}
+										>
+											SAVE / EXPORT
+										</button>
+									</div>
+								)}
+							</>
+						)}
+					</div>
+				</>
+			)}
 		</Layout>
 	);
 }
