@@ -48,16 +48,16 @@ interface LogEntry {
   meta?: Record<string, unknown>;
 }
 
-// Paths to exclude from logging (healthchecks, metrics)
-const EXCLUDED_PATHS = [
-  '/api',           // healthcheck
+// Exact paths to exclude from logging (healthchecks, metrics)
+const EXCLUDED_PATHS = new Set([
+  '/api',           // healthcheck (exact match only)
   '/api/',          // healthcheck with slash
   '/metrics',       // prometheus metrics
   '/health',        // explicit health endpoint
   '/healthz',       // k8s health endpoint
   '/ready',         // readiness probe
   '/live',          // liveness probe
-];
+]);
 
 // Headers that should never be logged
 const REDACTED_HEADERS = [
@@ -173,8 +173,8 @@ export const logger = new Logger();
 export const httpLogger = createMiddleware(async (c, next) => {
   const path = c.req.path;
   
-  // Skip logging for healthchecks and metrics
-  if (EXCLUDED_PATHS.some(p => path === p || path.startsWith(p + '/'))) {
+  // Skip logging for healthchecks and metrics (exact match only)
+  if (EXCLUDED_PATHS.has(path)) {
     await next();
     return;
   }
