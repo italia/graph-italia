@@ -10,6 +10,7 @@ import {
 } from '../lib/jwt-hono';
 import { sendActivationEmail, sendResetPasswordEmail } from '../lib/email';
 import { checkAuth, requireUser } from '../lib/middlewares-hono';
+import { logger } from '../lib/logger';
 
 const APP_URL = process.env.APP_URL || '/';
 
@@ -19,17 +20,15 @@ const router = new Hono();
 router.use('*', checkAuth);
 
 router.get('/user', (c) => {
-  console.log('check user');
   try {
     const user = c.get('user') || null;
     if (!user) {
       return c.json(null, 401);
     }
-    console.log('user found', user);
     const token = c.get('token') || null;
     return c.json({ ...user, token }, 201);
   } catch (error) {
-    console.log('Auth user ERROR', error);
+    logger.error('Failed to get user', error instanceof Error ? error : undefined);
     return c.json({ error: 'Internal error' }, 500);
   }
 });
@@ -53,18 +52,28 @@ router.post('/register', zValidator('json', registerSchema), async (c) => {
         error: { message: 'You must provide an email and a password.' },
       }, 400);
     }
+    
     const existingUser = await db.findUserByEmail(email);
     if (existingUser) {
+      logger.warn('Registration attempted with existing email', { 
+        email: email.replace(/(.{2}).*@/, '$1***@') 
+      });
       return c.json({ error: { message: 'Email already in use.' } }, 409);
     }
+    
     const user = await db.createUserByEmailAndPassword({ email, password });
     const pin = await db.createCode(user.id);
-    console.log('pin', pin);
+    
+    logger.info('User registered, sending activation email', { 
+      userId: user.id,
+      email: email.replace(/(.{2}).*@/, '$1***@')
+    });
+    
     await sendActivationEmail(user, pin);
 
     return c.json({ auth: true }, 200);
   } catch (err) {
-    console.error('Register error:', err);
+    logger.error('Registration failed', err instanceof Error ? err : undefined);
     return c.json({ error: { message: 'Registration failed' } }, 500);
   }
 });
@@ -79,22 +88,37 @@ const loginSchema = z.object({
 });
 
 router.post('/login', zValidator('json', loginSchema), async (c) => {
-  console.log('login');
   try {
     const { email, password } = c.req.valid('json');
     const existingUser = await db.findUserByEmail(email);
+    
     if (!existingUser) {
+      logger.warn('Login attempt for non-existent user', { 
+        email: email.replace(/(.{2}).*@/, '$1***@') 
+      });
       return c.json({ error: { message: 'Invalid login credentials.' } }, 401);
     }
+    
     const validPassword = await bcrypt.compare(password, existingUser.password);
     if (!validPassword) {
+      logger.warn('Login failed - invalid password', { 
+        userId: existingUser.id,
+        email: email.replace(/(.{2}).*@/, '$1***@') 
+      });
       return c.json({ error: { message: 'Invalid login credentials.' } }, 401);
     }
+    
     const { accessToken } = generateTokens(existingUser);
     setAccessTokenCookie(c, accessToken);
+    
+    logger.info('User logged in successfully', { 
+      userId: existingUser.id,
+      email: email.replace(/(.{2}).*@/, '$1***@') 
+    });
+    
     return c.json({ auth: true });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login failed', error instanceof Error ? error : undefined);
     return c.json({ error: { message: 'Login failed' } }, 500);
   }
 });
@@ -110,21 +134,24 @@ const recoverSchema = z.object({
 router.post('/recover', zValidator('json', recoverSchema), async (c) => {
   clearAccessTokenCookie(c);
   const { email } = c.req.valid('json');
-  console.log('recover', email);
+  
+  logger.info('Password recovery requested', { 
+    email: email.replace(/(.{2}).*@/, '$1***@') 
+  });
+  
   const user = await db.findUserByEmail(email);
   if (user) {
-    console.log('user', user);
     const pin = await db.createCode(user.id);
-    console.log('pin', pin);
     await sendResetPasswordEmail(user, pin);
   }
+  // Always return success to prevent email enumeration
   return c.json(true, 200);
 });
 
 router.get('/logout', (c) => {
-  console.log('logout, bye');
+  const user = c.get('user') as any;
+  logger.info('User logged out', { userId: user?.userId });
   clearAccessTokenCookie(c);
-  console.log('removed cookies, return');
   return c.json(true, 200);
 });
 
@@ -137,40 +164,45 @@ const verifySchema = z.object({
 
 router.post('/verify', zValidator('json', verifySchema), async (c) => {
   const { uid, code } = c.req.valid('json');
-  console.log('uid:', uid, ', code:', code);
+  
   if (!uid || !code) {
     return c.json({ error: 'Invalid user activation.' }, 401);
   }
+  
   const user = c.get('user') as any;
-  if (user) {
-    console.log('req.user?', user);
-    if (user.id !== uid) {
-      return c.json({ error: 'Invalid user activation.' }, 400);
-    }
+  if (user && user.id !== uid) {
+    logger.warn('Verification attempted with mismatched user', { 
+      requestUserId: uid, 
+      sessionUserId: user.id 
+    });
+    return c.json({ error: 'Invalid user activation.' }, 400);
   }
+  
   const dbUser = await db.findUserById(uid);
-  console.log('user?', dbUser);
   if (!dbUser) {
+    logger.warn('Verification attempted for non-existent user', { userId: uid });
     return c.json({ error: 'User not found.' }, 400);
   }
+  
   const pin = await db.findCodeByUid(uid);
-  console.log('pin?', pin);
   if (!pin) {
-    console.log('pin not found');
+    logger.warn('Verification failed - code not found', { userId: uid });
     return c.json({ error: 'Code invalid or expired.' }, 400);
   }
-  if (`${pin}`.trim() != `${code}`.trim()) {
-    console.log('pin are not equals', pin, code);
+  
+  if (`${pin}`.trim() !== `${code}`.trim()) {
+    logger.warn('Verification failed - code mismatch', { userId: uid });
     return c.json({ error: 'Code invalid or expired.' }, 400);
   }
-  console.log('user verifyed');
+  
   const userValue = await db.setVerifyed(dbUser.id);
-
   await db.destroyCodes(dbUser.id);
-
-  console.log('login user');
+  
   const { accessToken } = generateTokens(userValue);
   setAccessTokenCookie(c, accessToken);
+  
+  logger.info('User verified successfully', { userId: uid });
+  
   return c.json({ auth: true });
 });
 
@@ -183,32 +215,39 @@ const confirmSchema = z.object({
 
 router.get('/confirm/:uid/:code', zValidator('param', confirmSchema), async (c) => {
   const { uid, code } = c.req.valid('param');
-  console.log('uid:', uid, ', code:', code);
+  
   if (!uid || !code) {
     return c.json({ error: 'Invalid confirmation' }, 401);
   }
+  
   const user = c.get('user') as any;
-  if (user) {
-    console.log('req.user?', user);
-    if (user.userId !== uid) {
-      return c.json({ error: 'Invalid user activation.' }, 400);
-    }
+  if (user && user.userId !== uid) {
+    logger.warn('Email confirmation attempted with mismatched user', { 
+      requestUserId: uid, 
+      sessionUserId: user.userId 
+    });
+    return c.json({ error: 'Invalid user activation.' }, 400);
   }
+  
   const dbUser = await db.findUserById(uid);
-  console.log('user?', dbUser);
   if (!dbUser) {
+    logger.warn('Email confirmation for non-existent user', { userId: uid });
     return c.json({ error: 'User not found.' }, 400);
   }
+  
   const pin = await db.findCodeByUid(uid);
-  console.log('pin?', pin);
   if (!pin || pin !== code) {
+    logger.warn('Email confirmation failed - invalid code', { userId: uid });
     return c.json({ error: 'Code invalid or expired.' }, 400);
   }
+  
   const userValue = await db.setVerifyed(dbUser.id);
   await db.destroyCodes(dbUser.id);
   const { accessToken } = generateTokens(userValue);
   setAccessTokenCookie(c, accessToken);
-  console.log('validate code end');
+  
+  logger.info('Email confirmed successfully', { userId: uid });
+  
   return c.redirect(APP_URL);
 });
 
@@ -234,13 +273,15 @@ const changePwdSchema = z.object({
 
 router.put('/pwd', requireUser, zValidator('json', changePwdSchema), async (c) => {
   const user = c.get('user') as any;
-  console.log('user', user);
   const { password } = c.req.valid('json');
-  console.log('password', password);
+  
   if (!user || !password) {
     return c.json({ error: 'User and password are required.' }, 400);
   }
+  
   await db.changePassword(user.userId, password);
+  logger.info('Password changed successfully', { userId: user.userId });
+  
   return c.body(null, 204);
 });
 

@@ -233,71 +233,20 @@ export const httpLogger = createMiddleware(async (c, next) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function logStartup() {
-  const config = {
-    service: 'dataviz-server',
-    version: process.env.APP_VERSION || '0.0.0-dev',
-    environment: process.env.NODE_ENV || 'development',
-    port: process.env.PORT || 3003,
-    host: process.env.HOST || 'localhost',
-    routes_prefix: process.env.ROUTES_PREFIX || '/',
-    domains: process.env.DOMAINS || 'localhost',
-    database: process.env.DATABASE_URL ? '✓ configured' : '✗ missing',
-    jwt: process.env.JWT_SECRET ? '✓ configured' : '✗ missing',
-    resend: process.env.RESEND_API_KEY ? '✓ configured' : '✗ missing',
-    openai: process.env.OPENAI_API_KEY ? '✓ configured' : '✗ missing',
-  };
-
-  const entry: LogEntry = {
-    timestamp: new Date().toISOString(),
-    level: 'info',
-    service: config.service,
-    version: config.version,
-    environment: config.environment,
-    message: '🚀 Server starting up',
-    meta: {
-      config: {
-        port: config.port,
-        host: config.host,
-        routes_prefix: config.routes_prefix,
-        domains: config.domains,
-      },
-      integrations: {
-        database: config.database,
-        jwt: config.jwt,
-        email: config.resend,
-        ai: config.openai,
-      },
+  logger.info('Server starting up', {
+    config: {
+      port: process.env.PORT || 3003,
+      host: process.env.HOST || 'localhost',
+      routes_prefix: process.env.ROUTES_PREFIX || '/',
+      domains: process.env.DOMAINS || 'localhost',
     },
-  };
-
-  console.log(formatLog(entry));
-
-  // Also print a human-friendly banner in dev
-  if (config.environment !== 'production') {
-    console.log(`
-╔═══════════════════════════════════════════════════════════════╗
-║                                                               ║
-║   ██████╗  █████╗ ████████╗ █████╗ ██╗   ██╗██╗███████╗      ║
-║   ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║   ██║██║╚══███╔╝      ║
-║   ██║  ██║███████║   ██║   ███████║██║   ██║██║  ███╔╝       ║
-║   ██║  ██║██╔══██║   ██║   ██╔══██║╚██╗ ██╔╝██║ ███╔╝        ║
-║   ██████╔╝██║  ██║   ██║   ██║  ██║ ╚████╔╝ ██║███████╗      ║
-║   ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝  ╚═══╝  ╚═╝╚══════╝      ║
-║                                                               ║
-║   Environment: ${config.environment.padEnd(44)}║
-║   Version:     ${config.version.padEnd(44)}║
-║   Port:        ${String(config.port).padEnd(44)}║
-║   Prefix:      ${config.routes_prefix.padEnd(44)}║
-║                                                               ║
-║   Integrations:                                               ║
-║   • Database:  ${config.database.padEnd(44)}║
-║   • JWT:       ${config.jwt.padEnd(44)}║
-║   • Email:     ${config.resend.padEnd(44)}║
-║   • AI:        ${config.openai.padEnd(44)}║
-║                                                               ║
-╚═══════════════════════════════════════════════════════════════╝
-    `);
-  }
+    integrations: {
+      database: !!process.env.DATABASE_URL,
+      jwt: !!process.env.JWT_SECRET,
+      email: !!process.env.RESEND_API_KEY,
+      ai: !!process.env.OPENAI_API_KEY,
+    },
+  });
 }
 
 export default logger;

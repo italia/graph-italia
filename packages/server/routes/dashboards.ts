@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import * as z from 'zod';
 import { checkAuth, requireUser } from '../lib/middlewares-hono';
+import { logger } from '../lib/logger';
 import type { ParsedToken } from '../types';
 import db from '../lib/db';
 
@@ -62,7 +63,7 @@ router.get('/', async (c) => {
     const results = await db.findDashboardByUserId(id);
     return c.json(results);
   } catch (err) {
-    console.error('Dashboard index error:', err);
+    logger.error('Dashboard index error', err instanceof Error ? err : undefined);
     return c.json({ error: 'Internal error' }, 500);
   }
 });
@@ -74,7 +75,7 @@ router.get('/:id', requireUser, zValidator('param', detailSchema), async (c) => 
     const result = await db.findDashboardByIdWithIncludes(id);
     return c.json(result);
   } catch (err) {
-    console.error('Dashboard get error:', err);
+    logger.error('Dashboard get error', err instanceof Error ? err : undefined);
     return c.json({ error: 'Internal error' }, 500);
   }
 });
@@ -88,11 +89,16 @@ router.post('/', requireUser, zValidator('json', createDashboardSchema), async (
       userId: user.userId,
       ...body,
     };
-    console.log(chartData);
     const result = await db.dashboardDb.create(chartData);
+    
+    logger.info('Dashboard created', { 
+      dashboardId: result.id, 
+      userId: user.userId 
+    });
+    
     return c.json(result, 201);
   } catch (err) {
-    console.error('Dashboard create error:', err);
+    logger.error('Dashboard create error', err instanceof Error ? err : undefined);
     return c.json({ error: 'Internal error' }, 500);
   }
 });
@@ -110,9 +116,12 @@ router.delete('/:id', requireUser, zValidator('param', detailSchema), async (c) 
       return c.json({ message: 'Not Authorized' }, 401);
     }
     await db.deleteDashboardById(dashboardId);
+    
+    logger.info('Dashboard deleted', { dashboardId, userId: user.userId });
+    
     return c.body(null, 204);
   } catch (err) {
-    console.error('Dashboard delete error:', err);
+    logger.error('Dashboard delete error', err instanceof Error ? err : undefined);
     return c.json({ error: 'Internal error' }, 500);
   }
 });
@@ -136,9 +145,6 @@ router.put(
       if (dashboard.userId !== user.userId) {
         return c.json({ message: 'Not Authorized' }, 401);
       }
-      console.log('Updating dashboard', dashboardId);
-      console.log('Updating dashboard', JSON.stringify(dashboard));
-      console.log('Dashboard Data', dashboardData);
       
       const { slots: storedSlots } = dashboard;
       const { slots: updatedSlots } = dashboardData;
@@ -148,16 +154,23 @@ router.put(
         (s) => s.chartId
       );
 
-      console.log(toCreate, toUpdate);
-
       const result = await db.updateSlots(dashboardId, {
         toCreate,
         toUpdate,
         toDelete,
       });
+      
+      logger.debug('Dashboard slots updated', { 
+        dashboardId, 
+        userId: user.userId,
+        created: toCreate.length,
+        updated: toUpdate.length,
+        deleted: toDelete.length
+      });
+      
       return c.json(result);
     } catch (err) {
-      console.error('Dashboard update slots error:', err);
+      logger.error('Dashboard update slots error', err instanceof Error ? err : undefined);
       return c.json({ error: 'Internal error' }, 500);
     }
   }
@@ -182,12 +195,14 @@ router.put(
       if (dashboard.userId !== user.userId) {
         return c.json({ message: 'Not Authorized' }, 401);
       }
-      console.log('Updating dashboard', dashboardId);
-      console.log('Dashboard Data', dashboardData);
+      
       const result = await db.dashboardDb.update(dashboardId, dashboardData);
+      
+      logger.debug('Dashboard updated', { dashboardId, userId: user.userId });
+      
       return c.json(result);
     } catch (err) {
-      console.error('Dashboard update error:', err);
+      logger.error('Dashboard update error', err instanceof Error ? err : undefined);
       return c.json({ error: 'Internal error' }, 500);
     }
   }

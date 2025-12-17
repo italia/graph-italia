@@ -4,6 +4,7 @@ import * as z from "zod";
 import db from "../lib/db";
 import { zValidator } from "@hono/zod-validator";
 import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
 
 const router = new Hono();
@@ -56,7 +57,7 @@ router.get("/", async (c) => {
 		const results = await db.findChartsByUSerId(id);
 		return c.json(results);
 	} catch (err) {
-		console.error("Charts index error:", err);
+		logger.error("Charts index error", err instanceof Error ? err : undefined);
 		return c.json({ error: "Internal error" }, 500);
 	}
 });
@@ -68,7 +69,7 @@ router.get("/:id", zValidator("param", detailSchema), async (c) => {
 		const result = await db.findChartById(id);
 		return c.json(result);
 	} catch (err) {
-		console.error("Chart get error:", err);
+		logger.error("Chart get error", err instanceof Error ? err : undefined);
 		return c.json({ error: "Internal error" }, 500);
 	}
 });
@@ -98,7 +99,7 @@ router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
 		}
 		return c.json(result);
 	} catch (err) {
-		console.error("Chart show error:", err);
+		logger.error("Chart show error", err instanceof Error ? err : undefined);
 		return c.json({ error: "Internal error" }, 500);
 	}
 });
@@ -107,19 +108,23 @@ router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
 router.post("/", requireUser, zValidator("json", createChartSchema), async (c) => {
 	try {
 		const body = c.req.valid("json");
-		console.log("CREATE CHART", body);
-
 		const user = c.get("user") as ParsedToken;
-		console.log("user?", user);
 
 		const chartData = {
 			userId: user.userId,
 			...body,
 		};
 		const result = await db.createChart(chartData);
+		
+		logger.info("Chart created", { 
+			chartId: result.id, 
+			userId: user.userId,
+			chartType: body.chart 
+		});
+		
 		return c.json(result, 201);
 	} catch (err) {
-		console.error("Chart create error:", err);
+		logger.error("Chart create error", err instanceof Error ? err : undefined);
 		return c.json({ error: "Internal error" }, 500);
 	}
 });
@@ -137,9 +142,16 @@ router.post("/publish/:id", requireUser, zValidator("param", detailSchema), asyn
 			return c.json({ message: "Not Authorized" }, 401);
 		}
 		const result = await db.publishChart(chartId, !chart?.publish);
+		
+		logger.info("Chart publish toggled", { 
+			chartId, 
+			userId: user.userId, 
+			published: result.publish 
+		});
+		
 		return c.json({ published: result.publish });
 	} catch (err) {
-		console.error("Chart publish error:", err);
+		logger.error("Chart publish error", err instanceof Error ? err : undefined);
 		return c.json({ error: "Internal error" }, 500);
 	}
 });
@@ -157,9 +169,12 @@ router.delete("/:id", requireUser, zValidator("param", detailSchema), async (c) 
 			return c.json({ message: "Not Authorized" }, 401);
 		}
 		const result = await db.deleteChart(chartId);
+		
+		logger.info("Chart deleted", { chartId, userId: user.userId });
+		
 		return c.json(result);
 	} catch (err) {
-		console.error("Chart delete error:", err);
+		logger.error("Chart delete error", err instanceof Error ? err : undefined);
 		return c.json({ error: "Internal error" }, 500);
 	}
 });
@@ -184,9 +199,12 @@ router.put(
 				return c.json({ message: "Not Authorized" }, 401);
 			}
 			const result = await db.updateChart(chartId, chartData);
+			
+			logger.debug("Chart updated", { chartId, userId: user.userId });
+			
 			return c.json(result);
 		} catch (err) {
-			console.error("Chart update error:", err);
+			logger.error("Chart update error", err instanceof Error ? err : undefined);
 			return c.json({ error: "Internal error" }, 500);
 		}
 	}

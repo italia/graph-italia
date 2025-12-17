@@ -1,6 +1,7 @@
 import { setCookie, deleteCookie } from 'hono/cookie';
 import type { Context } from 'hono';
 import { generateTokens, generateAccessToken, verifyAccessToken, hashToken } from './jwt';
+import { logger } from './logger';
 import type { IAccessTokenPayload, IRefreshTokenPayload } from './jwt';
 
 // Re-export common functions
@@ -18,12 +19,12 @@ export function setAccessTokenCookie(c: Context, token: string) {
     secure: isProduction,
     path: '/',
   });
-  console.log('COOKIE SET');
+  logger.debug('Access token cookie set', { expires: expires.toISOString() });
 }
 
 export function clearAccessTokenCookie(c: Context) {
   deleteCookie(c, 'access_token', {
     path: '/',
   });
+  logger.debug('Access token cookie cleared');
 }
-
