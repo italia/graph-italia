@@ -166,9 +166,10 @@ server:
     - name: var-tmp
       mountPath: /var/tmp
   # Health check configuration
+  # Note: path should match ROUTES_PREFIX (e.g., /api if ROUTES_PREFIX=/api)
   livenessProbe:
     httpGet:
-      path: /
+      path: /api
       port: http
     initialDelaySeconds: 30
     periodSeconds: 10
@@ -176,7 +177,7 @@ server:
     failureThreshold: 3
   readinessProbe:
     httpGet:
-      path: /
+      path: /api
       port: http
     initialDelaySeconds: 10
     periodSeconds: 5
