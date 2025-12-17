@@ -120,6 +120,9 @@ jobs:
     environment:
       name: production
     steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
       - name: ⚓ Setup Helm
         uses: azure/setup-helm@v4
         with:
@@ -159,12 +162,11 @@ jobs:
 
       - name: 🎯 Deploy to Kubernetes
         run: |
-          NAMESPACE="dataviz"
           helm upgrade --install dataviz \
             oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
             --version ${{ needs.prepare.outputs.version }} \
-            --namespace $NAMESPACE \
-            --reuse-values \
+            --namespace dataviz \
+            -f ./charts/dataviz/values.yaml \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
             --wait \
@@ -173,10 +175,9 @@ jobs:
 
       - name: ✅ Verify deployment
         run: |
-          NAMESPACE="dataviz"
-          kubectl rollout status deployment/dataviz-webapp -n $NAMESPACE
-          kubectl rollout status deployment/dataviz-server -n $NAMESPACE
-          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to $NAMESPACE"
+          kubectl rollout status deployment/dataviz-webapp -n dataviz
+          kubectl rollout status deployment/dataviz-server -n dataviz
+          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz"
 
   deploy-test:
     name: 🧪 Deploy to Test Environment
@@ -189,6 +190,9 @@ jobs:
       contents: read
       packages: read
     steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
       - name: ⚓ Setup Helm
         uses: azure/setup-helm@v4
         with:
@@ -228,11 +232,11 @@ jobs:
 
       - name: 🎯 Deploy to dataviz-test
         run: |
-          helm upgrade --install dataviz \
+          helm upgrade --install dataviz-test \
             oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
             --version ${{ needs.prepare.outputs.version }} \
             --namespace dataviz-test \
-            --reuse-values \
+            -f ./charts/dataviz/values-test.yaml \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
             --wait \
@@ -241,6 +245,6 @@ jobs:
 
       - name: ✅ Verify deployment
         run: |
-          kubectl rollout status deployment/dataviz-webapp -n dataviz-test
-          kubectl rollout status deployment/dataviz-server -n dataviz-test
+          kubectl rollout status deployment/dataviz-test-webapp -n dataviz-test
+          kubectl rollout status deployment/dataviz-test-server -n dataviz-test
           echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz-test"
