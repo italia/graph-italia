@@ -21,7 +21,6 @@ export const checkAuth = createMiddleware(async (c, next) => {
       const payload = verifyAccessToken(accessToken) as any;
       c.set('user', payload);
       c.set('token', accessToken);
-      logger.debug('Auth successful', { userId: payload.userId });
     }
     await next();
   } catch (error) {
