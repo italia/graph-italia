@@ -5,10 +5,12 @@ async function seedUsers() {
 		{
 			email: "lp@lp.lp",
 			password: "lp@lp.lp",
+			verifyed: true,
 		},
 		{
 			email: "lorezz.me@gmail.com",
 			password: "lorezz.me@gmail.com",
+			verifyed: true,
 		},
 	];
 	for (const item of items) {
