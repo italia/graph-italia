@@ -105,10 +105,12 @@ export interface StoreStateType {
 
 export interface RemoteStoreStateType {
   list: [] | FieldDataType[];
+  showCreateKpiGroupModal: boolean;
   addItem: (item: FieldDataType) => void;
   removeItem: (id: string) => void;
   updateItem: (item: FieldDataType) => void;
   setList: (items: FieldDataType[]) => void;
+  setShowCreateKpiGroupModal: (value: boolean) => void;
 }
 
 // Types for your raw data
@@ -146,11 +148,11 @@ export type AggregationType =
 
 export interface TransformationStep {
   type:
-    | "GROUP_BY"
-    | "AGGREGATE"
-    | "FILTER"
-    | "EXTRACT_DATE_PART"
-    | "PIVOT" /* etc. */;
+  | "GROUP_BY"
+  | "AGGREGATE"
+  | "FILTER"
+  | "EXTRACT_DATE_PART"
+  | "PIVOT" /* etc. */;
   // Common properties
   inputColumns?: string[];
   outputColumnName?: string;
