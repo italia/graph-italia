@@ -105,12 +105,10 @@ export interface StoreStateType {
 
 export interface RemoteStoreStateType {
   list: [] | FieldDataType[];
-  showCreateKpiGroupModal: boolean;
   addItem: (item: FieldDataType) => void;
   removeItem: (id: string) => void;
   updateItem: (item: FieldDataType) => void;
   setList: (items: FieldDataType[]) => void;
-  setShowCreateKpiGroupModal: (value: boolean) => void;
 }
 
 // Types for your raw data

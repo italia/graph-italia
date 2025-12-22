@@ -1,7 +1,14 @@
 import { create } from "zustand";
 import { FieldDataType, RemoteStoreStateType } from "../types";
 
-const useChartsStoreState = create<RemoteStoreStateType>()((set) => ({
+type CreateKpiGroupState = {
+  setShowCreateKpiGroupModal: (value: boolean) => void;
+  showCreateKpiGroupModal: boolean;
+}
+
+type ChartListStoreState = RemoteStoreStateType & CreateKpiGroupState
+
+const useChartsStoreState = create<ChartListStoreState>()((set) => ({
   list: [],
   showCreateKpiGroupModal: false,
   addItem: (item: FieldDataType) => {
