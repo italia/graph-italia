@@ -6,10 +6,12 @@ async function seedUsers() {
     {
       email: "lp@lp.lp",
       password: "lp@lp.lp",
+      verifyed: true
     },
     {
       email: "lorezz.me@gmail.com",
       password: "lorezz.me@gmail.com",
+      verifyed: true
     },
   ];
   for (const item of items) {
@@ -23,6 +25,11 @@ export default async function main() {
     console.log("Seeding users...");
     await seedUsers();
     users = await db.getUsers();
+  }
+  for (const user of users) {
+    if (!user.verifyed) {
+      await db.setVerifyed(user.id)
+    }
   }
   console.log("users", users);
   return users;
