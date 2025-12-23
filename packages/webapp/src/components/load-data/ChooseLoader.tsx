@@ -7,6 +7,7 @@ type ChooseLoaderProps = {
   handleUpload: (d: any) => void;
   handleSetRemoteData: (d: any) => void;
   remoteUrl: string | null;
+  initialData?: any;
 };
 
 // Definizione dei tab con icone e descrizioni
@@ -80,6 +81,7 @@ export default function ChooseLoader({
   handleUpload,
   handleSetRemoteData,
   remoteUrl,
+  initialData,
 }: ChooseLoaderProps) {
   const [currentTab, setCurrentTab] = useState<number>(0);
 
@@ -113,10 +115,16 @@ export default function ChooseLoader({
       {/* Tab Content */}
       <div className="bg-base-100 rounded-lg">
         {currentTab === 0 && (
-          <CSVUpload setData={(d: any) => handleUpload(d)} />
+          <CSVUpload
+            setData={(d: any) => handleUpload(d)}
+            initialData={initialData}
+          />
         )}
         {currentTab === 1 && (
-          <JsonUpload setData={(d: any) => handleUpload(d)} />
+          <JsonUpload
+            setData={(d: any) => handleUpload(d)}
+            initialData={initialData}
+          />
         )}
         {currentTab === 2 && (
           <LoadRemoteJsonSource

@@ -28,12 +28,19 @@ function cleanupData(matrix: MatrixType) {
   });
 }
 
-function UploadJSON({ setData }: { setData: Function }) {
+function UploadJSON({
+  setData,
+  initialData,
+}: {
+  setData: Function;
+  initialData?: any;
+}) {
   const [_, startTransition] = useTransition();
   const [rawData, setRawData] = useState<any>(null);
   const [category, setCategory] = useState<selectOptionType | null>(null);
   const [series, setSeries] = useState<selectOptionType[] | []>([]);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   let fileReader: FileReader | undefined;
 
@@ -41,14 +48,30 @@ function UploadJSON({ setData }: { setData: Function }) {
     return JSON.stringify(a) === JSON.stringify(b);
   }
   function getFirstOfMAtrix(matrix: any) {
-    return matrix[0][0]?.trim();
+    const val = matrix[0][0];
+    return typeof val === "string" ? val.trim() : String(val);
   }
-  function getCols(cols: [string]) {
-    return cols.map((c: string) => {
-      const col = c.trim();
+  function getCols(cols: (string | number)[]) {
+    return cols.map((c: string | number) => {
+      const col = typeof c === "string" ? c.trim() : String(c);
       return { value: col, label: col };
     });
   }
+
+  // Inizializza con i dati esistenti
+  useEffect(() => {
+    if (initialData && initialData.length > 0 && !initialized) {
+      const c = getFirstOfMAtrix(initialData);
+      const newCategory = { value: c, label: c };
+      const cols = getCols(initialData[0]);
+      const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
+
+      setRawData(initialData);
+      setCategory(newCategory);
+      setSeries(newSeries);
+      setInitialized(true);
+    }
+  }, [initialData, initialized]);
 
   function filterData(
     data: any,

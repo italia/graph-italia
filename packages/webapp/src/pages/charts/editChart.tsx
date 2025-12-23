@@ -377,6 +377,7 @@ function EditChartPage() {
                     handleUpload={handleUpload}
                     remoteUrl={remoteUrl}
                     handleSetRemoteData={handleSetRemoteData}
+                    initialData={data}
                   />
 
                   {/* Pulsante per procedere alla configurazione */}

@@ -28,24 +28,47 @@ function cleanupData(matrix: MatrixType) {
   });
 }
 
-function UploadCSV({ setData }: { setData: Function }) {
+function UploadCSV({
+  setData,
+  initialData,
+}: {
+  setData: Function;
+  initialData?: any;
+}) {
   const [_, startTransition] = useTransition();
   const [rawData, setRawData] = useState<any>(null);
   const [category, setCategory] = useState<selectOptionType | null>(null);
   const [series, setSeries] = useState<selectOptionType[] | []>([]);
+  const [initialized, setInitialized] = useState(false);
 
   function isSameObject(a: object, b: object) {
     return JSON.stringify(a) === JSON.stringify(b);
   }
   function getFirstOfMAtrix(matrix: any) {
-    return matrix[0][0]?.trim();
+    const val = matrix[0][0];
+    return typeof val === "string" ? val.trim() : String(val);
   }
-  function getCols(cols: string[]) {
-    return cols.map((c: string) => {
-      const col = c.trim();
+  function getCols(cols: (string | number)[]) {
+    return cols.map((c: string | number) => {
+      const col = typeof c === "string" ? c.trim() : String(c);
       return { value: col, label: col };
     });
   }
+
+  // Inizializza con i dati esistenti
+  useEffect(() => {
+    if (initialData && initialData.length > 0 && !initialized) {
+      const c = getFirstOfMAtrix(initialData);
+      const newCategory = { value: c, label: c };
+      const cols = getCols(initialData[0]);
+      const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
+
+      setRawData(initialData);
+      setCategory(newCategory);
+      setSeries(newSeries);
+      setInitialized(true);
+    }
+  }, [initialData, initialized]);
 
   function filterData(
     data: any,
@@ -56,7 +79,10 @@ function UploadCSV({ setData }: { setData: Function }) {
     const cols = [cat, ...ser].map((col: any) => col.value);
     const filtered = data.map((row: any) => {
       return row.filter((_r: any, i: number) => {
-        return cols.includes(data[0][i].trim());
+        const headerVal = data[0][i];
+        const headerStr =
+          typeof headerVal === "string" ? headerVal.trim() : String(headerVal);
+        return cols.includes(headerStr);
       });
     });
     return filtered;
