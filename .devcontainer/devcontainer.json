@@ -26,6 +26,7 @@
         "github.vscode-github-actions",
         "github.vscode-pull-request-github",
         "ckolkman.vscode-postgres",
+        "waderyan.gitblame",
         "Prisma.prisma"
       ],
       "settings": {
