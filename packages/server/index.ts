@@ -1,12 +1,13 @@
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import express, { Router } from "express";
 import helmet from "helmet";
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import * as middlewares from "./lib/middlewares.ts";
 import authRouter from "./routes/auth.ts";
 import chartRouter from "./routes/charts.ts";
 import dashRouter from "./routes/dashboards.ts";
 import suggestionsRouter from "./routes/hints.ts";
+import kpiGroupRouter from "./routes/kpi-group.ts";
 
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
@@ -37,6 +38,7 @@ app.get(["/", `${ROUTES_PREFIX}/`], async (req, res) => {
 });
 
 app.use(`${ROUTES_PREFIX}/auth`, authRouter as Router);
+app.use(`${ROUTES_PREFIX}/charts/kpi-group`, kpiGroupRouter as Router);
 app.use(`${ROUTES_PREFIX}/charts`, chartRouter as Router);
 app.use(`${ROUTES_PREFIX}/dashboards`, dashRouter as Router);
 app.use(`${ROUTES_PREFIX}/hints`, suggestionsRouter as Router);

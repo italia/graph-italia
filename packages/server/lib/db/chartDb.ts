@@ -1,5 +1,5 @@
 import { prisma } from "./prisma";
-import type { Chart, User } from "./prisma/client";
+import type { Chart, Prisma, User } from "./prisma/client";
 
 export function findAllCharts() {
 	return prisma.chart.findMany({

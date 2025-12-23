@@ -324,3 +324,15 @@ export async function createChart(payload: {
   });
   return { id: response.data.id } as { id: string };
 }
+
+type CreateKpiGroupPayload = {
+  name: string;
+  description?: string;
+}
+
+export async function createKpiGroup(payload: CreateKpiGroupPayload) {
+  const response = await axios.post<{ id: string }>(`${getServerUrlWithApi()}/charts/kpi-group`, {
+    ...payload
+  });
+  return { id: response.data.id };
+}
