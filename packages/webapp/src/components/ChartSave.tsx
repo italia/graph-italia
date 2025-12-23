@@ -12,15 +12,19 @@ function ChartSave({ item, handleSave }: any) {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
-    defaultValues: {
+    values: {
       id: item?.id || "",
       name: item?.name || defaultName,
       description: item?.description || "",
       publish: item?.id ? item?.publish : true,
     },
   });
+
+  const publishValue = watch("publish");
 
   function saveChart(formData: any) {
     const { id = "", name, description = "", publish = false } = formData;
@@ -125,12 +129,16 @@ function ChartSave({ item, handleSave }: any) {
 
         {/* Opzione pubblica */}
         <div className="form-control bg-base-200/50 rounded-lg p-4">
-          <label className="label cursor-pointer justify-start gap-4">
-            <input
-              id="publish-checkbox"
-              type="checkbox"
-              className="toggle toggle-primary"
-              {...register("publish", { required: false })}
+          <div
+            className="flex items-center gap-4 cursor-pointer"
+            onClick={() => setValue("publish", !publishValue)}
+          >
+            <span
+              role="switch"
+              aria-checked={publishValue}
+              className={`toggle toggle-primary ${
+                publishValue ? "toggle-checked" : ""
+              }`}
             />
             <div>
               <span className="label-text font-medium block">
@@ -140,7 +148,7 @@ function ChartSave({ item, handleSave }: any) {
                 Rendi il grafico visibile pubblicamente
               </span>
             </div>
-          </label>
+          </div>
         </div>
 
         {/* Pulsante di salvataggio */}
@@ -168,7 +176,7 @@ function ChartSave({ item, handleSave }: any) {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                    d="M5 13l4 4L19 7"
                   />
                 </svg>
                 Salva grafico

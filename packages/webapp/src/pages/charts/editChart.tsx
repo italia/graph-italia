@@ -1,5 +1,5 @@
 import { useMachine } from "@xstate/react";
-import { DataTable, RenderChart, type FieldDataType } from "dataviz-components";
+import { DataTable, RenderChart } from "dataviz-components";
 import "dataviz-components/dist/style.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,15 +9,11 @@ import ChartSave from "../../components/ChartSave";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import SelectChart from "../../components/SelectChart";
-import {
-  getAvailablePalettes,
-  getPalette,
-  transposeData,
-} from "../../lib/utils";
+import { getAvailablePalettes, getPalette } from "../../lib/utils";
 
 import ChooseLoader from "../../components/load-data/ChooseLoader";
 import * as api from "../../lib/api";
-import useChartsStoreState from "../../lib/chartListStore";
+import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
 
@@ -56,8 +52,6 @@ function EditChartPage() {
     resetItem,
   } = useStoreState((state) => state);
 
-  const { list, setList } = useChartsStoreState((state) => state);
-
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
 
@@ -90,17 +84,6 @@ function EditChartPage() {
     };
   }, [updateLeftCardHeight, state.value, data]);
 
-  async function fetchCharts() {
-    setLoading(true);
-    try {
-      const data = await api.getCharts();
-      setList(data);
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  }
-
   // Carica il grafico esistente quando c'è un paramId
   useEffect(() => {
     async function loadExistingChart() {
@@ -109,7 +92,11 @@ function EditChartPage() {
         try {
           const chartData = await api.getChart(paramId);
           if (chartData) {
-            loadItem({ ...chartData, id: paramId });
+            loadItem({
+              ...chartData,
+              id: paramId,
+              config: chartData.config || defaultConfig,
+            });
             setChartName(chartData.name || "");
           }
         } catch (error) {
@@ -122,20 +109,7 @@ function EditChartPage() {
       }
     }
     loadExistingChart();
-    fetchCharts();
   }, [paramId]);
-
-  function reset() {
-    setData(null);
-  }
-  function transpose() {
-    setData(null);
-    const transposed = transposeData(data);
-    // setChart("");
-    setTimeout(() => {
-      handleChangeData(transposed);
-    }, 300);
-  }
 
   function handleChangeData(d: any) {
     if (!config.palette) {
@@ -170,28 +144,9 @@ function EditChartPage() {
     }
   }
 
-  function handleLoadChart(item: FieldDataType) {
-    send({ type: "CONFIG" });
-    loadItem(item);
-  }
-
-  function handleDeleteChart(id?: string) {
-    if (!id) return;
-    console.log("delete chart?", id);
-
-    const sure = confirm("Are you sure you want to delete this chart?");
-    if (!sure) return;
-
-    return api
-      .deleteChart(id)
-      .then(() => fetchCharts())
-      .then(() => send({ type: "IDLE" }));
-  }
   function handleSaveChart() {
-    fetchCharts().then(() => send({ type: "IDLE" }));
-    setTimeout(() => {
-      resetItem();
-    }, 100);
+    send({ type: "IDLE" });
+    resetItem();
   }
 
   // Determina lo step corrente per la visualizzazione
@@ -544,7 +499,17 @@ function EditChartPage() {
                           </svg>
                           Anteprima grafico
                         </h3>
-                        <div className="mt-4 overflow-auto max-h-[500px]">
+                        <div className="mt-4 overflow-auto h-[420px] relative">
+                          {!preview && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
+                              <div className="flex flex-col items-center gap-3">
+                                <span className="loading loading-spinner loading-lg text-primary"></span>
+                                <span className="text-sm text-base-content/60">
+                                  Caricamento grafico...
+                                </span>
+                              </div>
+                            </div>
+                          )}
                           <RenderChart
                             chart={chart}
                             data={data}
