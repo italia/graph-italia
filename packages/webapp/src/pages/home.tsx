@@ -24,7 +24,7 @@ type KpiGroupPayload = GenericChartPayload;
 type ChartPayload = GenericChartPayload;
 
 async function createKpiGroup(payload: KpiGroupPayload) {
-  return new Promise<{ id: string }>((resolve) => resolve({ id: "fakeId" }));
+  return api.createKpiGroup(payload);
 }
 
 function Home() {

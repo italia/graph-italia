@@ -1,7 +1,12 @@
-import { verifyAccessToken } from './jwt';
+import type { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
-import type { ErrorResponse, RequestValidators } from '../types';
-import type { NextFunction, Response, Request } from 'express';
+import type { ErrorResponse, ParsedToken, RequestValidators } from '../types';
+import { verifyAccessToken } from './jwt';
+
+export interface AuthenticatedRequest extends Request {
+  user: ParsedToken | null;
+  token: string;
+}
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
@@ -51,7 +56,7 @@ export function validateRequest(validators: RequestValidators) {
   };
 }
 
-export function checkAuth(req: any, res: Response, next: NextFunction) {
+export function checkAuth(req: Request, res: Response, next: NextFunction) {
   console.log('checkAuth');
   let accessToken;
   try {
@@ -68,20 +73,20 @@ export function checkAuth(req: any, res: Response, next: NextFunction) {
       console.log('ACCESS TOKEN', accessToken);
       const payload = verifyAccessToken(accessToken) as any;
       console.log('USER', payload);
-      req.user = payload;
-      req.token = accessToken;
+      (req as AuthenticatedRequest).user = payload;
+      (req as AuthenticatedRequest).token = accessToken;
     }
     next();
   } catch (error) {
     console.error('checkAuth ERROR', error);
-    req.user = null;
+    (req as AuthenticatedRequest).user = null;
     return res.status(401).json({ error });
   }
 }
 
-export function requireUser(req: any, res: Response, next: NextFunction) {
+export function requireUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const user = req.user;
+    const user = (req as AuthenticatedRequest).user;
     if (!user) {
       res.status(401);
       throw new Error('Unauthorized.');
