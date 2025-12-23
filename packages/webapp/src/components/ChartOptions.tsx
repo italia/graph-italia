@@ -1,7 +1,48 @@
 import { useForm } from "react-hook-form";
-import { palettes, getFields, defaultConfig } from "../lib/constants";
+import { defaultConfig, getFields, palettes } from "../lib/constants";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
 import ShowPalette from "./ShowPalette";
+
+// Mappa per tradurre le label dei campi in italiano
+const LABEL_TRANSLATIONS: Record<string, string> = {
+  "Chart Title": "Titolo del grafico",
+  "X Axis Label": "Etichetta asse X",
+  "Y Axis Label": "Etichetta asse Y",
+  "Show Legend": "Mostra legenda",
+  "Legend Position": "Posizione legenda",
+  "Show Tooltip": "Mostra tooltip",
+  "Show Grid": "Mostra griglia",
+  "Show Labels": "Mostra etichette",
+  "Show Values": "Mostra valori",
+  "Color Palette": "Palette colori",
+  Direction: "Orientamento",
+  Width: "Larghezza",
+  Height: "Altezza",
+  "Show Pie Labels": "Mostra etichette torta",
+  "Visual Map": "Mappa visuale",
+  Stacked: "Impilato",
+  Smooth: "Linea curva",
+};
+
+// Mappa per tradurre i nomi delle sezioni
+const SECTION_TRANSLATIONS: Record<string, string> = {
+  Layout: "Layout",
+  Style: "Stile",
+  Labels: "Etichette",
+  Legend: "Legenda",
+  Tooltip: "Tooltip",
+  Grid: "Griglia",
+  Colors: "Colori",
+  Options: "Opzioni",
+};
+
+function translateLabel(label: string): string {
+  return LABEL_TRANSLATIONS[label] || label;
+}
+
+function translateSection(name: string): string {
+  return SECTION_TRANSLATIONS[name] || name;
+}
 
 function ChartOptions({
   config,
@@ -44,8 +85,26 @@ function ChartOptions({
     const newConfig = { h: Number(h), w: Number(w), ...rest, colors, palette };
     setConfig(newConfig);
   };
+
   if (!chart) {
-    return <div className='my-5'>Please choose a chart type</div>;
+    return (
+      <div className="alert alert-info my-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          className="stroke-current shrink-0 w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <span>Seleziona un tipo di grafico per configurare le opzioni</span>
+      </div>
+    );
   }
 
   let filteredFields = fields.filter((field) =>
@@ -71,123 +130,151 @@ function ChartOptions({
       (field) => field.dependsOn !== "visualMap"
     );
   }
+
   return (
-    <div className='bg-base-200 p-4 rounded-box'>
+    <div className="space-y-4">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className='my-5'>
-          <button className='btn btn-primary w-full' type='submit'>
-            Apply Changes
+        {/* Pulsante Applica in alto */}
+        <div className="sticky top-0 bg-base-100 py-3 z-10 border-b border-base-200 mb-4">
+          <button className="btn btn-primary w-full gap-2" type="submit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            Applica modifiche
           </button>
         </div>
-        <div className='grid grid-cols-2 gap-4'>
+
+        {/* Griglia campi */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredFields.map((field) => {
+            // Campi di input testo, numero, colore
             if (["text", "email", "number", "color"].includes(field.type)) {
-              let style = {};
-              if (field.layout) {
-                style = { gridColumn: `span ${field.layout}` };
-              }
-              let label = field.label;
+              const layoutValue = field.layout ? Number(field.layout) : 1;
+              const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
+
+              let label = translateLabel(field.label);
               if (
                 (field.name === "xLabel" || field.name === "yLabel") &&
                 watchDirection === "horizontal"
               ) {
                 label =
                   field.name === "xLabel"
-                    ? field.label.replace("X", "Y")
-                    : field.label.replace("Y", "X");
+                    ? label.replace("X", "Y")
+                    : label.replace("Y", "X");
               }
               return (
-                <div key={field.name} style={style}>
-                  <label className='label'>{label}</label>
-                  <div>
-                    <input
-                      className='input'
-                      type={field.type}
-                      {...field.otherProps}
-                      {...register(field.name, { required: field.required })}
-                    />
-                  </div>
+                <div key={field.name} className={`form-control ${gridSpan}`}>
+                  <label className="label">
+                    <span className="label-text font-medium">{label}</span>
+                  </label>
+                  <input
+                    className="input input-bordered w-full"
+                    type={field.type}
+                    {...field.otherProps}
+                    {...register(field.name, { required: field.required })}
+                  />
                   {errors[field.name] && (
-                    <span className='bg-danger'>This field is required</span>
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        Campo obbligatorio
+                      </span>
+                    </label>
                   )}
                 </div>
               );
-            } else if (["checkbox"].includes(field.type)) {
-              let style = {};
-              if (field.layout) {
-                style = { gridColumn: `span ${field.layout}` };
-              }
+            }
+
+            // Campi checkbox
+            if (["checkbox"].includes(field.type)) {
+              const layoutValue = field.layout ? Number(field.layout) : 1;
+              const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
+
               return (
-                <div key={field.name} style={style}>
-                  <label className='label'>{field.label}</label>
-                  <div>
+                <div key={field.name} className={`form-control ${gridSpan}`}>
+                  <label className="label cursor-pointer justify-start gap-3">
                     <input
-                      className='checkbox'
-                      type='checkbox'
+                      className="checkbox checkbox-primary"
+                      type="checkbox"
                       {...field.otherProps}
                       {...register(field.name, { required: field.required })}
                     />
-                  </div>
+                    <span className="label-text font-medium">
+                      {translateLabel(field.label)}
+                    </span>
+                  </label>
                   {errors[field.name] && (
-                    <span className='bg-danger'>This field is required</span>
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        Campo obbligatorio
+                      </span>
+                    </label>
                   )}
                 </div>
               );
-            } else if (["select"].includes(field.type)) {
-              let style = {};
-              if (field.layout) {
-                style = { gridColumn: `span ${field.layout}` };
-              }
+            }
+
+            // Campi select
+            if (["select"].includes(field.type)) {
+              const layoutValue = field.layout ? Number(field.layout) : 1;
+              const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
+
               return (
-                <div key={field.name} style={style}>
-                  <div>{field.label}</div>
+                <div key={field.name} className={`form-control ${gridSpan}`}>
+                  <label className="label">
+                    <span className="label-text font-medium">
+                      {translateLabel(field.label)}
+                    </span>
+                  </label>
                   <select
-                    className='input select'
-                    style={{ width: "80%" }}
+                    className="select select-bordered w-full"
                     {...field.otherProps}
                     {...register(field.name, { required: field.required })}
                   >
-                    {field.options.map((option: string) => {
-                      return (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      );
-                    })}
+                    {field.options.map((option: string) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                   {errors[field.name] && (
-                    <span className='bg-danger'>This field is required</span>
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        Campo obbligatorio
+                      </span>
+                    </label>
                   )}
                   {field.name === "palette" && watchPalette && (
-                    <>
+                    <div className="mt-2">
                       <ShowPalette palette={palettes[watchPalette]} />
-                    </>
+                    </div>
                   )}
                 </div>
               );
-            } else {
-              let style = {
-                marginTop: 10,
-                gridColumn: "span 2",
-                fontWeight: "bold",
-                fontSize: 16,
-              };
-              return (
-                <>
-                  <div style={style}>
-                    <span className='badge badge-neutral badge-lg'>
-                      {field.name}
-                    </span>
-                  </div>
-                </>
-              );
             }
+
+            // Separatori di sezione
+            return (
+              <div key={field.name} className="col-span-full mt-4 first:mt-0">
+                <div className="flex items-center gap-2">
+                  <span className="badge badge-neutral">
+                    {translateSection(field.name)}
+                  </span>
+                  <div className="flex-1 h-px bg-base-200"></div>
+                </div>
+              </div>
+            );
           })}
-        </div>
-        <div className='my-5'>
-          <button className='btn btn-primary w-full' type='submit'>
-            Apply Changes
-          </button>
         </div>
       </form>
     </div>
