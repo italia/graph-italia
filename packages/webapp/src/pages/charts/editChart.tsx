@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { DataTable, RenderChart, type FieldDataType } from "dataviz-components";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import ChartOptions from "../../components/ChartOptions";
 import ChartSave from "../../components/ChartSave";
@@ -21,6 +21,7 @@ import useStoreState from "../../lib/storeState";
 
 function Home() {
   const { id: paramId } = useParams();
+  const navigate = useNavigate();
   const [state, send] = useMachine(stepMachine);
   const {
     config,
@@ -49,6 +50,8 @@ function Home() {
   const { list, setList } = useChartsStoreState((state) => state);
 
   const [loading, setLoading] = useState(true);
+  const [chartName, setChartName] = useState<string>("");
+
   async function fetchCharts() {
     setLoading(true);
     try {
@@ -60,9 +63,29 @@ function Home() {
     }
   }
 
+  // Carica il grafico esistente quando c'è un paramId
   useEffect(() => {
+    async function loadExistingChart() {
+      if (paramId) {
+        setLoading(true);
+        try {
+          const chartData = await api.getChart(paramId);
+          if (chartData) {
+            loadItem({ ...chartData, id: paramId });
+            setChartName(chartData.name || "");
+          }
+        } catch (error) {
+          console.error("Errore nel caricamento del grafico:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    }
+    loadExistingChart();
     fetchCharts();
-  }, []);
+  }, [paramId]);
 
   function reset() {
     setData(null);
@@ -129,17 +152,21 @@ function Home() {
     }, 100);
   }
 
-  const item = paramId ? list.find((item) => item.id === paramId) : null;
-
   return (
     <Layout>
       <div className="p-4">
-        <Link to="/home" className="btn btn-primary">
-          &lt; Back
-        </Link>
-        <h1>EDIT KPI GROUP: ID = {paramId}</h1>
-        {item && <pre>{item.name}</pre>}
-        <h3>current state: {state.value as string}</h3>
+        <button
+          onClick={() => navigate("/home")}
+          className="btn btn-outline btn-sm mb-4"
+        >
+          ← Torna alla lista
+        </button>
+        <h1 className="text-3xl font-bold mb-2">
+          {paramId ? `Modifica Grafico` : "Nuovo Grafico"}
+        </h1>
+        {chartName && (
+          <p className="text-lg text-base-content/70 mb-4">{chartName}</p>
+        )}
         {(state.matches("idle") || state.matches("input")) && (
           <div className="container">
             <h4 className="text-4xl font-bold">Upload your data</h4>
@@ -164,13 +191,15 @@ function Home() {
         )}
         {state.matches("done") && (
           <div className="container">
-            <h4 className="text-4xl font-bold">Save Chart</h4>
-            Give a name to your chart and save it
+            <h4 className="text-4xl font-bold">Salva Grafico</h4>
+            <p className="text-base-content/70 mb-4">
+              Dai un nome al tuo grafico e salvalo
+            </p>
             <ChartSave
               item={{
-                id,
+                id: paramId || id,
                 chart,
-                name,
+                name: chartName || name,
                 description,
                 publish,
                 config,

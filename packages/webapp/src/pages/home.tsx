@@ -15,12 +15,13 @@ import useChartsStoreState from "../lib/chartListStore";
 import stepMachine from "../lib/stepMachine";
 import useStoreState from "../lib/storeState";
 
-type GenericChartPaylod = {
+type GenericChartPayload = {
   name: string;
-  description: string;
+  description?: string;
 };
 
-type KpiGroupPayload = GenericChartPaylod;
+type KpiGroupPayload = GenericChartPayload;
+type ChartPayload = GenericChartPayload;
 
 async function createKpiGroup(payload: KpiGroupPayload) {
   return new Promise<{ id: string }>((resolve) => resolve({ id: "fakeId" }));
@@ -52,11 +53,19 @@ function Home() {
     resetItem,
   } = useStoreState((state) => state);
 
-  const { list, setList, showCreateKpiGroupModal, setShowCreateKpiGroupModal } =
-    useChartsStoreState((state) => state);
+  const {
+    list,
+    setList,
+    showCreateKpiGroupModal,
+    setShowCreateKpiGroupModal,
+    showCreateChartModal,
+    setShowCreateChartModal,
+  } = useChartsStoreState((state) => state);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [newKpiGroup, setNewKpiGroup] = useState<KpiGroupPayload>();
+  const [newChart, setNewChart] = useState<ChartPayload>();
+  const [isCreatingChart, setIsCreatingChart] = useState(false);
   async function fetchCharts() {
     setLoading(true);
     try {
@@ -97,6 +106,13 @@ function Home() {
     navigate(`/edit/kpi/${id}`);
   }
 
+  function navigateToChartEdit(id?: string) {
+    if (!id) {
+      throw new Error("ID del grafico mancante");
+    }
+    navigate(`/edit/chart/${id}`);
+  }
+
   async function showCreateKpiGroupConfirmHandler(payload: KpiGroupPayload) {
     const response = await createKpiGroup(payload);
     if (!response) {
@@ -110,6 +126,32 @@ function Home() {
 
   function showCreateKpiGroupCancelHandler() {
     setShowCreateKpiGroupModal(false);
+  }
+
+  async function showCreateChartConfirmHandler(payload: ChartPayload) {
+    if (!payload.name?.trim()) {
+      return;
+    }
+    setIsCreatingChart(true);
+    try {
+      const response = await api.createChart(payload);
+      if (!response) {
+        return;
+      }
+      const { id } = response;
+      setShowCreateChartModal(false);
+      setNewChart(undefined);
+      navigateToChartEdit(id);
+    } catch (error) {
+      console.error("Errore nella creazione del grafico:", error);
+    } finally {
+      setIsCreatingChart(false);
+    }
+  }
+
+  function showCreateChartCancelHandler() {
+    setShowCreateChartModal(false);
+    setNewChart(undefined);
   }
 
   return (
@@ -131,15 +173,17 @@ function Home() {
                     <details className="dropdown my-10 bg-base-100 z-10">
                       <summary className="btn btn-primary m-1">
                         {" "}
-                        + Create New chart
+                        + Crea nuovo
                       </summary>
                       <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border">
                         <li>
-                          <a href="/edit/chart">Create Chart</a>
+                          <a onClick={() => setShowCreateChartModal(true)}>
+                            Crea Grafico
+                          </a>
                         </li>
                         <li>
                           <a onClick={() => setShowCreateKpiGroupModal(true)}>
-                            Create KpiGroup
+                            Crea Gruppo KPI
                           </a>
                         </li>
                       </ul>
@@ -154,11 +198,14 @@ function Home() {
               </>
             )}
           </div>
+          {/* Modal per creare Gruppo KPI */}
           {showCreateKpiGroupModal && (
             <GenericDialog
-              title="Aggiungi Dashboard"
+              title="Crea Gruppo KPI"
+              description="Inserisci i dati per creare un nuovo gruppo di indicatori KPI"
               toggle={showCreateKpiGroupModal}
-              labels={{ confirm: "Aggiungi", cancel: "Annulla" }}
+              labels={{ confirm: "Crea", cancel: "Annulla" }}
+              confirmDisabled={!newKpiGroup?.name?.trim()}
               confirmCb={() => {
                 if (!newKpiGroup) {
                   return;
@@ -169,13 +216,18 @@ function Home() {
                 showCreateKpiGroupCancelHandler();
               }}
             >
-              <div className="bg-base-200">
-                <div className="p-4 my-5">
-                  <label className="name">Nome</label>
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label" htmlFor="kpi-name">
+                    <span className="label-text font-medium">Nome *</span>
+                  </label>
                   <input
-                    className="input w-full"
+                    id="kpi-name"
+                    className="input input-bordered w-full"
                     type="text"
                     name="name"
+                    placeholder="Inserisci il nome del gruppo KPI"
+                    autoFocus
                     onChange={(e) => {
                       const name = e.target.value;
                       const oldValue = newKpiGroup ?? ({} as KpiGroupPayload);
@@ -183,18 +235,79 @@ function Home() {
                     }}
                   />
                 </div>
-                <div className="p-4 my-5">
-                  <label className="name">Descrizione</label>
+                <div className="form-control">
+                  <label className="label" htmlFor="kpi-description">
+                    <span className="label-text font-medium">Descrizione</span>
+                  </label>
                   <input
-                    className="input w-full"
+                    id="kpi-description"
+                    className="input input-bordered w-full"
                     type="text"
                     name="description"
+                    placeholder="Inserisci una descrizione (opzionale)"
                     onChange={(e) => {
                       const description = e.target.value;
                       const oldValue = newKpiGroup ?? ({} as KpiGroupPayload);
                       setNewKpiGroup({ ...oldValue, description });
                     }}
                   />
+                </div>
+              </div>
+            </GenericDialog>
+          )}
+
+          {/* Modal per creare Grafico - Conforme Design System Italia */}
+          {showCreateChartModal && (
+            <GenericDialog
+              title="Crea nuovo grafico"
+              description="Dai un nome al tuo grafico per iniziare a modificarlo"
+              toggle={showCreateChartModal}
+              labels={{
+                confirm: isCreatingChart ? "Creazione..." : "Crea",
+                cancel: "Annulla",
+              }}
+              confirmDisabled={!newChart?.name?.trim() || isCreatingChart}
+              confirmCb={() => {
+                if (!newChart) {
+                  return;
+                }
+                showCreateChartConfirmHandler(newChart);
+              }}
+              cancelCb={() => {
+                showCreateChartCancelHandler();
+              }}
+            >
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label" htmlFor="chart-name">
+                    <span className="label-text font-medium">
+                      Nome del grafico *
+                    </span>
+                  </label>
+                  <input
+                    id="chart-name"
+                    className="input input-bordered w-full"
+                    type="text"
+                    name="name"
+                    placeholder="Es: Vendite mensili 2024"
+                    autoFocus
+                    value={newChart?.name || ""}
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      const oldValue = newChart ?? ({} as ChartPayload);
+                      setNewChart({ ...oldValue, name });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && newChart?.name?.trim()) {
+                        showCreateChartConfirmHandler(newChart);
+                      }
+                    }}
+                  />
+                  <label className="label">
+                    <span className="label-text-alt text-base-content/60">
+                      Potrai modificare il nome in seguito
+                    </span>
+                  </label>
                 </div>
               </div>
             </GenericDialog>

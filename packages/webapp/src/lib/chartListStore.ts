@@ -4,13 +4,21 @@ import { FieldDataType, RemoteStoreStateType } from "../types";
 type CreateKpiGroupState = {
   setShowCreateKpiGroupModal: (value: boolean) => void;
   showCreateKpiGroupModal: boolean;
-}
+};
 
-type ChartListStoreState = RemoteStoreStateType & CreateKpiGroupState
+type CreateChartState = {
+  setShowCreateChartModal: (value: boolean) => void;
+  showCreateChartModal: boolean;
+};
+
+type ChartListStoreState = RemoteStoreStateType &
+  CreateKpiGroupState &
+  CreateChartState;
 
 const useChartsStoreState = create<ChartListStoreState>()((set) => ({
   list: [],
   showCreateKpiGroupModal: false,
+  showCreateChartModal: false,
   addItem: (item: FieldDataType) => {
     set((state) => ({ list: [...state.list, item] }));
   },
@@ -32,7 +40,10 @@ const useChartsStoreState = create<ChartListStoreState>()((set) => ({
     set((state) => ({ list: [...items] }));
   },
   setShowCreateKpiGroupModal: (showCreateKpiGroupModal: boolean) => {
-    set(state => ({ ...state, showCreateKpiGroupModal }))
-  }
+    set((state) => ({ ...state, showCreateKpiGroupModal }));
+  },
+  setShowCreateChartModal: (showCreateChartModal: boolean) => {
+    set((state) => ({ ...state, showCreateChartModal }));
+  },
 }));
 export default useChartsStoreState;
