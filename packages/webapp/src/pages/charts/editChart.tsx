@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { DataTable, RenderChart, type FieldDataType } from "dataviz-components";
 import "dataviz-components/dist/style.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ChartOptions from "../../components/ChartOptions";
@@ -61,6 +61,35 @@ function EditChartPage() {
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
 
+  // Ref per sincronizzare l'altezza della card destra con quella sinistra
+  const leftCardRef = useRef<HTMLDivElement>(null);
+  const [leftCardHeight, setLeftCardHeight] = useState<number | null>(null);
+
+  // Aggiorna l'altezza quando cambia il contenuto della card sinistra
+  const updateLeftCardHeight = useCallback(() => {
+    if (leftCardRef.current) {
+      setLeftCardHeight(leftCardRef.current.offsetHeight);
+    }
+  }, []);
+
+  // Osserva i cambiamenti di dimensione della card sinistra
+  useEffect(() => {
+    updateLeftCardHeight();
+
+    // Usa ResizeObserver per rilevare cambiamenti di dimensione
+    const resizeObserver = new ResizeObserver(() => {
+      updateLeftCardHeight();
+    });
+
+    if (leftCardRef.current) {
+      resizeObserver.observe(leftCardRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [updateLeftCardHeight, state.value, data]);
+
   async function fetchCharts() {
     setLoading(true);
     try {
@@ -118,23 +147,27 @@ function EditChartPage() {
     }
     // setChart("");
     setData(d);
-    send({ type: "CONFIG" });
+    // Non transizionare automaticamente - l'utente deve cliccare "Procedi alla configurazione"
   }
   const haveData =
     data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
     setData(d);
-    send({ type: "NEXT" });
+    // Non transizionare automaticamente - l'utente deve cliccare "Procedi alla configurazione"
+    if (state.matches("idle")) {
+      send({ type: "NEXT" }); // Solo da idle a input
+    }
   }
   function handleSetRemoteData(d: any) {
     console.log("handleSetRemoteData", d);
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
     setData(d.data);
-    setTimeout(() => {
-      send({ type: "CONFIG" });
-    }, 100);
+    // Non transizionare automaticamente - l'utente deve cliccare "Procedi alla configurazione"
+    if (state.matches("idle")) {
+      send({ type: "NEXT" }); // Solo da idle a input
+    }
   }
 
   function handleLoadChart(item: FieldDataType) {
@@ -184,28 +217,108 @@ function EditChartPage() {
   return (
     <Layout>
       <div className="p-6 max-w-7xl mx-auto">
-        {/* Header con breadcrumb e titolo */}
+        {/* Header con navigazione e titolo */}
         <div className="mb-8">
-          <button
-            onClick={() => navigate("/home")}
-            className="btn btn-ghost btn-sm gap-2 mb-4 -ml-2 text-base-content/70 hover:text-base-content"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Torna alla lista
-          </button>
+          <div className="flex items-center gap-2 mb-4 -ml-2">
+            {/* Step 1: Solo "Torna alla lista" */}
+            {(state.matches("idle") || state.matches("input")) && (
+              <button
+                onClick={() => navigate("/home")}
+                className="btn btn-ghost btn-sm gap-2 text-base-content/70 hover:text-base-content"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Torna alla lista
+              </button>
+            )}
+
+            {/* Step 2: "Torna ai dati" */}
+            {state.matches("config") && (
+              <button
+                onClick={() => send({ type: "IDLE" })}
+                className="btn btn-ghost btn-sm gap-2 text-base-content/70 hover:text-base-content"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Torna ai dati
+              </button>
+            )}
+
+            {/* Step 3: "Torna alla configurazione" */}
+            {state.matches("done") && (
+              <button
+                onClick={() => send({ type: "CONFIG" })}
+                className="btn btn-ghost btn-sm gap-2 text-base-content/70 hover:text-base-content"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Torna alla configurazione
+              </button>
+            )}
+
+            {/* Separatore e link alla lista (per step 2 e 3) */}
+            {(state.matches("config") || state.matches("done")) && (
+              <>
+                <span className="text-base-content/30">|</span>
+                <button
+                  onClick={() => navigate("/home")}
+                  className="btn btn-ghost btn-sm gap-1 text-base-content/50 hover:text-base-content"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    />
+                  </svg>
+                  Lista
+                </button>
+              </>
+            )}
+          </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
@@ -244,7 +357,10 @@ function EditChartPage() {
           <div className="space-y-6">
             {/* Step 1: Caricamento dati */}
             {(state.matches("idle") || state.matches("input")) && (
-              <div className="card bg-base-100 shadow-sm border border-base-200">
+              <div
+                ref={leftCardRef}
+                className="card bg-base-100 shadow-sm border border-base-200"
+              >
                 <div className="card-body">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -262,6 +378,32 @@ function EditChartPage() {
                     remoteUrl={remoteUrl}
                     handleSetRemoteData={handleSetRemoteData}
                   />
+
+                  {/* Pulsante per procedere alla configurazione */}
+                  {haveData && chart && (
+                    <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => send({ type: "CONFIG" })}
+                      >
+                        Procedi alla configurazione
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 ml-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -334,47 +476,18 @@ function EditChartPage() {
           <div className="space-y-6">
             {haveData && (
               <>
-                {/* Card Anteprima Dati */}
-                <div className="card bg-base-100 shadow-sm border border-base-200">
-                  <div className="card-body">
-                    <h3 className="card-title text-lg flex items-center gap-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-base-content/60"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 3v4M15 3v4M4 11h16"
-                        />
-                      </svg>
-                      Anteprima dati
-                    </h3>
-                    <div className="overflow-auto max-h-[500px]">
-                      <DataTable data={data as any} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Anteprima Grafico - Sticky in fase di configurazione */}
-                {chart && (
+                {/* Card Anteprima Dati - Visibile solo in Step 1 */}
+                {(state.matches("idle") || state.matches("input")) && (
                   <div
-                    className={`card bg-base-100 shadow-sm border border-base-200 ${
-                      state.matches("config") ? "sticky top-4" : ""
-                    }`}
+                    className="card bg-base-100 shadow-sm border border-base-200 flex flex-col"
+                    style={{
+                      maxHeight: leftCardHeight
+                        ? `${leftCardHeight}px`
+                        : "500px",
+                    }}
                   >
-                    <div className="card-body">
-                      <h3 className="card-title text-lg flex items-center gap-2">
+                    <div className="card-body flex flex-col min-h-0">
+                      <h3 className="card-title text-lg flex items-center gap-2 flex-shrink-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5 text-base-content/60"
@@ -386,48 +499,62 @@ function EditChartPage() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                            d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 3v4M15 3v4M4 11h16"
                           />
                         </svg>
-                        Anteprima grafico
+                        Anteprima dati
                       </h3>
-                      <div className="mt-4 overflow-auto max-h-[500px]">
-                        <RenderChart
-                          chart={chart}
-                          data={data}
-                          config={config}
-                          dataSource={null}
-                          getPicture={(pic: string) => setPreview(pic)}
-                        />
+                      <div className="overflow-auto flex-1 min-h-0">
+                        <DataTable data={data as any} />
                       </div>
-                      {chart && !state.matches("done") && (
-                        <div className="card-actions justify-end mt-4">
-                          {/* Durante step 1 (input): vai alla configurazione */}
-                          {(state.matches("idle") ||
-                            state.matches("input")) && (
-                            <button
-                              className="btn btn-primary"
-                              onClick={() => send({ type: "CONFIG" })}
-                            >
-                              Procedi alla configurazione
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4 ml-1"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 5l7 7-7 7"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                          {/* Durante step 2 (config): vai al salvataggio */}
-                          {state.matches("config") && (
+                    </div>
+                  </div>
+                )}
+
+                {/* Card Anteprima Grafico - Visibile solo da Step 2 in poi, Sticky in fase di configurazione */}
+                {chart &&
+                  (state.matches("config") || state.matches("done")) && (
+                    <div
+                      className={`card bg-base-100 shadow-sm border border-base-200 ${
+                        state.matches("config") ? "sticky top-4" : ""
+                      }`}
+                    >
+                      <div className="card-body">
+                        <h3 className="card-title text-lg flex items-center gap-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-base-content/60"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                            />
+                          </svg>
+                          Anteprima grafico
+                        </h3>
+                        <div className="mt-4 overflow-auto max-h-[500px]">
+                          <RenderChart
+                            chart={chart}
+                            data={data}
+                            config={config}
+                            dataSource={null}
+                            getPicture={(pic: string) => setPreview(pic)}
+                          />
+                        </div>
+                        {/* Pulsante per procedere al salvataggio (solo in Step 2) */}
+                        {state.matches("config") && (
+                          <div className="card-actions justify-end mt-4">
                             <button
                               className="btn btn-primary"
                               onClick={() => send({ type: "DONE" })}
@@ -448,12 +575,11 @@ function EditChartPage() {
                                 />
                               </svg>
                             </button>
-                          )}
-                        </div>
-                      )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </>
             )}
 
