@@ -146,11 +146,11 @@ export type AggregationType =
 
 export interface TransformationStep {
   type:
-    | "GROUP_BY"
-    | "AGGREGATE"
-    | "FILTER"
-    | "EXTRACT_DATE_PART"
-    | "PIVOT" /* etc. */;
+  | "GROUP_BY"
+  | "AGGREGATE"
+  | "FILTER"
+  | "EXTRACT_DATE_PART"
+  | "PIVOT" /* etc. */;
   // Common properties
   inputColumns?: string[];
   outputColumnName?: string;

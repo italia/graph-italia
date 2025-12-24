@@ -7,13 +7,6 @@
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "postCreateCommand": "sh ./.devcontainer/postCreateCommand.sh",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "azureDnsAutoDetection": true,
-      "installDockerBuildx": true,
-      "installDockerComposeSwitch": true,
-      "version": "latest",
-      "dockerDashComposeVersion": "v2"
-    },
     "ghcr.io/devcontainers/features/node:1": {
       "nodeGypDependencies": true,
       "installYarnUsingApt": true,
@@ -33,6 +26,7 @@
         "github.vscode-github-actions",
         "github.vscode-pull-request-github",
         "ckolkman.vscode-postgres",
+        "waderyan.gitblame",
         "Prisma.prisma"
       ],
       "settings": {

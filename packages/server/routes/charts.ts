@@ -14,7 +14,7 @@ router.use("*", checkAuth);
 
 const detailSchema = z.object({
 	id: z.string({
-		required_error: "Id is required",
+		error: "Id is required",
 	}),
 });
 
@@ -22,7 +22,7 @@ const createChartSchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
 	chart: z.string({
-		required_error: "Chart type is required",
+		error: "Chart type is required",
 	}),
 	config: z.unknown().optional(),
 	data: z.unknown().optional(),
@@ -80,9 +80,12 @@ router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
 		const { id } = c.req.valid("param");
 		let result = await db.findChartById(id);
 		if (result?.publish !== true) {
-			return c.json({
-				error: { message: "Not Authorized, This chart is not public" },
-			}, 401);
+			return c.json(
+				{
+					error: { message: "Not Authorized, This chart is not public" },
+				},
+				401,
+			);
 		}
 		if (result?.isRemote && result?.remoteUrl) {
 			const lastUpdate = new Date(result.updatedAt);
@@ -105,79 +108,103 @@ router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
 });
 
 /** Create */
-router.post("/", requireUser, zValidator("json", createChartSchema), async (c) => {
-	try {
-		const body = c.req.valid("json");
-		const user = c.get("user") as ParsedToken;
+router.post(
+	"/",
+	requireUser,
+	zValidator("json", createChartSchema),
+	async (c) => {
+		try {
+			const body = c.req.valid("json");
+			const user = c.get("user") as ParsedToken;
 
-		const chartData = {
-			userId: user.userId,
-			...body,
-		};
-		const result = await db.createChart(chartData);
-		
-		logger.info("Chart created", { 
-			chartId: result.id, 
-			userId: user.userId,
-			chartType: body.chart 
-		});
-		
-		return c.json(result, 201);
-	} catch (err) {
-		logger.error("Chart create error", err instanceof Error ? err : undefined);
-		return c.json({ error: "Internal error" }, 500);
-	}
-});
+			const chartData = {
+				userId: user.userId,
+				...body,
+			};
+			const result = await db.createChart(chartData);
+
+			logger.info("Chart created", {
+				chartId: result.id,
+				userId: user.userId,
+				chartType: body.chart,
+			});
+
+			return c.json(result, 201);
+		} catch (err) {
+			logger.error(
+				"Chart create error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
 
 /** Publish */
-router.post("/publish/:id", requireUser, zValidator("param", detailSchema), async (c) => {
-	try {
-		const user = c.get("user") as ParsedToken;
-		const { id: chartId } = c.req.valid("param");
-		const chart = await db.findChartById(chartId);
-		if (!chart) {
-			return c.json({ message: "Not Found" }, 404);
+router.post(
+	"/publish/:id",
+	requireUser,
+	zValidator("param", detailSchema),
+	async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken;
+			const { id: chartId } = c.req.valid("param");
+			const chart = await db.findChartById(chartId);
+			if (!chart) {
+				return c.json({ message: "Not Found" }, 404);
+			}
+			if (chart.userId !== user.userId) {
+				return c.json({ message: "Not Authorized" }, 401);
+			}
+			const result = await db.publishChart(chartId, !chart?.publish);
+
+			logger.info("Chart publish toggled", {
+				chartId,
+				userId: user.userId,
+				published: result.publish,
+			});
+
+			return c.json({ published: result.publish });
+		} catch (err) {
+			logger.error(
+				"Chart publish error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
 		}
-		if (chart.userId !== user.userId) {
-			return c.json({ message: "Not Authorized" }, 401);
-		}
-		const result = await db.publishChart(chartId, !chart?.publish);
-		
-		logger.info("Chart publish toggled", { 
-			chartId, 
-			userId: user.userId, 
-			published: result.publish 
-		});
-		
-		return c.json({ published: result.publish });
-	} catch (err) {
-		logger.error("Chart publish error", err instanceof Error ? err : undefined);
-		return c.json({ error: "Internal error" }, 500);
-	}
-});
+	},
+);
 
 /** Delete ID */
-router.delete("/:id", requireUser, zValidator("param", detailSchema), async (c) => {
-	try {
-		const user = c.get("user") as ParsedToken;
-		const { id: chartId } = c.req.valid("param");
-		const chart = await db.findChartById(chartId);
-		if (!chart) {
-			return c.json({ message: "Not Found" }, 404);
+router.delete(
+	"/:id",
+	requireUser,
+	zValidator("param", detailSchema),
+	async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken;
+			const { id: chartId } = c.req.valid("param");
+			const chart = await db.findChartById(chartId);
+			if (!chart) {
+				return c.json({ message: "Not Found" }, 404);
+			}
+			if (chart.userId !== user.userId) {
+				return c.json({ message: "Not Authorized" }, 401);
+			}
+			const result = await db.deleteChart(chartId);
+
+			logger.info("Chart deleted", { chartId, userId: user.userId });
+
+			return c.json(result);
+		} catch (err) {
+			logger.error(
+				"Chart delete error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
 		}
-		if (chart.userId !== user.userId) {
-			return c.json({ message: "Not Authorized" }, 401);
-		}
-		const result = await db.deleteChart(chartId);
-		
-		logger.info("Chart deleted", { chartId, userId: user.userId });
-		
-		return c.json(result);
-	} catch (err) {
-		logger.error("Chart delete error", err instanceof Error ? err : undefined);
-		return c.json({ error: "Internal error" }, 500);
-	}
-});
+	},
+);
 
 /** Update ID */
 router.put(
@@ -190,7 +217,7 @@ router.put(
 			const user = c.get("user") as ParsedToken;
 			const { id: chartId } = c.req.valid("param");
 			const chartData = c.req.valid("json");
-			
+
 			const chart = await db.findChartById(chartId);
 			if (!chart) {
 				return c.json({ message: "Not Found" }, 404);
@@ -199,15 +226,18 @@ router.put(
 				return c.json({ message: "Not Authorized" }, 401);
 			}
 			const result = await db.updateChart(chartId, chartData);
-			
+
 			logger.debug("Chart updated", { chartId, userId: user.userId });
-			
+
 			return c.json(result);
 		} catch (err) {
-			logger.error("Chart update error", err instanceof Error ? err : undefined);
+			logger.error(
+				"Chart update error",
+				err instanceof Error ? err : undefined,
+			);
 			return c.json({ error: "Internal error" }, 500);
 		}
-	}
+	},
 );
 
 export default router;

@@ -79,10 +79,10 @@ model Chart {
   userId String
 
   slot Slot[]
+  SourceLink SourceLink[]
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  SourceLink SourceLink[]
 }
 
 model SourceLink {
