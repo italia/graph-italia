@@ -10,11 +10,11 @@ type ChooseLoaderProps = {
   initialData?: any;
 };
 
-// Definizione dei tab con icone e descrizioni
+// Tab definitions with icons and descriptions
 const TABS = [
   {
     id: 0,
-    label: "File CSV",
+    label: "CSV File",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -31,11 +31,11 @@ const TABS = [
         />
       </svg>
     ),
-    description: "Carica un file CSV dal tuo computer",
+    description: "Upload a CSV file from your computer",
   },
   {
     id: 1,
-    label: "File JSON",
+    label: "JSON File",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,11 +52,11 @@ const TABS = [
         />
       </svg>
     ),
-    description: "Carica un file JSON dal tuo computer",
+    description: "Upload a JSON file from your computer",
   },
   {
     id: 2,
-    label: "URL Remoto",
+    label: "Remote URL",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ const TABS = [
         />
       </svg>
     ),
-    description: "Carica dati da un URL JSON remoto",
+    description: "Load data from a remote JSON URL",
   },
 ];
 

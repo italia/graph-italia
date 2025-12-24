@@ -1,9 +1,9 @@
-// Definizione dei tipi di grafico disponibili con icone e descrizioni
+// Available chart types with icons and descriptions
 const CHART_TYPES = [
   {
     value: "bar",
-    label: "Grafico a barre",
-    description: "Confronta valori tra categorie",
+    label: "Bar chart",
+    description: "Compare values across categories",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,8 +23,8 @@ const CHART_TYPES = [
   },
   {
     value: "line",
-    label: "Grafico a linee",
-    description: "Mostra trend nel tempo",
+    label: "Line chart",
+    description: "Show trends over time",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -44,8 +44,8 @@ const CHART_TYPES = [
   },
   {
     value: "pie",
-    label: "Grafico a torta",
-    description: "Visualizza proporzioni",
+    label: "Pie chart",
+    description: "Display proportions",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -71,8 +71,8 @@ const CHART_TYPES = [
   },
   {
     value: "map",
-    label: "Mappa geografica",
-    description: "Visualizza dati su mappa",
+    label: "Geographic map",
+    description: "Display data on a map",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -102,10 +102,10 @@ function SelectChart({
   return (
     <div className="space-y-3">
       <label className="label">
-        <span className="label-text font-medium">Tipo di grafico</span>
+        <span className="label-text font-medium">Chart type</span>
       </label>
 
-      {/* Grid di selezione tipo grafico */}
+      {/* Chart type selection grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {CHART_TYPES.map((type) => (
           <button
@@ -132,7 +132,7 @@ function SelectChart({
         ))}
       </div>
 
-      {/* Descrizione del tipo selezionato */}
+      {/* Selected type description */}
       {chart && (
         <p className="text-sm text-base-content/60 px-1">
           {CHART_TYPES.find((t) => t.value === chart)?.description}

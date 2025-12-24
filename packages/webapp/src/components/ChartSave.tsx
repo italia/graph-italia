@@ -65,20 +65,20 @@ function ChartSave({ item, handleSave }: any) {
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
           />
         </svg>
-        <span>Seleziona prima un tipo di grafico</span>
+        <span>Please select a chart type first</span>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Anteprima immagine se disponibile */}
+      {/* Image preview if available */}
       {item.preview && (
         <div className="flex justify-center">
           <div className="border border-base-200 rounded-lg p-2 bg-white shadow-sm">
             <img
               src={item.preview}
-              alt="Anteprima grafico"
+              alt="Chart preview"
               className="max-w-[200px] h-auto rounded"
             />
           </div>
@@ -88,10 +88,10 @@ function ChartSave({ item, handleSave }: any) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <input type="hidden" {...register("id", { required: false })} />
 
-        {/* Nome del grafico */}
+        {/* Chart name */}
         <div className="form-control">
           <label className="label" htmlFor="chart-name">
-            <span className="label-text font-medium">Nome del grafico *</span>
+            <span className="label-text font-medium">Chart name *</span>
           </label>
           <input
             id="chart-name"
@@ -99,35 +99,35 @@ function ChartSave({ item, handleSave }: any) {
             className={`input input-bordered w-full ${
               errors["name"] ? "input-error" : ""
             }`}
-            placeholder="Es: Vendite mensili 2024"
+            placeholder="E.g.: Monthly sales 2024"
             {...register("name", { required: true })}
           />
           {errors["name"] && (
             <label className="label">
               <span className="label-text-alt text-error">
-                Il nome è obbligatorio
+                Name is required
               </span>
             </label>
           )}
         </div>
 
-        {/* Descrizione */}
+        {/* Description */}
         <div className="form-control">
           <label className="label" htmlFor="chart-description">
-            <span className="label-text font-medium">Descrizione</span>
+            <span className="label-text font-medium">Description</span>
             <span className="label-text-alt text-base-content/50">
-              Opzionale
+              Optional
             </span>
           </label>
           <textarea
             id="chart-description"
             {...register("description", { required: false })}
             className="textarea textarea-bordered w-full min-h-[80px]"
-            placeholder="Aggiungi una descrizione per il tuo grafico..."
+            placeholder="Add a description for your chart..."
           />
         </div>
 
-        {/* Opzione pubblica */}
+        {/* Publish option */}
         <div className="form-control bg-base-200/50 rounded-lg p-4">
           <div
             className="flex items-center gap-4 cursor-pointer"
@@ -142,16 +142,16 @@ function ChartSave({ item, handleSave }: any) {
             />
             <div>
               <span className="label-text font-medium block">
-                Pubblica grafico
+                Publish chart
               </span>
               <span className="label-text-alt text-base-content/60">
-                Rendi il grafico visibile pubblicamente
+                Make the chart publicly visible
               </span>
             </div>
           </div>
         </div>
 
-        {/* Pulsante di salvataggio */}
+        {/* Save button */}
         <div className="pt-4">
           <button
             disabled={isSubmitting}
@@ -161,7 +161,7 @@ function ChartSave({ item, handleSave }: any) {
             {isSubmitting ? (
               <>
                 <span className="loading loading-spinner loading-sm"></span>
-                Salvataggio in corso...
+                Saving...
               </>
             ) : (
               <>
@@ -179,7 +179,7 @@ function ChartSave({ item, handleSave }: any) {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                Salva grafico
+                Save chart
               </>
             )}
           </button>

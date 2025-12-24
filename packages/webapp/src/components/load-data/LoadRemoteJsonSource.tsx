@@ -15,7 +15,7 @@ function LoadSource({
 
   async function getData() {
     if (!url.trim()) {
-      setError("Inserisci un URL valido");
+      setError("Please enter a valid URL");
       return;
     }
 
@@ -33,7 +33,7 @@ function LoadSource({
       }
     } catch (err) {
       log(err);
-      setError("Impossibile caricare i dati dall'URL specificato");
+      setError("Unable to load data from the specified URL");
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ function LoadSource({
     <div className="space-y-4">
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">URL sorgente dati JSON</span>
+          <span className="label-text font-medium">JSON data source URL</span>
         </label>
         <input
           className={`input input-bordered w-full ${
@@ -51,7 +51,7 @@ function LoadSource({
           }`}
           type="url"
           value={url}
-          placeholder="https://esempio.com/dati.json"
+          placeholder="https://example.com/data.json"
           onChange={(e) => {
             setUrl(e.target.value);
             setError(null);
@@ -77,7 +77,7 @@ function LoadSource({
         {loading ? (
           <>
             <span className="loading loading-spinner loading-sm"></span>
-            Caricamento in corso...
+            Loading...
           </>
         ) : (
           <>
@@ -95,7 +95,7 @@ function LoadSource({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
               />
             </svg>
-            Carica dati remoti
+            Load remote data
           </>
         )}
       </button>

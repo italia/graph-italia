@@ -55,7 +55,7 @@ function UploadCSV({
     });
   }
 
-  // Inizializza con i dati esistenti
+  // Initialize with existing data
   useEffect(() => {
     if (initialData && initialData.length > 0 && !initialized) {
       const c = getFirstOfMAtrix(initialData);
@@ -114,7 +114,7 @@ function UploadCSV({
     });
   }
 
-  // Aggiorna automaticamente i dati quando cambiano category o series
+  // Automatically update data when category or series change
   useEffect(() => {
     if (rawData && category && series.length > 0) {
       const filtered = filterData(rawData, category, series);
@@ -155,7 +155,7 @@ function UploadCSV({
     <div className="space-y-4">
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">Carica file CSV</span>
+          <span className="label-text font-medium">Upload CSV file</span>
         </label>
         <input
           className="file-input file-input-bordered file-input-primary w-full"
@@ -169,13 +169,13 @@ function UploadCSV({
       {rawData && (
         <div className="space-y-4 p-4 bg-base-200 rounded-lg">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">Configura colonne</h4>
+            <h4 className="font-medium">Configure columns</h4>
             <div className="flex gap-2">
               <button
                 className="btn btn-sm btn-outline"
                 onClick={() => transpose()}
               >
-                Trasponi
+                Transpose
               </button>
               <button
                 className="btn btn-sm btn-ghost text-error"
@@ -185,7 +185,7 @@ function UploadCSV({
                   setSeries([]);
                 }}
               >
-                Rimuovi
+                Remove
               </button>
             </div>
           </div>
@@ -193,7 +193,7 @@ function UploadCSV({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Colonna categoria (asse X)</span>
+                <span className="label-text">Category column (X axis)</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -213,9 +213,9 @@ function UploadCSV({
             {category && (
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Serie dati (valori)</span>
+                  <span className="label-text">Data series (values)</span>
                   <span className="label-text-alt text-base-content/50">
-                    Ctrl+click per selezione multipla
+                    Ctrl+click for multiple selection
                   </span>
                 </label>
                 <select
@@ -258,7 +258,7 @@ function UploadCSV({
                 />
               </svg>
               <span className="text-sm">
-                Dati caricati: {series.length} serie selezionate
+                Data loaded: {series.length} series selected
               </span>
             </div>
           )}

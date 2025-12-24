@@ -3,45 +3,15 @@ import { defaultConfig, getFields, palettes } from "../lib/constants";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
 import ShowPalette from "./ShowPalette";
 
-// Mappa per tradurre le label dei campi in italiano
-const LABEL_TRANSLATIONS: Record<string, string> = {
-  "Chart Title": "Titolo del grafico",
-  "X Axis Label": "Etichetta asse X",
-  "Y Axis Label": "Etichetta asse Y",
-  "Show Legend": "Mostra legenda",
-  "Legend Position": "Posizione legenda",
-  "Show Tooltip": "Mostra tooltip",
-  "Show Grid": "Mostra griglia",
-  "Show Labels": "Mostra etichette",
-  "Show Values": "Mostra valori",
-  "Color Palette": "Palette colori",
-  Direction: "Orientamento",
-  Width: "Larghezza",
-  Height: "Altezza",
-  "Show Pie Labels": "Mostra etichette torta",
-  "Visual Map": "Mappa visuale",
-  Stacked: "Impilato",
-  Smooth: "Linea curva",
-};
-
-// Mappa per tradurre i nomi delle sezioni
-const SECTION_TRANSLATIONS: Record<string, string> = {
-  Layout: "Layout",
-  Style: "Stile",
-  Labels: "Etichette",
-  Legend: "Legenda",
-  Tooltip: "Tooltip",
-  Grid: "Griglia",
-  Colors: "Colori",
-  Options: "Opzioni",
-};
+// Labels are already in English, no translation needed
+// Keeping functions for consistency but they return the original values
 
 function translateLabel(label: string): string {
-  return LABEL_TRANSLATIONS[label] || label;
+  return label;
 }
 
 function translateSection(name: string): string {
-  return SECTION_TRANSLATIONS[name] || name;
+  return name;
 }
 
 function ChartOptions({
@@ -102,7 +72,7 @@ function ChartOptions({
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           ></path>
         </svg>
-        <span>Seleziona un tipo di grafico per configurare le opzioni</span>
+        <span>Select a chart type to configure options</span>
       </div>
     );
   }
@@ -134,7 +104,7 @@ function ChartOptions({
   return (
     <div className="space-y-4">
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Pulsante Applica in alto */}
+        {/* Apply button at the top */}
         <div className="sticky top-0 bg-base-100 py-3 z-10 border-b border-base-200 mb-4">
           <button className="btn btn-primary w-full gap-2" type="submit">
             <svg
@@ -151,14 +121,14 @@ function ChartOptions({
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            Applica modifiche
+            Apply changes
           </button>
         </div>
 
-        {/* Griglia campi */}
+        {/* Fields grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredFields.map((field) => {
-            // Campi di input testo, numero, colore
+            // Text, number, color input fields
             if (["text", "email", "number", "color"].includes(field.type)) {
               const layoutValue = field.layout ? Number(field.layout) : 1;
               const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
@@ -187,7 +157,7 @@ function ChartOptions({
                   {errors[field.name] && (
                     <label className="label">
                       <span className="label-text-alt text-error">
-                        Campo obbligatorio
+                        Required field
                       </span>
                     </label>
                   )}
@@ -195,7 +165,7 @@ function ChartOptions({
               );
             }
 
-            // Campi checkbox
+            // Checkbox fields
             if (["checkbox"].includes(field.type)) {
               const layoutValue = field.layout ? Number(field.layout) : 1;
               const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
@@ -216,7 +186,7 @@ function ChartOptions({
                   {errors[field.name] && (
                     <label className="label">
                       <span className="label-text-alt text-error">
-                        Campo obbligatorio
+                        Required field
                       </span>
                     </label>
                   )}
@@ -224,7 +194,7 @@ function ChartOptions({
               );
             }
 
-            // Campi select
+            // Select fields
             if (["select"].includes(field.type)) {
               const layoutValue = field.layout ? Number(field.layout) : 1;
               const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
@@ -250,7 +220,7 @@ function ChartOptions({
                   {errors[field.name] && (
                     <label className="label">
                       <span className="label-text-alt text-error">
-                        Campo obbligatorio
+                        Required field
                       </span>
                     </label>
                   )}
@@ -263,7 +233,7 @@ function ChartOptions({
               );
             }
 
-            // Separatori di sezione
+            // Section separators
             return (
               <div key={field.name} className="col-span-full mt-4 first:mt-0">
                 <div className="flex items-center gap-2">

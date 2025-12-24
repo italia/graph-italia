@@ -58,7 +58,7 @@ function UploadJSON({
     });
   }
 
-  // Inizializza con i dati esistenti
+  // Initialize with existing data
   useEffect(() => {
     if (initialData && initialData.length > 0 && !initialized) {
       const c = getFirstOfMAtrix(initialData);
@@ -108,7 +108,7 @@ function UploadJSON({
     fileReader.onloadend = (e) => {
       const text = e.target?.result;
       if (!text) {
-        setError("Il file è vuoto");
+        setError("The file is empty");
         return;
       }
       let data: undefined | MatrixType;
@@ -137,7 +137,7 @@ function UploadJSON({
     };
   }
 
-  // Aggiorna automaticamente i dati quando cambiano category o series
+  // Automatically update data when category or series change
   useEffect(() => {
     if (rawData && category && series.length > 0) {
       const filtered = filterData(rawData, category, series);
@@ -178,7 +178,7 @@ function UploadJSON({
     <div className="space-y-4">
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">Carica file JSON</span>
+          <span className="label-text font-medium">Upload JSON file</span>
         </label>
         <input
           className="file-input file-input-bordered file-input-primary w-full"
@@ -211,13 +211,13 @@ function UploadJSON({
       {rawData && (
         <div className="space-y-4 p-4 bg-base-200 rounded-lg">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">Configura colonne</h4>
+            <h4 className="font-medium">Configure columns</h4>
             <div className="flex gap-2">
               <button
                 className="btn btn-sm btn-outline"
                 onClick={() => transpose()}
               >
-                Trasponi
+                Transpose
               </button>
               <button
                 className="btn btn-sm btn-ghost text-error"
@@ -228,7 +228,7 @@ function UploadJSON({
                   setError(null);
                 }}
               >
-                Rimuovi
+                Remove
               </button>
             </div>
           </div>
@@ -236,7 +236,7 @@ function UploadJSON({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Colonna categoria (asse X)</span>
+                <span className="label-text">Category column (X axis)</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -256,9 +256,9 @@ function UploadJSON({
             {category && (
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Serie dati (valori)</span>
+                  <span className="label-text">Data series (values)</span>
                   <span className="label-text-alt text-base-content/50">
-                    Ctrl+click per selezione multipla
+                    Ctrl+click for multiple selection
                   </span>
                 </label>
                 <select
@@ -301,7 +301,7 @@ function UploadJSON({
                 />
               </svg>
               <span className="text-sm">
-                Dati caricati: {series.length} serie selezionate
+                Data loaded: {series.length} series selected
               </span>
             </div>
           )}

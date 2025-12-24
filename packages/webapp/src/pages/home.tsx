@@ -108,7 +108,7 @@ function Home() {
 
   function navigateToChartEdit(id?: string) {
     if (!id) {
-      throw new Error("ID del grafico mancante");
+      throw new Error("Missing chart ID");
     }
     navigate(`/edit/chart/${id}`);
   }
@@ -143,7 +143,7 @@ function Home() {
       setNewChart(undefined);
       navigateToChartEdit(id);
     } catch (error) {
-      console.error("Errore nella creazione del grafico:", error);
+      console.error("Error creating chart:", error);
     } finally {
       setIsCreatingChart(false);
     }
@@ -173,17 +173,17 @@ function Home() {
                     <details className="dropdown my-10 bg-base-100 z-10">
                       <summary className="btn btn-primary m-1">
                         {" "}
-                        + Crea nuovo
+                        + Create new
                       </summary>
                       <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border">
                         <li>
                           <a onClick={() => setShowCreateChartModal(true)}>
-                            Crea Grafico
+                            Create Chart
                           </a>
                         </li>
                         <li>
                           <a onClick={() => setShowCreateKpiGroupModal(true)}>
-                            Crea Gruppo KPI
+                            Create KPI Group
                           </a>
                         </li>
                       </ul>
@@ -198,13 +198,13 @@ function Home() {
               </>
             )}
           </div>
-          {/* Modal per creare Gruppo KPI */}
+          {/* Modal to create KPI Group */}
           {showCreateKpiGroupModal && (
             <GenericDialog
-              title="Crea Gruppo KPI"
-              description="Inserisci i dati per creare un nuovo gruppo di indicatori KPI"
+              title="Create KPI Group"
+              description="Enter data to create a new KPI indicator group"
               toggle={showCreateKpiGroupModal}
-              labels={{ confirm: "Crea", cancel: "Annulla" }}
+              labels={{ confirm: "Create", cancel: "Cancel" }}
               confirmDisabled={!newKpiGroup?.name?.trim()}
               confirmCb={() => {
                 if (!newKpiGroup) {
@@ -219,14 +219,14 @@ function Home() {
               <div className="space-y-4">
                 <div className="form-control">
                   <label className="label" htmlFor="kpi-name">
-                    <span className="label-text font-medium">Nome *</span>
+                    <span className="label-text font-medium">Name *</span>
                   </label>
                   <input
                     id="kpi-name"
                     className="input input-bordered w-full"
                     type="text"
                     name="name"
-                    placeholder="Inserisci il nome del gruppo KPI"
+                    placeholder="Enter the KPI group name"
                     autoFocus
                     onChange={(e) => {
                       const name = e.target.value;
@@ -237,14 +237,14 @@ function Home() {
                 </div>
                 <div className="form-control">
                   <label className="label" htmlFor="kpi-description">
-                    <span className="label-text font-medium">Descrizione</span>
+                    <span className="label-text font-medium">Description</span>
                   </label>
                   <input
                     id="kpi-description"
                     className="input input-bordered w-full"
                     type="text"
                     name="description"
-                    placeholder="Inserisci una descrizione (opzionale)"
+                    placeholder="Enter a description (optional)"
                     onChange={(e) => {
                       const description = e.target.value;
                       const oldValue = newKpiGroup ?? ({} as KpiGroupPayload);
@@ -256,15 +256,15 @@ function Home() {
             </GenericDialog>
           )}
 
-          {/* Modal per creare Grafico - Conforme Design System Italia */}
+          {/* Modal to create Chart */}
           {showCreateChartModal && (
             <GenericDialog
-              title="Crea nuovo grafico"
-              description="Dai un nome al tuo grafico per iniziare a modificarlo"
+              title="Create new chart"
+              description="Name your chart to start editing it"
               toggle={showCreateChartModal}
               labels={{
-                confirm: isCreatingChart ? "Creazione..." : "Crea",
-                cancel: "Annulla",
+                confirm: isCreatingChart ? "Creating..." : "Create",
+                cancel: "Cancel",
               }}
               confirmDisabled={!newChart?.name?.trim() || isCreatingChart}
               confirmCb={() => {
@@ -280,16 +280,14 @@ function Home() {
               <div className="space-y-4">
                 <div className="form-control">
                   <label className="label" htmlFor="chart-name">
-                    <span className="label-text font-medium">
-                      Nome del grafico *
-                    </span>
+                    <span className="label-text font-medium">Chart name *</span>
                   </label>
                   <input
                     id="chart-name"
                     className="input input-bordered w-full"
                     type="text"
                     name="name"
-                    placeholder="Es: Vendite mensili 2024"
+                    placeholder="E.g.: Monthly sales 2024"
                     autoFocus
                     value={newChart?.name || ""}
                     onChange={(e) => {
@@ -305,7 +303,7 @@ function Home() {
                   />
                   <label className="label">
                     <span className="label-text-alt text-base-content/60">
-                      Potrai modificare il nome in seguito
+                      You can change the name later
                     </span>
                   </label>
                 </div>

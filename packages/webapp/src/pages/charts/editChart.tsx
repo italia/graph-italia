@@ -17,11 +17,11 @@ import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
 
-// Definizione degli step per il wizard di creazione grafico
+// Step definitions for the chart creation wizard
 const STEPS = [
-  { id: "input", label: "Carica dati", description: "Importa i tuoi dati" },
-  { id: "config", label: "Configura", description: "Personalizza il grafico" },
-  { id: "done", label: "Salva", description: "Salva e pubblica" },
+  { id: "input", label: "Load Data", description: "Import your data" },
+  { id: "config", label: "Configure", description: "Customize the chart" },
+  { id: "done", label: "Save", description: "Save and publish" },
 ];
 
 function EditChartPage() {
@@ -55,22 +55,22 @@ function EditChartPage() {
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
 
-  // Ref per sincronizzare l'altezza della card destra con quella sinistra
+  // Ref to sync the right card height with the left one
   const leftCardRef = useRef<HTMLDivElement>(null);
   const [leftCardHeight, setLeftCardHeight] = useState<number | null>(null);
 
-  // Aggiorna l'altezza quando cambia il contenuto della card sinistra
+  // Update height when the left card content changes
   const updateLeftCardHeight = useCallback(() => {
     if (leftCardRef.current) {
       setLeftCardHeight(leftCardRef.current.offsetHeight);
     }
   }, []);
 
-  // Osserva i cambiamenti di dimensione della card sinistra
+  // Observe size changes of the left card
   useEffect(() => {
     updateLeftCardHeight();
 
-    // Usa ResizeObserver per rilevare cambiamenti di dimensione
+    // Use ResizeObserver to detect size changes
     const resizeObserver = new ResizeObserver(() => {
       updateLeftCardHeight();
     });
@@ -84,7 +84,7 @@ function EditChartPage() {
     };
   }, [updateLeftCardHeight, state.value, data]);
 
-  // Carica il grafico esistente quando c'è un paramId
+  // Load existing chart when there's a paramId
   useEffect(() => {
     async function loadExistingChart() {
       if (paramId) {
@@ -100,7 +100,7 @@ function EditChartPage() {
             setChartName(chartData.name || "");
           }
         } catch (error) {
-          console.error("Errore nel caricamento del grafico:", error);
+          console.error("Error loading chart:", error);
         } finally {
           setLoading(false);
         }
@@ -121,16 +121,16 @@ function EditChartPage() {
     }
     // setChart("");
     setData(d);
-    // Non transizionare automaticamente - l'utente deve cliccare "Procedi alla configurazione"
+    // Don't transition automatically - user must click "Proceed to configuration"
   }
   const haveData =
     data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
     setData(d);
-    // Non transizionare automaticamente - l'utente deve cliccare "Procedi alla configurazione"
+    // Don't transition automatically - user must click "Proceed to configuration"
     if (state.matches("idle")) {
-      send({ type: "NEXT" }); // Solo da idle a input
+      send({ type: "NEXT" }); // Only from idle to input
     }
   }
   function handleSetRemoteData(d: any) {
@@ -138,9 +138,9 @@ function EditChartPage() {
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
     setData(d.data);
-    // Non transizionare automaticamente - l'utente deve cliccare "Procedi alla configurazione"
+    // Don't transition automatically - user must click "Proceed to configuration"
     if (state.matches("idle")) {
-      send({ type: "NEXT" }); // Solo da idle a input
+      send({ type: "NEXT" }); // Only from idle to input
     }
   }
 
@@ -149,7 +149,7 @@ function EditChartPage() {
     resetItem();
   }
 
-  // Determina lo step corrente per la visualizzazione
+  // Determine current step for display
   const getCurrentStepIndex = () => {
     if (state.matches("idle") || state.matches("input")) return 0;
     if (state.matches("config")) return 1;
@@ -172,10 +172,10 @@ function EditChartPage() {
   return (
     <Layout>
       <div className="p-6 max-w-7xl mx-auto">
-        {/* Header con navigazione e titolo */}
+        {/* Header with navigation and title */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4 -ml-2">
-            {/* Step 1: Solo "Torna alla lista" */}
+            {/* Step 1: Only "Back to list" */}
             {(state.matches("idle") || state.matches("input")) && (
               <button
                 onClick={() => navigate("/home")}
@@ -195,11 +195,11 @@ function EditChartPage() {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                Torna alla lista
+                Back to list
               </button>
             )}
 
-            {/* Step 2: "Torna ai dati" */}
+            {/* Step 2: "Back to data" */}
             {state.matches("config") && (
               <button
                 onClick={() => send({ type: "IDLE" })}
@@ -219,11 +219,11 @@ function EditChartPage() {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                Torna ai dati
+                Back to data
               </button>
             )}
 
-            {/* Step 3: "Torna alla configurazione" */}
+            {/* Step 3: "Back to configuration" */}
             {state.matches("done") && (
               <button
                 onClick={() => send({ type: "CONFIG" })}
@@ -243,11 +243,11 @@ function EditChartPage() {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-                Torna alla configurazione
+                Back to configuration
               </button>
             )}
 
-            {/* Separatore e link alla lista (per step 2 e 3) */}
+            {/* Separator and link to list (for steps 2 and 3) */}
             {(state.matches("config") || state.matches("done")) && (
               <>
                 <span className="text-base-content/30">|</span>
@@ -269,7 +269,7 @@ function EditChartPage() {
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                     />
                   </svg>
-                  Lista
+                  List
                 </button>
               </>
             )}
@@ -278,7 +278,7 @@ function EditChartPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <h1 className="text-3xl font-bold text-base-content">
-                {paramId ? "Modifica Grafico" : "Nuovo Grafico"}
+                {paramId ? "Edit Chart" : "New Chart"}
               </h1>
               {chartName && (
                 <p className="text-lg text-base-content/60 mt-1">{chartName}</p>
@@ -287,7 +287,7 @@ function EditChartPage() {
           </div>
         </div>
 
-        {/* Stepper - Indicatore di progresso */}
+        {/* Stepper - Progress indicator */}
         <div className="mb-8">
           <ul className="steps steps-horizontal w-full">
             {STEPS.map((step, index) => (
@@ -306,11 +306,11 @@ function EditChartPage() {
           </ul>
         </div>
 
-        {/* Contenuto principale in due colonne */}
+        {/* Main content in two columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Colonna sinistra: Form/Configurazione */}
+          {/* Left column: Form/Configuration */}
           <div className="space-y-6">
-            {/* Step 1: Caricamento dati */}
+            {/* Step 1: Data loading */}
             {(state.matches("idle") || state.matches("input")) && (
               <div
                 ref={leftCardRef}
@@ -322,9 +322,9 @@ function EditChartPage() {
                       <span className="text-primary font-bold">1</span>
                     </div>
                     <div>
-                      <h2 className="card-title text-xl">Carica i tuoi dati</h2>
+                      <h2 className="card-title text-xl">Load your data</h2>
                       <p className="text-sm text-base-content/60">
-                        Importa dati da file CSV, JSON o da una sorgente remota
+                        Import data from CSV, JSON files or from a remote source
                       </p>
                     </div>
                   </div>
@@ -335,14 +335,14 @@ function EditChartPage() {
                     initialData={data}
                   />
 
-                  {/* Pulsante per procedere alla configurazione */}
+                  {/* Button to proceed to configuration */}
                   {haveData && chart && (
                     <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
                       <button
                         className="btn btn-primary"
                         onClick={() => send({ type: "CONFIG" })}
                       >
-                        Procedi alla configurazione
+                        Proceed to configuration
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-4 w-4 ml-1"
@@ -364,7 +364,7 @@ function EditChartPage() {
               </div>
             )}
 
-            {/* Step 2: Configurazione */}
+            {/* Step 2: Configuration */}
             {state.matches("config") && (
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
@@ -374,10 +374,10 @@ function EditChartPage() {
                     </div>
                     <div>
                       <h2 className="card-title text-xl">
-                        Configura il grafico
+                        Configure the chart
                       </h2>
                       <p className="text-sm text-base-content/60">
-                        Scegli il tipo di grafico e personalizza l'aspetto
+                        Choose the chart type and customize its appearance
                       </p>
                     </div>
                   </div>
@@ -393,7 +393,7 @@ function EditChartPage() {
               </div>
             )}
 
-            {/* Step 3: Salvataggio */}
+            {/* Step 3: Saving */}
             {state.matches("done") && (
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
@@ -402,9 +402,9 @@ function EditChartPage() {
                       <span className="text-primary font-bold">3</span>
                     </div>
                     <div>
-                      <h2 className="card-title text-xl">Salva il grafico</h2>
+                      <h2 className="card-title text-xl">Save the chart</h2>
                       <p className="text-sm text-base-content/60">
-                        Dai un nome al grafico e scegli se pubblicarlo
+                        Name the chart and choose whether to publish it
                       </p>
                     </div>
                   </div>
@@ -428,11 +428,11 @@ function EditChartPage() {
             )}
           </div>
 
-          {/* Colonna destra: Anteprima */}
+          {/* Right column: Preview */}
           <div className="space-y-6">
             {haveData && (
               <>
-                {/* Card Anteprima Dati - Visibile solo in Step 1 */}
+                {/* Data Preview Card - Visible only in Step 1 */}
                 {(state.matches("idle") || state.matches("input")) && (
                   <div
                     className="card bg-base-100 shadow-sm border border-base-200 flex flex-col"
@@ -464,7 +464,7 @@ function EditChartPage() {
                             d="M9 3v4M15 3v4M4 11h16"
                           />
                         </svg>
-                        Anteprima dati
+                        Data preview
                       </h3>
                       <div className="overflow-auto flex-1 min-h-0">
                         <DataTable data={data as any} />
@@ -473,7 +473,7 @@ function EditChartPage() {
                   </div>
                 )}
 
-                {/* Card Anteprima Grafico - Visibile solo da Step 2 in poi, Sticky in fase di configurazione */}
+                {/* Chart Preview Card - Visible from Step 2 onwards, Sticky during configuration */}
                 {chart &&
                   (state.matches("config") || state.matches("done")) && (
                     <div
@@ -497,7 +497,7 @@ function EditChartPage() {
                               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                             />
                           </svg>
-                          Anteprima grafico
+                          Chart preview
                         </h3>
                         <div className="mt-4 overflow-auto h-[420px] relative">
                           {!preview && (
@@ -505,7 +505,7 @@ function EditChartPage() {
                               <div className="flex flex-col items-center gap-3">
                                 <span className="loading loading-spinner loading-lg text-primary"></span>
                                 <span className="text-sm text-base-content/60">
-                                  Caricamento grafico...
+                                  Loading chart...
                                 </span>
                               </div>
                             </div>
@@ -518,14 +518,14 @@ function EditChartPage() {
                             getPicture={(pic: string) => setPreview(pic)}
                           />
                         </div>
-                        {/* Pulsante per procedere al salvataggio (solo in Step 2) */}
+                        {/* Button to proceed to saving (only in Step 2) */}
                         {state.matches("config") && (
                           <div className="card-actions justify-end mt-4">
                             <button
                               className="btn btn-primary"
                               onClick={() => send({ type: "DONE" })}
                             >
-                              Procedi al salvataggio
+                              Proceed to save
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-4 w-4 ml-1"
@@ -549,7 +549,7 @@ function EditChartPage() {
               </>
             )}
 
-            {/* Placeholder quando non ci sono dati */}
+            {/* Placeholder when there's no data */}
             {!haveData && (
               <div className="card bg-base-200/50 border-2 border-dashed border-base-300 min-h-[300px]">
                 <div className="card-body items-center justify-center text-center">
@@ -568,10 +568,10 @@ function EditChartPage() {
                     />
                   </svg>
                   <h3 className="text-lg font-medium text-base-content/60">
-                    Anteprima grafico
+                    Chart preview
                   </h3>
                   <p className="text-sm text-base-content/40 max-w-xs">
-                    Carica i tuoi dati per visualizzare l'anteprima del grafico
+                    Load your data to display the chart preview
                   </p>
                 </div>
               </div>
