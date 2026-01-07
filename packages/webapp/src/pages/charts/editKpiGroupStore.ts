@@ -5,16 +5,19 @@ interface EditKpiGroupActions {
     load: (id: string) => void;
     reload: () => void;
     save: () => Promise<boolean>;
+    addKpi: () => void;
+    closeFormModal: () => void;
 }
 
 type EditKpiGroupState = {
+    id?: string
     vm: { name: string; description: string };
     isLoading: boolean;
     loaded: boolean;
-    id?: string
     error?: {
         message: string;
     };
+    showFormModal?: boolean;
 }
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
@@ -23,6 +26,13 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     vm: { name: '', description: '' },
     isLoading: true,
     loaded: false,
+    addKpi: () => {
+        console.log("add item");
+        set({ showFormModal: true });
+    },
+    closeFormModal: () => {
+        set({ showFormModal: false });
+    },
     load: async (id: string) => {
         try {
             const response = await api.getKpiGroup({ id });

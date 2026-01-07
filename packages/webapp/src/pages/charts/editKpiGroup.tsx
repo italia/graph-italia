@@ -2,13 +2,28 @@ import { useEffect } from "react";
 
 import { Link, useParams } from "react-router-dom";
 import Layout from "../../components/layout";
+import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
 import useEditKpiGroupStore from "./editKpiGroupStore";
 
 function EditKpiGroup() {
   const { id } = useParams();
-  const { load, reload, save, vm, isLoading, loaded, error } =
-    useEditKpiGroupStore();
+  const {
+    load,
+    reload,
+    save,
+    addKpi,
+    closeFormModal,
+    showFormModal,
+    vm,
+    isLoading,
+    loaded,
+    error,
+  } = useEditKpiGroupStore();
+
+  function addKpiHandler() {
+    addKpi();
+  }
 
   async function saveHandler() {
     const response = await save();
@@ -53,7 +68,26 @@ function EditKpiGroup() {
           <>
             <h1 className="text-4xl font-bold">{vm.name}</h1>
             <h4 className="text-xl">{vm.description}</h4>
+            <div className="flex flex-wrap items-center">
+              <button
+                className="m-2 btn btn-xs btn-primary"
+                onClick={addKpiHandler}
+              >
+                Aggiungi KPI +
+              </button>
+            </div>
           </>
+        )}
+        {showFormModal && (
+          <Dialog
+            toggle={showFormModal}
+            title="KPI"
+            callback={() => {
+              closeFormModal();
+            }}
+          >
+            <div>Form to add or edit a KPI</div>
+          </Dialog>
         )}
       </div>
     </Layout>
