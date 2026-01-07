@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
-import Layout from "../../components/layout";
-import Dialog from "../../components/layout/Dialog";
-import Loading from "../../components/layout/Loading";
+import Layout from "../../../components/layout";
+import Dialog from "../../../components/layout/Dialog";
+import Loading from "../../../components/layout/Loading";
 import useEditKpiGroupStore from "./editKpiGroupStore";
 
 type KpiFormValues = {
