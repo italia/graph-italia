@@ -1,12 +1,6 @@
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
-import Layout from "../../../components/layout";
-import Dialog from "../../../components/layout/Dialog";
-import Loading from "../../../components/layout/Loading";
-import useEditKpiGroupStore from "./editKpiGroupStore";
 
-type KpiFormValues = {
+export type KpiFormValues = {
   title: string;
   openDataPath: string;
   mostraAndamento: boolean;
@@ -36,7 +30,7 @@ const defaultValues: KpiFormValues = {
   testoFooter: "",
 };
 
-function KpiForm({
+export function KpiForm({
   initialValues = {},
   onSubmit,
 }: {
@@ -67,7 +61,7 @@ function KpiForm({
             {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title*
+                Title *
               </label>
               <input
                 type="text"
@@ -104,8 +98,12 @@ function KpiForm({
                       className="sr-only peer"
                       {...register("mostraAndamento")}
                     />
-                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
-                    <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 transition-colors">
+                      {" "}
+                    </div>
+                    <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
+                      {" "}
+                    </div>
                   </div>
                   <span className="text-sm font-medium text-gray-700">
                     Mostra andamento
@@ -237,101 +235,3 @@ function KpiForm({
     </form>
   );
 }
-
-function EditKpiGroup() {
-  const { id } = useParams();
-  const {
-    load,
-    reload,
-    save,
-    addKpi,
-    closeFormModal,
-    showFormModal,
-    vm,
-    isLoading,
-    loaded,
-    error,
-  } = useEditKpiGroupStore();
-
-  function addKpiHandler() {
-    addKpi();
-  }
-
-  function saveKpiHandler(data: KpiFormValues) {
-    //update store with new kpi
-    console.log("KPI data to save:", data);
-    //close form modal
-    closeFormModal();
-  }
-
-  async function saveHandler() {
-    const response = await save();
-    if (response) {
-      reload();
-    }
-  }
-
-  function resetHandler() {
-    reload();
-  }
-
-  useEffect(() => {
-    if (id) {
-      load(id);
-    }
-  }, []);
-
-  return (
-    <Layout>
-      <div className="p-4">
-        <div className="flex justify-between items-center">
-          <Link to="/home" className="text-blue-500 hover:underline">
-            &lt; Torna alla lista
-          </Link>
-          <div className="ml-auto flex space-x-2">
-            <button onClick={resetHandler} className="btn btn-primary">
-              Reset
-            </button>
-            <button onClick={saveHandler} className="btn btn-primary">
-              Salva
-            </button>
-          </div>
-        </div>
-        {isLoading && <Loading />}
-        {error && (
-          <div role="alert" className="alert alert-error">
-            {error.message}
-          </div>
-        )}
-        {loaded && (
-          <>
-            <h1 className="text-4xl font-bold">{vm.name}</h1>
-            <h4 className="text-xl">{vm.description}</h4>
-            <div className="flex flex-wrap items-center">
-              <button
-                className="m-2 btn btn-xs btn-primary"
-                onClick={addKpiHandler}
-              >
-                Aggiungi KPI +
-              </button>
-            </div>
-          </>
-        )}
-        {showFormModal && (
-          <Dialog
-            toggle={showFormModal}
-            title="KPI"
-            callback={() => {
-              closeFormModal();
-            }}
-          >
-            <div>Form to add or edit a KPI</div>
-            <KpiForm onSubmit={saveKpiHandler} />
-          </Dialog>
-        )}
-      </div>
-    </Layout>
-  );
-}
-
-export default EditKpiGroup;

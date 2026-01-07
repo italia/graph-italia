@@ -5,7 +5,7 @@ import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
 import EditChartPage from "./pages/charts/editChart";
-import EditKpiGroupPage from "./pages/charts/EditKpiGroup/editKpiGroup";
+import EditKpiGroupPage from "./pages/charts/EditKpiGroup";
 import DashboardEditPage from "./pages/dashboard/DashboardEditPage";
 import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
