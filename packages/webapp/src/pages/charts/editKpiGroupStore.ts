@@ -31,7 +31,9 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                 const { name, description } = response.data;
                 set({ vm: { name, description }, isLoading: false, loaded: true, id });
             }
-        } catch (error) { }
+        } catch (error) {
+            set({ error: { message: (error as Error).message }, isLoading: false });
+        }
     },
     reload: async () => {
         const { id, load } = get();
