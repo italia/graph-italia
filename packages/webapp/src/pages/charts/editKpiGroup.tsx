@@ -51,8 +51,8 @@ function EditKpiGroup() {
         )}
         {loaded && (
           <>
-            <h1>KPI GROUP: {vm.name}</h1>
-            <pre>{vm.description}</pre>
+            <h1 className="text-4xl font-bold">{vm.name}</h1>
+            <h4 className="text-xl">{vm.description}</h4>
           </>
         )}
       </div>
