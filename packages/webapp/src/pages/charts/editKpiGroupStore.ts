@@ -11,6 +11,7 @@ type EditKpiGroupState = {
     vm: { name: string; description: string };
     isLoading: boolean;
     loaded: boolean;
+    id?: string
     error?: {
         message: string;
     };
@@ -28,12 +29,18 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             if (response && response.data) {
                 console.log(response.data);
                 const { name, description } = response.data;
-                set({ vm: { name, description }, isLoading: false, loaded: true });
+                set({ vm: { name, description }, isLoading: false, loaded: true, id });
             }
         } catch (error) { }
     },
-    reload: async () => { },
+    reload: async () => {
+        const { id, load } = get();
+        if (id) {
+            await load(id);
+        }
+    },
     save: async () => {
+        console.log("save kpi group");
         return true;
     },
 }));
