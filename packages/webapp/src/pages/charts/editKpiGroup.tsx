@@ -6,7 +6,22 @@ import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
 import useEditKpiGroupStore from "./editKpiGroupStore";
 
-const defaultValues = {
+type KpiFormValues = {
+  title: string;
+  openDataPath: string;
+  mostraAndamento: boolean;
+  direzioneAndamento: string;
+  valoreAndamento: string;
+  dettaglioAndamento: string;
+  valore: string;
+  coloreSfondo: string;
+  prefissoValore: string;
+  suffissoValore: string;
+  percentuale: string;
+  testoFooter: string;
+};
+
+const defaultValues: KpiFormValues = {
   title: "Progetti attivi",
   openDataPath: "pa_2026_od_progetti_attivi_antepromatore_totali.csv",
   mostraAndamento: false,
@@ -25,10 +40,10 @@ function KpiForm({
   initialValues = {},
   onSubmit,
 }: {
-  initialValues?: any;
-  onSubmit?: (data: unknown) => void;
+  initialValues?: Partial<KpiFormValues>;
+  onSubmit?: (data: KpiFormValues) => void;
 }) {
-  const { register, handleSubmit, watch } = useForm({
+  const { register, handleSubmit, watch } = useForm<KpiFormValues>({
     defaultValues: {
       ...defaultValues,
       ...initialValues,
@@ -37,7 +52,7 @@ function KpiForm({
 
   const mostraAndamento = watch("mostraAndamento");
 
-  const onSubmitHandler = (data: unknown) => {
+  const onSubmitHandler = (data: KpiFormValues) => {
     console.log(data);
     if (onSubmit) {
       onSubmit(data);
@@ -242,8 +257,9 @@ function EditKpiGroup() {
     addKpi();
   }
 
-  function saveKpiHandler(data: any) {
+  function saveKpiHandler(data: KpiFormValues) {
     //update store with new kpi
+    console.log("KPI data to save:", data);
     //close form modal
     closeFormModal();
   }
