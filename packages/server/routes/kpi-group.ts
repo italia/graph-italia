@@ -11,6 +11,7 @@ const createSchema = z.object({
 
 const router = Router();
 
+// #region: COMMAND
 router.post(
     '/',
     [validateRequest({ body: createSchema }), requireUser],
@@ -20,7 +21,7 @@ router.post(
             const { body } = req;
             const chartData = {
                 userId: user.userId,
-                chart: 'kpiGroup',
+                chart: 'kpiGroup' as 'kpiGroup',
                 ...body,
             };
             console.log(chartData);
@@ -33,5 +34,33 @@ router.post(
         }
     }
 );
+// #endregion
+
+// #region: QUERY
+const detailSchema = z.object({
+    id: z.string({
+        message: 'Id is required',
+    }),
+});
+router.get(
+    '/:id',
+    [validateRequest({ params: detailSchema }), requireUser],
+    async (req: any, res: any, next: any) => {
+        try {
+            const id = req.params.id;
+            //const user: ParsedToken = req.user;
+            const result = await db.findKpiGroupById(id);
+            if (!result) {
+                return res.status(404).json({ message: 'KPI Group not found' });
+            }
+            const { name, description } = result;
+            return res.json({ data: { name, description } });
+            //return res.json({ user, data });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+// #endregion
 
 export default router;

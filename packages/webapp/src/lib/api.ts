@@ -336,3 +336,16 @@ export async function createKpiGroup(payload: CreateKpiGroupPayload) {
   });
   return { id: response.data.id };
 }
+
+type GetKpiGroupParams = {
+  id: string;
+}
+
+type GetKpiGroupResponse = {
+  data: { name: string; description: string };
+}
+
+export async function getKpiGroup({ id }: GetKpiGroupParams) {
+  const response = await axios.get(`${getServerUrlWithApi()}/charts/kpi-group/${id}`);
+  return { data: response.data.data } as GetKpiGroupResponse;
+}

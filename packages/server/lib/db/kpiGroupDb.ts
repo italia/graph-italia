@@ -16,3 +16,7 @@ type UpdateKpiGroup = {
 type WhereKpiGroup = {}
 
 export const kpiGroupDb = createDb<CreateKpiGroup, UpdateKpiGroup, WhereKpiGroup>(prisma.chart);
+
+export async function findKpiGroupById(id: string) {
+    return kpiGroupDb.findById(id);
+}
