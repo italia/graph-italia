@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import * as api from "../../lib/api";
 
-interface EditKpyGroupActions {
+interface EditKpiGroupActions {
     load: (id: string) => void;
     reload: () => void;
     save: () => Promise<boolean>;
 }
 
-type EditKpyGroupState = {
+type EditKpiGroupState = {
     vm: { name: string; description: string };
     isLoading: boolean;
     loaded: boolean;
@@ -16,7 +16,7 @@ type EditKpyGroupState = {
     };
 }
 
-type EditKpiGroupStore = EditKpyGroupActions & EditKpyGroupState;
+type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     vm: { name: '', description: '' },
