@@ -4,7 +4,7 @@ export type KpiFormValues = {
   title: string;
   openDataPath: string;
   show_flow: boolean;
-  flow_direction: string;
+  flow_direction: "+" | "-";
   flow_value: string;
   flow_detail: string;
   value: string;
@@ -19,7 +19,7 @@ const defaultValues: KpiFormValues = {
   title: "Progetti attivi",
   openDataPath: "pa_2026_od_progetti_attivi_antepromatore_totali.csv",
   show_flow: false,
-  flow_direction: "(duplicate) (duplicate) (duplicate) (duplicate)",
+  flow_direction: "+",
   flow_value: "13.4%",
   flow_detail: "11.18%",
   value: "81070",
@@ -116,12 +116,15 @@ export function KpiForm({
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Direzione andamento
                 </label>
-                <input
-                  type="text"
+                <select
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 text-sm"
                   {...register("flow_direction")}
                   disabled={!showFlow}
-                />
+                >
+                  <option>--Seleziona un valore--</option>
+                  <option value="+">Positivo (+)</option>
+                  <option value="-">Negativo (-)</option>
+                </select>
               </div>
 
               {/* Valore andamento */}
