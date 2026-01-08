@@ -7,14 +7,15 @@ axios.defaults.withCredentials = true;
 const getServerUrl = (): string => {
   let baseServerUrl ; // = import.meta.env.VITE_SERVER_URL;
   // Priority 1: Runtime config from ConfigMap (/config.json)
-  if (!baseServerUrl && typeof window !== "undefined" && window.__ENV__?.VITE_SERVER_URL) {
+  if (typeof window !== "undefined" && window.__ENV__?.VITE_SERVER_URL) {
     baseServerUrl = window.__ENV__.VITE_SERVER_URL;
-  }
+    return baseServerUrl;
+  }else{
   // Priority 2: Build-time env from .env file (for local development)
-  baseServerUrl = import.meta.env.VITE_SERVER_URL ||  'http://localhost:3003';
   // Priority 3: Default fallback
+    baseServerUrl = import.meta.env.VITE_SERVER_URL ||  'http://localhost:3003';
+  }
   console.log("Using server URL:", baseServerUrl);
-
   return baseServerUrl;
 };
 
