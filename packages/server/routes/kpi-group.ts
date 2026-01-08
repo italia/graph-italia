@@ -1,37 +1,43 @@
-import { Router, type Request, type Response } from "express";
-import z from "zod";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import * as z from "zod";
 import db from "../lib/db";
-import { requireUser, validateRequest, type AuthenticatedRequest } from "../lib/middlewares";
+import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
+import { checkAuth, requireUser } from "../lib/middlewares-hono";
 
 const createSchema = z.object({
-    name: z.string(),
-    description: z.string().optional(),
+	name: z.string(),
+	description: z.string().optional(),
 });
 
-const router = Router();
+const router = new Hono();
 
-router.post(
-    '/',
-    [validateRequest({ body: createSchema }), requireUser],
-    async (req: Request<{}, { id: string }, { name: string; description?: string }>, res: Response<{ id: string }>, next: any) => {
-        try {
-            const user: ParsedToken = (req as AuthenticatedRequest).user!;
-            const { body } = req;
-            const chartData = {
-                userId: user.userId,
-                chart: 'kpiGroup',
-                ...body,
-            };
-            console.log(chartData);
-            const result = await db.kpiGroupDb.create(chartData);
+// Apply auth check middleware to all routes
+router.use("*", checkAuth);
 
-            return res.status(201).json(result);
-        } catch (err) {
-            console.log(err);
-            next(err);
-        }
-    }
-);
+router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
+	try {
+		const user = c.get("user") as ParsedToken;
+		const body = c.req.valid("json");
+		const chartData = {
+			userId: user.userId,
+			chart: "kpiGroup",
+			...body,
+		};
+		const result = await db.kpiGroupDb.create(chartData);
+		logger.info("kpiGroup created", {
+			chartId: result.id,
+			userId: user.userId,
+		});
+		return c.json(result, 201);
+	} catch (err) {
+		logger.error(
+			"Dashboard create error",
+			err instanceof Error ? err : undefined,
+		);
+		return c.json({ error: "Internal error" }, 500);
+	}
+});
 
 export default router;

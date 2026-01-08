@@ -1,204 +1,245 @@
-import { Router } from 'express';
-import * as z from 'zod';
-import { requireUser, validateRequest } from '../lib/middlewares';
-import type { ParsedToken } from '../types';
-import db from '../lib/db';
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import * as z from "zod";
+import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { logger } from "../lib/logger";
+import type { ParsedToken } from "../types";
+import db from "../lib/db";
 
-const router = Router();
+const router = new Hono();
+
+// Apply auth check middleware to all routes
+router.use("*", checkAuth);
 
 const detailSchema = z.object({
-  id: z.string({
-    required_error: 'Id is required',
-  }),
+	id: z.string({
+		error: "Id is required",
+	}),
 });
 
 const slotSchema = z.object({
-  chartId: z.string(), // Ignoriamo la validazione specifica per Chart
-  settings: z.object({}).passthrough().optional(),
-  createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date().default(() => new Date()),
+	chartId: z.string(),
+	settings: z.object({}).passthrough().optional(),
+	createdAt: z.coerce.date().default(() => new Date()),
+	updatedAt: z.coerce.date().default(() => new Date()),
 });
 
 const createDashboardSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  config: z.unknown().optional(),
-  data: z.unknown().optional(),
-  remoteUrl: z.string().nullable().optional(),
-  isRemote: z.boolean().optional(),
-  publish: z.boolean().optional(),
-  preview: z.string().nullable().optional(),
+	name: z.string().optional(),
+	description: z.string().optional(),
+	config: z.unknown().optional(),
+	data: z.unknown().optional(),
+	remoteUrl: z.string().nullable().optional(),
+	isRemote: z.boolean().optional(),
+	publish: z.boolean().optional(),
+	preview: z.string().nullable().optional(),
 });
 
 const updateDashboardSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  // chart: z.string().optional(),
-  config: z.unknown().optional(),
-  data: z.unknown().optional(),
-  publish: z.boolean().optional(),
-  remoteUrl: z.string().nullable().optional(),
-  isRemote: z.boolean().optional(),
-  id: z.string().optional(),
-  preview: z.string().nullable().optional(),
-  slots: z.array(slotSchema).optional(),
+	name: z.string().optional(),
+	description: z.string().optional(),
+	config: z.unknown().optional(),
+	data: z.unknown().optional(),
+	publish: z.boolean().optional(),
+	remoteUrl: z.string().nullable().optional(),
+	isRemote: z.boolean().optional(),
+	id: z.string().optional(),
+	preview: z.string().nullable().optional(),
+	slots: z.array(slotSchema).optional(),
 });
 
 const updateSlotsSchema = z.object({
-  slots: z.array(slotSchema),
+	slots: z.array(slotSchema),
 });
 
 /** Index */
-router.get('/', async (req: any, res, next) => {
-  try {
-    const user: ParsedToken = req.user;
-    if (!user) return;
-    const id = user.userId;
-    const results = await db.findDashboardByUserId(id);
-    return res.json(results);
-  } catch (err) {
-    next(err);
-  }
+router.get("/", async (c) => {
+	try {
+		const user = c.get("user") as ParsedToken | null;
+		if (!user) {
+			return c.json({ error: "Unauthorized" }, 401);
+		}
+		const id = user.userId;
+		const results = await db.findDashboardByUserId(id);
+		return c.json(results);
+	} catch (err) {
+		logger.error(
+			"Dashboard index error",
+			err instanceof Error ? err : undefined,
+		);
+		return c.json({ error: "Internal error" }, 500);
+	}
 });
 
 /** Get :ID */
 router.get(
-  '/:id',
-  [validateRequest({ params: detailSchema }), requireUser],
-  async (req: any, res: any, next: any) => {
-    try {
-      const id = req.params.id;
-      const user: ParsedToken = req.user;
-      const { data } = req.body;
-      const result = await db.findDashboardByIdWithIncludes(id);
-      res.json(result);
-      return res.json({ user, data });
-    } catch (err) {
-      next(err);
-    }
-  }
+	"/:id",
+	requireUser,
+	zValidator("param", detailSchema),
+	async (c) => {
+		try {
+			const { id } = c.req.valid("param");
+			const result = await db.findDashboardByIdWithIncludes(id);
+			return c.json(result);
+		} catch (err) {
+			logger.error(
+				"Dashboard get error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
 );
 
 /** Create */
 router.post(
-  '/',
-  [validateRequest({ body: createDashboardSchema }), requireUser],
-  async (req: any, res: any, next: any) => {
-    try {
-      const user: ParsedToken = req.user;
-      const { body } = req;
-      const chartData = {
-        userId: user.userId,
-        ...body,
-      };
-      console.log(chartData);
-      const result = await db.dashboardDb.create(chartData);
+	"/",
+	requireUser,
+	zValidator("json", createDashboardSchema),
+	async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken;
+			const body = c.req.valid("json");
+			const chartData = {
+				userId: user.userId,
+				...body,
+			};
+			const result = await db.dashboardDb.create(chartData);
 
-      return res.status(201).json(result);
-    } catch (err) {
-      console.log(err);
-      next(err);
-    }
-  }
+			logger.info("Dashboard created", {
+				dashboardId: result.id,
+				userId: user.userId,
+			});
+
+			return c.json(result, 201);
+		} catch (err) {
+			logger.error(
+				"Dashboard create error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
 );
 
 /** Delete ID */
 router.delete(
-  '/:id',
-  [validateRequest({ params: detailSchema }), requireUser],
-  async (req: any, res: any, next: any) => {
-    try {
-      const user: ParsedToken = req.user;
-      const dashboardId = req.params.id;
-      const dashboard = await db.dashboardDb.findById(dashboardId);
-      if (!dashboard) {
-        return res.json({ message: 'Not Found' }).status(404);
-      }
-      if (dashboard.userId !== user.userId) {
-        return res.json({ message: 'Not Authorized' }).status(401);
-      }
-      const result = await db.deleteDashboardById(dashboardId);
-      return res.status(204).json();
-    } catch (err) {
-      next(err);
-    }
-  }
+	"/:id",
+	requireUser,
+	zValidator("param", detailSchema),
+	async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken;
+			const { id: dashboardId } = c.req.valid("param");
+			const dashboard = await db.dashboardDb.findById(dashboardId);
+			if (!dashboard) {
+				return c.json({ message: "Not Found" }, 404);
+			}
+			if (dashboard.userId !== user.userId) {
+				return c.json({ message: "Not Authorized" }, 401);
+			}
+			await db.deleteDashboardById(dashboardId);
+
+			logger.info("Dashboard deleted", { dashboardId, userId: user.userId });
+
+			return c.body(null, 204);
+		} catch (err) {
+			logger.error(
+				"Dashboard delete error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
 );
 
 /** Update slots */
 router.put(
-  '/:id/slots',
-  [
-    validateRequest({ body: updateSlotsSchema }),
-    validateRequest({ params: detailSchema }),
-    requireUser,
-  ],
-  async (req: any, res: any, next: any) => {
-    try {
-      const user: ParsedToken = req.user;
-      const dashboardId = req.params.id;
-      const dashboard = await db.findSlots(dashboardId);
-      if (!dashboard) {
-        return res.json({ message: 'Not Found' }).status(404);
-      }
-      if (dashboard.userId !== user.userId) {
-        return res.json({ message: 'Not Authorized' }).status(401);
-      }
-      console.log('Updating dashboard', dashboardId);
-      console.log('Updating dashboard', JSON.stringify(dashboard));
-      const dashboardData = req.body;
-      console.log('Dashboard Data', dashboardData);
-      const { slots: storedSlots } = dashboard;
-      const { slots: updatedSlots } = dashboardData;
-      const { toCreate, toUpdate, toDelete } =
-        db.separateCreateUpdateDeleteSlots(
-          storedSlots,
-          updatedSlots,
-          (s) => s.chartId
-        );
+	"/:id/slots",
+	requireUser,
+	zValidator("param", detailSchema),
+	zValidator("json", updateSlotsSchema),
+	async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken;
+			const { id: dashboardId } = c.req.valid("param");
+			const dashboardData = c.req.valid("json");
 
-      console.log(toCreate, toUpdate);
+			const dashboard = await db.findSlots(dashboardId);
+			if (!dashboard) {
+				return c.json({ message: "Not Found" }, 404);
+			}
+			if (dashboard.userId !== user.userId) {
+				return c.json({ message: "Not Authorized" }, 401);
+			}
 
-      const result = await db.updateSlots(dashboardId, {
-        toCreate,
-        toUpdate,
-        toDelete,
-      });
-      return res.json(result);
-    } catch (err) {
-      next(err);
-    }
-  }
+			const { slots: storedSlots } = dashboard;
+			const { slots: updatedSlots } = dashboardData;
+			const { toCreate, toUpdate, toDelete } =
+				db.separateCreateUpdateDeleteSlots(
+					storedSlots,
+					updatedSlots,
+					(s) => s.chartId,
+				);
+
+			const result = await db.updateSlots(dashboardId, {
+				toCreate,
+				toUpdate,
+				toDelete,
+			});
+
+			logger.debug("Dashboard slots updated", {
+				dashboardId,
+				userId: user.userId,
+				created: toCreate.length,
+				updated: toUpdate.length,
+				deleted: toDelete.length,
+			});
+
+			return c.json(result);
+		} catch (err) {
+			logger.error(
+				"Dashboard update slots error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
 );
 
 /** Update ID */
 router.put(
-  '/:id',
-  [
-    validateRequest({ body: updateDashboardSchema }),
-    validateRequest({ params: detailSchema }),
-    requireUser,
-  ],
-  async (req: any, res: any, next: any) => {
-    try {
-      const user: ParsedToken = req.user;
-      const dashboardId = req.params.id;
-      const dashboard = await db.dashboardDb.findById(dashboardId);
-      if (!dashboard) {
-        return res.json({ message: 'Not Found' }).status(404);
-      }
-      if (dashboard.userId !== user.userId) {
-        return res.json({ message: 'Not Authorized' }).status(401);
-      }
-      console.log('Updating dashboard', dashboardId);
-      const dashboardData = req.body;
-      console.log('Dashboard Data', dashboardData);
-      const result = await db.dashboardDb.update(dashboardId, dashboardData);
-      return res.json(result);
-    } catch (err) {
-      next(err);
-    }
-  }
+	"/:id",
+	requireUser,
+	zValidator("param", detailSchema),
+	zValidator("json", updateDashboardSchema),
+	async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken;
+			const { id: dashboardId } = c.req.valid("param");
+			const dashboardData = c.req.valid("json");
+
+			const dashboard = await db.dashboardDb.findById(dashboardId);
+			if (!dashboard) {
+				return c.json({ message: "Not Found" }, 404);
+			}
+			if (dashboard.userId !== user.userId) {
+				return c.json({ message: "Not Authorized" }, 401);
+			}
+
+			const result = await db.dashboardDb.update(dashboardId, dashboardData);
+
+			logger.debug("Dashboard updated", { dashboardId, userId: user.userId });
+
+			return c.json(result);
+		} catch (err) {
+			logger.error(
+				"Dashboard update error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
 );
 
 export default router;
