@@ -1,8 +1,6 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { log } from "../../lib/utils";
-
-const PLACEHOLDER_URL = "";
 
 function LoadSource({
   setData,
@@ -12,48 +10,94 @@ function LoadSource({
   currentValue: string | null;
 }) {
   const [loading, setLoading] = useState(false);
-  const [url, setUrl] = useState(currentValue || PLACEHOLDER_URL);
+  const [url, setUrl] = useState(currentValue || "");
+  const [error, setError] = useState<string | null>(null);
 
   async function getData() {
+    if (!url.trim()) {
+      setError("Please enter a valid URL");
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+
     try {
-      let testUrl = new URL(url);
+      const testUrl = new URL(url);
       if (testUrl) {
         axios.defaults.timeout = 5000;
         const response = await axios.get(url);
-        console.log("response.data", response.data);
         if (response.data) {
           setData({ remoteUrl: url, data: response.data });
         }
       }
-    } catch (error) {
-      log(error);
+    } catch (err) {
+      log(err);
+      setError("Unable to load data from the specified URL");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div
-      style={{
-        marginTop: 10,
-        marginBottom: 10,
-        width: "100%",
-      }}
-    >
-      {loading && <p>Loading...</p>}
-      <div className='bg-base-200 p-4 my-5'>
-        <label className='label'>Url</label>
+    <div className="space-y-4">
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text font-medium">JSON data source URL</span>
+        </label>
         <input
-          className='input w-full'
-          type='text'
+          className={`input input-bordered w-full ${
+            error ? "input-error" : ""
+          }`}
+          type="url"
           value={url}
-          placeholder='https://example.com/data.json'
-          onChange={(e) => setUrl(e.target.value)}
+          placeholder="https://example.com/data.json"
+          onChange={(e) => {
+            setUrl(e.target.value);
+            setError(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              getData();
+            }
+          }}
         />
+        {error && (
+          <label className="label">
+            <span className="label-text-alt text-error">{error}</span>
+          </label>
+        )}
       </div>
-      <button className='btn btn-primary' onClick={() => getData()}>
-        USE REMOTE DATA
+
+      <button
+        className="btn btn-primary w-full gap-2"
+        onClick={() => getData()}
+        disabled={loading || !url.trim()}
+      >
+        {loading ? (
+          <>
+            <span className="loading loading-spinner loading-sm"></span>
+            Loading...
+          </>
+        ) : (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              />
+            </svg>
+            Load remote data
+          </>
+        )}
       </button>
     </div>
   );

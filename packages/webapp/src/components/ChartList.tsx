@@ -49,15 +49,19 @@ export default function ChartList({
 									className="m-2"
 								/>
 							)} */}
-              {item.chart === "bar" && <FaChartBar fill={"#06c"} size={24} />}
-              {item.chart === "line" && <FaChartLine fill={"#06c"} size={24} />}
-              {item.chart === "pie" && <FaChartPie fill={"#06c"} />}
-              {item.chart === "geo" && <FaRegMap fill={"#06c"} size={24} />}
-              {item.chart === "map" && (
-                <FaMapMarkerAlt fill={"#06c"} size={24} />
-              )}
+              {/* @ts-expect-error react-icons type issue */}
+              {item.chart === "bar" && <FaChartBar fill="#06c" size={24} />}
+              {/* @ts-expect-error react-icons type issue */}
+              {item.chart === "line" && <FaChartLine fill="#06c" size={24} />}
+              {/* @ts-expect-error react-icons type issue */}
+              {item.chart === "pie" && <FaChartPie fill="#06c" />}
+              {/* @ts-expect-error react-icons type issue */}
+              {item.chart === "geo" && <FaRegMap fill="#06c" size={24} />}
+              {/* @ts-expect-error react-icons type issue */}
+              {item.chart === "map" && <FaMapMarkerAlt fill="#06c" size={24} />}
               {(item.chart === "kpi" || item.chart === "kpigroup") && (
-                <FaRegListAlt fill={"#06c"} size={24} />
+                // @ts-expect-error react-icons type issue
+                <FaRegListAlt fill="#06c" size={24} />
               )}
 
               <div className="grow flex flex-col justify-start  pb-4">
@@ -116,7 +120,7 @@ export default function ChartList({
                 <a
                   className="btn btn-outline btn-primary btn-sm"
                   // onClick={() => handleLoadChart(item)}
-                  href={`/edit/${item.chart === "kpiGroup" ? "kpi" : "chart"}/${
+                  href={`/edit/${item.chart === "kpi" ? "kpi" : "chart"}/${
                     item.id
                   }`}
                 >
