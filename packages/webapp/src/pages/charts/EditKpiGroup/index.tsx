@@ -14,6 +14,7 @@ function EditKpiGroup() {
     save,
     addKpi,
     closeFormModal,
+    saveKpi,
     showFormModal,
     vm,
     isLoading,
@@ -28,6 +29,7 @@ function EditKpiGroup() {
   function saveKpiHandler(data: KpiFormValues) {
     //update store with new kpi
     console.log("KPI data to save:", data);
+    saveKpi(data);
     //close form modal
     closeFormModal();
   }
@@ -82,6 +84,23 @@ function EditKpiGroup() {
               >
                 Aggiungi KPI +
               </button>
+            </div>
+            <div className="relative border min-h-[60vh]">
+              {vm.kpis.length === 0 && (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-500">
+                  Nessun KPI presente. Aggiungi un nuovo KPI.
+                </div>
+              )}
+              <div className="p-4 space-y-4">
+                {vm.kpis.map((kpi, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border rounded-md shadow-sm bg-white"
+                  >
+                    <h3 className="text-lg font-semibold">{kpi.title}</h3>
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         )}
