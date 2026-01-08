@@ -15,15 +15,15 @@ interface GenericDialogProps {
 }
 
 /**
- * GenericDialog - Componente Modal conforme alle linee guida del Design System Italia
+ * GenericDialog - Modal Component following Italian Design System guidelines
  * @see https://designers.italia.it/design-system/componenti/modal/
  *
- * Caratteristiche:
- * - Titolo con h2 per accessibilità (contenuti separati dalla struttura della pagina)
- * - Pulsante di chiusura (X) in alto a destra
- * - Pulsanti azione in basso a destra (Cancel a sinistra, Confirm a destra)
- * - Overlay scuro per evidenziare la modale
- * - Chiusura cliccando fuori dalla modale
+ * Features:
+ * - Title with h2 for accessibility (content separated from page structure)
+ * - Close button (X) at top right
+ * - Action buttons at bottom right (Cancel on left, Confirm on right)
+ * - Dark overlay to highlight the modal
+ * - Close by clicking outside the modal
  */
 export default function GenericDialog({
   title,
@@ -33,14 +33,14 @@ export default function GenericDialog({
   confirmCb,
   cancelCb,
   labels = {
-    confirm: "Conferma",
-    cancel: "Annulla",
+    confirm: "Confirm",
+    cancel: "Cancel",
   },
   confirmDisabled = false,
 }: GenericDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
-  // Gestione chiusura con ESC e click fuori
+  // Handle closing with ESC and click outside
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent<HTMLDialogElement>) => {
       const dialogDimensions = ref.current?.getBoundingClientRect();
@@ -68,7 +68,7 @@ export default function GenericDialog({
     }
   }, [toggle]);
 
-  // Gestione tasto ESC
+  // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && toggle) {
@@ -88,21 +88,21 @@ export default function GenericDialog({
       aria-describedby={description ? "modal-description" : undefined}
     >
       <div className="modal-box relative" onClick={(e) => e.stopPropagation()}>
-        {/* Pulsante chiusura (X) in alto a destra - Linea guida Italia */}
+        {/* Close button (X) at top right - Italian Design guideline */}
         <button
           className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"
           onClick={() => cancelCb()}
-          aria-label="Chiudi modale"
+          aria-label="Close modal"
         >
           ✕
         </button>
 
-        {/* Titolo con h2 per accessibilità - Linea guida Italia */}
+        {/* Title with h2 for accessibility - Italian Design guideline */}
         <h2 id="modal-title" className="font-bold text-xl pr-8">
           {title}
         </h2>
 
-        {/* Descrizione opzionale */}
+        {/* Optional description */}
         {description && (
           <p
             id="modal-description"
@@ -112,10 +112,10 @@ export default function GenericDialog({
           </p>
         )}
 
-        {/* Contenuto della modale */}
+        {/* Modal content */}
         <div className="py-4">{children}</div>
 
-        {/* Pulsanti azione - Posizionati in basso a destra come da linee guida Italia */}
+        {/* Action buttons - Positioned at bottom right as per Italian Design guidelines */}
         <div className="modal-action">
           <button className="btn btn-outline" onClick={() => cancelCb()}>
             {labels.cancel}

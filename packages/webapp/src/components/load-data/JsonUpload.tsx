@@ -1,9 +1,7 @@
-import { useState, useTransition } from "react";
-import DataTable from "../DataTable";
-
-import { log, transposeData, moveDataColumn } from "../../lib/utils";
-import { MatrixType } from "../../types";
+import { useEffect, useState, useTransition } from "react";
+import { log, moveDataColumn, transposeData } from "../../lib/utils";
 import { validateStructure } from "../../lib/validate";
+import { MatrixType } from "../../types";
 
 type selectOptionType = {
   value: string;
@@ -30,14 +28,65 @@ function cleanupData(matrix: MatrixType) {
   });
 }
 
-function UploadJSON({ setData }: { setData: Function }) {
+function UploadJSON({
+  setData,
+  initialData,
+}: {
+  setData: Function;
+  initialData?: any;
+}) {
   const [_, startTransition] = useTransition();
   const [rawData, setRawData] = useState<any>(null);
   const [category, setCategory] = useState<selectOptionType | null>(null);
   const [series, setSeries] = useState<selectOptionType[] | []>([]);
   const [error, setError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   let fileReader: FileReader | undefined;
+
+  function isSameObject(a: object, b: object) {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+  function getFirstOfMAtrix(matrix: any) {
+    const val = matrix[0][0];
+    return typeof val === "string" ? val.trim() : String(val);
+  }
+  function getCols(cols: (string | number)[]) {
+    return cols.map((c: string | number) => {
+      const col = typeof c === "string" ? c.trim() : String(c);
+      return { value: col, label: col };
+    });
+  }
+
+  // Initialize with existing data
+  useEffect(() => {
+    if (initialData && initialData.length > 0 && !initialized) {
+      const c = getFirstOfMAtrix(initialData);
+      const newCategory = { value: c, label: c };
+      const cols = getCols(initialData[0]);
+      const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
+
+      setRawData(initialData);
+      setCategory(newCategory);
+      setSeries(newSeries);
+      setInitialized(true);
+    }
+  }, [initialData, initialized]);
+
+  function filterData(
+    data: any,
+    cat: selectOptionType | null,
+    ser: selectOptionType[]
+  ) {
+    if (!ser || !cat) return null;
+    const cols = [cat, ...ser].map((col: any) => col.value);
+    const filtered = data.map((row: any) => {
+      return row.filter((_r: any, i: number) => {
+        return cols.includes(data[0][i].trim());
+      });
+    });
+    return filtered;
+  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     startTransition(() => {
@@ -57,10 +106,9 @@ function UploadJSON({ setData }: { setData: Function }) {
     fileReader = new FileReader();
     fileReader.readAsText(file);
     fileReader.onloadend = (e) => {
-      // log("RESULTS DATA", text);
       const text = e.target?.result;
       if (!text) {
-        setError("File is empty");
+        setError("The file is empty");
         return;
       }
       let data: undefined | MatrixType;
@@ -71,104 +119,129 @@ function UploadJSON({ setData }: { setData: Function }) {
         return;
       }
       if (data) {
-        // const data = JSON.parse(text as string);
         log("RESULTS DATA", data);
         const c = getFirstOfMAtrix(data);
-        const category = { value: c, label: c };
-        log("CATEGORY", category);
+        const newCategory = { value: c, label: c };
+        log("CATEGORY", newCategory);
         const cols = getCols(data[0] as [string]);
         log("COLS", cols);
-        const series = cols.filter((i) => !isSameObject(i, category));
-        log("SERIES", series);
+        const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
+        log("SERIES", newSeries);
 
         startTransition(() => {
           setRawData(data);
-          setCategory(category);
-          setSeries(series);
+          setCategory(newCategory);
+          setSeries(newSeries);
         });
       }
     };
   }
 
-  function isSameObject(a: object, b: object) {
-    return JSON.stringify(a) === JSON.stringify(b);
-  }
-  function getFirstOfMAtrix(matrix: any) {
-    return matrix[0][0]?.trim();
-  }
-  function getCols(cols: [string]) {
-    return cols.map((c: string) => {
-      const col = c.trim();
-      return { value: col, label: col };
-    });
-  }
+  // Automatically update data when category or series change
+  useEffect(() => {
+    if (rawData && category && series.length > 0) {
+      const filtered = filterData(rawData, category, series);
+      if (filtered) {
+        setData(cleanupData(filtered));
+      }
+    }
+  }, [rawData, category, series]);
 
   function transpose() {
     const transposed = transposeData(rawData);
     setRawData(transposed);
     const c = getFirstOfMAtrix(transposed);
-    const category = { value: c, label: c };
-    setCategory(category);
-    setSeries(getCols(transposed[0]).filter((i) => !isSameObject(i, category)));
-  }
-
-  function filterData() {
-    if (!series) return;
-    const cols = [category, ...series].map((col: any) => col.value);
-    const filtered = rawData.map((row: any) => {
-      return row.filter((r: any, i: number) => {
-        return cols.includes(rawData[0][i].trim());
-      });
-    });
-    return filtered;
+    const newCategory = { value: c, label: c };
+    setCategory(newCategory);
+    setSeries(
+      getCols(transposed[0]).filter((i) => !isSameObject(i, newCategory))
+    );
   }
 
   function handleChangeCategory(newValue: string) {
     setSeries([]);
-    const category: any = getCols(rawData[0]).find((i) => i.value === newValue);
-    setCategory(category);
+    const newCategory: any = getCols(rawData[0]).find(
+      (i) => i.value === newValue
+    );
+    setCategory(newCategory);
     setRawData(moveDataColumn(rawData, newValue));
   }
 
   function handleChangeSerie(options: string[]) {
-    const series = getCols(rawData[0]).filter((i: any) =>
+    const newSeries = getCols(rawData[0]).filter((i: any) =>
       options.map((o) => o).includes(i.value)
     );
-    setSeries(series);
+    setSeries(newSeries);
   }
 
   return (
-    <div className='bg-base-200 p-4 my-5'>
-      <div className='form-control'>
-        <label className='label'>Load JSON:</label>
+    <div className="space-y-4">
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text font-medium">Upload JSON file</span>
+        </label>
         <input
-          className='file-input file-input-bordered file-input-primary  w-full max-w-2xl'
-          type='file'
-          name='file'
-          accept='.json'
+          className="file-input file-input-bordered file-input-primary w-full"
+          type="file"
+          name="file"
+          accept=".json"
           onChange={(e) => handleFileChange(e)}
         />
       </div>
-      {error && <div className='error'>{error}</div>}
-      {rawData && (
-        <div className=''>
-          <div className=''>
-            <DataTable
-              data={rawData}
-              transpose={() => transpose()}
-              reset={() => setRawData(null)}
-              download={() => {}}
+
+      {error && (
+        <div className="alert alert-error py-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
+          </svg>
+          <span className="text-sm">{error}</span>
+        </div>
+      )}
+
+      {rawData && (
+        <div className="space-y-4 p-4 bg-base-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium">Configure columns</h4>
+            <div className="flex gap-2">
+              <button
+                className="btn btn-sm btn-outline"
+                onClick={() => transpose()}
+              >
+                Transpose
+              </button>
+              <button
+                className="btn btn-sm btn-ghost text-error"
+                onClick={() => {
+                  setRawData(null);
+                  setCategory(null);
+                  setSeries([]);
+                  setError(null);
+                }}
+              >
+                Remove
+              </button>
+            </div>
           </div>
-          <div className='bg-base-200 p-5'>
-            <div>
-              <label className='label'>Seleziona la colonna categoria:</label>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Category column (X axis)</span>
+              </label>
               <select
-                className='select select-primary max-w-lg'
-                name='category'
-                id='category'
-                // label="category"
-                // hint="Selezione la colonna categoria"
+                className="select select-bordered w-full"
+                name="category"
+                id="category"
                 value={category?.value}
                 onChange={(e) => handleChangeCategory(e.target.value)}
               >
@@ -179,15 +252,19 @@ function UploadJSON({ setData }: { setData: Function }) {
                 ))}
               </select>
             </div>
+
             {category && (
-              <div>
-                <label className='label'>Seleziona una o più serie:</label>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Data series (values)</span>
+                  <span className="label-text-alt text-base-content/50">
+                    Ctrl+click for multiple selection
+                  </span>
+                </label>
                 <select
-                  className='select select-primary max-w-lg'
-                  name='series'
-                  id='series'
-                  // label="series"
-                  // hint="Seleziona una o più serie"
+                  className="select select-bordered w-full min-h-[100px]"
+                  name="series"
+                  id="series"
                   multiple={true}
                   value={series.map((s) => s.value)}
                   onChange={(e) =>
@@ -206,19 +283,28 @@ function UploadJSON({ setData }: { setData: Function }) {
                 </select>
               </div>
             )}
-            <div className='my-4'>
-              {series && category?.value && series.length > 0 && (
-                <button
-                  className='btn btn-primary'
-                  onClick={() => {
-                    setData(cleanupData(filterData()));
-                  }}
-                >
-                  Salva Dati
-                </button>
-              )}
-            </div>
           </div>
+
+          {series.length > 0 && (
+            <div className="alert alert-success py-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span className="text-sm">
+                Data loaded: {series.length} series selected
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>

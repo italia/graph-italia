@@ -14,7 +14,7 @@ const getServerUrl = (): string => {
     return import.meta.env.VITE_SERVER_URL;
   }
   // Priority 3: Default fallback
-  return 'http://localhost:3003';
+  return "http://localhost:3003";
 };
 
 // Use a getter function instead of a constant to ensure it's recalculated
@@ -60,8 +60,7 @@ export async function getChart(id: string) {
     method: "GET",
   });
   if (response.status === 200) {
-    const { data } = response.data;
-    return data;
+    return response.data;
   } else {
     return [];
   }
