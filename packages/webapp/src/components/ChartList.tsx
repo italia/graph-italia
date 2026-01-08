@@ -49,18 +49,12 @@ export default function ChartList({
 									className="m-2"
 								/>
 							)} */}
-              {/* @ts-expect-error react-icons type issue */}
               {item.chart === "bar" && <FaChartBar fill="#06c" size={24} />}
-              {/* @ts-expect-error react-icons type issue */}
               {item.chart === "line" && <FaChartLine fill="#06c" size={24} />}
-              {/* @ts-expect-error react-icons type issue */}
               {item.chart === "pie" && <FaChartPie fill="#06c" />}
-              {/* @ts-expect-error react-icons type issue */}
               {item.chart === "geo" && <FaRegMap fill="#06c" size={24} />}
-              {/* @ts-expect-error react-icons type issue */}
               {item.chart === "map" && <FaMapMarkerAlt fill="#06c" size={24} />}
               {(item.chart === "kpi" || item.chart === "kpigroup") && (
-                // @ts-expect-error react-icons type issue
                 <FaRegListAlt fill="#06c" size={24} />
               )}
 
