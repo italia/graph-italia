@@ -5,16 +5,17 @@ axios.defaults.withCredentials = true;
 // The config is loaded at app startup in main.tsx and stored in window.__ENV__
 // Falls back to import.meta.env (from .env file at build-time) for development, then to default
 const getServerUrl = (): string => {
+  let baseServerUrl =import.meta.env.VITE_SERVER_URL;
   // Priority 1: Runtime config from ConfigMap (/config.json)
-  if (typeof window !== "undefined" && window.__ENV__?.VITE_SERVER_URL) {
-    return window.__ENV__.VITE_SERVER_URL;
+  if (!baseServerUrl && typeof window !== "undefined" && window.__ENV__?.VITE_SERVER_URL) {
+    baseServerUrl = window.__ENV__.VITE_SERVER_URL;
   }
   // Priority 2: Build-time env from .env file (for local development)
-  if (import.meta.env.VITE_SERVER_URL) {
-    return import.meta.env.VITE_SERVER_URL;
-  }
+  baseServerUrl =  'http://localhost:3003';
   // Priority 3: Default fallback
-  return 'http://localhost:3003';
+  console.log("Using server URL:", baseServerUrl);
+
+  return baseServerUrl;
 };
 
 // Use a getter function instead of a constant to ensure it's recalculated

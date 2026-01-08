@@ -1,6 +1,6 @@
 {
   "name": "dataviz",
-  "private": "true",
+  "private": "false",
   "module": "index.ts",
   "type": "module",
   "workspaces": [
