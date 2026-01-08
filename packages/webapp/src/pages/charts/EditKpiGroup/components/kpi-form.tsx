@@ -3,31 +3,31 @@ import { useForm } from "react-hook-form";
 export type KpiFormValues = {
   title: string;
   openDataPath: string;
-  mostraAndamento: boolean;
-  direzioneAndamento: string;
-  valoreAndamento: string;
-  dettaglioAndamento: string;
-  valore: string;
-  coloreSfondo: string;
-  prefissoValore: string;
-  suffissoValore: string;
-  percentuale: string;
-  testoFooter: string;
+  show_flow: boolean;
+  flow_direction: string;
+  flow_value: string;
+  flow_detail: string;
+  value: string;
+  background_color: string;
+  value_prefix: string;
+  value_suffix: string;
+  percentage: string;
+  footer_text: string;
 };
 
 const defaultValues: KpiFormValues = {
   title: "Progetti attivi",
   openDataPath: "pa_2026_od_progetti_attivi_antepromatore_totali.csv",
-  mostraAndamento: false,
-  direzioneAndamento: "(duplicate) (duplicate) (duplicate) (duplicate)",
-  valoreAndamento: "13.4%",
-  dettaglioAndamento: "11.18%",
-  valore: "81070",
-  coloreSfondo: "",
-  prefissoValore: "",
-  suffissoValore: "",
-  percentuale: "",
-  testoFooter: "",
+  show_flow: false,
+  flow_direction: "(duplicate) (duplicate) (duplicate) (duplicate)",
+  flow_value: "13.4%",
+  flow_detail: "11.18%",
+  value: "81070",
+  background_color: "",
+  value_prefix: "",
+  value_suffix: "",
+  percentage: "",
+  footer_text: "",
 };
 
 export function KpiForm({
@@ -44,7 +44,7 @@ export function KpiForm({
     },
   });
 
-  const mostraAndamento = watch("mostraAndamento");
+  const showFlow = watch("show_flow");
 
   const onSubmitHandler = (data: KpiFormValues) => {
     console.log(data);
@@ -67,7 +67,7 @@ export function KpiForm({
                 type="text"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                {...register("title")}
+                {...register("title", { required: true })}
               />
             </div>
 
@@ -96,7 +96,7 @@ export function KpiForm({
                     <input
                       type="checkbox"
                       className="sr-only peer"
-                      {...register("mostraAndamento")}
+                      {...register("show_flow")}
                     />
                     <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 transition-colors">
                       {" "}
@@ -119,8 +119,8 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 text-sm"
-                  {...register("direzioneAndamento")}
-                  disabled={!mostraAndamento}
+                  {...register("flow_direction")}
+                  disabled={!showFlow}
                 />
               </div>
 
@@ -131,9 +131,9 @@ export function KpiForm({
                 </label>
                 <input
                   type="text"
-                  disabled={!mostraAndamento}
+                  disabled={!showFlow}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
-                  {...register("valoreAndamento")}
+                  {...register("flow_value")}
                 />
               </div>
 
@@ -144,9 +144,9 @@ export function KpiForm({
                 </label>
                 <input
                   type="text"
-                  disabled={!mostraAndamento}
+                  disabled={!showFlow}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
-                  {...register("dettaglioAndamento")}
+                  {...register("flow_detail")}
                 />
               </div>
             </div>
@@ -160,7 +160,7 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("valore")}
+                  {...register("value", { required: true })}
                 />
               </div>
 
@@ -171,7 +171,7 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("coloreSfondo")}
+                  {...register("background_color")}
                 />
               </div>
 
@@ -182,7 +182,7 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("prefissoValore")}
+                  {...register("value_prefix")}
                 />
               </div>
 
@@ -193,7 +193,7 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("suffissoValore")}
+                  {...register("value_suffix")}
                 />
               </div>
 
@@ -204,7 +204,7 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("percentuale")}
+                  {...register("percentage")}
                 />
               </div>
 
@@ -215,7 +215,7 @@ export function KpiForm({
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  {...register("testoFooter")}
+                  {...register("footer_text")}
                 />
               </div>
             </div>
