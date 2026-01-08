@@ -1,3 +1,4 @@
+import { FieldDataType } from 'dataviz-components';
 import { create } from 'zustand';
 import * as api from "../../../lib/api";
 import { KpiFormValues } from './components/kpi-form';
@@ -11,9 +12,37 @@ interface EditKpiGroupActions {
     saveKpi: (data: KpiFormValues) => void;
 }
 
+const defaultKpiGroupData: FieldDataType = {
+    id: "kpi-group2",
+    dataSource: [],
+    chart: "kpi",
+    config: {
+        direction: "vertical",
+        h: 0,
+        labeLine: false,
+        legend: false,
+        legendPosition: "",
+        palette: [],
+        tooltip: false,
+        tooltipFormatter: "",
+        valueFormatter: "",
+        totalLabel: "",
+        tooltipTrigger: "",
+        colors: [],
+        background: "skyblue",
+    },
+    data: null,
+}
+
+type EditKpiGroupVM = {
+    name: string;
+    description: string,
+}
+
 type EditKpiGroupState = {
     id?: string
-    vm: { name: string; description: string, kpis: KpiFormValues[] };
+    vm: EditKpiGroupVM;
+    kpiGroup: FieldDataType;
     isLoading: boolean;
     loaded: boolean;
     error?: {
@@ -25,7 +54,8 @@ type EditKpiGroupState = {
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
-    vm: { name: '', description: '', kpis: [] },
+    vm: { name: '', description: '' },
+    kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
     addKpi: () => {
@@ -33,9 +63,8 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         set({ showFormModal: true });
     },
     saveKpi: (data: KpiFormValues) => {
-        const { vm } = get();
-        const kpis = [...vm.kpis, data];
-        set({ vm: { ...vm, kpis } });
+        const { kpiGroup } = get();
+        set({ kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] } });
         console.log("KPI saved:", data);
     },
     closeFormModal: () => {
@@ -47,7 +76,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             if (response && response.data) {
                 console.log(response.data);
                 const { name, description } = response.data;
-                set({ vm: { name, description, kpis: [] }, isLoading: false, loaded: true, id });
+                set({ vm: { name, description }, isLoading: false, loaded: true, id });
             }
         } catch (error) {
             set({ error: { message: (error as Error).message }, isLoading: false });
