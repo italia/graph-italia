@@ -17,6 +17,9 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 	"localhost",
 	HOST,
 	`${HOST}:${PORT}`,
+	"localhost:3000",
+	"http://localhost:3000",
+	"http://127.0.0.1:3000",
 ];
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV !== "production";
@@ -47,7 +50,7 @@ app.use("*", httpLogger);
 app.use(
 	csrf({
 		origin: isDev
-			? ["http://localhost:4000", "http://localhost:3003", ...whitelist]
+			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
 			: process.env.HOST,
 	}),
 );
@@ -63,7 +66,7 @@ if (isDev) {
 			allowHeaders: ["Content-Type", "Authorization"],
 		}),
 	);
-}
+ }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
