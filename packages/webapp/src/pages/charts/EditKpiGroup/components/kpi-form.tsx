@@ -2,17 +2,17 @@ import { useForm } from "react-hook-form";
 
 export type KpiFormValues = {
   title: string;
-  openDataPath: string;
-  show_flow: boolean;
-  flow_direction: "+" | "-";
-  flow_value: string;
-  flow_detail: string;
+  openDataPath?: string;
+  show_flow?: boolean;
+  flow_direction?: "+" | "-";
+  flow_value?: string;
+  flow_detail?: string;
   value: string;
-  background_color: string;
-  value_prefix: string;
-  value_suffix: string;
-  percentage: string;
-  footer_text: string;
+  background_color?: string;
+  value_prefix?: string;
+  value_suffix?: string;
+  percentage?: string;
+  footer_text?: string;
 };
 
 const defaultValues: KpiFormValues = {
