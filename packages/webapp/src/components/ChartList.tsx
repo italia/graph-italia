@@ -120,7 +120,7 @@ export default function ChartList({
                 <a
                   className="btn btn-outline btn-primary btn-sm"
                   // onClick={() => handleLoadChart(item)}
-                  href={`/edit/${item.chart === "kpi" ? "kpi" : "chart"}/${
+                  href={`/edit/${item.chart === "kpiGroup" ? "kpi" : "chart"}/${
                     item.id
                   }`}
                 >
