@@ -92,13 +92,13 @@ function EditKpiGroup() {
                   Nessun KPI presente. Aggiungi un nuovo KPI.
                 </div>
               )}
-              {
+              {kpiGroup.dataSource.length > 0 && (
                 <div className="p-4 space-y-4">
                   <div className="p-4 border rounded-md shadow-sm">
                     {/* <RenderChart {...kpiGroup}></RenderChart> */}
                   </div>
                 </div>
-              }
+              )}
             </div>
           </>
         )}
