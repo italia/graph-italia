@@ -3,8 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
 import Dialog from "../../../components/layout/Dialog";
 import Loading from "../../../components/layout/Loading";
-import KpiConfigForm from "./components/kpi-config-form";
-import { KpiForm, KpiFormValues } from "./components/kpi-form";
+import { KpiConfigForm, KpiForm, KpiFormValues } from "./components";
 import useEditKpiGroupStore from "./store";
 
 function EditKpiGroup() {
