@@ -12,17 +12,12 @@ const router = new Hono();
 router.use("*", checkAuth);
 
 // #region: COMMAND - CREATE
-
 const createSchema = z.object({
     name: z.string(),
     description: z.string().optional(),
 });
 
-type CreateParamsDictionary = {}
 type CreateResponseBody = { id: string }
-type CreateRequestBody = { name: string; description?: string }
-// type CreateRequest = Request<CreateParamsDictionary, CreateResponseBody, CreateRequestBody>;
-// type CreateResponse = Response<CreateResponseBody>;
 
 router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
     try {
@@ -54,7 +49,7 @@ router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
             chartId: result.id,
             userId: user.userId,
         });
-        return c.json(result, 201);
+        return c.json<CreateResponseBody>(result, 201);
     } catch (err) {
         logger.error(
             "Dashboard create error",
@@ -107,14 +102,6 @@ const updateBodySchema = z.object({
     dataSource: datasourceArraySchema,
 });
 
-type DatasourceDTO = z.infer<typeof datasourceSchema>;
-type ConfigDTO = z.infer<typeof configSchema>;
-type UpdateParamsDictionary = { id: string }
-type UpdateResponseBody = { id: string }
-type UpdateRequestBody = { config: ConfigDTO; dataSource: DatasourceDTO[] }
-// type UpdateRequest = Request<UpdateParamsDictionary, UpdateResponseBody, UpdateRequestBody>;
-// type UpdateResponse = Response<UpdateResponseBody>;
-
 router.put(
     '/:id',
     requireUser,
@@ -137,15 +124,11 @@ const findByIdSchema = z.object({
         message: 'Id is required',
     }),
 });
-type FindByIdParamsDictionary = { id: string }
 type FindByIdResponseBody = {
     data: {
         name: string; description: string, config: any, dataSource: {}[]
     }
 } | { message: string };
-type FindByIdRequestBody = undefined
-// type FindByIdRequest = Request<FindByIdParamsDictionary, FindByIdResponseBody, FindByIdRequestBody>;
-// type FindByIdResponse = Response<FindByIdResponseBody>;
 
 router.get(
     '/:id',
@@ -161,7 +144,7 @@ router.get(
             }
             const { name, description, config, data: dataSource } = result;
 
-            return c.json({ data: { name, description, config, dataSource } });
+            return c.json<FindByIdResponseBody>({ data: { name, description, config, dataSource } });
         } catch (err) {
             logger.error(
                 "Dashboard create error",
@@ -172,8 +155,5 @@ router.get(
     }
 );
 // #endregion
-
-
-
 
 export default router;
