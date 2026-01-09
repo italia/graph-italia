@@ -75,8 +75,13 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             const response = await api.getKpiGroup({ id });
             if (response && response.data) {
                 console.log(response.data);
-                const { name, description, config } = response.data;
-                set({ vm: { name, description }, isLoading: false, loaded: true, id, kpiGroup: { ...defaultKpiGroupData, ...config } });
+                const { name, description, config, dataSource } = response.data;
+                set({
+                    vm: { name, description },
+                    isLoading: false,
+                    loaded: true, id,
+                    kpiGroup: { ...defaultKpiGroupData, config: { ...config }, dataSource }
+                });
             }
         } catch (error) {
             set({ error: { message: (error as Error).message }, isLoading: false });

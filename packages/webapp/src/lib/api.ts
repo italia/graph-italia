@@ -341,7 +341,7 @@ type GetKpiGroupParams = {
 }
 
 type GetKpiGroupResponse = {
-  data: { name: string; description: string, config: any };
+  data: { name: string; description: string, config: any, dataSource: {}[] };
 }
 
 export async function getKpiGroup({ id }: GetKpiGroupParams) {
