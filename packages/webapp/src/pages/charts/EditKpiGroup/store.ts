@@ -8,6 +8,7 @@ interface EditKpiGroupActions {
     reload: () => void;
     save: () => Promise<boolean>;
     addKpi: () => void;
+    deleteKpi: (index: number) => void;
     closeFormModal: () => void;
     saveKpi: (data: KpiFormValues) => void;
 }
@@ -61,6 +62,10 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     addKpi: () => {
         console.log("add item");
         set({ showFormModal: true });
+    },
+    deleteKpi: (index: number) => {
+        const { kpiGroup } = get();
+        set({ kpiGroup: { ...kpiGroup, dataSource: kpiGroup.dataSource.filter((_: unknown, i: number) => i !== index) } });
     },
     saveKpi: (data: KpiFormValues) => {
         const { kpiGroup } = get();

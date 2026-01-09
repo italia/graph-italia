@@ -13,6 +13,7 @@ function EditKpiGroup() {
     reload,
     save,
     addKpi,
+    deleteKpi,
     closeFormModal,
     saveKpi,
     showFormModal,
@@ -25,6 +26,10 @@ function EditKpiGroup() {
 
   function addKpiHandler() {
     addKpi();
+  }
+
+  function deleteKpiHandler(index: number) {
+    deleteKpi(index);
   }
 
   function saveKpiHandler(data: KpiFormValues) {
@@ -85,6 +90,22 @@ function EditKpiGroup() {
               >
                 Aggiungi KPI +
               </button>
+              {kpiGroup.dataSource.map(
+                (
+                  ds: {
+                    title: string;
+                  },
+                  index: number
+                ) => (
+                  <button
+                    key={`${ds.title}-${index}`}
+                    className="m-2 btn btn-xs btn-error"
+                    onClick={() => deleteKpiHandler(index)}
+                  >
+                    {ds.title}
+                  </button>
+                )
+              )}
             </div>
             <div className="relative border min-h-[60vh]">
               {kpiGroup.dataSource.length === 0 && (
