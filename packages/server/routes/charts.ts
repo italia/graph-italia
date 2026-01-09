@@ -2,10 +2,15 @@ import axios from "axios";
 import { Hono } from "hono";
 import * as z from "zod";
 import db from "../lib/db";
-import { zValidator } from "@hono/zod-validator";
 import { checkAuth, requireUser } from "../lib/middlewares-hono";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
+// import { zValidator } from "@hono/zod-validator";
+import {
+  validator as zValidator,
+  resolver,
+  describeRoute,
+} from "hono-openapi";
 
 const router = new Hono();
 
@@ -46,8 +51,50 @@ const updateChartSchema = z.object({
 	slots: z.array(z.string()).nullable().optional(),
 });
 
+const chartListSchema = z.array(
+	z.object({
+		id: z.string(),
+		userId: z.string(),
+		name: z.string().nullable(),
+		description: z.string().nullable(),
+		chart: z.string(),
+		config: z.unknown().nullable(),
+		data: z.unknown().nullable(),
+		isRemote: z.boolean().nullable(),
+		remoteUrl: z.string().nullable(),
+		publish: z.boolean(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	}),
+);
+const errorMessageSchema = z.object({
+	error: z.string(),
+});
+
 /** Index */
-router.get("/", async (c) => {
+router.get("/",  describeRoute({
+    responses: {
+      200: {
+        description: "Successful response",
+        content: {
+          "application/json": {
+            schema: resolver(chartListSchema),
+          },
+        },
+      },
+			401:{ description: "Unauthorized",
+        content: {
+          "application/json": {
+            schema: resolver(errorMessageSchema),
+          },
+        }, },
+			500:{ description: "Internal error" ,
+        content: {
+          "application/json": {
+            schema: resolver(errorMessageSchema),
+          },
+        },}
+    }}),async (c) => {
 	try {
 		const user = c.get("user") as ParsedToken | null;
 		if (!user) {
