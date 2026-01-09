@@ -10,6 +10,8 @@ interface EditKpiGroupActions {
     addKpi: () => void;
     deleteKpi: (index: number) => void;
     closeFormModal: () => void;
+    showConfigFormModal: () => void;
+    closeConfigFormModal: () => void;
     saveKpi: (data: KpiFormValues) => void;
 }
 
@@ -50,6 +52,7 @@ type EditKpiGroupState = {
         message: string;
     };
     showFormModal?: boolean;
+    showConfigModal?: boolean;
 }
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
@@ -59,6 +62,13 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
+    showConfigFormModal: () => {
+        set({ showConfigModal: true });
+    },
+    closeConfigFormModal: () => {
+        // Implement the logic to change the configuration
+        set({ showConfigModal: false });
+    },
     addKpi: () => {
         console.log("add item");
         set({ showFormModal: true });

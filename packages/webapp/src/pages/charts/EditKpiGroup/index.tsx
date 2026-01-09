@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
 import Dialog from "../../../components/layout/Dialog";
 import Loading from "../../../components/layout/Loading";
+import KpiConfigForm from "./components/kpi-config-form";
 import { KpiForm, KpiFormValues } from "./components/kpi-form";
 import useEditKpiGroupStore from "./store";
 
@@ -14,8 +15,11 @@ function EditKpiGroup() {
     save,
     addKpi,
     deleteKpi,
-    closeFormModal,
     saveKpi,
+    closeFormModal,
+    showConfigFormModal,
+    closeConfigFormModal,
+    showConfigModal,
     showFormModal,
     vm,
     kpiGroup,
@@ -23,6 +27,10 @@ function EditKpiGroup() {
     loaded,
     error,
   } = useEditKpiGroupStore();
+
+  function changeConfigHandler() {
+    showConfigFormModal();
+  }
 
   function addKpiHandler() {
     addKpi();
@@ -84,6 +92,12 @@ function EditKpiGroup() {
             <h1 className="text-4xl font-bold">{vm.name}</h1>
             <h4 className="text-xl">{vm.description}</h4>
             <div className="flex flex-wrap items-center">
+              <button
+                className="m-2 btn btn-xs btn-primary"
+                onClick={changeConfigHandler}
+              >
+                Cambia configurazione
+              </button>
               <button
                 className="m-2 btn btn-xs btn-primary"
                 onClick={addKpiHandler}
@@ -148,6 +162,18 @@ function EditKpiGroup() {
           >
             <div>Form to add or edit a KPI</div>
             <KpiForm onSubmit={saveKpiHandler} />
+          </Dialog>
+        )}
+        {showConfigModal && (
+          <Dialog
+            toggle={showConfigModal}
+            title="Configura Kpi Group"
+            callback={() => {
+              closeConfigFormModal();
+            }}
+          >
+            <div>Form to configure Kpi Group</div>
+            <KpiConfigForm />
           </Dialog>
         )}
       </div>

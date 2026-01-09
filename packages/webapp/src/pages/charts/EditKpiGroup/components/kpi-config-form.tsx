@@ -1,0 +1,264 @@
+import { Controller, useForm } from "react-hook-form";
+
+const defaultValues = {
+  direction: "vertical",
+  h: 0,
+  labeLine: false,
+  legend: false,
+  legendPosition: "",
+  palette: [],
+  tooltip: false,
+  tooltipFormatter: "",
+  valueFormatter: "",
+  totalLabel: "",
+  tooltipTrigger: "",
+  colors: [],
+  background: "skyblue",
+};
+
+type KpiGroupConfigFormValues = typeof defaultValues;
+
+export default function KpiConfigForm() {
+  const { register, control, handleSubmit, reset } = useForm({
+    defaultValues,
+  });
+
+  const onSubmit = (data: KpiGroupConfigFormValues) => {
+    console.log("Form Data:", data);
+    alert("Form inviato! Controlla la console per vedere i dati.");
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+          Configurazione Kpi Group
+        </h1>
+
+        <div className="space-y-6">
+          {/* Direction - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Orientamento
+            </label>
+            <select
+              {...register("direction")}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="vertical">Vertical</option>
+              <option value="horizontal">Horizontal</option>
+            </select>
+          </div>
+
+          {/* Height - register con valueAsNumber */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Altezza (h)
+            </label>
+            <input
+              {...register("h", { valueAsNumber: true })}
+              type="number"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* LabelLine - register */}
+          <div className="flex items-center">
+            <input
+              {...register("labeLine")}
+              type="checkbox"
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label className="ml-2 text-sm font-medium text-gray-700">
+              Label Line
+            </label>
+          </div>
+
+          {/* Legend - register */}
+          <div className="flex items-center">
+            <input
+              {...register("legend")}
+              type="checkbox"
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label className="ml-2 text-sm font-medium text-gray-700">
+              Legenda
+            </label>
+          </div>
+
+          {/* Legend Position - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Posizione Legenda
+            </label>
+            <select
+              {...register("legendPosition")}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Nessuna</option>
+              <option value="top">Top</option>
+              <option value="bottom">Bottom</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+
+          {/* Palette - Controller per trasformazione array */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Palette (comma separated)
+            </label>
+            <Controller
+              name="palette"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="text"
+                  value={field.value.join(", ")}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean)
+                    )
+                  }
+                  placeholder="es: red, blue, green"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              )}
+            />
+          </div>
+
+          {/* Tooltip - register */}
+          <div className="flex items-center">
+            <input
+              {...register("tooltip")}
+              type="checkbox"
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label className="ml-2 text-sm font-medium text-gray-700">
+              Tooltip
+            </label>
+          </div>
+
+          {/* Tooltip Formatter - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tooltip Formatter
+            </label>
+            <input
+              {...register("tooltipFormatter")}
+              type="text"
+              placeholder="es: {b}: {c}"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Value Formatter - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Value Formatter
+            </label>
+            <input
+              {...register("valueFormatter")}
+              type="text"
+              placeholder="es: {c}%"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Total Label - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Label Totale
+            </label>
+            <input
+              {...register("totalLabel")}
+              type="text"
+              placeholder="es: Totale"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Tooltip Trigger - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tooltip Trigger
+            </label>
+            <select
+              {...register("tooltipTrigger")}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Nessuno</option>
+              <option value="item">Item</option>
+              <option value="axis">Axis</option>
+            </select>
+          </div>
+
+          {/* Colors - Controller per trasformazione array */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Colori (separati dalla virgola)
+            </label>
+            <Controller
+              name="colors"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="text"
+                  value={field.value.join(", ")}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean)
+                    )
+                  }
+                  placeholder="es: #ff0000, #00ff00, #0000ff"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              )}
+            />
+          </div>
+
+          {/* Background - register */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Background
+            </label>
+            <div className="flex gap-2">
+              <input
+                {...register("background")}
+                type="text"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                {...register("background")}
+                type="color"
+                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={handleSubmit(onSubmit)}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
+            >
+              Invia
+            </button>
+            <button
+              onClick={() => reset()}
+              className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-medium"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
