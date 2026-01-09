@@ -1,10 +1,15 @@
-import { Router, type Request, type Response } from "express";
-import z from "zod";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import * as z from "zod";
 import db from "../lib/db";
-import { requireUser, validateRequest, type AuthenticatedRequest } from "../lib/middlewares";
+import { logger } from "../lib/logger";
+import { checkAuth, requireUser } from "../lib/middlewares-hono";
 import type { ParsedToken } from "../types";
 
-const router = Router();
+const router = new Hono();
+
+// Apply auth check middleware to all routes
+router.use("*", checkAuth);
 
 // #region: COMMAND - CREATE
 
@@ -158,5 +163,30 @@ router.get(
     }
 );
 // #endregion
+
+
+router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
+    try {
+        const user = c.get("user") as ParsedToken;
+        const body = c.req.valid("json");
+        const chartData = {
+            userId: user.userId,
+            chart: "kpiGroup",
+            ...body,
+        };
+        const result = await db.kpiGroupDb.create(chartData);
+        logger.info("kpiGroup created", {
+            chartId: result.id,
+            userId: user.userId,
+        });
+        return c.json(result, 201);
+    } catch (err) {
+        logger.error(
+            "Dashboard create error",
+            err instanceof Error ? err : undefined,
+        );
+        return c.json({ error: "Internal error" }, 500);
+    }
+});
 
 export default router;

@@ -20,6 +20,20 @@ webapp:
     repository: dataviz-webapp
     pullPolicy: IfNotPresent
     tag: "latest"
+  # Node scheduling (optional)
+  nodeSelector: {}
+    # agentpool: applications
+  tolerations: []
+    # - key: "workload"
+    #   operator: "Equal"
+    #   value: "applications"
+    #   effect: "NoSchedule"
+  affinity: {}
+  # Prometheus metrics scraping
+  prometheus:
+    enabled: false
+    port: 8080
+    path: "/nginx_status"
   service:
     type: ClusterIP
     port: 80
@@ -97,6 +111,20 @@ server:
     repository: dataviz-srv
     pullPolicy: IfNotPresent
     tag: "latest"
+  # Node scheduling (optional)
+  nodeSelector: {}
+    # agentpool: applications
+  tolerations: []
+    # - key: "workload"
+    #   operator: "Equal"
+    #   value: "applications"
+    #   effect: "NoSchedule"
+  affinity: {}
+  # Prometheus metrics scraping
+  prometheus:
+    enabled: false
+    port: 3003
+    path: "/metrics"
   service:
     type: ClusterIP
     port: 3003
@@ -148,9 +176,10 @@ server:
     - name: var-tmp
       mountPath: /var/tmp
   # Health check configuration
+  # Note: path should match ROUTES_PREFIX (e.g., /api if ROUTES_PREFIX=/api)
   livenessProbe:
     httpGet:
-      path: /
+      path: /api
       port: http
     initialDelaySeconds: 30
     periodSeconds: 10
@@ -158,7 +187,7 @@ server:
     failureThreshold: 3
   readinessProbe:
     httpGet:
-      path: /
+      path: /api
       port: http
     initialDelaySeconds: 10
     periodSeconds: 5

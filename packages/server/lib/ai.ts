@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import { logger } from "./logger";
+
 const APIKEY = process.env.OPENAI_API_KEY;
 const client = new OpenAI({ apiKey: APIKEY });
 
@@ -128,8 +130,7 @@ export async function getSuggestions(inputData: (string | number)[][]) {
     // console.log(JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
-    console.error("Error on OpenAi");
-    console.log(error);
+    logger.error("OpenAI API error", error instanceof Error ? error : undefined);
     throw error;
   }
 }

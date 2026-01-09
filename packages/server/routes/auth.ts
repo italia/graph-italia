@@ -1,273 +1,309 @@
-import { Router } from 'express';
-import * as bcrypt from 'bcrypt';
-import db from '../lib/db';
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import * as bcrypt from "bcrypt";
+import * as z from "zod";
+import db from "../lib/db";
 import {
-  generateTokens,
-  setAccessTokenCookie,
-  clearAccestokenCookie,
-} from '../lib/jwt';
-import * as z from 'zod';
-import { sendActivationEmail, sendResetPasswordEmail } from '../lib/email';
-import { requireUser, validateRequest } from '../lib/middlewares';
+	generateTokens,
+	setAccessTokenCookie,
+	clearAccessTokenCookie,
+} from "../lib/jwt-hono";
+import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
+import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { logger } from "../lib/logger";
 
-const APP_URL = process.env.APP_URL || '/';
+const APP_URL = process.env.APP_URL || "/";
 
-const router = Router();
+const router = new Hono();
 
-router.get('/user', (req: any, res) => {
-  console.log('check user');
-  try {
-    const user = req?.user || null;
-    if (!user) {
-      return res.status(401).json(null);
-    }
-    console.log('user found', user);
-    const token = req?.token || null;
-    return res.status(201).json({ ...user, token });
-  } catch (error) {
-    console.log('Auth user ERROR', error);
-  }
+// Apply auth check middleware to all routes
+router.use("*", checkAuth);
+
+// GET CURRENT USER INFO
+
+router.get("/user", (c) => {
+	try {
+		const user = c.get("user") || null;
+		if (!user) {
+			return c.json(null, 401);
+		}
+		const token = c.get("token") || null;
+		return c.json({ ...user, token }, 201);
+	} catch (error) {
+		logger.error(
+			"Failed to get user",
+			error instanceof Error ? error : undefined,
+		);
+		return c.json({ error: "Internal error" }, 500);
+	}
 });
+
+// REGISTER
 
 const registerSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Email is required',
-    })
-    .email('Invalid email or password'),
-  password: z
-    .string({ required_error: 'Password is required' })
-    .min(7, 'Password must be at least 7 characters long'),
+	email: z.email({ error: "Invalid email address" }),
+	password: z
+		.string({ error: "Password is required" })
+		.min(7, "Password must be at least 7 characters long"),
 });
-router.post(
-  '/register',
-  validateRequest({ body: registerSchema }),
-  async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
-      if (!email || !password) {
-        return res.status(400).json({
-          error: { message: 'You must provide an email and a password.' },
-        });
-      }
-      const existingUser = await db.findUserByEmail(email);
-      if (existingUser) {
-        return res
-          .status(409)
-          .json({ error: { message: 'Email already in use.' } });
-      }
-      const user = await db.createUserByEmailAndPassword({ email, password });
-      //@TODO SEND EMAIL TO ACTIVATE USER
-      const pin = await db.createCode(user.id);
-      console.log('pin', pin);
-      await sendActivationEmail(user, pin);
 
-      // const { accessToken } = generateTokens(user);
-      // sendAccessToken(res, accessToken);
+router.post("/register", zValidator("json", registerSchema), async (c) => {
+	try {
+		const { email, password } = c.req.valid("json");
+		if (!email || !password) {
+			return c.json(
+				{
+					error: { message: "You must provide an email and a password." },
+				},
+				400,
+			);
+		}
 
-      return res.status(200).json({ auth: true });
-    } catch (err) {
-      next(err);
-    }
-  }
-);
+		const existingUser = await db.findUserByEmail(email);
+		if (existingUser) {
+			logger.warn("Registration attempted with existing email", {
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+			return c.json({ error: { message: "Email already in use." } }, 409);
+		}
+
+		const user = await db.createUserByEmailAndPassword({ email, password });
+		const pin = await db.createCode(user.id);
+
+		logger.info("User registered, sending activation email", {
+			userId: user.id,
+			email: email.replace(/(.{2}).*@/, "$1***@"),
+		});
+
+		await sendActivationEmail(user, pin);
+
+		return c.json({ auth: true }, 200);
+	} catch (err) {
+		logger.error("Registration failed", err instanceof Error ? err : undefined);
+		return c.json({ error: { message: "Registration failed" } }, 500);
+	}
+});
+
+// LOGIN
 
 const loginSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Email is required',
-    })
-    .email('Invalid email or password'),
-  password: z.string({ required_error: 'Password is required' }),
+	email: z.email({ error: "Invalid email address" }),
+	password: z.string({ error: "Password is required" }),
 });
 
-router.post(
-  '/login',
-  validateRequest({ body: loginSchema }),
-  async (req, res, next) => {
-    console.log('login');
-    try {
-      const { email, password } = req.body;
-      const existingUser = await db.findUserByEmail(email);
-      if (!existingUser) {
-        res.status(401);
-        throw new Error('Invalid login credentials.');
-      }
-      const validPassword = await bcrypt.compare(
-        password,
-        existingUser.password
-      );
-      if (!validPassword) {
-        res.status(401);
-        throw new Error('Invalid login credentials.');
-      }
-      const { accessToken } = generateTokens(existingUser);
-      setAccessTokenCookie(res, accessToken);
-      // res.json({
-      //   accessToken,
-      // });
-      res.json({ auth: true });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+router.post("/login", zValidator("json", loginSchema), async (c) => {
+	try {
+		const { email, password } = c.req.valid("json");
+		const existingUser = await db.findUserByEmail(email);
+
+		if (!existingUser) {
+			logger.warn("Login attempt for non-existent user", {
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+			return c.json({ error: { message: "Invalid login credentials." } }, 401);
+		}
+
+		const validPassword = await bcrypt.compare(password, existingUser.password);
+		if (!validPassword) {
+			logger.warn("Login failed - invalid password", {
+				userId: existingUser.id,
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+			return c.json({ error: { message: "Invalid login credentials." } }, 401);
+		}
+
+		const { accessToken } = generateTokens(existingUser);
+		setAccessTokenCookie(c, accessToken);
+
+		logger.info("User logged in successfully", {
+			userId: existingUser.id,
+			email: email.replace(/(.{2}).*@/, "$1***@"),
+		});
+
+		return c.json({ auth: true });
+	} catch (error) {
+		logger.error("Login failed", error instanceof Error ? error : undefined);
+		return c.json({ error: { message: "Login failed" } }, 500);
+	}
+});
+
+// RECOVER ACCOUNT
 
 const recoverSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Email is required',
-    })
-    .email('Invalid email or password'),
+	email: z.email({ error: "Invalid email address" }),
 });
 
-router.post(
-  '/recover',
-  validateRequest({ body: recoverSchema }),
-  async (req: any, res) => {
-    clearAccestokenCookie(res);
-    const { email } = req.body;
-    console.log('recover', email);
-    const user = await db.findUserByEmail(email);
-    if (user) {
-      console.log('user', user);
-      const pin = await db.createCode(user.id);
-      console.log('pin', pin);
-      await sendResetPasswordEmail(user, pin);
-    }
-    return res.status(200).json(true);
-  }
-);
+router.post("/recover", zValidator("json", recoverSchema), async (c) => {
+	clearAccessTokenCookie(c);
+	const { email } = c.req.valid("json");
 
-router.get('/logout', (req: any, res) => {
-  console.log('logout, bye');
-  // res.clearCookie('access_token');
-  clearAccestokenCookie(res);
-  console.log('removed cookies, return');
-  return res.status(200).json(true);
+	logger.info("Password recovery requested", {
+		email: email.replace(/(.{2}).*@/, "$1***@"),
+	});
+
+	const user = await db.findUserByEmail(email);
+	if (user) {
+		const pin = await db.createCode(user.id);
+		await sendResetPasswordEmail(user, pin);
+	}
+	// Always return success to prevent email enumeration
+	return c.json(true, 200);
 });
+
+// LOGOUT
+
+router.get("/logout", (c) => {
+	const user = c.get("user") as any;
+	logger.info("User logged out", { userId: user?.userId });
+	clearAccessTokenCookie(c);
+	return c.json(true, 200);
+});
+
+// VERIFY CODE
 
 const verifySchema = z.object({
-  uid: z.string({
-    required_error: 'uid is required',
-  }),
-  code: z.string({ required_error: 'code is required' }),
+	uid: z.string({
+		error: "uid is required",
+	}),
+	code: z.string({ error: "code is required" }),
 });
-router.post(
-  '/verify',
-  validateRequest({ body: verifySchema }),
-  async (req: any, res) => {
-    const { uid, code } = req.body;
-    console.log('uid:', uid, ', code:', code);
-    if (!uid || !code)
-      return res.status(401).json({ error: 'Invalid user activation.' });
-    if (req.user) {
-      console.log('req.user?', req.user);
-      if (req.user.id !== uid) {
-        return res.status(400).json({ error: 'Invalid user activation.' });
-      }
-    }
-    const user = await db.findUserById(uid);
-    console.log('user?', user);
-    if (!user) {
-      return res.status(400).json({ error: 'User not found.' });
-    }
-    const pin = await db.findCodeByUid(uid);
-    console.log('pin?', pin);
-    if (!pin) {
-      console.log('pin not found');
-      return res.status(400).json({ error: 'Code invalid or expired.' });
-    }
-    if (`${pin}`.trim() != `${code}`.trim()) {
-      console.log('pin are not equals', pin, code);
-      return res.status(400).json({ error: 'Code invalid or expired.' });
-    }
-    console.log('user verifyed');
-    const userValue = await db.setVerifyed(user.id);
 
-    await db.destroyCodes(user.id);
+router.post("/verify", zValidator("json", verifySchema), async (c) => {
+	const { uid, code } = c.req.valid("json");
 
-    console.log('login user');
-    const { accessToken } = generateTokens(userValue);
-    setAccessTokenCookie(res, accessToken);
-    return res.json({ auth: true });
-  }
-);
+	if (!uid || !code) {
+		return c.json({ error: "Invalid user activation." }, 401);
+	}
+
+	const user = c.get("user") as any;
+	if (user && user.id !== uid) {
+		logger.warn("Verification attempted with mismatched user", {
+			requestUserId: uid,
+			sessionUserId: user.id,
+		});
+		return c.json({ error: "Invalid user activation." }, 400);
+	}
+
+	const dbUser = await db.findUserById(uid);
+	if (!dbUser) {
+		logger.warn("Verification attempted for non-existent user", {
+			userId: uid,
+		});
+		return c.json({ error: "User not found." }, 400);
+	}
+
+	const pin = await db.findCodeByUid(uid);
+	if (!pin) {
+		logger.warn("Verification failed - code not found", { userId: uid });
+		return c.json({ error: "Code invalid or expired." }, 400);
+	}
+
+	if (`${pin}`.trim() !== `${code}`.trim()) {
+		logger.warn("Verification failed - code mismatch", { userId: uid });
+		return c.json({ error: "Code invalid or expired." }, 400);
+	}
+
+	const userValue = await db.setVerifyed(dbUser.id);
+	await db.destroyCodes(dbUser.id);
+
+	const { accessToken } = generateTokens(userValue);
+	setAccessTokenCookie(c, accessToken);
+
+	logger.info("User verified successfully", { userId: uid });
+
+	return c.json({ auth: true });
+});
+
+// CONFIRM EMAIL
 
 const confirmSchema = z.object({
-  uid: z.string({
-    required_error: 'uid is required',
-  }),
-  code: z.string({ required_error: 'code is required' }),
+	uid: z.string({
+		error: "uid is required",
+	}),
+	code: z.string({ error: "code is required" }),
 });
+
 router.get(
-  '/confirm/:uid/:code',
-  validateRequest({ params: confirmSchema }),
-  async (req: any, res) => {
-    const { uid, code } = req.params;
-    console.log('uid:', uid, ', code:', code);
-    if (!uid || !code) return res.status(401);
-    if (req.user) {
-      console.log('req.user?', req.user);
-      if (req.user.userId !== uid) {
-        return res.status(400).json({ error: 'Invalid user activation.' });
-      }
-    }
-    const user = await db.findUserById(uid);
-    console.log('user?', user);
-    if (!user) {
-      return res.status(400).json({ error: 'User not found.' });
-    }
-    const pin = await db.findCodeByUid(uid);
-    console.log('pin?', pin);
-    if (!pin || pin !== code) {
-      return res.status(400).json({ error: 'Code invalid or expired.' });
-    }
-    const userValue = await db.setVerifyed(user.id);
-    await db.destroyCodes(user.id);
-    const { accessToken } = generateTokens(userValue);
-    setAccessTokenCookie(res, accessToken);
-    console.log('validate code end');
-    // return res.json({ auth: true });
-    return res.redirect(APP_URL);
-  }
+	"/confirm/:uid/:code",
+	zValidator("param", confirmSchema),
+	async (c) => {
+		const { uid, code } = c.req.valid("param");
+
+		if (!uid || !code) {
+			return c.json({ error: "Invalid confirmation" }, 401);
+		}
+
+		const user = c.get("user") as any;
+		if (user && user.userId !== uid) {
+			logger.warn("Email confirmation attempted with mismatched user", {
+				requestUserId: uid,
+				sessionUserId: user.userId,
+			});
+			return c.json({ error: "Invalid user activation." }, 400);
+		}
+
+		const dbUser = await db.findUserById(uid);
+		if (!dbUser) {
+			logger.warn("Email confirmation for non-existent user", { userId: uid });
+			return c.json({ error: "User not found." }, 400);
+		}
+
+		const pin = await db.findCodeByUid(uid);
+		if (!pin || pin !== code) {
+			logger.warn("Email confirmation failed - invalid code", { userId: uid });
+			return c.json({ error: "Code invalid or expired." }, 400);
+		}
+
+		const userValue = await db.setVerifyed(dbUser.id);
+		await db.destroyCodes(dbUser.id);
+		const { accessToken } = generateTokens(userValue);
+		setAccessTokenCookie(c, accessToken);
+
+		logger.info("Email confirmed successfully", { userId: uid });
+
+		return c.redirect(APP_URL);
+	},
 );
 
+// CHANGE PASSWORD
+
 const passwordSchema = z
-  .string({ required_error: 'Password is required' })
-  .min(8, { message: 'Password must be at least 8 characters long' })
-  // .max(20, { message: maxLengthErrorMessage })
-  .refine((password) => /[A-Z]/.test(password), {
-    message: 'Password must have at least one uppercase letter',
-  })
-  .refine((password) => /[a-z]/.test(password), {
-    message: 'Password must have at least one lowercase letter',
-  })
-  .refine((password) => /[0-9]/.test(password), {
-    message: 'Must contain a number',
-  })
-  .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: 'Must contain at least one special character',
-  });
+	.string({ error: "Password is required" })
+	.min(8, { message: "Password must be at least 8 characters long" })
+	.refine((password) => /[A-Z]/.test(password), {
+		message: "Password must have at least one uppercase letter",
+	})
+	.refine((password) => /[a-z]/.test(password), {
+		message: "Password must have at least one lowercase letter",
+	})
+	.refine((password) => /[0-9]/.test(password), {
+		message: "Must contain a number",
+	})
+	.refine((password) => /[!@#$%^&*]/.test(password), {
+		message: "Must contain at least one special character",
+	});
 
 const changePwdSchema = z.object({
-  password: passwordSchema,
+	password: passwordSchema,
 });
 
 router.put(
-  '/pwd',
-  [validateRequest({ body: changePwdSchema }), requireUser],
-  async (req: any, res: any) => {
-    const user = req.user;
-    console.log('user', user);
-    const { password } = req.body;
-    console.log('password', password);
-    if (!user || !password) {
-      return res.status(400).json({ error: 'User and password are required.' });
-    }
-    await db.changePassword(user.userId, password);
-    return res.status(204).json(true);
-  }
+	"/pwd",
+	requireUser,
+	zValidator("json", changePwdSchema),
+	async (c) => {
+		const user = c.get("user") as any;
+		const { password } = c.req.valid("json");
+
+		if (!user || !password) {
+			return c.json({ error: "User and password are required." }, 400);
+		}
+
+		await db.changePassword(user.userId, password);
+		logger.info("Password changed successfully", { userId: user.userId });
+
+		return c.body(null, 204);
+	},
 );
 
 export default router;
