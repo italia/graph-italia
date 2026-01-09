@@ -11,6 +11,9 @@ import suggestionsRoutes from "./routes/hints.ts";
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
 
+import { openAPIRouteHandler } from "hono-openapi"
+import { Scalar } from "@scalar/hono-api-reference";
+
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
 const whitelist = process.env.DOMAINS?.split(",") || [
@@ -24,17 +27,11 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV !== "production";
 
-// Variables stored in Hono context
-type Variables = {
-	user: any;
-	token: string;
-	requestId: string;
-};
 
 // Main app with base path
 const app = ROUTES_PREFIX
-	? new Hono<{ Variables: Variables }>().basePath(ROUTES_PREFIX)
-	: new Hono<{ Variables: Variables }>();
+	? new Hono().basePath(ROUTES_PREFIX)
+	: new Hono();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🔧 MIDDLEWARE STACK
@@ -75,12 +72,31 @@ if (isDev) {
 // Health check endpoint (minimal response for k8s probes)
 app.get("/", (c) => c.json({ status: "ok", message: "^^" }));
 
+
+
 // API routes
 app.route("/auth", authRoutes);
 app.route("/charts", chartRoutes);
 app.route("/dashboards", dashRoutes);
 app.route("/hints", suggestionsRoutes);
 
+app.get("/openapi.json", openAPIRouteHandler(chartRoutes,{
+	documentation: {
+		info: {
+			title: "Dataviz API",
+			version: "1.0.0",
+			description: "API documentation for the Dataviz application"
+		}
+	}
+}));
+
+app.get(
+  "/docs",
+  Scalar({
+    theme: "saturn",
+    url: "/api/openapi.json",
+  })
+);
 // ═══════════════════════════════════════════════════════════════════════════════
 // ❌ ERROR HANDLING
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -114,20 +130,25 @@ app.onError((err, c) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 📊 METRICS ENDPOINT (outside of ROUTES_PREFIX)
 // ═══════════════════════════════════════════════════════════════════════════════
-let rootApp: Hono<{ Variables: Variables }>;
+let rootApp: Hono;
+
+
 
 if (ROUTES_PREFIX) {
 	// Create a separate app for metrics (no auth, no prefix)
-	rootApp = new Hono<{ Variables: Variables }>();
+	rootApp = new Hono();
 	// Mount metrics at /metrics (outside of /api prefix)
 	rootApp.route("/metrics", metricsRouter);
 	// Mount the main app
 	rootApp.route("/", app);
+
 } else {
 	// If no ROUTES_PREFIX, use the main app as root
 	app.route("/metrics", metricsRouter);
 	rootApp = app;
 }
+
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🚀 SERVER STARTUP
