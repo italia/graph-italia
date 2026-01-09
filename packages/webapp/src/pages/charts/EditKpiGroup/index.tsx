@@ -91,12 +91,12 @@ function EditKpiGroup() {
             <h1 className="text-4xl font-bold">{vm.name}</h1>
             <h4 className="text-xl">{vm.description}</h4>
             <div className="flex flex-wrap items-center">
-              <button
+              {/* <button
                 className="m-2 btn btn-xs btn-primary"
                 onClick={changeConfigHandler}
               >
                 Cambia configurazione
-              </button>
+              </button> */}
               <button
                 className="m-2 btn btn-xs btn-primary"
                 onClick={addKpiHandler}
