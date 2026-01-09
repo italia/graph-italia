@@ -95,6 +95,21 @@ function EditKpiGroup() {
               {kpiGroup.dataSource.length > 0 && (
                 <div className="p-4 space-y-4">
                   <div className="p-4 border rounded-md shadow-sm">
+                    {kpiGroup.dataSource.map(
+                      (
+                        kpi: { title: string; value: string },
+                        index: number
+                      ) => (
+                        <div key={index}>
+                          <div className="p-4 border rounded-md shadow-sm">
+                            <h3 className="text-lg font-semibold">
+                              {kpi.title}
+                            </h3>
+                            <p>{kpi.value}</p>
+                          </div>
+                        </div>
+                      )
+                    )}
                     {/* <RenderChart {...kpiGroup}></RenderChart> */}
                   </div>
                 </div>

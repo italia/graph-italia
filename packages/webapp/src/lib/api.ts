@@ -348,3 +348,8 @@ export async function getKpiGroup({ id }: GetKpiGroupParams) {
   const response = await axios.get(`${getServerUrlWithApi()}/charts/kpi-group/${id}`);
   return { data: response.data.data } as GetKpiGroupResponse;
 }
+
+export async function saveKpiGroup({ id, payload }: { id: string; payload: any }) {
+  const response = await axios.put(`${getServerUrlWithApi()}/charts/kpi-group/${id}`, payload);
+  return Boolean(response.data.id);
+}

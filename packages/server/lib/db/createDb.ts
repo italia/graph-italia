@@ -16,9 +16,9 @@ export default function createDb<CreateInput, UpdateInput, WhereInput>(
       return model.findUnique(args);
     },
     find: (where?: WhereInput) => model.findMany({ where }),
-    create: async (data: CreateInput) => model.create({ data }),
-    update: (id: string, data: UpdateInput) =>
-      model.update({ where: { id }, data }),
+    create: async (data: CreateInput) => await model.create({ data }),
+    update: async (id: string, data: UpdateInput) =>
+      await model.update({ where: { id }, data }),
     deleteById: (id: string) => model.delete({ where: { id } }),
   };
 }

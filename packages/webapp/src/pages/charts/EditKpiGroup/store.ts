@@ -90,7 +90,19 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     },
     save: async () => {
         console.log("save kpi group");
-        return true;
+        const { id, kpiGroup } = get();
+        if (!id) {
+            throw new Error("ID is undefined");
+        }
+        const response = await api.saveKpiGroup({
+            id,
+            payload: {
+                config: kpiGroup.config,
+                dataSource: kpiGroup.dataSource,
+            }
+        });
+
+        return response;
     },
 }));
 
