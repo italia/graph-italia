@@ -5,11 +5,12 @@ import db from "../lib/db";
 import { checkAuth, requireUser } from "../lib/middlewares-hono";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
+import type { Chart } from "../lib/db/prisma/client";
 // import { zValidator } from "@hono/zod-validator";
 import {
-  validator as zValidator,
-  resolver,
-  describeRoute,
+	validator as zValidator,
+	resolver,
+	describeRoute,
 } from "hono-openapi";
 
 const router = new Hono();
@@ -51,69 +52,117 @@ const updateChartSchema = z.object({
 	slots: z.array(z.string()).nullable().optional(),
 });
 
-const chartListSchema = z.array(
-	z.object({
-		id: z.string(),
-		userId: z.string(),
-		name: z.string().nullable(),
-		description: z.string().nullable(),
-		chart: z.string(),
-		config: z.unknown().nullable(),
-		data: z.unknown().nullable(),
-		isRemote: z.boolean().nullable(),
-		remoteUrl: z.string().nullable(),
-		publish: z.boolean(),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-	}),
-);
+const chartSchema = z.object({
+	id: z.string(),
+	userId: z.string(),
+	name: z.string().nullable(),
+	description: z.string().nullable(),
+	chart: z.string(),
+	config: z.unknown().nullable(),
+	data: z.unknown().nullable(),
+	isRemote: z.boolean().nullable(),
+	remoteUrl: z.string().nullable(),
+	publish: z.boolean(),
+	createdAt: z.string(),
+	updatedAt: z.string(),
+})
+const chartListSchema = z.array(chartSchema);
+
 const errorMessageSchema = z.object({
 	error: z.string(),
 });
 
-/** Index */
-router.get("/",  describeRoute({
-    responses: {
-      200: {
-        description: "Successful response",
-        content: {
-          "application/json": {
-            schema: resolver(chartListSchema),
-          },
-        },
-      },
-			401:{ description: "Unauthorized",
-        content: {
-          "application/json": {
-            schema: resolver(errorMessageSchema),
-          },
-        }, },
-			500:{ description: "Internal error" ,
-        content: {
-          "application/json": {
-            schema: resolver(errorMessageSchema),
-          },
-        },}
-    }}),async (c) => {
-	try {
-		const user = c.get("user") as ParsedToken | null;
-		if (!user) {
-			return c.json({ error: "Unauthorized" }, 401);
-		}
-		const id = user.userId;
-		const results = await db.findChartsByUSerId(id);
-		return c.json(results);
-	} catch (err) {
-		logger.error("Charts index error", err instanceof Error ? err : undefined);
-		return c.json({ error: "Internal error" }, 500);
-	}
+const publishResultSchema = z.object({
+	published: z.boolean(),
 });
 
+/** Index */
+router.get("/",
+	describeRoute({
+		responses: {
+			200: {
+				description: "Successful response",
+				content: {
+					"application/json": {
+						schema: resolver(chartListSchema),
+					},
+				},
+			},
+			401: {
+				description: "Unauthorized",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal error",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			}
+		}
+	}), async (c) => {
+		try {
+			const user = c.get("user") as ParsedToken | null;
+			if (!user) {
+				return c.json({ error: "Unauthorized" }, 401);
+			}
+			const id = user.userId;
+			const results = await db.findChartsByUSerId(id);
+			return c.json(results);
+		} catch (err) {
+			logger.error("Charts index error", err instanceof Error ? err : undefined);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	});
+
 /** Get :ID */
-router.get("/:id", zValidator("param", detailSchema), async (c) => {
+router.get("/:id", describeRoute({
+	responses: {
+		200: {
+			description: "Successful response",
+			content: {
+				"application/json": {
+					schema: resolver(chartSchema),
+				},
+			},
+		},
+		401: {
+			description: "Unauthorized",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		},
+		404: {
+			description: "NotFound",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		}
+	}
+}), zValidator("param", detailSchema), async (c) => {
 	try {
 		const { id } = c.req.valid("param");
 		const result = await db.findChartById(id);
+		if (!result) {
+			return c.json({ error: "Not Found" }, 404);
+		}
 		return c.json(result);
 	} catch (err) {
 		logger.error("Chart get error", err instanceof Error ? err : undefined);
@@ -122,14 +171,52 @@ router.get("/:id", zValidator("param", detailSchema), async (c) => {
 });
 
 /** Show :ID (public) */
-router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
+router.get("/show/:id", describeRoute({
+	responses: {
+		200: {
+			description: "Successful response",
+			content: {
+				"application/json": {
+					schema: resolver(chartSchema),
+				},
+			},
+		},
+		401: {
+			description: "Unauthorized",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		},
+		404: {
+			description: "Not Found",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		}
+	}
+}), zValidator("param", detailSchema), async (c) => {
 	try {
 		const { id } = c.req.valid("param");
 		let result = await db.findChartById(id);
+		if (!result) {
+			return c.json({ error: "Not Found" }, 404);
+		}
 		if (result?.publish !== true) {
 			return c.json(
 				{
-					error: { message: "Not Authorized, This chart is not public" },
+					error: { message: "Unauthorized" },
 				},
 				401,
 			);
@@ -157,6 +244,34 @@ router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
 /** Create */
 router.post(
 	"/",
+	describeRoute({
+		responses: {
+			201: {
+				description: "Successful response",
+				content: {
+					"application/json": {
+						schema: resolver(chartSchema),
+					},
+				},
+			},
+			401: {
+				description: "Unauthorized",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal error",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			}
+		}
+	}),
 	requireUser,
 	zValidator("json", createChartSchema),
 	async (c) => {
@@ -190,6 +305,42 @@ router.post(
 /** Publish */
 router.post(
 	"/publish/:id",
+	describeRoute({
+		responses: {
+			200: {
+				description: "Successful response",
+				content: {
+					"application/json": {
+						schema: resolver(publishResultSchema),
+					},
+				},
+			},
+			401: {
+				description: "Unauthorized",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			404: {
+				description: "Not Found",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal error",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			}
+		}
+	}),
 	requireUser,
 	zValidator("param", detailSchema),
 	async (c) => {
@@ -225,6 +376,42 @@ router.post(
 /** Delete ID */
 router.delete(
 	"/:id",
+	describeRoute({
+		responses: {
+			200: {
+				description: "Successful response",
+				content: {
+					"application/json": {
+						schema: resolver(chartSchema),
+					},
+				},
+			},
+			401: {
+				description: "Unauthorized",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			404: {
+				description: "Not Found",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal error",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			}
+		}
+	}),
 	requireUser,
 	zValidator("param", detailSchema),
 	async (c) => {
@@ -256,6 +443,42 @@ router.delete(
 /** Update ID */
 router.put(
 	"/:id",
+	describeRoute({
+		responses: {
+			200: {
+				description: "Successful response",
+				content: {
+					"application/json": {
+						schema: resolver(chartSchema),
+					},
+				},
+			},
+			401: {
+				description: "Unauthorized",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			404: {
+				description: "Not Found",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal error",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			}
+		}
+	}),
 	requireUser,
 	zValidator("param", detailSchema),
 	zValidator("json", updateChartSchema),
