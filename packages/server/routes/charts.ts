@@ -12,6 +12,8 @@ import {
 	resolver,
 	describeRoute,
 } from "hono-openapi";
+import parseCSV from "../lib/parseCSV";
+import { isArgumentsObject } from "util/types";
 
 const router = new Hono();
 
@@ -222,17 +224,37 @@ router.get("/show/:id", describeRoute({
 			);
 		}
 		if (result?.isRemote && result?.remoteUrl) {
+			console.log("Fetching remote data for chart", id);
 			const lastUpdate = new Date(result.updatedAt);
 			const now = Date.now();
 			const diff = now - lastUpdate.getTime();
 			const isToUpdate = diff > 1000 * 60 * 60 * 24;
 			if (isToUpdate) {
-				const remote = await axios.get("" + result.remoteUrl);
-				if (remote.data) {
-					await db.updateChart(id, { data: remote.data });
+				console.log("Server data is stale, updating...");
+				const response = await axios.get("" + result.remoteUrl);
+				console.log("REMOTE RESPONSE TYPE", response.headers['content-type']);
+				let data
+				if (response.headers['content-type']?.includes('application/json')) {
+					data = response.data;
+				} else {
+					const csv = await parseCSV(response.data);
+					console.log("parsed csv", csv);
+					data = csv.data;
+				}
+				if (data) {
+					const updatedChartData = {
+						isRemote: result.isRemote,
+						remoteUrl: result.remoteUrl,
+						data,
+					}
+					console.log("Updating chart with remote data", updatedChartData);
+					await db.updateChart(id, updatedChartData);
 					result = await db.findChartById(id);
 				}
+			} else {
+				console.log("Server data is fresh, no update needed.");
 			}
+
 		}
 		return c.json(result);
 	} catch (err) {
