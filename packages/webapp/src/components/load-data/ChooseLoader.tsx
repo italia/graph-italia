@@ -94,11 +94,10 @@ export default function ChooseLoader({
           <button
             key={tab.id}
             role="tab"
-            className={`tab gap-2 transition-all ${
-              currentTab === tab.id
-                ? "tab-active bg-base-100 shadow-sm"
-                : "hover:bg-base-100/50"
-            }`}
+            className={`tab gap-2 transition-all ${currentTab === tab.id
+              ? "tab-active bg-base-100 shadow-sm"
+              : "hover:bg-base-100/50"
+              }`}
             onClick={() => setCurrentTab(tab.id)}
             aria-selected={currentTab === tab.id}
           >
@@ -129,6 +128,10 @@ export default function ChooseLoader({
         )}
         {currentTab === 2 && (
           <>
+
+
+            {/* <b>TODO: ADD RADIO BUTTONS TO CHOOSE JSON OR CSV</b> */}
+
             <LoadRemoteJsonSource
               currentValue={remoteUrl}
               setData={(d: any) => handleSetRemoteData(d)}

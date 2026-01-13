@@ -50,6 +50,7 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
           <span className="label-text font-medium">CSV data source URL</span>
         </label>
         <input
+          placeholder="https://example.com/data.csv"
           className='input w-full'
           type='text'
           value={url}

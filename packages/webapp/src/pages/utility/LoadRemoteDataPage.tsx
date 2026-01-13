@@ -58,7 +58,7 @@ function Home() {
               Dati Italia, Governo e servizi pubblici
             </a>
           </div>
-          <LoadSource setRawData={setRawData} />
+          <LoadSource currentValue={""} setData={setRawData} />
         </>
         {rawData && (
           <div>
