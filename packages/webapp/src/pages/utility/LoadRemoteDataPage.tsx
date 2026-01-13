@@ -7,7 +7,7 @@ import {
 import Layout from "../../components/layout";
 import DataTable from "../../components/DataTable";
 import useStoreState from "../../lib/storeState";
-import LoadSource from "../../components/LoadCSVSource";
+import LoadSource from "../../components/load-data/LoadRemoteCSVSource";
 import { downloadCSV, dataToCSV } from "../../lib/downloadUtils";
 
 function Home() {

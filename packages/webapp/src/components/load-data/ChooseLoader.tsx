@@ -2,6 +2,7 @@ import { useState } from "react";
 import CSVUpload from "./CSVUpload";
 import JsonUpload from "./JsonUpload";
 import LoadRemoteJsonSource from "./LoadRemoteJsonSource";
+import LoadRemoteCSVSource from "./LoadRemoteCSVSource";
 
 type ChooseLoaderProps = {
   handleUpload: (d: any) => void;
@@ -127,10 +128,16 @@ export default function ChooseLoader({
           />
         )}
         {currentTab === 2 && (
-          <LoadRemoteJsonSource
-            currentValue={remoteUrl}
-            setData={(d: any) => handleSetRemoteData(d)}
-          />
+          <>
+            <LoadRemoteJsonSource
+              currentValue={remoteUrl}
+              setData={(d: any) => handleSetRemoteData(d)}
+            />
+            <LoadRemoteCSVSource
+              currentValue={remoteUrl}
+              setData={(d: any) => handleSetRemoteData(d)}
+            />
+          </>
         )}
       </div>
     </div>

@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { log } from "../../lib/utils";
+import Papa from "papaparse";
 
-function LoadSource({
-  setData,
-  currentValue,
-}: {
-  setData: Function;
-  currentValue: string | null;
-}) {
+// const PLACEHOLDER_URL =
+//   "https://www.datocms-assets.com/38008/1722249098-generated-data-3x51722249031636.csv";
+
+function LoadSource({ setData, currentValue }: { setData: Function, currentValue: string | null; }) {
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState(currentValue || "");
   const [error, setError] = useState<string | null>(null);
@@ -17,24 +15,28 @@ function LoadSource({
       setError("Please enter a valid URL");
       return;
     }
-
     setLoading(true);
     setError(null);
-
     try {
-      const testUrl = new URL(url);
+      let testUrl = new URL(url);
       if (testUrl) {
 
-        const response = await fetch(url);
+        const response = await fetch(url)
         console.log("fetch response", response);
-        const data = await response.json();
-        console.log("fetched remote json data", data);
-        if (data) {
-          setData({ remoteUrl: url, data: data });
-        }
+        const data = await response.text();
+        console.log("response data", data);
+        Papa.parse(data, {
+          header: false,
+          skipEmptyLines: true,
+          complete: (results) => {
+            const { data } = results;
+            console.log("setData ", data);
+            setData({ remoteUrl: url, data: data });
+          },
+        });
       }
-    } catch (err) {
-      log(err);
+    } catch (error) {
+      log(error);
       setError("Unable to load data from the specified URL");
     } finally {
       setLoading(false);
@@ -45,14 +47,12 @@ function LoadSource({
     <div className="space-y-4">
       <div className="form-control">
         <label className="label">
-          <span className="label-text font-medium">JSON data source URL</span>
+          <span className="label-text font-medium">CSV data source URL</span>
         </label>
         <input
-          className={`input input-bordered w-full ${error ? "input-error" : ""
-            }`}
-          type="url"
+          className='input w-full'
+          type='text'
           value={url}
-          placeholder="https://example.com/data.json"
           onChange={(e) => {
             setUrl(e.target.value);
             setError(null);
@@ -96,7 +96,7 @@ function LoadSource({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
               />
             </svg>
-            Load remote JSON data
+            Load remote CSV data
           </>
         )}
       </button>
