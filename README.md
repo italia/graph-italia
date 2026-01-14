@@ -126,6 +126,7 @@ erDiagram
         string email UK
         string password
         boolean verifyed
+        Role role
         datetime createdAt
         datetime updatedAt
     }
@@ -199,9 +200,15 @@ erDiagram
     }
 ```
 
+#### Ruoli Utente
+
+Il sistema supporta due ruoli:
+- **`USER`**: Utente standard (default)
+- **`ADMIN`**: Amministratore con privilegi estesi
+
 #### Descrizione Modelli
 
-- **`User`**: Gestione utenti con autenticazione email/password, verifica account tramite codici PIN
+- **`User`**: Gestione utenti con autenticazione email/password, verifica account tramite codici PIN, ruolo assegnabile
 - **`Chart`**: Configurazione grafici (tipo, dati, configurazione), supporto per dati remoti, pubblicazione pubblica, preview come immagine
 - **`Dashboard`**: Raccolta di grafici organizzati in "slots", pubblicazione pubblica, layout personalizzabile
 - **`DataSource`**: Fonti dati riutilizzabili, supporto per dati remoti, trasposizione dati
@@ -521,14 +528,161 @@ Dal `package.json` root:
 
 ### Docker
 - `packages/server/Dockerfile`: Immagine Docker per server
-- `packages/server/Dockerfile.app`: Immagine alternativa
+- `packages/server/Dockerfile.app`: Immagine alternativa ottimizzata
 - `packages/webapp/Dockerfile`: Immagine Docker per webapp
 
+### Helm Chart
+
+Il progetto include un Helm chart per il deployment su Kubernetes in `charts/dataviz/`.
+
+#### Struttura Deployment
+
+```mermaid
+graph TB
+    subgraph "Kubernetes Cluster"
+        subgraph "Namespace: dataviz"
+            Ingress[Ingress<br/>nginx] --> Webapp[Webapp<br/>nginx + React]
+            Ingress --> Server[Server<br/>Bun + Express]
+            Server --> DB[(PostgreSQL<br/>Azure/NeonDB)]
+            
+            subgraph "Helm Hooks"
+                Migration[Job: db-migration<br/>prisma db push]
+                Seed[Job: db-seed<br/>seed-users.ts]
+            end
+            
+            Migration -.->|pre-upgrade| Server
+            Seed -.->|pre-upgrade| Server
+        end
+    end
+    
+    CI[GitHub Actions] -->|helm upgrade| Ingress
+```
+
+#### Componenti Helm
+
+| Componente | Descrizione |
+|------------|-------------|
+| `webapp-deployment` | Frontend React servito da nginx |
+| `server-deployment` | Backend API Bun/Express |
+| `db-migration-job` | Hook pre-upgrade per `prisma db push` |
+| `db-seed-job` | Hook pre-upgrade per seeding utenti |
+| `ingress` | Routing HTTP/HTTPS con cert-manager |
+
 ### Database Setup
-1. Installare Prisma globalmente: `bun i -g prisma@latest`
-2. Configurare connection string PostgreSQL
-3. Eseguire: `prisma db push`
-4. Seed utenti: `bun seeds/seed-users.ts`
+
+#### Sviluppo Locale
+
+1. Configurare connection string PostgreSQL in `.env`:
+   ```bash
+   DATABASE_URL="postgresql://user:password@localhost:5432/dataviz"
+   ```
+
+2. Applicare schema al database:
+   ```bash
+   cd packages/server
+   bunx prisma db push
+   ```
+
+3. (Opzionale) Seed utenti di test:
+   ```bash
+   bun run seeds/seed-users.ts
+   ```
+
+#### Deployment Kubernetes (Helm)
+
+Il database viene configurato automaticamente tramite Helm hooks:
+
+```mermaid
+sequenceDiagram
+    participant Helm
+    participant Migration as db-migration Job
+    participant Seed as db-seed Job
+    participant Server as Server Pod
+    participant DB as PostgreSQL
+    
+    Helm->>Migration: pre-upgrade hook (weight: -5)
+    Migration->>DB: prisma db push
+    DB-->>Migration: Schema synced
+    Migration-->>Helm: Job completed
+    
+    Helm->>Seed: pre-upgrade hook (weight: 0)
+    Seed->>DB: Check/create users
+    DB-->>Seed: Users ready
+    Seed-->>Helm: Job completed
+    
+    Helm->>Server: Deploy new pods
+    Server->>DB: Connect & serve
+```
+
+**Configurazione utenti in `values.yaml`:**
+
+```yaml
+dbMigration:
+  enabled: true
+  acceptDataLoss: false  # MAI true in produzione!
+
+dbSeed:
+  enabled: true
+  users:
+    # Crea nuovo utente (skip se email esiste già)
+    - email: "admin@example.com"
+      password: "SecurePassword123!"
+      verifyed: true
+      role: "ADMIN"
+    
+    # Aggiorna utente esistente (richiede id)
+    - id: "existing-user-id"
+      email: "updated@example.com"
+      password: "NewPassword!"
+      verifyed: true
+```
+
+**Primo deployment:**
+
+```bash
+# Installazione iniziale con migration e seed
+helm upgrade --install dataviz oci://ghcr.io/italia/charts/dataviz \
+  -n dataviz -f values.yaml
+```
+
+**Deployment successivi:**
+
+```bash
+# Solo aggiornamento immagini (migration idempotente)
+helm upgrade dataviz oci://ghcr.io/italia/charts/dataviz \
+  -n dataviz -f values.yaml
+```
+
+### Gestione Utenti
+
+#### Creazione Utenti via Helm
+
+Gli utenti vengono creati/aggiornati automaticamente dal seed job durante il deployment:
+
+```yaml
+# values.yaml
+dbSeed:
+  enabled: true
+  users:
+    - email: "admin@example.com"
+      password: "password"
+      verifyed: true
+      role: "ADMIN"
+```
+
+#### Registrazione Self-Service
+
+Gli utenti possono registrarsi autonomamente tramite l'interfaccia web:
+
+1. Accedere a `/register`
+2. Inserire email e password
+3. Ricevere email di verifica (via Resend)
+4. Cliccare link di verifica
+5. Account attivato
+
+**Requisiti per email:**
+- Configurare `RESEND_API_KEY` con chiave valida
+- Configurare `SENDER_EMAIL` con dominio verificato su Resend (es. `noreply@dataviz.example.com`)
 
 ---
 
@@ -565,29 +719,74 @@ graph LR
 #### Workflow Release (`.github/workflows/release.yml`)
 
 Eseguito su:
-- Push su branch `main`
+- Push su branch `main` o `develop`
 - Tag con pattern `v*` (es. `v1.0.0`)
 - Pull Request su `main` (solo build, no push)
 
-**Processo Release**:
+**Processo Release Completo**:
+
 ```mermaid
-graph LR
-    Trigger[Tag/Push] --> Checkout[Checkout Code]
-    Checkout --> DockerMeta[Generate Docker Tags]
-    DockerMeta --> SetupQEMU[Setup QEMU]
-    SetupQEMU --> SetupBuildx[Setup Docker Buildx]
-    SetupBuildx --> Login[Login to GHCR]
-    Login --> BuildPush[Build & Push Docker Image]
-    BuildPush --> Image[ghcr.io/teamdigitale/dataviz-srv]
+flowchart TB
+    subgraph Trigger
+        Push[Push main/develop]
+        Tag[Tag v*]
+        PR[Pull Request]
+    end
+    
+    subgraph Prepare["📋 Prepare"]
+        Version[Generate Version<br/>0.0.0-test.SHA / v1.0.0]
+    end
+    
+    subgraph Build["🏗️ Build Images"]
+        direction LR
+        BuildServer[Build Server<br/>Dockerfile.app]
+        BuildWebapp[Build Webapp<br/>Dockerfile]
+    end
+    
+    subgraph Package["📦 Package Helm"]
+        HelmPkg[helm package]
+        HelmPush[helm push OCI]
+    end
+    
+    subgraph Deploy["🚀 Deploy"]
+        DeployTest[Deploy Test<br/>dataviz-test namespace]
+        DeployProd[Deploy Production<br/>dataviz namespace]
+    end
+    
+    Push --> Prepare
+    Tag --> Prepare
+    PR --> Prepare
+    
+    Prepare --> Build
+    Build --> Package
+    
+    Package --> DeployTest
+    DeployTest -->|main branch| DeployProd
+    
+    BuildServer --> GHCR1[ghcr.io/italia/dataviz-srv]
+    BuildWebapp --> GHCR2[ghcr.io/italia/dataviz-webapp]
+    HelmPush --> GHCR3[ghcr.io/italia/charts/dataviz]
 ```
 
-**Caratteristiche**:
-- Build immagine Docker multi-stage usando `packages/server/Dockerfile.app`
-- Push su GitHub Container Registry (`ghcr.io/teamdigitale/dataviz-srv`)
-- Tag automatici basati su:
-  - Branch name (per branch `main`)
-  - Semantic versioning (`v1.0.0`, `v1.0`, `v1`)
-- Supporto multi-architettura (linux/amd64)
+**Jobs del Workflow**:
+
+| Job | Descrizione | Trigger |
+|-----|-------------|---------|
+| `prepare` | Genera versione semantica | Sempre |
+| `build-images` | Build Docker server + webapp | Sempre |
+| `package-helm` | Package e push Helm chart | Non PR |
+| `deploy-test` | Deploy su dataviz-test | Non PR |
+| `deploy-production` | Deploy su dataviz | Solo main + non PR |
+
+**Versioning**:
+- Branch `develop`: `0.0.0-test.<short-sha>`
+- Branch `main`: `0.0.0-test.<short-sha>`
+- Tag `v1.2.3`: `1.2.3`
+
+**Artefatti Prodotti**:
+- `ghcr.io/italia/dataviz-srv:<version>`
+- `ghcr.io/italia/dataviz-webapp:<version>`
+- `ghcr.io/italia/charts/dataviz:<version>`
 
 #### Workflow Pullfrog (`.github/workflows/pullfrog.yml`)
 
@@ -752,8 +951,40 @@ Il progetto **non include** framework di testing configurati:
 
 - **GitGuardian**: Configurato (`.gitguardian.yaml`) per scansione segreti nel codice
 - **Secrets Management**: Utilizzo GitHub Secrets per:
-  - `GITHUB_TOKEN` (per push Docker images)
+  - `GITHUB_TOKEN` (per push Docker images e Helm charts)
   - `ANTHROPIC_API_KEY` (per Pullfrog workflow)
+  - `KUBE_CONFIG` (per deploy su Kubernetes)
+
+### Deployment Environments
+
+```mermaid
+graph LR
+    subgraph "GitHub Actions"
+        CI[CI/CD Pipeline]
+    end
+    
+    subgraph "Kubernetes Cluster"
+        subgraph "Test Environment"
+            TestNS[dataviz-test namespace]
+            TestDB[(NeonDB)]
+        end
+        
+        subgraph "Production Environment"
+            ProdNS[dataviz namespace]
+            ProdDB[(Azure PostgreSQL)]
+        end
+    end
+    
+    CI -->|develop/main push| TestNS
+    CI -->|main push only| ProdNS
+    TestNS --> TestDB
+    ProdNS --> ProdDB
+```
+
+| Environment | Namespace | Database | Branch | URL |
+|-------------|-----------|----------|--------|-----|
+| Test | `dataviz-test` | NeonDB | develop, main | `dataviz-test.innovazione.gov.it` |
+| Production | `dataviz` | Azure PostgreSQL | main | `dataviz.innovazione.gov.it` |
 
 ---
 
