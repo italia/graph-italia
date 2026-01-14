@@ -1,14 +1,16 @@
 import { RenderChart } from "dataviz-components";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
 import Dialog from "../../../components/layout/Dialog";
+import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
-import { KpiConfigForm, KpiForm, KpiFormValues } from "./components";
+import { KpiConfigForm, KpiForm, KpiFormValues, type KpiConfigFormHandle } from "./components";
 import useEditKpiGroupStore from "./store";
 
 function EditKpiGroup() {
   const { id } = useParams();
+  const kpiConfigFormRef = useRef<KpiConfigFormHandle>(null);
   const {
     load,
     reload,
@@ -154,16 +156,21 @@ function EditKpiGroup() {
           </Dialog>
         )}
         {showConfigModal && (
-          <Dialog
+          <GenericDialog
             toggle={showConfigModal}
             title="Configura Kpi Group"
-            callback={() => {
+            confirmCb={() => {
+              const formData = kpiConfigFormRef.current?.getFormData();
+              console.log("Configurazione KPI Group:", formData);
+              closeConfigFormModal();
+            }}
+            cancelCb={() => {
               closeConfigFormModal();
             }}
           >
             <div>Form to configure Kpi Group</div>
-            <KpiConfigForm />
-          </Dialog>
+            <KpiConfigForm ref={kpiConfigFormRef} />
+          </GenericDialog>
         )}
       </div>
     </Layout>

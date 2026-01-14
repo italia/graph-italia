@@ -1,3 +1,4 @@
+import { forwardRef, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 const defaultValues = {
@@ -16,17 +17,22 @@ const defaultValues = {
   background: "skyblue",
 };
 
-type KpiGroupConfigFormValues = typeof defaultValues;
+export type KpiGroupConfigFormValues = typeof defaultValues;
 
-export default function KpiConfigForm() {
-  const { register, control, handleSubmit, reset } = useForm({
+export interface KpiConfigFormHandle {
+  getFormData: () => KpiGroupConfigFormValues;
+  resetForm: () => void;
+}
+
+const KpiConfigForm = forwardRef<KpiConfigFormHandle>((_, ref) => {
+  const { register, control, reset, getValues } = useForm({
     defaultValues,
   });
 
-  const onSubmit = (data: KpiGroupConfigFormValues) => {
-    console.log("Form Data:", data);
-    alert("Form inviato! Controlla la console per vedere i dati.");
-  };
+  useImperativeHandle(ref, () => ({
+    getFormData: () => getValues(),
+    resetForm: () => reset(),
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -241,24 +247,12 @@ export default function KpiConfigForm() {
               />
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-4">
-            <button
-              onClick={handleSubmit(onSubmit)}
-              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
-            >
-              Invia
-            </button>
-            <button
-              onClick={() => reset()}
-              className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-medium"
-            >
-              Reset
-            </button>
-          </div>
         </div>
       </div>
     </div>
   );
-}
+});
+
+KpiConfigForm.displayName = "KpiConfigForm";
+
+export default KpiConfigForm;
