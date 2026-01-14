@@ -28,7 +28,7 @@ Il progetto utilizza **Bun workspaces** per gestire i pacchetti multipli. La con
 ### Pacchetti Principali
 
 1. **`packages/components`** - Libreria React di componenti riutilizzabili
-2. **`packages/server`** - Backend API server (Express + Bun)
+2. **`packages/server`** - Backend API server (Hono + Bun)
 3. **`packages/webapp`** - Applicazione web principale (React + Vite)
 4. **`packages/ui-example-app`** - App di esempio per dimostrare l'uso dei componenti
 
@@ -97,15 +97,17 @@ I pacchetti interni (`webapp` e `ui-example-app`) utilizzano il componente trami
 ## 2. Packages/Server - Backend API
 
 ### Descrizione
-Server Express che gestisce autenticazione, persistenza dati, e API per charts e dashboards.
+Server Hono che gestisce autenticazione, persistenza dati, e API per charts e dashboards.
 
 ### Tecnologie
 - **Runtime**: Bun
-- **Framework**: Express v5.1.0
-- **Database**: PostgreSQL con Prisma ORM v7.0.1
-- **Autenticazione**: JWT (jsonwebtoken) + bcrypt
+- **Framework**: Hono (web framework ultraleggero)
+- **Database**: PostgreSQL (Azure) con Prisma ORM v7.0.1
+- **Autenticazione**: JWT + bcrypt
 - **Email**: Resend (per invio email di attivazione/reset password)
 - **AI**: OpenAI (per suggerimenti automatici)
+- **Observability**: Pino (logging JSON), Prometheus metrics
+- **API Docs**: OpenAPI + Scalar
 
 ### Modelli Database (Prisma Schema)
 
@@ -419,7 +421,7 @@ Usa `dataviz-components` tramite link locale:
 graph TB
     Webapp[Webapp<br/>React + Vite]
     Components[Components<br/>React Library]
-    Server[Server<br/>Express + Bun]
+    Server[Server<br/>Hono + Bun]
     DB[(PostgreSQL<br/>Prisma ORM)]
     
     Webapp -->|usa| Components
@@ -435,7 +437,7 @@ graph LR
     Root[Root Package<br/>Bun Workspaces]
     
     Root --> Components[packages/components<br/>React Component Library<br/>Pubblicabile su npm]
-    Root --> Server[packages/server<br/>Backend API<br/>Express + Bun]
+    Root --> Server[packages/server<br/>Backend API<br/>Hono + Bun]
     Root --> Webapp[packages/webapp<br/>Web Application<br/>React + Vite]
     Root --> Example[packages/ui-example-app<br/>Example App<br/>Demo Components]
     
@@ -542,8 +544,8 @@ graph TB
     subgraph "Kubernetes Cluster"
         subgraph "Namespace: dataviz"
             Ingress[Ingress<br/>nginx] --> Webapp[Webapp<br/>nginx + React]
-            Ingress --> Server[Server<br/>Bun + Express]
-            Server --> DB[(PostgreSQL<br/>Azure/NeonDB)]
+            Ingress --> Server[Server<br/>Bun + Hono]
+            Server --> DB[(PostgreSQL<br/>Azure)]
             
             subgraph "Helm Hooks"
                 Migration[Job: db-migration<br/>prisma db push]
@@ -563,7 +565,7 @@ graph TB
 | Componente | Descrizione |
 |------------|-------------|
 | `webapp-deployment` | Frontend React servito da nginx |
-| `server-deployment` | Backend API Bun/Express |
+| `server-deployment` | Backend API Bun/Hono |
 | `db-migration-job` | Hook pre-upgrade per `prisma db push` |
 | `db-seed-job` | Hook pre-upgrade per seeding utenti |
 | `ingress` | Routing HTTP/HTTPS con cert-manager |
@@ -936,7 +938,7 @@ Il progetto **non include** framework di testing configurati:
 
 2. **Test API** (Server):
    - Framework: Vitest o Jest
-   - Target: Route Express, middleware, logica business
+   - Target: Route Hono, middleware, logica business
    - Libreria: Supertest per HTTP testing
 
 3. **Test E2E** (Webapp):
@@ -966,7 +968,7 @@ graph LR
     subgraph "Kubernetes Cluster"
         subgraph "Test Environment"
             TestNS[dataviz-test namespace]
-            TestDB[(NeonDB)]
+            TestDB[(Azure PostgreSQL)]
         end
         
         subgraph "Production Environment"
@@ -983,7 +985,7 @@ graph LR
 
 | Environment | Namespace | Database | Branch | URL |
 |-------------|-----------|----------|--------|-----|
-| Test | `dataviz-test` | NeonDB | develop, main | `dataviz-test.innovazione.gov.it` |
+| Test | `dataviz-test` | Azure PostgreSQL | develop, main | `dataviz-test.innovazione.gov.it` |
 | Production | `dataviz` | Azure PostgreSQL | main | `dataviz.innovazione.gov.it` |
 
 ---
@@ -1015,7 +1017,7 @@ graph LR
 |-----------|-----------|
 | **Runtime** | Bun |
 | **Frontend** | React 19, TypeScript, Vite |
-| **Backend** | Express, Bun, TypeScript |
+| **Backend** | Hono, Bun, TypeScript |
 | **Database** | PostgreSQL, Prisma ORM |
 | **Charts** | ECharts 5 |
 | **Maps** | OpenLayers 10 |
@@ -1025,6 +1027,80 @@ graph LR
 | **Auth** | JWT, bcrypt |
 | **Email** | Resend |
 | **AI** | OpenAI API |
+
+---
+
+## Troubleshooting
+
+### Gestione Utenti via kubectl
+
+Se hai bisogno di creare o verificare utenti manualmente senza passare dal seed job, puoi usare `kubectl exec` per accedere direttamente al database.
+
+#### Verificare utenti esistenti
+
+```bash
+kubectl run -n dataviz db-check --rm -it --restart=Never \
+  --image=postgres:15-alpine -- \
+  psql "$DATABASE_URL" \
+  -c "SELECT id, email, role, verifyed FROM \"User\";"
+```
+
+#### Creare un nuovo utente
+
+Prima genera l'hash della password:
+
+```bash
+kubectl exec -n dataviz deployment/dataviz-server -- \
+  bun -e "const {hash} = require('bcrypt'); hash('PASSWORD', 10).then(console.log)"
+```
+
+Poi crea l'utente:
+
+```bash
+kubectl run -n dataviz db-create-user --rm -it --restart=Never \
+  --image=postgres:15-alpine -- \
+  psql "$DATABASE_URL" \
+  -c "INSERT INTO \"User\" (id, email, password, verifyed, role, \"createdAt\", \"updatedAt\") 
+      VALUES ('user-001', 'email@example.com', '\$2b\$10\$HASH...', true, 'USER', NOW(), NOW());"
+```
+
+#### Verificare/Approvare un utente esistente
+
+```bash
+kubectl run -n dataviz db-verify-user --rm -it --restart=Never \
+  --image=postgres:15-alpine -- \
+  psql "$DATABASE_URL" \
+  -c "UPDATE \"User\" SET verifyed = true WHERE email = 'email@example.com';"
+```
+
+#### Promuovere utente ad ADMIN
+
+```bash
+kubectl run -n dataviz db-promote-admin --rm -it --restart=Never \
+  --image=postgres:15-alpine -- \
+  psql "$DATABASE_URL" \
+  -c "UPDATE \"User\" SET role = 'ADMIN' WHERE email = 'email@example.com';"
+```
+
+#### Eliminare un utente
+
+```bash
+kubectl run -n dataviz db-delete-user --rm -it --restart=Never \
+  --image=postgres:15-alpine -- \
+  psql "$DATABASE_URL" \
+  -c "DELETE FROM \"User\" WHERE email = 'email@example.com';"
+```
+
+> **Nota**: Sostituisci `$DATABASE_URL` con la connection string del database o esportala come variabile d'ambiente. Per production, recupera la connection string dal `values.yaml` o dai secrets Kubernetes.
+
+### Problemi Comuni
+
+| Problema | Soluzione |
+|----------|-----------|
+| Utente non riceve email di verifica | Verificare `RESEND_API_KEY` e `SENDER_EMAIL` nel deployment |
+| Login fallisce con "Invalid credentials" | Verificare che l'utente sia `verifyed = true` |
+| Migration job fallisce | Controllare i logs con `kubectl logs -n dataviz -l component=db-migration` |
+| Seed job fallisce | Controllare i logs con `kubectl logs -n dataviz -l component=db-seed` |
 
 ---
 
