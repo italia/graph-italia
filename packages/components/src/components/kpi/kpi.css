@@ -1,28 +1,217 @@
-.kpi-group,
-.kpi-group.div {
+/* ===========================================
+   KPI Components - Custom CSS
+   Replaces Bootstrap Italia CDN dependency
+   All classes prefixed with "dv-kpi-" to avoid conflicts
+   =========================================== */
+
+/* --- HR Reset (Bootstrap Italia style) --- */
+hr {
+  margin: 1rem 0;
+  color: inherit;
+  border: 0;
+  border-top: 1px solid;
+  opacity: 0.25;
+}
+
+/* --- Bootstrap Italia Colors (extracted) --- */
+.dv-kpi-primary-color-a9 {
+  color: hsl(210, 100%, 25%) !important;
+}
+
+.dv-kpi-primary-border-color-a9 {
+  border-color: hsl(210, 100%, 25%) !important;
+}
+
+.dv-kpi-primary-border-color-a9.dv-kpi-border {
+  border-color: hsl(210, 100%, 25%) !important;
+}
+
+.dv-kpi-white-bg {
+  background-color: #fff !important;
+}
+
+.dv-kpi-bg-success {
+  background-color: rgb(0, 128, 85) !important;
+}
+
+.dv-kpi-bg-danger {
+  background-color: rgb(204, 51, 77) !important;
+}
+
+/* --- Border Utilities --- */
+.dv-kpi-border {
+  border: 1px solid hsl(210, 4%, 78%) !important;
+}
+
+.dv-kpi-border-top {
+  border-top: 1px solid hsl(210, 4%, 78%) !important;
+}
+
+.dv-kpi-border-end-0 {
+  border-right: 0 !important;
+}
+
+.dv-kpi-border-top-0 {
+  border-top: 0 !important;
+}
+
+.dv-kpi-border-bottom-0 {
+  border-bottom: 0 !important;
+}
+
+.dv-kpi-border-4 {
+  border-width: 4px !important;
+}
+
+.dv-kpi-border-secondary {
+  border-color: rgb(93, 112, 131) !important;
+}
+
+.dv-kpi-rounded {
+  border-radius: 4px !important;
+}
+
+/* --- Spacing Utilities --- */
+.dv-kpi-p-2 {
+  padding: 0.5rem !important;
+}
+
+.dv-kpi-ps-3 {
+  padding-left: 1rem !important;
+}
+
+.dv-kpi-pt-1 {
+  padding-top: 0.25rem !important;
+}
+
+.dv-kpi-py-1 {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+
+.dv-kpi-px-1 {
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+}
+
+.dv-kpi-mt-3 {
+  margin-top: 1rem !important;
+}
+
+.dv-kpi-me-1 {
+  margin-right: 0.25rem !important;
+}
+
+.dv-kpi-me-3 {
+  margin-right: 1rem !important;
+}
+
+.dv-kpi-ms-1 {
+  margin-left: 0.25rem !important;
+}
+
+.dv-kpi-ms-3 {
+  margin-left: 1rem !important;
+}
+
+/* --- Typography Utilities --- */
+.dv-kpi-fw-semibold {
+  font-weight: 600 !important;
+}
+
+.dv-kpi-text-black {
+  color: #000 !important;
+}
+
+.dv-kpi-text-white {
+  color: #fff !important;
+}
+
+/* --- KPI Typography (mid-caption) --- */
+.dv-kpi-mid-caption {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.dv-kpi-mid-caption--xsmall {
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.dv-kpi-mid-caption--xlarge {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.dv-kpi-mid-caption--xxlarge {
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+/* --- Bootstrap Grid System (minimal) --- */
+.dv-kpi-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.dv-kpi-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.dv-kpi-row > * {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.dv-kpi-col-6 {
+  flex: 0 0 auto;
+  width: 50%;
+  display: flex;
+}
+
+.dv-kpi-col-6 > .dv-kpi-item {
+  flex: 1;
+  display: flex;
+}
+
+.dv-kpi-col-6 > .dv-kpi-item > div {
+  flex: 1;
+}
+
+/* ===========================================
+   KPI Group Layout Styles
+   =========================================== */
+
+.dv-kpi-group,
+.dv-kpi-group.div {
   box-sizing: border-box;
   font-size: medium;
 }
-.kpi-group-vertical,
-.kpi-group-horizontal {
+
+.dv-kpi-group-vertical,
+.dv-kpi-group-horizontal {
   display: flex;
   align-items: center;
   overflow-y: scroll;
 }
 
-.kpi-group-horizontal {
+.dv-kpi-group-horizontal {
   justify-content: flex-start;
   flex-wrap: wrap;
 }
 
-.kpi-group-vertical {
+.dv-kpi-group-vertical {
   max-width: 100%;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
 }
 
-.kpi-group-item {
+.dv-kpi-group-item {
   padding: 4px;
   display: block;
   overflow: hidden;
@@ -31,42 +220,27 @@
   width: max-content;
 }
 
-.kpi-group-vertical {
-  .kpi-group-item {
+.dv-kpi-group-vertical {
+  .dv-kpi-group-item {
     width: 100%;
     height: max-content;
   }
 }
 
-.kpi-item {
+.dv-kpi-item {
   width: 100%;
 }
 
-.kpi-group-horizontal::-webkit-scrollbar {
+.dv-kpi-group-horizontal::-webkit-scrollbar {
   height: 8px;
 }
-/*
-.kpi-group-horizontal::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.kpi-group-horizontal::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-.kpi-group-horizontal::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} */
 
 @media screen and (max-width: 800px) {
-  .kpi-group-vertical,
-  .kpi-group-horizontal {
+  .dv-kpi-group-vertical,
+  .dv-kpi-group-horizontal {
     display: block;
-
   }
-  .kpi-group-item {
+  .dv-kpi-group-item {
     width: 100%;
     height: max-content;
     overflow-x: scroll;

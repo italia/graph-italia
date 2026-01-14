@@ -1,7 +1,7 @@
 import {
+  KpiItem,
   RenderChart,
   type FieldDataType,
-  KpiItem,
   type KpiItemType,
 } from "dataviz-components";
 import { generateFakeKpis } from "./lib/utils";
@@ -60,12 +60,13 @@ function App() {
       <RenderChart {...data1} />
       <hr />
       <RenderChart {...data2} />
-      <div className='container'>
-        <div className='row'>
-          <div className='col-6'>
+      <hr />
+      <div className="dv-kpi-container">
+        <div className="dv-kpi-row">
+          <div className="dv-kpi-col-6">
             <KpiItem data={singleKpi1} />
           </div>
-          <div className='col-6'>
+          <div className="dv-kpi-col-6">
             <KpiItem data={singleKpi2} />
           </div>
         </div>
