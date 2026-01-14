@@ -14,11 +14,17 @@ datasource db {
 }
 
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
   password String
   verifyed Boolean @default(false)
+  role     Role    @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

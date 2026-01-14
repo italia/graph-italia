@@ -1,10 +1,15 @@
 import db from "../lib/db";
 import { prisma } from "../lib/db/prisma";
+import { hash } from "bcrypt";
+
+type Role = "USER" | "ADMIN";
 
 interface SeedUser {
+  id?: string;          // Optional: for updating existing users
   email: string;
   password: string;
   verifyed?: boolean;
+  role?: Role;
 }
 
 // Default users (fallback if SEED_USERS env var is not set)
@@ -12,18 +17,25 @@ const DEFAULT_USERS: SeedUser[] = [
   {
     email: "lp@lp.lp",
     password: "lp@lp.lp",
-    verifyed: true
+    verifyed: true,
+    role: "USER"
   },
   {
     email: "lorezz.me@gmail.com",
     password: "lorezz.me@gmail.com",
-    verifyed: true
+    verifyed: true,
+    role: "USER"
   },
 ];
 
 /**
  * Get users to seed from environment variable or use defaults
- * SEED_USERS should be a JSON array of {email, password, verifyed?} objects
+ * SEED_USERS should be a JSON array of {id?, email, password, verifyed?, role?} objects
+ * 
+ * Examples:
+ * - Create new user: {"email": "user@example.com", "password": "secret", "role": "USER"}
+ * - Create admin: {"email": "admin@example.com", "password": "secret", "role": "ADMIN"}
+ * - Update existing: {"id": "existing-id", "email": "new@email.com", "password": "newpass"}
  */
 function getUsersToSeed(): SeedUser[] {
   const seedUsersEnv = process.env.SEED_USERS;
@@ -34,9 +46,11 @@ function getUsersToSeed(): SeedUser[] {
       if (Array.isArray(parsed) && parsed.length > 0) {
         console.log(`📋 Using ${parsed.length} users from SEED_USERS environment variable`);
         return parsed.map((u: any) => ({
+          id: u.id,
           email: u.email,
           password: u.password,
-          verifyed: u.verifyed ?? true
+          verifyed: u.verifyed ?? true,
+          role: u.role ?? "USER"
         }));
       }
     } catch (e) {
@@ -48,20 +62,59 @@ function getUsersToSeed(): SeedUser[] {
   return DEFAULT_USERS;
 }
 
-async function seedUsers(users: SeedUser[]) {
+/**
+ * Upsert users - creates new users or updates existing ones
+ * - If id is provided: updates the user with that id
+ * - If email exists: skips creation (idempotent for new installs)
+ * - Otherwise: creates new user
+ */
+async function upsertUsers(users: SeedUser[]) {
   for (const item of users) {
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
+    const hashedPassword = await hash(item.password, 10);
+    
+    // If id is provided, update existing user
+    if (item.id) {
+      const existingUser = await prisma.user.findUnique({
+        where: { id: item.id }
+      });
+      
+      if (existingUser) {
+        console.log(`🔄 Updating user ${item.id} -> ${item.email}`);
+        await prisma.user.update({
+          where: { id: item.id },
+          data: {
+            email: item.email,
+            password: hashedPassword,
+            verifyed: item.verifyed ?? true,
+            role: item.role ?? "USER"
+          }
+        });
+        continue;
+      } else {
+        console.log(`⚠️ User with id ${item.id} not found, will create new`);
+      }
+    }
+    
+    // Check if user already exists by email
+    const existingByEmail = await prisma.user.findUnique({
       where: { email: item.email }
     });
     
-    if (existingUser) {
-      console.log(`⏭️ User ${item.email} already exists, skipping...`);
+    if (existingByEmail) {
+      console.log(`⏭️ User ${item.email} already exists (id: ${existingByEmail.id}), skipping...`);
       continue;
     }
     
-    console.log(`➕ Creating user: ${item.email}`);
-    await db.createUserByEmailAndPassword(item);
+    // Create new user
+    console.log(`➕ Creating user: ${item.email} (role: ${item.role ?? "USER"})`);
+    await prisma.user.create({
+      data: {
+        email: item.email,
+        password: hashedPassword,
+        verifyed: item.verifyed ?? true,
+        role: item.role ?? "USER"
+      }
+    });
   }
 }
 
@@ -69,13 +122,14 @@ export default async function main() {
   console.log("🌱 Starting user seeding process...");
   
   const usersToSeed = getUsersToSeed();
-  let users = await db.getUsers();
   
-  // Seed users if needed (idempotent - checks each user individually)
+  // Upsert users (idempotent - safe to run multiple times)
   if (usersToSeed.length > 0) {
-    await seedUsers(usersToSeed);
-    users = await db.getUsers();
+    await upsertUsers(usersToSeed);
   }
+  
+  // Get final user list
+  const users = await db.getUsers();
   
   // Ensure all users are verified
   for (const user of users) {
@@ -86,6 +140,7 @@ export default async function main() {
   }
   
   console.log(`🎉 Seeding complete! Total users: ${users.length}`);
+  console.log("📊 Users:", users.map(u => `${u.email} (${(u as any).role ?? 'USER'})`).join(", "));
   return users;
 }
 
