@@ -80,15 +80,23 @@ async function upsertUsers(users: SeedUser[]) {
       
       if (existingUser) {
         console.log(`🔄 Updating user ${item.id} -> ${item.email}`);
-        await prisma.user.update({
-          where: { id: item.id },
-          data: {
-            email: item.email,
-            password: hashedPassword,
-            verifyed: item.verifyed ?? true,
-            role: item.role ?? "USER"
+        const updateData: any = {
+          email: item.email,
+          password: hashedPassword,
+          verifyed: item.verifyed ?? true,
+        };
+        if (item.role) updateData.role = item.role;
+        
+        try {
+          await prisma.user.update({ where: { id: item.id }, data: updateData });
+        } catch (error: any) {
+          if (error.message?.includes("Unknown argument `role`")) {
+            delete updateData.role;
+            await prisma.user.update({ where: { id: item.id }, data: updateData });
+          } else {
+            throw error;
           }
-        });
+        }
         continue;
       } else {
         console.log(`⚠️ User with id ${item.id} not found, will create new`);
@@ -107,14 +115,31 @@ async function upsertUsers(users: SeedUser[]) {
     
     // Create new user
     console.log(`➕ Creating user: ${item.email} (role: ${item.role ?? "USER"})`);
-    await prisma.user.create({
-      data: {
-        email: item.email,
-        password: hashedPassword,
-        verifyed: item.verifyed ?? true,
-        role: item.role ?? "USER"
+    
+    // Build data object - only include role if schema supports it
+    const createData: any = {
+      email: item.email,
+      password: hashedPassword,
+      verifyed: item.verifyed ?? true,
+    };
+    
+    // Add role only if the field exists in the schema (backward compatible)
+    if (item.role) {
+      createData.role = item.role;
+    }
+    
+    try {
+      await prisma.user.create({ data: createData });
+    } catch (error: any) {
+      // If role field doesn't exist in client, retry without it
+      if (error.message?.includes("Unknown argument `role`")) {
+        console.log(`⚠️ Role field not supported by current Prisma client, creating without role`);
+        delete createData.role;
+        await prisma.user.create({ data: createData });
+      } else {
+        throw error;
       }
-    });
+    }
   }
 }
 
