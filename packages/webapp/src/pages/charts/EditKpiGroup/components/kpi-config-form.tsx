@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 const defaultValues = {
@@ -25,9 +25,17 @@ export interface KpiConfigFormHandle {
 }
 
 const KpiConfigForm = forwardRef<KpiConfigFormHandle>((_, ref) => {
-  const { register, control, reset, getValues } = useForm({
+  const { register, control, reset, getValues, watch, setValue } = useForm({
     defaultValues,
   });
+
+  const legendValue = watch("legend");
+
+  useEffect(() => {
+    if (!legendValue) {
+      setValue("legendPosition", "");
+    }
+  }, [legendValue, setValue]);
 
   useImperativeHandle(ref, () => ({
     getFormData: () => getValues(),
@@ -92,22 +100,24 @@ const KpiConfigForm = forwardRef<KpiConfigFormHandle>((_, ref) => {
             </label>
           </div>
 
-          {/* Legend Position - register */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Posizione Legenda
-            </label>
-            <select
-              {...register("legendPosition")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Nessuna</option>
-              <option value="top">Top</option>
-              <option value="bottom">Bottom</option>
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-            </select>
-          </div>
+          {/* Legend Position - register - visible only when legend is true */}
+          {legendValue && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Posizione Legenda
+              </label>
+              <select
+                {...register("legendPosition")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Nessuna</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+          )}
 
           {/* Palette - Controller per trasformazione array */}
           <div>
