@@ -251,23 +251,31 @@ const KpiConfigForm = forwardRef<KpiConfigFormHandle>((_, ref) => {
             />
           </div>
 
-          {/* Background - register */}
+          {/* Background - Controller per sincronizzare text e color input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Background
             </label>
-            <div className="flex gap-2">
-              <input
-                {...register("background")}
-                type="text"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                {...register("background")}
-                type="color"
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-            </div>
+            <Controller
+              name="background"
+              control={control}
+              render={({ field }) => (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="color"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                  />
+                </div>
+              )}
+            />
           </div>
         </div>
       </div>
