@@ -1,7 +1,7 @@
-# BASE Stage - Use slim Bun image
+# BASE Stage - Use slim Bun image with Node.js for Prisma CLI
 FROM oven/bun:1.3.1-slim AS base
 
-# Install Node.js only for Prisma generation (will be removed in final stage)
+# Install Node.js (needed for Prisma CLI in both build and runtime)
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
@@ -53,39 +53,56 @@ RUN npx prisma generate --schema=prisma/schema.prisma
 WORKDIR /usr/src/app
 COPY packages/server ./packages/server
 
-# PRODUCTION DEPS Stage
+# PRODUCTION DEPS Stage - Keep prisma CLI for migrations
 FROM install AS prod-deps
 WORKDIR /tmp/clean
 
 COPY --from=install /temp/prod/node_modules ./root_node_modules
 COPY --from=install /temp/prod/packages/server/node_modules ./server_node_modules
 
+# Clean up but KEEP prisma (needed for db push/migrate)
 RUN for dir in root_node_modules server_node_modules; do \
-        cd $dir && \
+        cd /tmp/clean/$dir && \
         find . -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) -exec rm -rf {} + 2>/dev/null || true && \
         find . -type f \( -name "*.test.*" -o -name "*.spec.*" -o -name "*.md" -o -name "*.map" \) -delete 2>/dev/null || true && \
-        find . -name "*.ts" ! -name "*.d.ts" ! -path "*/node_modules/@types/*" -delete 2>/dev/null || true && \
-        find . -type d -empty -delete 2>/dev/null || true && \
-        cd ..; \
+        find . -name "*.ts" ! -name "*.d.ts" ! -path "*/node_modules/@types/*" ! -path "*prisma*" -delete 2>/dev/null || true && \
+        find . -type d -empty -delete 2>/dev/null || true; \
     done
 
-# RELEASE Stage
+# RELEASE Stage - Include Node.js for Prisma CLI (db push/migrate)
 FROM oven/bun:1.3.1-slim AS release
 
 WORKDIR /usr/src/app
 
+# Install Node.js for Prisma CLI runtime (needed for db push in migration jobs)
 RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get install -y --no-install-recommends ca-certificates curl && \
+    rm -rf /var/lib/apt/lists/*
 
+ARG NODE_VERSION=20
+RUN curl -fsSL https://raw.githubusercontent.com/tj/n/master/bin/n -o /tmp/n && \
+    bash /tmp/n ${NODE_VERSION} && \
+    rm /tmp/n && \
+    rm -rf /tmp/* /var/tmp/*
+
+# Copy node_modules (includes prisma CLI)
 COPY --from=prod-deps /tmp/clean/root_node_modules ./node_modules
 COPY --from=prod-deps /tmp/clean/server_node_modules ./packages/server/node_modules
 
+# Copy generated Prisma client
 COPY --from=build /usr/src/app/packages/server/lib/generated ./packages/server/lib/generated
+
+# Copy application code
 COPY --from=build /usr/src/app/packages/server/index.ts ./packages/server/
 COPY --from=build /usr/src/app/packages/server/lib ./packages/server/lib
 COPY --from=build /usr/src/app/packages/server/routes ./packages/server/routes
 COPY --from=build /usr/src/app/packages/server/package.json ./packages/server/
+
+# Copy Prisma schema (needed for db push)
+COPY --from=build /usr/src/app/packages/server/prisma ./packages/server/prisma
+
+# Copy seeds directory (needed for seeding jobs)
+COPY --from=build /usr/src/app/packages/server/seeds ./packages/server/seeds
 
 USER bun
 
