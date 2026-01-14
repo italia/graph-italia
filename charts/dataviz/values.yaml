@@ -14,6 +14,48 @@ imagePullSecret:
   token: ""  # GitHub Personal Access Token or GITHUB_TOKEN
   username: ""  # Optional, defaults to github.repository_owner
 
+# =============================================================================
+# DATABASE MIGRATION (Helm pre-upgrade/pre-install hook)
+# =============================================================================
+# Runs prisma db push before deployment to ensure schema is up to date
+# This is idempotent and safe to run multiple times
+dbMigration:
+  enabled: false
+  # Accept data loss during migration (use with caution in production!)
+  acceptDataLoss: false
+  # How long to keep the job after completion (seconds)
+  ttlSecondsAfterFinished: 300
+  # Number of retries before marking as failed
+  backoffLimit: 3
+  # Optional: use DATABASE_URL from an existing secret instead of server.env
+  # databaseUrlFromSecret:
+  #   secretName: "dataviz-db-credentials"
+  #   key: "DATABASE_URL"
+
+# =============================================================================
+# DATABASE SEEDING (Helm pre-upgrade/pre-install hook)
+# =============================================================================
+# Seeds initial users after migration. Idempotent - skips existing users.
+dbSeed:
+  enabled: false
+  # How long to keep the job after completion (seconds)
+  ttlSecondsAfterFinished: 300
+  # Number of retries before marking as failed
+  backoffLimit: 3
+  # Optional: use DATABASE_URL from an existing secret
+  # databaseUrlFromSecret:
+  #   secretName: "dataviz-db-credentials"
+  #   key: "DATABASE_URL"
+  # Users to seed (if not set, uses default users from seed script)
+  # These will be exposed as SEED_USERS env var (JSON array)
+  users: []
+    # - email: "admin@example.com"
+    #   password: "secure-password-here"
+    #   verifyed: true
+    # - email: "user@example.com"
+    #   password: "another-secure-password"
+    #   verifyed: true
+
 webapp:
   enabled: true
   image:

@@ -1,0 +1,85 @@
+{{- if and .Values.server.enabled .Values.dbMigration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "dataviz.fullname" . }}-db-migration-{{ .Release.Revision }}
+  labels:
+    {{- include "dataviz.labels" . | nindent 4 }}
+    component: db-migration
+  annotations:
+    # Run before deployment upgrade
+    "helm.sh/hook": pre-upgrade,pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: {{ .Values.dbMigration.ttlSecondsAfterFinished | default 300 }}
+  backoffLimit: {{ .Values.dbMigration.backoffLimit | default 3 }}
+  template:
+    metadata:
+      labels:
+        {{- include "dataviz.selectorLabels" . | nindent 8 }}
+        component: db-migration
+    spec:
+      {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
+      imagePullSecrets:
+        - name: {{ include "dataviz.fullname" . }}-image-pull-secret
+      {{- end }}
+      {{- if .Values.server.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.server.nodeSelector | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migration
+          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "🔄 Starting database migration..."
+              
+              # Run Prisma db push (idempotent - safe to run multiple times)
+              echo "📊 Running prisma db push..."
+              cd /usr/src/app/packages/server
+              # Use bunx (bun's npx equivalent) or npx if available
+              # Prisma 7+ removed --skip-generate flag
+              SCHEMA_PATH="prisma/schema.prisma"
+              if command -v bunx &> /dev/null; then
+                bunx prisma db push --schema=$SCHEMA_PATH {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
+              else
+                npx prisma db push --schema=$SCHEMA_PATH {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
+              fi
+              
+              echo "✅ Database migration completed successfully!"
+          env:
+            - name: DATABASE_URL
+              {{- if .Values.dbMigration.databaseUrlFromSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.dbMigration.databaseUrlFromSecret.secretName }}
+                  key: {{ .Values.dbMigration.databaseUrlFromSecret.key }}
+              {{- else }}
+              value: {{ .Values.server.env.DATABASE_URL | quote }}
+              {{- end }}
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+{{- end }}
