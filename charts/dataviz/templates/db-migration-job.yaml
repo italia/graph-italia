@@ -45,24 +45,17 @@ spec:
             capabilities:
               drop:
                 - ALL
+          workingDir: /usr/src/app/packages/server
           command:
             - /bin/sh
             - -c
             - |
               set -e
               echo "🔄 Starting database migration..."
+              echo "📍 Working directory: $(pwd)"
               
-              # Run Prisma db push (idempotent - safe to run multiple times)
               echo "📊 Running prisma db push..."
-              cd /usr/src/app/packages/server
-              # Use bunx (bun's npx equivalent) or npx if available
-              # Prisma 7+ removed --skip-generate flag
-              SCHEMA_PATH="prisma/schema.prisma"
-              if command -v bunx &> /dev/null; then
-                bunx prisma db push --schema=$SCHEMA_PATH {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
-              else
-                npx prisma db push --schema=$SCHEMA_PATH {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
-              fi
+              bunx prisma db push --schema=prisma/schema.prisma --url="$DATABASE_URL" {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
               
               echo "✅ Database migration completed successfully!"
           env:
