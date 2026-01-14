@@ -73,7 +73,7 @@ function EditKpiGroup() {
             &lt; Torna alla lista
           </Link>
           <div className="ml-auto flex space-x-2">
-            <button onClick={resetHandler} className="btn btn-primary">
+            <button onClick={resetHandler} className="btn btn-danger">
               Reset
             </button>
             <button onClick={saveHandler} className="btn btn-primary">
@@ -89,15 +89,19 @@ function EditKpiGroup() {
         )}
         {loaded && (
           <>
-            <h1 className="text-4xl font-bold">{vm.name}</h1>
-            <h4 className="text-xl">{vm.description}</h4>
-            <div className="flex flex-wrap items-center">
-              {/* <button
-                className="m-2 btn btn-xs btn-primary"
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl font-bold">{vm.name}</h1>
+                <h4 className="text-xl">{vm.description}</h4>
+              </div>
+              <button
+                className="btn btn-secondary"
                 onClick={changeConfigHandler}
               >
                 Cambia configurazione
-              </button> */}
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center">
               <button
                 className="m-2 btn btn-xs btn-primary"
                 onClick={addKpiHandler}
