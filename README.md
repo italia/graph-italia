@@ -988,6 +988,79 @@ graph LR
 | Test | `dataviz-test` | Azure PostgreSQL | develop, main | `dataviz-test.innovazione.gov.it` |
 | Production | `dataviz` | Azure PostgreSQL | main | `dataviz.innovazione.gov.it` |
 
+### Monitoring & Alerting
+
+Il progetto include un sistema completo di monitoring basato su Prometheus, Grafana e Alertmanager.
+
+#### Metriche Esposte
+
+Il server espone metriche Prometheus su `/metrics`:
+
+| Metrica | Tipo | Descrizione |
+|---------|------|-------------|
+| `http_requests_total` | Counter | Richieste HTTP per method, path, status |
+| `http_request_duration_seconds` | Histogram | Latenza richieste HTTP |
+| `dataviz_db_queries_total` | Counter | Query database per operation, status |
+| `dataviz_db_query_duration_seconds` | Histogram | Latenza query database |
+| `dataviz_ai_requests_total` | Counter | Richieste OpenAI per status |
+| `dataviz_ai_request_duration_seconds` | Histogram | Latenza richieste OpenAI |
+
+#### Dashboard Grafana
+
+La dashboard è disponibile in `charts/dataviz/dashboards/dataviz-dashboard.json`.
+
+**Importazione manuale**:
+1. Grafana → Dashboards → Import
+2. Upload `dataviz-dashboard.json`
+3. Selezionare datasource Prometheus e Loki
+
+**Sezioni della dashboard**:
+- Overview (requests/s, error rate, latency, pods)
+- HTTP Traffic (requests by status, latency percentiles)
+- Database (query latency, queries by operation)
+- AI/OpenAI (request latency, success/error)
+- Resources (CPU, Memory)
+- Ingress & WAF (ModSecurity events)
+- Logs (backend logs, errors & warnings)
+
+#### Alert Rules
+
+Gli alert sono definiti in `charts/dataviz/templates/prometheusrule.yaml`:
+
+| Alert | Condizione | Severità |
+|-------|------------|----------|
+| `DatavizDown` | Nessun pod running per 2 min | Critical |
+| `DatavizHighErrorRate` | 5xx > 10% per 5 min | Critical |
+| `DatavizDatabaseErrors` | Errori DB > 0.5/s per 3 min | Critical |
+| `DatavizCrashLooping` | > 5 restart in 30 min | Critical |
+| `DatavizHighWAFBlocks` | 4xx > 30% per 10 min | Critical |
+| `DatavizUnresponsive` | p95 latency > 30s | Critical |
+| `DatavizOutOfMemory` | Memory > 95% per 5 min | Critical |
+
+#### Configurazione Email Alerting
+
+Per ricevere notifiche email, configurare nei values:
+
+```yaml
+monitoring:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
+  prometheusRule:
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
+  alertmanagerConfig:
+    enabled: true
+    emailTo: "team@example.com, ops@example.com"
+    # Opzionali (hanno default):
+    # emailFrom: "dataviz@innovazione.gov.it"
+    # smarthost: "smtp.eu.mailgun.org:587"
+    # authUsername: "dataviz@innovazione.gov.it"
+    # authPasswordSecret: "alertmanager-smtp-secret"
+```
+
 ---
 
 ## Architettura e Pattern
