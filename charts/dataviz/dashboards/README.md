@@ -93,16 +93,6 @@ The dashboard includes these template variables:
 | `datasource` | Prometheus datasource | Auto-detected |
 | `namespace` | Kubernetes namespace filter | `dataviz.*` regex |
 
-## Customization
-
-To modify the dashboard:
-
-1. Edit `dataviz-dashboard.json`
-2. Test changes by importing manually in Grafana
-3. Export the updated dashboard from Grafana (Share > Export > Save to file)
-4. Replace the JSON file in this directory
-5. Commit and redeploy
-
 ## Alert Rules
 
 Alert rules are defined separately in `templates/prometheusrule.yaml`. See the main chart documentation for alert configuration.
