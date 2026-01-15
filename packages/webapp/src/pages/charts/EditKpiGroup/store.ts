@@ -1,4 +1,4 @@
-import { FieldDataType } from 'dataviz-components';
+import { ChartConfigType, FieldDataType } from 'dataviz-components';
 import { create } from 'zustand';
 import * as api from "../../../lib/api";
 import { KpiFormValues } from './components/kpi-form';
@@ -11,11 +11,30 @@ interface EditKpiGroupActions {
     deleteKpi: (index: number) => void;
     closeFormModal: () => void;
     showConfigFormModal: () => void;
-    closeConfigFormModal: () => void;
+    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
     saveKpi: (data: KpiFormValues) => void;
 }
 
-const defaultKpiGroupData: FieldDataType = {
+type KpiGroupConfigType = Pick<ChartConfigType,
+    'direction' |
+    'h' |
+    'labeLine' |
+    'legend' |
+    'legendPosition' |
+    'palette' |
+    'tooltip' |
+    'tooltipFormatter' |
+    'valueFormatter' |
+    'totalLabel' |
+    'tooltipTrigger' |
+    'colors' |
+    'background'>;
+
+type KpiGroupFieldDataType = FieldDataType & {
+    config: KpiGroupConfigType;
+}
+
+const defaultKpiGroupData: KpiGroupFieldDataType = {
     id: "kpi-group2",
     dataSource: [],
     chart: "kpi",
@@ -45,7 +64,7 @@ type EditKpiGroupVM = {
 type EditKpiGroupState = {
     id?: string
     vm: EditKpiGroupVM;
-    kpiGroup: FieldDataType;
+    kpiGroup: KpiGroupFieldDataType;
     isLoading: boolean;
     loaded: boolean;
     error?: {
@@ -65,9 +84,17 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     showConfigFormModal: () => {
         set({ showConfigModal: true });
     },
-    closeConfigFormModal: () => {
+    closeConfigFormModal: (config) => {
         // Implement the logic to change the configuration
-        set({ showConfigModal: false });
+        if (config) {
+            const { kpiGroup } = get();
+            set({
+                showConfigModal: false,
+                kpiGroup: { ...kpiGroup, config: { ...config } }
+            });
+        } else {
+            set({ showConfigModal: false });
+        }
     },
     addKpi: () => {
         console.log("add item");

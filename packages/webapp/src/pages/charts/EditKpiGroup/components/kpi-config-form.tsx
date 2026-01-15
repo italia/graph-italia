@@ -1,5 +1,23 @@
+import { ChartConfigType } from "dataviz-components";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
+
+type KpiGroupConfigType = Pick<
+  ChartConfigType,
+  | "direction"
+  | "h"
+  | "labeLine"
+  | "legend"
+  | "legendPosition"
+  | "palette"
+  | "tooltip"
+  | "tooltipFormatter"
+  | "valueFormatter"
+  | "totalLabel"
+  | "tooltipTrigger"
+  | "colors"
+  | "background"
+>;
 
 const defaultValues = {
   direction: "vertical",
@@ -15,7 +33,7 @@ const defaultValues = {
   tooltipTrigger: "",
   colors: [],
   background: "skyblue",
-};
+} satisfies KpiGroupConfigType;
 
 export type KpiGroupConfigFormValues = typeof defaultValues;
 

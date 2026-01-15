@@ -5,7 +5,12 @@ import Layout from "../../../components/layout";
 import Dialog from "../../../components/layout/Dialog";
 import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
-import { KpiConfigForm, KpiForm, KpiFormValues, type KpiConfigFormHandle } from "./components";
+import {
+  KpiConfigForm,
+  KpiForm,
+  KpiFormValues,
+  type KpiConfigFormHandle,
+} from "./components";
 import useEditKpiGroupStore from "./store";
 
 function EditKpiGroup() {
@@ -162,7 +167,7 @@ function EditKpiGroup() {
             confirmCb={() => {
               const formData = kpiConfigFormRef.current?.getFormData();
               console.log("Configurazione KPI Group:", formData);
-              closeConfigFormModal();
+              closeConfigFormModal(formData);
             }}
             cancelCb={() => {
               closeConfigFormModal();
