@@ -7,7 +7,7 @@ function AuthPage() {
   const [login, setLogin] = useState(true);
   return (
     <Layout>
-      <div className='flex min-h-full flex-1'>
+      <div className='flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8'>
         <>
           {login ? (
             <SignIn setLogin={setLogin} />
@@ -15,7 +15,7 @@ function AuthPage() {
             <SignUp setLogin={setLogin} />
           )}
         </>
-        <div
+        {/* <div
           className={`relative hidden w-0 flex-1 lg:block bg-cover  bg-center bg-no-repeat ${
             login
               ? "bg-[url('/images/undraw_Charts_re_5qe9.png')]"
@@ -35,7 +35,7 @@ function AuthPage() {
               </>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </Layout>
   );

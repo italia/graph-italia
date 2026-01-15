@@ -46,7 +46,7 @@ function AuthPage() {
 
   return (
     <Layout>
-      <div className='flex min-h-full flex-1'>
+      <div className='flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8'>
         <div>
           {!(isValid && action) && (
             <VerifyCode
