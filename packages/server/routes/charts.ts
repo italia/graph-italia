@@ -5,7 +5,6 @@ import db from "../lib/db";
 import { checkAuth, requireUser } from "../lib/middlewares-hono";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
-import type { Chart } from "../lib/db/prisma/client";
 // import { zValidator } from "@hono/zod-validator";
 import {
 	validator as zValidator,

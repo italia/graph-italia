@@ -1,36 +1,74 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as api from '../../lib/api';
+import { AxiosError } from 'axios';
+import { z } from "zod";
+
+const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters long" })
+  // .max(20, { message: maxLengthErrorMessage })
+  .refine((password) => /[A-Z]/.test(password), {
+    message: "Password must have at least one uppercase letter",
+  })
+  .refine((password) => /[a-z]/.test(password), {
+    message: "Password must have at least one lowercase letter",
+  })
+  .refine((password) => /[0-9]/.test(password), {
+    message: "Must contain a number",
+  })
+  .refine((password) => /[!@#$%^&*]/.test(password), {
+    message: "Must contain at least one special character",
+  });
+
+export const signupSchema = z
+  .object({
+    email: z.string().email({ message: "Invalid email address" }),
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+    policyAcknologment: z.boolean().refine((val) => val === true, {
+      message: "You must accept the policy agreement",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
   let navigate = useNavigate();
   const [message, setMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({});
+  } = useForm({ resolver: zodResolver(signupSchema), });
 
   const onSubmit = async (submittedData: any) => {
     setMessage('');
-    const { email, password, confirm_password } = submittedData;
-    if (password !== confirm_password) {
-      setMessage('Passwords do not match');
-      return;
-    }
+
+    const isValid = signupSchema.parse(submittedData);
+    console.log("isValid", isValid);
+
     console.log(submittedData);
     try {
+      const { email, password } = submittedData;
       const result = await api.register({ email, password });
+      console.log('Registration result', result);
       if (result?.uid) {
-        navigate(`/verify/${result.uid}`);
+        const path = `/verify/${result.uid}?action=init`;
+        navigate(path);
       } else {
         setMessage('Error while registering');
       }
     } catch (error) {
       console.log('error', error);
-      setMessage((error as any).message ?? error);
+      const errorMessage = (error as AxiosError).response?.data?.error?.message || (error as any).message || error;
+      setMessage(errorMessage);
     }
   };
 
@@ -70,43 +108,100 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
 
               <div>
                 <label
-                  htmlFor='password'
-                  className='block text-sm font-medium leading-6 text-content'
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-content"
                 >
                   Password
                 </label>
-                <div className='mt-2'>
-                  <input
+                <div className="mt-2">
+                  <div className="relative">
+                    <input
+                      id="hs-toggle-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter a new password"
+                      className="w-full rounded-md block"
+                      {...register("password")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-content rounded-e-md focus:text-primary"
+                    >
+                      <svg
+                        className="shrink-0 size-3.5"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          className={"block"}
+                          d="M9.88 9.88a3 3 0 1 0 4.24 4.24"
+                        ></path>
+                        <path
+                          className={"block"}
+                          d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                        ></path>
+                        <path
+                          className={"block"}
+                          d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                        ></path>
+                        <line
+                          className={showPassword ? "hidden" : "block"}
+                          x1="2"
+                          x2="22"
+                          y1="2"
+                          y2="22"
+                        ></line>
+                        <path
+                          className={"block"}
+                          d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+                        ></path>
+                        <circle
+                          className={"block"}
+                          cx="12"
+                          cy="12"
+                          r="3"
+                        ></circle>
+                      </svg>
+                    </button>
+                  </div>
+                  {/* <input
                     id='password'
                     type='password'
-                    required
-                    autoComplete='current-password'
+                    placeholder='new password'
                     className='w-full rounded-md'
-                    {...register('password', { required: true })}
-                  />
-                  {errors['password'] && (
-                    <p className='text-error'>This field is required</p>
+                    {...register('password')}
+                  /> */}
+                  {errors["password"] && (
+                    <p className="text-error">{errors["password"].message}</p>
                   )}
                 </div>
               </div>
 
               <div>
                 <label
-                  htmlFor='confirm-password'
-                  className='block text-sm font-medium leading-6 text-content'
+                  htmlFor="confirm-password"
+                  className="block text-sm font-medium leading-6 text-content"
                 >
                   Confirm Password
                 </label>
-                <div className='mt-2'>
+                <div className="mt-2">
                   <input
-                    id='confirm-password'
-                    type='password'
-                    required
-                    className='w-full rounded-md'
-                    {...register('confirm_password', { required: true })}
+                    id="confirm-password"
+                    type="password"
+                    className="w-full rounded-md"
+                    placeholder=""
+                    {...register("confirmPassword")}
                   />
-                  {errors['confirm_password'] && (
-                    <p className='text-error'>This field is required</p>
+                  {errors["confirmPassword"] && (
+                    <p className="text-error">
+                      {errors["confirmPassword"].message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -116,7 +211,7 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                   id='policy'
                   type='checkbox'
                   className='h-4 w-4 rounded'
-                  {...register('policy-acknologment', { required: true })}
+                  {...register('policyAcknologment', { required: true })}
                 />
                 <label
                   htmlFor='policy'
@@ -132,8 +227,8 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                   </a>{' '}
                   agreement.
                 </label>
-                {errors['policy-acknologment'] && (
-                  <p className='pl-4 text-error'>Must accept to register!!</p>
+                {errors['policyAcknologment'] && (
+                  <p className='pl-4 text-error'>{errors['policyAcknologment'].message}</p>
                 )}
               </div>
 

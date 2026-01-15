@@ -80,7 +80,7 @@ const router = createBrowserRouter([
 		element: <AuthPage />,
 	},
 	{
-		path: "/verify/:uid",
+		path: "/verify/:uid?",
 		element: <VerifyPage />,
 	},
 	{
