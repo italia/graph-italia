@@ -427,6 +427,21 @@ monitoring:
     # Namespace where Grafana is deployed (for dashboard ConfigMap)
     namespace: ""  # e.g., "monitoring"
 
+  # AlertmanagerConfig for email notifications
+  alertmanagerConfig:
+    enabled: false
+    # Email recipients (comma-separated)
+    emailTo: ""
+    # Email sender
+    emailFrom: "dataviz@innovazione.gov.it"
+    # SMTP server
+    smarthost: "smtp.eu.mailgun.org:587"
+    # SMTP authentication
+    authUsername: "dataviz@innovazione.gov.it"
+    # Secret containing SMTP password
+    authPasswordSecret: "alertmanager-smtp-secret"
+    authPasswordKey: "password"
+
 # Global settings
 global:
   namespace: ""
