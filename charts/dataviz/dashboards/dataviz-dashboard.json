@@ -415,7 +415,7 @@
       },
       "targets": [
         {
-          "expr": "{namespace=\"$namespace\", container=\"server\"} | json | line_format `{{.timestamp}} [{{.level | upper}}] {{.message}}{{ if .request }} | {{.request_method}} {{.request_path}} {{.response_status}} {{.response_duration_ms}}ms{{ end }}{{ if .user_id }} | user={{.user_id}}{{ end }}{{ if .error_message }} | ERROR: {{.error_message}}{{ end }}`",
+          "expr": "{namespace=\"$namespace\", container=\"server\"} |~ `^\\{` | json | line_format `{{ .timestamp }} [{{ .level }}] {{ .message }}`",
           "legendFormat": "",
           "refId": "A"
         }
@@ -425,7 +425,7 @@
     },
     {
       "datasource": { "type": "loki", "uid": "${loki}" },
-      "description": "Error logs only",
+      "description": "Error and warning logs only",
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 66 },
       "id": 15,
       "options": {
@@ -440,7 +440,7 @@
       },
       "targets": [
         {
-          "expr": "{namespace=\"$namespace\", container=\"server\"} | json | level=~\"error|warn\" | line_format `{{.timestamp}} [{{.level | upper}}] {{.message}}{{ if .error_name }} | {{.error_name}}: {{.error_message}}{{ end }}{{ if .error_stack }}\\n{{.error_stack}}{{ end }}`",
+          "expr": "{namespace=\"$namespace\", container=\"server\"} |~ `^\\{` | json | level=~`error|warn` | line_format `{{ .timestamp }} [{{ .level }}] {{ .message }}`",
           "legendFormat": "",
           "refId": "A"
         }
