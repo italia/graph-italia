@@ -216,6 +216,59 @@
     {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 36 },
+      "id": 105,
+      "title": "Ingress & WAF (ModSecurity)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "reqps" }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 37 },
+      "id": 50,
+      "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "expr": "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=~\"dataviz.*\"}[5m])) by (status)", "legendFormat": "{{status}}", "refId": "A" }],
+      "title": "Ingress Requests by Status",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "s" }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 37 },
+      "id": 51,
+      "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{namespace=\"$namespace\", ingress=~\"dataviz.*\"}[5m])) by (le))", "legendFormat": "p50", "refId": "A" },
+        { "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{namespace=\"$namespace\", ingress=~\"dataviz.*\"}[5m])) by (le))", "legendFormat": "p99", "refId": "B" }
+      ],
+      "title": "Ingress Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki}" },
+      "description": "ModSecurity WAF events from ingress-nginx logs. Shows blocked requests and rule violations.",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 43 },
+      "id": 52,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [{ "expr": "{namespace=\"ingress-nginx\"} |~ `(?i)(modsec|owasp|blocked|ModSecurity|SecRule)`", "refId": "A" }],
+      "title": "WAF Events (ModSecurity)",
+      "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 49 },
       "id": 104,
       "title": "Logs",
       "type": "row"
@@ -223,7 +276,7 @@
     {
       "datasource": { "type": "loki", "uid": "${loki}" },
       "description": "All backend server logs",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 37 },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 50 },
       "id": 40,
       "options": {
         "dedupStrategy": "none",
@@ -242,7 +295,7 @@
     {
       "datasource": { "type": "loki", "uid": "${loki}" },
       "description": "Errors and warnings only",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 47 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 60 },
       "id": 41,
       "options": {
         "dedupStrategy": "none",
