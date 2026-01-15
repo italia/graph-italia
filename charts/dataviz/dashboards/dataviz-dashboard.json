@@ -124,13 +124,13 @@
     {
       "datasource": { "type": "prometheus", "uid": "${datasource}" },
       "fieldConfig": {
-        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "bars", "fillOpacity": 100, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "normal" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "short" }
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }, "unit": "reqps" }
       },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 14 },
       "id": 12,
-      "options": { "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "expr": "topk(10, sum by (path) (increase(http_requests_total{namespace=\"$namespace\"}[1h])))", "legendFormat": "{{path}}", "refId": "A" }],
-      "title": "Top 10 Endpoints (Last Hour)",
+      "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "expr": "topk(10, sum by (path) (rate(http_requests_total{namespace=\"$namespace\"}[5m])))", "legendFormat": "{{path}}", "refId": "A" }],
+      "title": "Top 10 Endpoints (req/s)",
       "type": "timeseries"
     },
     {
