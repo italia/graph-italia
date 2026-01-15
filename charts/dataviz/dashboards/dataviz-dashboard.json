@@ -262,8 +262,8 @@
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
-      "targets": [{ "expr": "{namespace=\"ingress-nginx\"} |~ `(?i)(modsec|owasp|blocked|ModSecurity|SecRule)`", "refId": "A" }],
-      "title": "WAF Events (ModSecurity)",
+      "targets": [{ "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} |~ `dataviz` |~ `(?i)(SELECT|UNION|INSERT|DELETE|DROP|<script|javascript:|onclick|onerror|eval\\(|;cat|;ls|;rm|\\.\\.%2f|%27|%22|%3c|%3e)`", "refId": "A" }],
+      "title": "Suspicious Requests (WAF)",
       "type": "logs"
     },
     {
