@@ -97,13 +97,48 @@ spec:
     {{- toYaml . | nindent 4 }}
     {{- end }}
   egress:
+    {{- /* DNS resolution */}}
     {{- if .Values.networkPolicy.allowDNS }}
     - to:
         - namespaceSelector: {}
       ports:
         - protocol: UDP
           port: 53
+        - protocol: TCP
+          port: 53
     {{- end }}
+    {{- /* PostgreSQL database access */}}
+    {{- if and .Values.networkPolicy.serverEgress .Values.networkPolicy.serverEgress.postgresql .Values.networkPolicy.serverEgress.postgresql.enabled }}
+    - to:
+        - ipBlock:
+            cidr: {{ .Values.networkPolicy.serverEgress.postgresql.cidr }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.networkPolicy.serverEgress.postgresql.port | default 5432 }}
+    {{- end }}
+    {{- /* Cloudflare APIs (OpenAI, Resend, etc.) */}}
+    {{- if and .Values.networkPolicy.serverEgress .Values.networkPolicy.serverEgress.cloudflareAPIs .Values.networkPolicy.serverEgress.cloudflareAPIs.enabled }}
+    {{- range .Values.networkPolicy.serverEgress.cloudflareAPIs.cidrs }}
+    - to:
+        - ipBlock:
+            cidr: {{ . }}
+      ports:
+        - protocol: TCP
+          port: {{ $.Values.networkPolicy.serverEgress.cloudflareAPIs.port | default 443 }}
+    {{- end }}
+    {{- end }}
+    {{- /* Custom external endpoints */}}
+    {{- if and .Values.networkPolicy.serverEgress .Values.networkPolicy.serverEgress.custom }}
+    {{- range .Values.networkPolicy.serverEgress.custom }}
+    - to:
+        - ipBlock:
+            cidr: {{ .cidr }}
+      ports:
+        - protocol: TCP
+          port: {{ .port }}
+    {{- end }}
+    {{- end }}
+    {{- /* Additional raw egress rules */}}
     {{- with .Values.networkPolicy.egress }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

@@ -24,6 +24,10 @@ spec:
         prometheus.io/port: "{{ .Values.webapp.prometheus.port | default 8080 }}"
         prometheus.io/path: "{{ .Values.webapp.prometheus.path | default "/nginx_status" }}"
         {{- end }}
+        {{- /* Additional annotations */}}
+        {{- with .Values.webapp.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
       imagePullSecrets:

@@ -97,19 +97,26 @@ webapp:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 80
-  # Security context
+  # Security context (Pod level)
   securityContext:
     runAsNonRoot: true
     runAsUser: 101  # nginx user
     fsGroup: 101
     seccompProfile:
       type: RuntimeDefault
+    # AppArmor profile (Kubernetes 1.30+)
+    # Types: RuntimeDefault, Localhost, Unconfined
+    appArmorProfile:
+      type: RuntimeDefault
+  # Container security context
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
     capabilities:
       drop:
         - ALL
+  # Additional pod annotations (e.g., for custom security policies)
+  podAnnotations: {}
   # Volumes for readonly root filesystem
   volumes:
     - name: tmp
@@ -193,19 +200,26 @@ server:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 80
-  # Security context
+  # Security context (Pod level)
   securityContext:
     runAsNonRoot: true
     runAsUser: 1000  # bun user
     fsGroup: 1000
     seccompProfile:
       type: RuntimeDefault
+    # AppArmor profile (Kubernetes 1.30+)
+    # Types: RuntimeDefault, Localhost, Unconfined
+    appArmorProfile:
+      type: RuntimeDefault
+  # Container security context
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
     capabilities:
       drop:
         - ALL
+  # Additional pod annotations (e.g., for custom security policies)
+  podAnnotations: {}
   # Volumes for readonly root filesystem
   volumes:
     - name: tmp
@@ -242,6 +256,55 @@ ingress:
   enabled: false
   className: ""
   annotations: {}
+  # ==========================================================================
+  # ModSecurity WAF Configuration
+  # ==========================================================================
+  # Enable ModSecurity Web Application Firewall for protection against
+  # OWASP Top 10 vulnerabilities (SQLi, XSS, etc.)
+  modsecurity:
+    enabled: false
+    # SecRuleEngine: On (block), DetectionOnly (log only), Off
+    # Start with DetectionOnly to test, then switch to On
+    secRuleEngine: "DetectionOnly"
+    # OWASP Core Rule Set - provides protection against common attacks
+    owasp: true
+    # Custom rules and exclusions to prevent false positives
+    # These are tuned for modern web applications with JSON APIs
+    customRules: |
+      # Paranoia Level 1 (default, less false positives)
+      SecAction "id:900000,phase:1,nolog,pass,t:none,setvar:tx.paranoia_level=1"
+      
+      # Increase body limits for file uploads (match UPLOAD_SIZE_LIMIT)
+      SecRequestBodyLimit 16777216
+      SecRequestBodyNoFilesLimit 1048576
+      
+      # Exclude common false positives for JSON APIs
+      SecRuleRemoveById 920420
+      SecRuleRemoveById 942100
+      SecRuleRemoveById 942200
+      SecRuleRemoveById 942260
+      SecRuleRemoveById 942340
+      SecRuleRemoveById 942370
+      SecRuleRemoveById 942430
+      SecRuleRemoveById 942431
+      SecRuleRemoveById 942432
+      
+      # Allow JWT tokens in Authorization header
+      SecRuleRemoveById 942450
+      
+      # Exclude /api paths from some strict rules that break JSON
+      SecRule REQUEST_URI "@beginsWith /api" "id:1000,phase:1,nolog,pass,ctl:ruleRemoveById=921180"
+  # ==========================================================================
+  # Rate Limiting
+  # ==========================================================================
+  rateLimit:
+    enabled: false
+    # Requests per second per client IP
+    rps: 10
+    # Burst size (concurrent connections)
+    burst: 20
+    # Connections per IP
+    connections: 10
   # Single host mode: set host and paths
   # If host is set, paths will be used for routing
   host: ""  # e.g., "dataviz.example.com"
@@ -282,19 +345,54 @@ networkPolicy:
   allowSameNamespace: true
   allowDNS: true
   ingressNamespace: "ingress-nginx"
+  # Additional ingress rules (raw NetworkPolicy format)
   ingress: []
     # - from:
     #     - namespaceSelector:
     #         matchLabels:
     #           name: monitoring
+  # Additional egress rules (raw NetworkPolicy format)
   egress: []
-    # - to:
-    #     - namespaceSelector:
-    #         matchLabels:
-    #           name: database
-    #   ports:
-    #     - protocol: TCP
-    #       port: 5432
+  # ==========================================================================
+  # Server Egress Configuration (structured)
+  # ==========================================================================
+  # Pre-defined egress rules for the server component
+  serverEgress:
+    # PostgreSQL database access
+    postgresql:
+      enabled: false
+      # IP address of the PostgreSQL server (use /32 for single IP)
+      # This should be set per environment (test/prod have different DBs)
+      cidr: ""  # e.g., "172.213.241.163/32"
+      port: 5432
+    # External HTTPS APIs (OpenAI, Resend, etc.)
+    # These services use Cloudflare CDN, so we allow all Cloudflare IP ranges
+    cloudflareAPIs:
+      enabled: false
+      port: 443
+      # Official Cloudflare IPv4 ranges (from https://www.cloudflare.com/ips-v4)
+      # Last updated: 2026-01-15
+      cidrs:
+        - "173.245.48.0/20"
+        - "103.21.244.0/22"
+        - "103.22.200.0/22"
+        - "103.31.4.0/22"
+        - "141.101.64.0/18"
+        - "108.162.192.0/18"
+        - "190.93.240.0/20"
+        - "188.114.96.0/20"
+        - "197.234.240.0/22"
+        - "198.41.128.0/17"
+        - "162.158.0.0/15"
+        - "104.16.0.0/13"
+        - "104.24.0.0/14"
+        - "172.64.0.0/13"
+        - "131.0.72.0/22"
+    # Custom external endpoints (for services not behind Cloudflare)
+    custom: []
+      # - name: "custom-api"
+      #   cidr: "1.2.3.4/32"
+      #   port: 443
 
 # Global settings
 global:

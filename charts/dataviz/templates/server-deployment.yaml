@@ -24,6 +24,10 @@ spec:
         prometheus.io/port: "{{ .Values.server.prometheus.port | default 3003 }}"
         prometheus.io/path: "{{ .Values.server.prometheus.path | default "/metrics" }}"
         {{- end }}
+        {{- /* Additional annotations */}}
+        {{- with .Values.server.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
       imagePullSecrets:
