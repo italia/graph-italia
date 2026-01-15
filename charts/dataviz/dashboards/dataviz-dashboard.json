@@ -400,27 +400,52 @@
     },
     {
       "datasource": { "type": "loki", "uid": "${loki}" },
-      "description": "Backend server logs from Loki",
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 52 },
+      "description": "Backend server logs from Loki - parsed JSON format",
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 52 },
       "id": 14,
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
-        "prettifyLogMessage": true,
+        "prettifyLogMessage": false,
         "showCommonLabels": false,
         "showLabels": false,
-        "showTime": true,
+        "showTime": false,
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
       "targets": [
         {
-          "expr": "{namespace=\"$namespace\", container=\"server\"} |= ``",
+          "expr": "{namespace=\"$namespace\", container=\"server\"} | json | line_format `{{.timestamp}} [{{.level | upper}}] {{.message}}{{ if .request }} | {{.request_method}} {{.request_path}} {{.response_status}} {{.response_duration_ms}}ms{{ end }}{{ if .user_id }} | user={{.user_id}}{{ end }}{{ if .error_message }} | ERROR: {{.error_message}}{{ end }}`",
           "legendFormat": "",
           "refId": "A"
         }
       ],
       "title": "Backend Server Logs",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki}" },
+      "description": "Error logs only",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 66 },
+      "id": 15,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "expr": "{namespace=\"$namespace\", container=\"server\"} | json | level=~\"error|warn\" | line_format `{{.timestamp}} [{{.level | upper}}] {{.message}}{{ if .error_name }} | {{.error_name}}: {{.error_message}}{{ end }}{{ if .error_stack }}\\n{{.error_stack}}{{ end }}`",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors & Warnings",
       "type": "logs"
     }
   ],
