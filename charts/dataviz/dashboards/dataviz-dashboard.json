@@ -228,7 +228,7 @@
       "gridPos": { "h": 6, "w": 12, "x": 0, "y": 37 },
       "id": 50,
       "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "expr": "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=~\"dataviz.*\"}[5m])) by (status)", "legendFormat": "{{status}}", "refId": "A" }],
+      "targets": [{ "expr": "sum(rate(nginx_ingress_controller_requests{ingress=~\"$namespace\"}[5m])) by (status)", "legendFormat": "{{status}}", "refId": "A" }],
       "title": "Ingress Requests by Status",
       "type": "timeseries"
     },
@@ -241,8 +241,8 @@
       "id": 51,
       "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
       "targets": [
-        { "expr": "histogram_quantile(0.50, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{namespace=\"$namespace\", ingress=~\"dataviz.*\"}[5m])) by (le))", "legendFormat": "p50", "refId": "A" },
-        { "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{namespace=\"$namespace\", ingress=~\"dataviz.*\"}[5m])) by (le))", "legendFormat": "p99", "refId": "B" }
+        { "expr": "histogram_quantile(0.50, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=~\"$namespace\"}[5m])) by (le))", "legendFormat": "p50", "refId": "A" },
+        { "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=~\"$namespace\"}[5m])) by (le))", "legendFormat": "p99", "refId": "B" }
       ],
       "title": "Ingress Latency",
       "type": "timeseries"
