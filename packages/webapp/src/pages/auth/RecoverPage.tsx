@@ -15,7 +15,7 @@ function AuthPage({ action = 'recover' }) {
 
   return (
     <Layout>
-      <div className='flex min-h-full'>
+      <div className='flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8' >
         <>
           {user /*&& action != 'recover'*/ ? (
             <ChangePasswordForm onDone={() => redirectHome()} />

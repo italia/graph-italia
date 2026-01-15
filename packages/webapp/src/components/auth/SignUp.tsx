@@ -155,7 +155,7 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
             </div>
           </div>
 
-          <div className='mt-10'>
+          {/* <div className='mt-10'>
             <div className='relative'>
               <div
                 aria-hidden='true'
@@ -176,7 +176,7 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
                 CIE
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
