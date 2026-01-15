@@ -145,7 +145,7 @@ export async function register({
 }: {
   email: string;
   password: string;
-}) {
+}): Promise<{ uid: string } | null> {
   try {
     const response = await axios.post(
       `${getServerUrlWithApi()}/auth/register`,
@@ -156,9 +156,10 @@ export async function register({
     );
     const data = response.data;
     console.log("RESPONSE DATA", data);
-    if (response.status === 200) {
-      return true;
+    if (response.status === 200 && data.uid) {
+      return { uid: data.uid };
     }
+    return null;
   } catch (error: any) {
     console.log("REGISTER ERROR", error.message);
     throw error;

@@ -77,7 +77,7 @@ router.post("/register", zValidator("json", registerSchema), async (c) => {
 
 		await sendActivationEmail(user, pin);
 
-		return c.json({ auth: true }, 200);
+		return c.json({ auth: true, uid: user.id }, 200);
 	} catch (err) {
 		logger.error("Registration failed", err instanceof Error ? err : undefined);
 		return c.json({ error: { message: "Registration failed" } }, 500);

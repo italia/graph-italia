@@ -23,8 +23,8 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
     console.log(submittedData);
     try {
       const result = await api.register({ email, password });
-      if (result) {
-        navigate('/home');
+      if (result?.uid) {
+        navigate(`/verify/${result.uid}`);
       } else {
         setMessage('Error while registering');
       }
