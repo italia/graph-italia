@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
 import * as bcrypt from "bcrypt";
 import * as z from "zod";
 import db from "../lib/db";
@@ -11,6 +10,11 @@ import {
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 import { checkAuth, requireUser } from "../lib/middlewares-hono";
 import { logger } from "../lib/logger";
+import {
+	validator as zValidator,
+	resolver,
+	describeRoute,
+} from "hono-openapi";
 
 const APP_URL = process.env.APP_URL || "/";
 
@@ -21,11 +25,63 @@ router.use("*", checkAuth);
 
 // GET CURRENT USER INFO
 
-router.get("/user", (c) => {
+const errorMessageSchema = z.object({
+	error: z.string(),
+});
+
+const userInfoSchema = z.object();
+
+const passwordSchema = z
+	.string({ error: "Password is required" })
+	.min(8, { message: "Password must be at least 8 characters long" })
+	.refine((password) => /[A-Z]/.test(password), {
+		message: "Password must have at least one uppercase letter",
+	})
+	.refine((password) => /[a-z]/.test(password), {
+		message: "Password must have at least one lowercase letter",
+	})
+	.refine((password) => /[0-9]/.test(password), {
+		message: "Must contain a number",
+	})
+	.refine((password) => /[!@#$%^&*]/.test(password), {
+		message: "Must contain at least one special character",
+	});
+
+
+router.get("/user", describeRoute({
+	description: 'If the user is authenticated, returns the user information along with current token.',
+	responses: {
+		201: {
+			description: "Successful response",
+			content: {
+				"application/json": {
+					schema: resolver(userInfoSchema),
+				},
+			},
+		},
+		401: {
+			description: "Unauthorized",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		},
+		500: {
+			description: "Internal error",
+			content: {
+				"application/json": {
+					schema: resolver(errorMessageSchema),
+				},
+			},
+		}
+	}
+}), (c) => {
 	try {
 		const user = c.get("user") || null;
+		console.log("user", user);
 		if (!user) {
-			return c.json(null, 401);
+			return c.json({ error: "Unauthorized" }, 401);
 		}
 		const token = c.get("token") || null;
 		return c.json({ ...user, token }, 201);
@@ -42,47 +98,88 @@ router.get("/user", (c) => {
 
 const registerSchema = z.object({
 	email: z.email({ error: "Invalid email address" }),
-	password: z
-		.string({ error: "Password is required" })
-		.min(7, "Password must be at least 7 characters long"),
-});
+	password: passwordSchema
+})
 
-router.post("/register", zValidator("json", registerSchema), async (c) => {
-	try {
-		const { email, password } = c.req.valid("json");
-		if (!email || !password) {
-			return c.json(
-				{
-					error: { message: "You must provide an email and a password." },
+const registerSuccessSchema = z.object({
+	uid: z.string(),
+})
+
+router.post("/register",
+	describeRoute({
+		description: 'Register a new user with email and password.',
+		responses: {
+			200: {
+				description: "Successful response",
+				content: {
+					"application/json": {
+						schema: resolver(registerSuccessSchema),
+					},
 				},
-				400,
-			);
+			},
+			400: {
+				description: "Missing email or password",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			409: {
+				description: "User Already Exists",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal error",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			}
 		}
+	}), zValidator("json", registerSchema), async (c) => {
+		try {
+			const { email, password } = c.req.valid("json");
+			if (!email || !password) {
+				return c.json(
+					{
+						error: { message: "You must provide an email and a password." },
+					},
+					400,
+				);
+			}
 
-		const existingUser = await db.findUserByEmail(email);
-		if (existingUser) {
-			logger.warn("Registration attempted with existing email", {
+			const existingUser = await db.findUserByEmail(email);
+			if (existingUser) {
+				console.log("User already exists with email", email);
+				logger.warn("Registration attempted with existing email", {
+					email: email.replace(/(.{2}).*@/, "$1***@"),
+				});
+				return c.json({ error: { message: "Email already in use." } }, 409);
+			}
+
+			const user = await db.createUserByEmailAndPassword({ email, password });
+			const pin = await db.createCode(user.id);
+
+			console.log("User registered, sending activation email", email);
+			logger.info("User registered, sending activation email", {
+				userId: user.id,
 				email: email.replace(/(.{2}).*@/, "$1***@"),
 			});
-			return c.json({ error: { message: "Email already in use." } }, 409);
+
+			await sendActivationEmail(user, pin);
+
+			return c.json({ uid: user.id }, 200);
+		} catch (err) {
+			logger.error("Registration failed", err instanceof Error ? err : undefined);
+			return c.json({ error: { message: "Registration failed" } }, 500);
 		}
-
-		const user = await db.createUserByEmailAndPassword({ email, password });
-		const pin = await db.createCode(user.id);
-
-		logger.info("User registered, sending activation email", {
-			userId: user.id,
-			email: email.replace(/(.{2}).*@/, "$1***@"),
-		});
-
-		await sendActivationEmail(user, pin);
-
-		return c.json({ auth: true }, 200);
-	} catch (err) {
-		logger.error("Registration failed", err instanceof Error ? err : undefined);
-		return c.json({ error: { message: "Registration failed" } }, 500);
-	}
-});
+	});
 
 // LOGIN
 
@@ -97,14 +194,29 @@ router.post("/login", zValidator("json", loginSchema), async (c) => {
 		const existingUser = await db.findUserByEmail(email);
 
 		if (!existingUser) {
+			console.log("No user found with email", email);
 			logger.warn("Login attempt for non-existent user", {
 				email: email.replace(/(.{2}).*@/, "$1***@"),
 			});
 			return c.json({ error: { message: "Invalid login credentials." } }, 401);
 		}
 
+		//check if user is verifyed
+		if (!existingUser.verifyed) {
+			console.log("User not verified", email);
+			logger.warn("Login attempt for unverified user", {
+				userId: existingUser.id,
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+			return c.json(
+				{ error: { message: "Please verify your email before logging in." } },
+				401,
+			);
+		}
+
 		const validPassword = await bcrypt.compare(password, existingUser.password);
 		if (!validPassword) {
+			console.log("Invalid password for user", email);
 			logger.warn("Login failed - invalid password", {
 				userId: existingUser.id,
 				email: email.replace(/(.{2}).*@/, "$1***@"),
@@ -114,7 +226,7 @@ router.post("/login", zValidator("json", loginSchema), async (c) => {
 
 		const { accessToken } = generateTokens(existingUser);
 		setAccessTokenCookie(c, accessToken);
-
+		console.log("User logged in successfully", email);
 		logger.info("User logged in successfully", {
 			userId: existingUser.id,
 			email: email.replace(/(.{2}).*@/, "$1***@"),
@@ -267,21 +379,7 @@ router.get(
 
 // CHANGE PASSWORD
 
-const passwordSchema = z
-	.string({ error: "Password is required" })
-	.min(8, { message: "Password must be at least 8 characters long" })
-	.refine((password) => /[A-Z]/.test(password), {
-		message: "Password must have at least one uppercase letter",
-	})
-	.refine((password) => /[a-z]/.test(password), {
-		message: "Password must have at least one lowercase letter",
-	})
-	.refine((password) => /[0-9]/.test(password), {
-		message: "Must contain a number",
-	})
-	.refine((password) => /[!@#$%^&*]/.test(password), {
-		message: "Must contain at least one special character",
-	});
+
 
 const changePwdSchema = z.object({
 	password: passwordSchema,

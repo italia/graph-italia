@@ -62,7 +62,7 @@ spec:
             namespace: {{ .Release.Namespace }}
           annotations:
             summary: "Database errors on DataViz"
-            description: "Database error rate: {{ "{{ $value | humanize }}" }} errors/sec for 3+ minutes"
+            description: 'Database error rate: {{ "{{ $value | printf \"%.2f\" }}" }} errors/sec for 3+ minutes'
 
         # -----------------------------------------------------------------------
         # Pod CrashLooping (more than 5 restarts in 30 min)
@@ -77,7 +77,7 @@ spec:
             namespace: {{ .Release.Namespace }}
           annotations:
             summary: "DataViz pod is crash-looping"
-            description: "Pod {{ "{{ $labels.pod }}" }} has restarted {{ "{{ $value | humanize }}" }} times in 30 minutes"
+            description: 'Pod {{ "{{ $labels.pod }}" }} has restarted {{ "{{ $value | printf \"%.0f\" }}" }} times in 30 minutes'
 
         # -----------------------------------------------------------------------
         # Ingress/WAF - High block rate (potential attack or misconfiguration)

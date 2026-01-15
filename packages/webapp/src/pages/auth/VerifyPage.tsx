@@ -21,20 +21,7 @@ function AuthPage() {
     }
   }, []);
 
-  async function handleResult(result: boolean) {
-    setResult(result);
-    try {
-      if (action === 'init') {
-        await activate();
-        navigate('/home');
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   function redirectHome() {
-    // alert('changed');
     navigate('/home');
   }
 
@@ -42,7 +29,32 @@ function AuthPage() {
     navigate('/recover-password');
   }
 
-  if (!uid) return <div>Error</div>;
+  async function handleResult(result: boolean) {
+    setResult(result);
+    try {
+      if (action === 'init') {
+        await activate();
+        redirectHome();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  if (!uid) return (<Layout>
+    <div className='flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8'>
+      <div className='text-sm leading-6'>
+        <p>Invalid params, use the recover password flow to get a new code.</p>
+        <a
+          href='#'
+          onClick={() => handleAskAnotherCode()}
+          className='link font-semibold link-primary'
+        >
+          Recover password
+        </a>
+      </div>
+    </div>
+  </Layout>);
 
   return (
     <Layout>
@@ -55,10 +67,23 @@ function AuthPage() {
               onAskAnotherCode={() => handleAskAnotherCode()}
             />
           )}
-          {isValid && <div>The code is Valid.</div>}
+          {isValid && <div role="alert" className="alert alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span> The code is Valid.</span>
+          </div>
+          }
           {isValid && action === 'reset' && (
             <div>
               <ChangePasswordForm onDone={() => redirectHome()} />
+            </div>
+          )}
+          {isValid && action === 'init' && (
+            <div>
+              <p>You can now close this window or
+                <a href='/home' className='link font-semibold link-primary'>enter</a>
+              </p>
             </div>
           )}
         </div>

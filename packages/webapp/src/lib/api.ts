@@ -5,15 +5,15 @@ axios.defaults.withCredentials = true;
 // The config is loaded at app startup in main.tsx and stored in window.__ENV__
 // Falls back to import.meta.env (from .env file at build-time) for development, then to default
 const getServerUrl = (): string => {
-  let baseServerUrl ; // = import.meta.env.VITE_SERVER_URL;
+  let baseServerUrl; // = import.meta.env.VITE_SERVER_URL;
   // Priority 1: Runtime config from ConfigMap (/config.json)
   if (typeof window !== "undefined" && window.__ENV__?.VITE_SERVER_URL) {
     baseServerUrl = window.__ENV__.VITE_SERVER_URL;
     return baseServerUrl;
-  }else{
-  // Priority 2: Build-time env from .env file (for local development)
-  // Priority 3: Default fallback
-    baseServerUrl = import.meta.env.VITE_SERVER_URL ||  'http://localhost:3003';
+  } else {
+    // Priority 2: Build-time env from .env file (for local development)
+    // Priority 3: Default fallback
+    baseServerUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3003';
   }
   console.log("Using server URL:", baseServerUrl);
   return baseServerUrl;
@@ -145,7 +145,7 @@ export async function register({
 }: {
   email: string;
   password: string;
-}) {
+}): Promise<{ uid: string } | null> {
   try {
     const response = await axios.post(
       `${getServerUrlWithApi()}/auth/register`,
@@ -156,9 +156,10 @@ export async function register({
     );
     const data = response.data;
     console.log("RESPONSE DATA", data);
-    if (response.status === 200) {
-      return true;
+    if (response.status === 200 && data.uid) {
+      return { uid: data.uid };
     }
+    return null;
   } catch (error: any) {
     console.log("REGISTER ERROR", error.message);
     throw error;
@@ -169,8 +170,6 @@ export async function getUser() {
   const response = await axios(`${getServerUrlWithApi()}/auth/user`, {
     method: "GET",
   });
-  console.log("response status", response.status);
-  console.log("response data", response.data);
   return response.data;
 }
 

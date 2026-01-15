@@ -63,7 +63,7 @@ if (isDev) {
 			allowHeaders: ["Content-Type", "Authorization"],
 		}),
 	);
- }
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
@@ -80,22 +80,56 @@ app.route("/charts", chartRoutes);
 app.route("/dashboards", dashRoutes);
 app.route("/hints", suggestionsRoutes);
 
-app.get("/openapi.json", openAPIRouteHandler(chartRoutes,{
+app.get("/openapi.json", openAPIRouteHandler(app, {
 	documentation: {
 		info: {
 			title: "Dataviz API",
 			version: "1.0.0",
 			description: "API documentation for the Dataviz application"
-		}
+		},
+		components: {
+			securitySchemes: {
+				// cookieSchema: {
+				// 	type: "apiKey",
+				// 	in: "cookie",
+				// 	name: "access_token",
+				// },
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+				}
+			},
+		},
+		security: [
+			{
+				bearerAuth: [],
+			},
+		],
+		servers: [
+			{
+				url: "http://localhost:3000",
+				description: "Local server",
+			},
+			{
+				url: "http://dataviz-test.innovazione.gov.it",
+				description: "Staging server",
+			},
+			{
+				url: "http://dataviz.innovazione.gov.it",
+				description: "Production server",
+			},
+
+		],
 	}
 }));
 
 app.get(
-  "/docs",
-  Scalar({
-    theme: "saturn",
-    url: "/api/openapi.json",
-  })
+	"/docs",
+	Scalar({
+		theme: "saturn",
+		url: `${ROUTES_PREFIX}/openapi.json`,
+	})
 );
 // ═══════════════════════════════════════════════════════════════════════════════
 // ❌ ERROR HANDLING
