@@ -13,7 +13,6 @@ import {
 	describeRoute,
 } from "hono-openapi";
 import parseCSV from "../lib/parseCSV";
-import { isArgumentsObject } from "util/types";
 
 const router = new Hono();
 
