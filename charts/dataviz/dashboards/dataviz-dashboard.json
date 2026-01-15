@@ -400,22 +400,22 @@
     },
     {
       "datasource": { "type": "loki", "uid": "${loki}" },
-      "description": "Backend server logs from Loki - parsed JSON format",
+      "description": "All backend server logs",
       "gridPos": { "h": 14, "w": 24, "x": 0, "y": 52 },
       "id": 14,
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
-        "prettifyLogMessage": false,
+        "prettifyLogMessage": true,
         "showCommonLabels": false,
         "showLabels": false,
-        "showTime": false,
+        "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
       "targets": [
         {
-          "expr": "{namespace=\"$namespace\", container=\"server\"} |~ `^\\{` | json | line_format `{{ .timestamp }} [{{ .level }}] {{ .message }}`",
+          "expr": "{namespace=\"$namespace\", container=\"server\"}",
           "legendFormat": "",
           "refId": "A"
         }
@@ -425,22 +425,22 @@
     },
     {
       "datasource": { "type": "loki", "uid": "${loki}" },
-      "description": "Error and warning logs only",
+      "description": "Error and warning logs only (contains error or warn)",
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 66 },
       "id": 15,
       "options": {
         "dedupStrategy": "none",
         "enableLogDetails": true,
-        "prettifyLogMessage": false,
+        "prettifyLogMessage": true,
         "showCommonLabels": false,
         "showLabels": false,
-        "showTime": false,
+        "showTime": true,
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
       "targets": [
         {
-          "expr": "{namespace=\"$namespace\", container=\"server\"} |~ `^\\{` | json | level=~`error|warn` | line_format `{{ .timestamp }} [{{ .level }}] {{ .message }}`",
+          "expr": "{namespace=\"$namespace\", container=\"server\"} |~ `(?i)(error|warn|exception|fail)`",
           "legendFormat": "",
           "refId": "A"
         }
