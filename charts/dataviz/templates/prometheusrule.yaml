@@ -1,0 +1,228 @@
+{{- if .Values.monitoring.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "dataviz.fullname" . }}
+  labels:
+    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  groups:
+    # ==========================================================================
+    # HTTP/API Alerts
+    # ==========================================================================
+    - name: dataviz.http
+      rules:
+        # High Error Rate (>5% 5xx errors over 5 minutes)
+        - alert: DatavizHighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{status="5xx", namespace="{{ .Release.Namespace }}"}[5m]))
+              /
+              sum(rate(http_requests_total{namespace="{{ .Release.Namespace }}"}[5m]))
+            ) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "High error rate on DataViz API"
+            description: "Error rate is {{ "{{ $value | humanizePercentage }}" }} (>5%) for the last 5 minutes"
+            runbook_url: "https://github.com/italia/dataviz/wiki/Runbooks#high-error-rate"
+
+        # High Client Error Rate (>20% 4xx errors)
+        - alert: DatavizHighClientErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{status="4xx", namespace="{{ .Release.Namespace }}"}[5m]))
+              /
+              sum(rate(http_requests_total{namespace="{{ .Release.Namespace }}"}[5m]))
+            ) > 0.20
+          for: 10m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "High client error rate on DataViz API"
+            description: "Client error rate is {{ "{{ $value | humanizePercentage }}" }} (>20%) for the last 10 minutes"
+
+        # High Latency (p99 > 2 seconds)
+        - alert: DatavizHighLatency
+          expr: |
+            histogram_quantile(0.99, 
+              sum(rate(http_request_duration_seconds_bucket{namespace="{{ .Release.Namespace }}"}[5m])) by (le)
+            ) > 2
+          for: 5m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "High API latency on DataViz"
+            description: "p99 latency is {{ "{{ $value | humanizeDuration }}" }} (>2s) for the last 5 minutes"
+
+        # Very High Latency (p99 > 5 seconds)
+        - alert: DatavizVeryHighLatency
+          expr: |
+            histogram_quantile(0.99, 
+              sum(rate(http_request_duration_seconds_bucket{namespace="{{ .Release.Namespace }}"}[5m])) by (le)
+            ) > 5
+          for: 5m
+          labels:
+            severity: critical
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Very high API latency on DataViz"
+            description: "p99 latency is {{ "{{ $value | humanizeDuration }}" }} (>5s) for the last 5 minutes"
+
+    # ==========================================================================
+    # Database Alerts
+    # ==========================================================================
+    - name: dataviz.database
+      rules:
+        # Slow Database Queries (p99 > 500ms)
+        - alert: DatavizSlowDatabaseQueries
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(dataviz_db_query_duration_seconds_bucket{namespace="{{ .Release.Namespace }}"}[5m])) by (le, operation)
+            ) > 0.5
+          for: 5m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Slow database queries on DataViz"
+            description: "p99 DB query latency is {{ "{{ $value | humanizeDuration }}" }} (>500ms)"
+
+        # Very Slow Database Queries (p99 > 2s)
+        - alert: DatavizVerySlowDatabaseQueries
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(dataviz_db_query_duration_seconds_bucket{namespace="{{ .Release.Namespace }}"}[5m])) by (le, operation)
+            ) > 2
+          for: 5m
+          labels:
+            severity: critical
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Very slow database queries on DataViz"
+            description: "p99 DB query latency is {{ "{{ $value | humanizeDuration }}" }} (>2s)"
+
+        # High Database Error Rate
+        - alert: DatavizDatabaseErrors
+          expr: |
+            sum(rate(dataviz_db_queries_total{status="error", namespace="{{ .Release.Namespace }}"}[5m])) > 0.1
+          for: 5m
+          labels:
+            severity: critical
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Database errors on DataViz"
+            description: "Database error rate is {{ "{{ $value }}" }}/s"
+
+    # ==========================================================================
+    # AI/OpenAI Alerts
+    # ==========================================================================
+    - name: dataviz.ai
+      rules:
+        # Slow AI Requests (p99 > 30s)
+        - alert: DatavizSlowAIRequests
+          expr: |
+            histogram_quantile(0.99,
+              sum(rate(dataviz_ai_request_duration_seconds_bucket{namespace="{{ .Release.Namespace }}"}[10m])) by (le)
+            ) > 30
+          for: 10m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "Slow AI requests on DataViz"
+            description: "p99 AI request latency is {{ "{{ $value | humanizeDuration }}" }} (>30s)"
+
+        # AI Request Errors
+        - alert: DatavizAIErrors
+          expr: |
+            (
+              sum(rate(dataviz_ai_requests_total{status="error", namespace="{{ .Release.Namespace }}"}[5m]))
+              /
+              sum(rate(dataviz_ai_requests_total{namespace="{{ .Release.Namespace }}"}[5m]))
+            ) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "AI request errors on DataViz"
+            description: "AI error rate is {{ "{{ $value | humanizePercentage }}" }} (>10%)"
+
+    # ==========================================================================
+    # Pod/Container Alerts
+    # ==========================================================================
+    - name: dataviz.pods
+      rules:
+        # Pod Restarts
+        - alert: DatavizPodRestarts
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}", pod=~"dataviz.*"}[1h]) > 3
+          for: 5m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "DataViz pod restarting frequently"
+            description: "Pod {{ "{{ $labels.pod }}" }} has restarted {{ "{{ $value }}" }} times in the last hour"
+
+        # High Memory Usage (>80%)
+        - alert: DatavizHighMemoryUsage
+          expr: |
+            (
+              container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container=~"server|webapp"}
+              /
+              container_spec_memory_limit_bytes{namespace="{{ .Release.Namespace }}", container=~"server|webapp"}
+            ) > 0.8
+          for: 10m
+          labels:
+            severity: warning
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "High memory usage on DataViz"
+            description: "Container {{ "{{ $labels.container }}" }} memory usage is {{ "{{ $value | humanizePercentage }}" }}"
+
+        # Pod Not Ready
+        - alert: DatavizPodNotReady
+          expr: |
+            kube_pod_status_ready{namespace="{{ .Release.Namespace }}", pod=~"dataviz.*", condition="true"} == 0
+          for: 5m
+          labels:
+            severity: critical
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "DataViz pod not ready"
+            description: "Pod {{ "{{ $labels.pod }}" }} has been not ready for 5 minutes"
+
+        # No Running Pods
+        - alert: DatavizNoRunningPods
+          expr: |
+            sum(kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment=~"dataviz.*"}) == 0
+          for: 2m
+          labels:
+            severity: critical
+            service: dataviz
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "No DataViz pods running"
+            description: "DataViz has no available replicas for deployment {{ "{{ $labels.deployment }}" }}"
+{{- end }}

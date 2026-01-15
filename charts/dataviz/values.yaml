@@ -394,6 +394,39 @@ networkPolicy:
       #   cidr: "1.2.3.4/32"
       #   port: 443
 
+# =============================================================================
+# MONITORING & OBSERVABILITY
+# =============================================================================
+monitoring:
+  # ServiceMonitor for Prometheus Operator
+  serviceMonitor:
+    enabled: false
+    # Labels to add to ServiceMonitor (for Prometheus selector)
+    labels: {}
+      # release: prometheus
+    # Scrape interval
+    interval: "30s"
+    # Scrape timeout
+    scrapeTimeout: "10s"
+    # Metric relabeling configs
+    metricRelabelings: []
+
+  # PrometheusRule for alerting
+  prometheusRule:
+    enabled: false
+    # Labels to add to PrometheusRule (for Prometheus selector)
+    labels: {}
+      # release: prometheus
+
+  # Grafana Dashboard as ConfigMap
+  grafanaDashboard:
+    enabled: false
+    # Labels for Grafana sidecar discovery
+    labels: {}
+      # grafana_dashboard: "1"
+    # Namespace where Grafana is deployed (for dashboard ConfigMap)
+    namespace: ""  # e.g., "monitoring"
+
 # Global settings
 global:
   namespace: ""

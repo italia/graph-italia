@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { logger } from "./logger";
+import { aiRequests, aiRequestDuration } from "./metrics";
 
 const APIKEY = process.env.OPENAI_API_KEY;
 const client = new OpenAI({ apiKey: APIKEY });
@@ -117,19 +118,32 @@ export function getDataSchema(inputData: (string | number)[][]) {
 export async function getSuggestions(inputData: (string | number)[][]) {
   const dataSchema = getDataSchema(inputData);
   const prompt = getPrompt(JSON.stringify(dataSchema, null, 2));
+  const model = "gpt-4o";
+  const startTime = performance.now();
+  
   try {
     const response = await client.responses.create({
-      model: "gpt-4o",
+      model,
       input: prompt,
     });
+    
+    // Track successful request
+    const duration = (performance.now() - startTime) / 1000;
+    aiRequests.inc({ status: "success" });
+    aiRequestDuration.observe({ model }, duration);
+    
     const text = response.output_text
       .replace(/\n/g, "")
       .replace("```json", "")
       .replace("```", "");
     const result = JSON.parse(text);
-    // console.log(JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
+    // Track failed request
+    const duration = (performance.now() - startTime) / 1000;
+    aiRequests.inc({ status: "error" });
+    aiRequestDuration.observe({ model }, duration);
+    
     logger.error("OpenAI API error", error instanceof Error ? error : undefined);
     throw error;
   }

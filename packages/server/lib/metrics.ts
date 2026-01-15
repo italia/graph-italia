@@ -236,12 +236,42 @@ export const aiRequests = new Counter(
   ['status']
 );
 
+export const aiRequestDuration = new Histogram(
+  'dataviz_ai_request_duration_seconds',
+  'AI request duration in seconds',
+  ['model'],
+  [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60]
+);
+
 export const dbQueryDuration = new Histogram(
   'dataviz_db_query_duration_seconds',
   'Database query duration in seconds',
   ['operation'],
   [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
 );
+
+export const dbQueryTotal = new Counter(
+  'dataviz_db_queries_total',
+  'Total number of database queries',
+  ['operation', 'status']
+);
+
+// Helper function to track DB queries
+export async function trackDbQuery<T>(operation: string, queryFn: () => Promise<T>): Promise<T> {
+  const startTime = performance.now();
+  try {
+    const result = await queryFn();
+    const duration = (performance.now() - startTime) / 1000;
+    dbQueryDuration.observe({ operation }, duration);
+    dbQueryTotal.inc({ operation, status: 'success' });
+    return result;
+  } catch (error) {
+    const duration = (performance.now() - startTime) / 1000;
+    dbQueryDuration.observe({ operation }, duration);
+    dbQueryTotal.inc({ operation, status: 'error' });
+    throw error;
+  }
+}
 
 // Process metrics
 const startTime = Date.now();
@@ -323,7 +353,9 @@ export function getMetrics(): string {
     dashboardsCreated,
     emailsSent,
     aiRequests,
+    aiRequestDuration,
     dbQueryDuration,
+    dbQueryTotal,
     processUptime,
     processMemory,
   ];
