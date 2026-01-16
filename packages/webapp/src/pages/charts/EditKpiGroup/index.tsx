@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
 import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
+import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
 import {
   KpiConfigForm,
   KpiGroupForm,
@@ -32,7 +33,14 @@ function EditKpiGroup() {
     isLoading,
     loaded,
     error,
+    pendingChanges,
   } = useEditKpiGroupStore();
+
+  const {
+    showModal: showConfirmNavigationModal,
+    confirm: confirmNavigationModal,
+    cancel: cancelNavigationModal,
+  } = useConfirmNavigation(pendingChanges);
 
   function changeConfigHandler() {
     showConfigFormModal();
@@ -179,6 +187,16 @@ function EditKpiGroup() {
             }}
           >
             <KpiConfigForm ref={kpiConfigFormRef} config={kpiGroup.config} />
+          </GenericDialog>
+        )}
+        {showConfirmNavigationModal && (
+          <GenericDialog
+            toggle={showConfirmNavigationModal}
+            title="Conferma navigazione"
+            confirmCb={confirmNavigationModal}
+            cancelCb={cancelNavigationModal}
+          >
+            <p>Sei sicuro di voler uscire senza salvare le modifiche?</p>
           </GenericDialog>
         )}
       </div>
