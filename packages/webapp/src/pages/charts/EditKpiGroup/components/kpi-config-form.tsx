@@ -1,12 +1,31 @@
+import { ChartConfigType } from "dataviz-components";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-const defaultValues = {
+type KpiGroupConfigType = Pick<
+  ChartConfigType,
+  | "direction"
+  | "h"
+  | "labeLine"
+  | "legend"
+  | "legendPosition"
+  | "palette"
+  | "tooltip"
+  | "tooltipFormatter"
+  | "valueFormatter"
+  | "totalLabel"
+  | "tooltipTrigger"
+  | "colors"
+  | "background"
+>;
+
+const defaultValues: KpiGroupConfigType = {
   direction: "vertical",
   h: 0,
   labeLine: false,
   legend: false,
   legendPosition: "",
-  palette: [],
+  palette: [] as string[],
   tooltip: false,
   tooltipFormatter: "",
   valueFormatter: "",
@@ -16,17 +35,44 @@ const defaultValues = {
   background: "skyblue",
 };
 
-type KpiGroupConfigFormValues = typeof defaultValues;
+export type KpiGroupConfigFormValues = typeof defaultValues;
 
-export default function KpiConfigForm() {
-  const { register, control, handleSubmit, reset } = useForm({
-    defaultValues,
+export interface KpiConfigFormHandle {
+  getFormData: () => KpiGroupConfigFormValues;
+  resetForm: () => void;
+}
+
+const KpiConfigForm = forwardRef<
+  KpiConfigFormHandle,
+  { config: KpiGroupConfigType }
+>((props, ref) => {
+  const { register, control, reset, getValues, watch, setValue } = useForm({
+    defaultValues: {
+      ...defaultValues,
+      ...props.config,
+    },
   });
 
-  const onSubmit = (data: KpiGroupConfigFormValues) => {
-    console.log("Form Data:", data);
-    alert("Form inviato! Controlla la console per vedere i dati.");
-  };
+  const legendValue = watch("legend");
+  const tooltipValue = watch("tooltip");
+
+  useEffect(() => {
+    if (!legendValue) {
+      setValue("legendPosition", "");
+    }
+  }, [legendValue, setValue]);
+
+  useEffect(() => {
+    if (!tooltipValue) {
+      setValue("tooltipFormatter", "");
+      setValue("tooltipTrigger", "");
+    }
+  }, [tooltipValue, setValue]);
+
+  useImperativeHandle(ref, () => ({
+    getFormData: () => getValues(),
+    resetForm: () => reset(),
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -45,8 +91,8 @@ export default function KpiConfigForm() {
               {...register("direction")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="vertical">Vertical</option>
-              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Verticale</option>
+              <option value="horizontal">Orizzontale</option>
             </select>
           </div>
 
@@ -86,22 +132,24 @@ export default function KpiConfigForm() {
             </label>
           </div>
 
-          {/* Legend Position - register */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Posizione Legenda
-            </label>
-            <select
-              {...register("legendPosition")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Nessuna</option>
-              <option value="top">Top</option>
-              <option value="bottom">Bottom</option>
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-            </select>
-          </div>
+          {/* Legend Position - register - visible only when legend is true */}
+          {legendValue && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Posizione Legenda
+              </label>
+              <select
+                {...register("legendPosition")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Nessuna</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+          )}
 
           {/* Palette - Controller per trasformazione array */}
           <div>
@@ -114,13 +162,10 @@ export default function KpiConfigForm() {
               render={({ field }) => (
                 <input
                   type="text"
-                  value={field.value.join(", ")}
+                  value={field.value}
                   onChange={(e) =>
                     field.onChange(
-                      e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean)
+                      e.target.value.split(",").map((s) => s.trim())
                     )
                   }
                   placeholder="es: red, blue, green"
@@ -142,18 +187,37 @@ export default function KpiConfigForm() {
             </label>
           </div>
 
-          {/* Tooltip Formatter - register */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tooltip Formatter
-            </label>
-            <input
-              {...register("tooltipFormatter")}
-              type="text"
-              placeholder="es: {b}: {c}"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          {/* Tooltip Formatter - register - visible only when tooltip is true */}
+          {tooltipValue && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tooltip Formatter
+              </label>
+              <input
+                {...register("tooltipFormatter")}
+                type="text"
+                placeholder="es: {b}: {c}"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
+
+          {/* Tooltip Trigger - register - visible only when tooltip is true */}
+          {tooltipValue && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tooltip Trigger
+              </label>
+              <select
+                {...register("tooltipTrigger")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Nessuno</option>
+                <option value="item">Item</option>
+                <option value="axis">Axis</option>
+              </select>
+            </div>
+          )}
 
           {/* Value Formatter - register */}
           <div>
@@ -181,21 +245,6 @@ export default function KpiConfigForm() {
             />
           </div>
 
-          {/* Tooltip Trigger - register */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tooltip Trigger
-            </label>
-            <select
-              {...register("tooltipTrigger")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Nessuno</option>
-              <option value="item">Item</option>
-              <option value="axis">Axis</option>
-            </select>
-          </div>
-
           {/* Colors - Controller per trasformazione array */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -207,13 +256,10 @@ export default function KpiConfigForm() {
               render={({ field }) => (
                 <input
                   type="text"
-                  value={field.value.join(", ")}
+                  value={field.value.join(",")}
                   onChange={(e) =>
                     field.onChange(
-                      e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean)
+                      e.target.value.split(",").map((s) => s.trim())
                     )
                   }
                   placeholder="es: #ff0000, #00ff00, #0000ff"
@@ -223,42 +269,38 @@ export default function KpiConfigForm() {
             />
           </div>
 
-          {/* Background - register */}
+          {/* Background - Controller per sincronizzare text e color input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Background
             </label>
-            <div className="flex gap-2">
-              <input
-                {...register("background")}
-                type="text"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                {...register("background")}
-                type="color"
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-4">
-            <button
-              onClick={handleSubmit(onSubmit)}
-              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
-            >
-              Invia
-            </button>
-            <button
-              onClick={() => reset()}
-              className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-medium"
-            >
-              Reset
-            </button>
+            <Controller
+              name="background"
+              control={control}
+              render={({ field }) => (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="color"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                  />
+                </div>
+              )}
+            />
           </div>
         </div>
       </div>
     </div>
   );
-}
+});
+
+KpiConfigForm.displayName = "KpiConfigForm";
+
+export default KpiConfigForm;

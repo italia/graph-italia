@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 
-export type KpiFormValues = {
+export type KpiGroupFormValues = {
   title: string;
   openDataPath?: string;
   show_flow?: boolean;
@@ -15,29 +15,19 @@ export type KpiFormValues = {
   footer_text?: string;
 };
 
-const defaultValues: KpiFormValues = {
-  title: "Progetti attivi",
-  openDataPath: "pa_2026_od_progetti_attivi_antepromatore_totali.csv",
-  show_flow: false,
-  flow_direction: "+",
-  flow_value: "13.4%",
-  flow_detail: "11.18%",
-  value: "81070",
-  background_color: "",
-  value_prefix: "",
-  value_suffix: "",
-  percentage: "",
-  footer_text: "",
+const defaultValues: KpiGroupFormValues = {
+  title: "",
+  value: "",
 };
 
-export function KpiForm({
+export function KpiGroupForm({
   initialValues = {},
   onSubmit,
 }: {
-  initialValues?: Partial<KpiFormValues>;
-  onSubmit?: (data: KpiFormValues) => void;
+  initialValues?: Partial<KpiGroupFormValues>;
+  onSubmit?: (data: KpiGroupFormValues) => void;
 }) {
-  const { register, handleSubmit, watch } = useForm<KpiFormValues>({
+  const { register, handleSubmit, watch } = useForm<KpiGroupFormValues>({
     defaultValues: {
       ...defaultValues,
       ...initialValues,
@@ -46,7 +36,7 @@ export function KpiForm({
 
   const showFlow = watch("show_flow");
 
-  const onSubmitHandler = (data: KpiFormValues) => {
+  const onSubmitHandler = (data: KpiGroupFormValues) => {
     console.log(data);
     if (onSubmit) {
       onSubmit(data);
@@ -54,31 +44,35 @@ export function KpiForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full">
+    <form
+      id="kpi-group-form"
+      onSubmit={handleSubmit(onSubmitHandler)}
+      className="w-full"
+    >
       <div className="">
         <div className="">
           <div className="p-6 space-y-6">
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title *
+              <label className="label">
+                <span className="label-text font-medium">Title *</span>
               </label>
               <input
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input input-bordered w-full"
                 {...register("title", { required: true })}
               />
             </div>
 
             {/* Open Data Path */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Open Data Path
+              <label className="label">
+                <span className="label-text font-medium">Open Data Path</span>
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="input input-bordered w-full"
                 {...register("openDataPath")}
               />
             </div>
@@ -113,11 +107,13 @@ export function KpiForm({
 
               {/* Direzione andamento */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Direzione andamento
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Direzione andamento
+                  </span>
                 </label>
                 <select
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 text-sm"
+                  className="input input-bordered w-full"
                   {...register("flow_direction")}
                   disabled={!showFlow}
                 >
@@ -129,26 +125,30 @@ export function KpiForm({
 
               {/* Valore andamento */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Valore andamento
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Valore andamento
+                  </span>
                 </label>
                 <input
                   type="text"
                   disabled={!showFlow}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                  className="input input-bordered w-full"
                   {...register("flow_value")}
                 />
               </div>
 
               {/* Dettaglio andamento */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dettaglio andamento
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Dettaglio andamento
+                  </span>
                 </label>
                 <input
                   type="text"
                   disabled={!showFlow}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                  className="input input-bordered w-full"
                   {...register("flow_detail")}
                 />
               </div>
@@ -157,77 +157,74 @@ export function KpiForm({
             {/* Altri campi */}
             <div className="space-y-4 border-t pt-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Valore
+                <label className="label">
+                  <span className="label-text font-medium">Valore</span>
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("value", { required: true })}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Colore sfondo
+                <label className="label">
+                  <span className="label-text font-medium">Colore sfondo</span>
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("background_color")}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Prefisso valore
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Prefisso valore
+                  </span>
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("value_prefix")}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Suffisso valore
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Suffisso valore
+                  </span>
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("value_suffix")}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Percentuale
+                <label className="label">
+                  <span className="label-text font-medium">Percentuale</span>
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("percentage")}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Testo footer
+                <label className="label">
+                  <span className="label-text font-medium">Testo footer</span>
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("footer_text")}
                 />
               </div>
-            </div>
-
-            {/* Submit button */}
-            <div className="pt-4">
-              <button type="submit" className="w-full btn btn-primary">
-                Salva
-              </button>
             </div>
           </div>
         </div>

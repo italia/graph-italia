@@ -1,7 +1,7 @@
-import { FieldDataType } from 'dataviz-components';
+import { ChartConfigType, FieldDataType } from 'dataviz-components';
 import { create } from 'zustand';
 import * as api from "../../../lib/api";
-import { KpiFormValues } from './components/kpi-form';
+import { KpiGroupFormValues } from './components/kpi-group-form';
 
 interface EditKpiGroupActions {
     load: (id: string) => void;
@@ -11,11 +11,30 @@ interface EditKpiGroupActions {
     deleteKpi: (index: number) => void;
     closeFormModal: () => void;
     showConfigFormModal: () => void;
-    closeConfigFormModal: () => void;
-    saveKpi: (data: KpiFormValues) => void;
+    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
+    saveKpi: (data: KpiGroupFormValues) => void;
 }
 
-const defaultKpiGroupData: FieldDataType = {
+type KpiGroupConfigType = Pick<ChartConfigType,
+    'direction' |
+    'h' |
+    'labeLine' |
+    'legend' |
+    'legendPosition' |
+    'palette' |
+    'tooltip' |
+    'tooltipFormatter' |
+    'valueFormatter' |
+    'totalLabel' |
+    'tooltipTrigger' |
+    'colors' |
+    'background'>;
+
+type KpiGroupFieldDataType = FieldDataType & {
+    config: KpiGroupConfigType;
+}
+
+const defaultKpiGroupData: KpiGroupFieldDataType = {
     id: "kpi-group2",
     dataSource: [],
     chart: "kpi",
@@ -45,7 +64,7 @@ type EditKpiGroupVM = {
 type EditKpiGroupState = {
     id?: string
     vm: EditKpiGroupVM;
-    kpiGroup: FieldDataType;
+    kpiGroup: KpiGroupFieldDataType;
     isLoading: boolean;
     loaded: boolean;
     error?: {
@@ -53,6 +72,7 @@ type EditKpiGroupState = {
     };
     showFormModal?: boolean;
     showConfigModal?: boolean;
+    pendingChanges: boolean;
 }
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
@@ -62,12 +82,22 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
+    pendingChanges: false,
     showConfigFormModal: () => {
         set({ showConfigModal: true });
     },
-    closeConfigFormModal: () => {
+    closeConfigFormModal: (config) => {
         // Implement the logic to change the configuration
-        set({ showConfigModal: false });
+        if (config) {
+            const { kpiGroup } = get();
+            set({
+                showConfigModal: false,
+                kpiGroup: { ...kpiGroup, config: { ...config } },
+                pendingChanges: true
+            });
+        } else {
+            set({ showConfigModal: false });
+        }
     },
     addKpi: () => {
         console.log("add item");
@@ -75,11 +105,17 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     },
     deleteKpi: (index: number) => {
         const { kpiGroup } = get();
-        set({ kpiGroup: { ...kpiGroup, dataSource: kpiGroup.dataSource.filter((_: unknown, i: number) => i !== index) } });
+        set({
+            kpiGroup: { ...kpiGroup, dataSource: kpiGroup.dataSource.filter((_: unknown, i: number) => i !== index) },
+            pendingChanges: true
+        });
     },
-    saveKpi: (data: KpiFormValues) => {
+    saveKpi: (data: KpiGroupFormValues) => {
         const { kpiGroup } = get();
-        set({ kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] } });
+        set({
+            kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data], },
+            pendingChanges: true
+        });
         console.log("KPI saved:", data);
     },
     closeFormModal: () => {
@@ -94,7 +130,9 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                 set({
                     vm: { name, description },
                     isLoading: false,
-                    loaded: true, id,
+                    loaded: true,
+                    id,
+                    pendingChanges: false,
                     kpiGroup: { ...defaultKpiGroupData, config: { ...config }, dataSource }
                 });
             }
@@ -121,6 +159,8 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                 dataSource: kpiGroup.dataSource,
             }
         });
+
+        set({ pendingChanges: false });
 
         return response;
     },
