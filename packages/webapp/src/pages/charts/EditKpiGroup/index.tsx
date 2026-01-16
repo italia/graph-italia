@@ -152,7 +152,7 @@ function EditKpiGroup() {
             toggle={showFormModal}
             title="Nuovo KPI Group"
             confirmCb={() => {
-              const formData = document
+              document
                 .getElementById("kpi-group-form")
                 ?.dispatchEvent(
                   new Event("submit", { cancelable: true, bubbles: true })
