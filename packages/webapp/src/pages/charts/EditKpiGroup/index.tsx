@@ -156,7 +156,6 @@ function EditKpiGroup() {
               closeFormModal();
             }}
           >
-            <div>Form to add or edit a KPI</div>
             <KpiGroupForm onSubmit={saveKpiHandler} />
           </Dialog>
         )}
@@ -173,7 +172,6 @@ function EditKpiGroup() {
               closeConfigFormModal();
             }}
           >
-            <div>Form to configure Kpi Group</div>
             <KpiConfigForm ref={kpiConfigFormRef} config={kpiGroup.config} />
           </GenericDialog>
         )}
