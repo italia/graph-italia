@@ -16,18 +16,8 @@ export type KpiFormValues = {
 };
 
 const defaultValues: KpiFormValues = {
-  title: "Progetti attivi",
-  openDataPath: "pa_2026_od_progetti_attivi_antepromatore_totali.csv",
-  show_flow: false,
-  flow_direction: "+",
-  flow_value: "13.4%",
-  flow_detail: "11.18%",
-  value: "81070",
-  background_color: "",
-  value_prefix: "",
-  value_suffix: "",
-  percentage: "",
-  footer_text: "",
+  title: "",
+  value: "",
 };
 
 export function KpiForm({
