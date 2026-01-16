@@ -1,7 +1,7 @@
 import { ChartConfigType, FieldDataType } from 'dataviz-components';
 import { create } from 'zustand';
 import * as api from "../../../lib/api";
-import { KpiFormValues } from './components/kpi-form';
+import { KpiGroupFormValues } from './components/kpi-group-form';
 
 interface EditKpiGroupActions {
     load: (id: string) => void;
@@ -12,7 +12,7 @@ interface EditKpiGroupActions {
     closeFormModal: () => void;
     showConfigFormModal: () => void;
     closeConfigFormModal: (config?: KpiGroupConfigType) => void;
-    saveKpi: (data: KpiFormValues) => void;
+    saveKpi: (data: KpiGroupFormValues) => void;
 }
 
 type KpiGroupConfigType = Pick<ChartConfigType,
@@ -104,7 +104,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         const { kpiGroup } = get();
         set({ kpiGroup: { ...kpiGroup, dataSource: kpiGroup.dataSource.filter((_: unknown, i: number) => i !== index) } });
     },
-    saveKpi: (data: KpiFormValues) => {
+    saveKpi: (data: KpiGroupFormValues) => {
         const { kpiGroup } = get();
         set({ kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] } });
         console.log("KPI saved:", data);

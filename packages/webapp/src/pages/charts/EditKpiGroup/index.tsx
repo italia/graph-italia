@@ -7,8 +7,8 @@ import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import {
   KpiConfigForm,
-  KpiForm,
-  KpiFormValues,
+  KpiGroupForm,
+  KpiGroupFormValues,
   type KpiConfigFormHandle,
 } from "./components";
 import useEditKpiGroupStore from "./store";
@@ -47,7 +47,7 @@ function EditKpiGroup() {
     deleteKpi(index);
   }
 
-  function saveKpiHandler(data: KpiFormValues) {
+  function saveKpiHandler(data: KpiGroupFormValues) {
     //update store with new kpi
     console.log("KPI data to save:", data);
     saveKpi(data);
@@ -157,7 +157,7 @@ function EditKpiGroup() {
             }}
           >
             <div>Form to add or edit a KPI</div>
-            <KpiForm onSubmit={saveKpiHandler} />
+            <KpiGroupForm onSubmit={saveKpiHandler} />
           </Dialog>
         )}
         {showConfigModal && (
