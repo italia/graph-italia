@@ -10,14 +10,18 @@ function AuthPage() {
   const { uid } = useParams();
   const [isValid, setResult] = useState(false);
   const [action, setAction] = useState('init');
+  const [code, setCode] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    // let code = searchParams.get("code");
     let action = searchParams.get('action');
+    let code = searchParams.get("code");
     if (action) {
       setAction(action);
+    }
+    if (code) {
+      setCode(code);
     }
   }, []);
 
@@ -63,6 +67,7 @@ function AuthPage() {
           {!(isValid && action) && (
             <VerifyCode
               uid={uid}
+              code={code}
               onCheckDone={(result: boolean) => handleResult(result)}
               onAskAnotherCode={() => handleAskAnotherCode()}
             />

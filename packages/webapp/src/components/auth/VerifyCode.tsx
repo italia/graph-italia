@@ -9,11 +9,24 @@ export default function VerifyCodeComponent({
   uid = '',
   onCheckDone,
   onAskAnotherCode,
+  code = ''
 }: {
   uid: string;
   onCheckDone: (result: boolean) => void;
   onAskAnotherCode: () => void;
+  code?: string;
 }) {
+
+
+  useEffect(() => {
+    if (code && code.length === 6) {
+      setTimeout(() => {
+        setValues(code.split(''));
+      }, 1000);
+    }
+  }, [code]);
+
+
   const [values, setValues] = useState(['', '', '', '', '', '']);
   const [message, setMessage] = useState('');
   const { setUser } = useUserStore();

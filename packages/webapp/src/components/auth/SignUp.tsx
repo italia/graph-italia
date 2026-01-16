@@ -37,7 +37,7 @@ export const signupSchema = z
     path: ["confirmPassword"],
   });
 
-function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
+function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => void, handleRegistered: () => void, }) {
   let navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -60,8 +60,10 @@ function SignUp({ setLogin }: { setLogin: (login: boolean) => void }) {
       const result = await api.register({ email, password });
       console.log('Registration result', result);
       if (result?.uid) {
-        const path = `/verify/${result.uid}?action=init`;
-        navigate(path);
+        // const path = `/verify/${result.uid}?action=init`;
+        // navigate(path);
+        handleRegistered();
+
       } else {
         setMessage('Error while registering');
       }
