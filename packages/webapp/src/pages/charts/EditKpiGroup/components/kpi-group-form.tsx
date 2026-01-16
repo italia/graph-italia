@@ -54,8 +54,8 @@ export function KpiGroupForm({
           <div className="p-6 space-y-6">
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title *
+              <label className="label">
+                <span className="label-text font-medium">Title *</span>
               </label>
               <input
                 type="text"
@@ -67,8 +67,8 @@ export function KpiGroupForm({
 
             {/* Open Data Path */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Open Data Path
+              <label className="label">
+                <span className="label-text font-medium">Open Data Path</span>
               </label>
               <input
                 type="text"
@@ -107,8 +107,10 @@ export function KpiGroupForm({
 
               {/* Direzione andamento */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Direzione andamento
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Direzione andamento
+                  </span>
                 </label>
                 <select
                   className="input input-bordered w-full"
@@ -123,8 +125,10 @@ export function KpiGroupForm({
 
               {/* Valore andamento */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Valore andamento
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Valore andamento
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -136,8 +140,10 @@ export function KpiGroupForm({
 
               {/* Dettaglio andamento */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dettaglio andamento
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Dettaglio andamento
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -151,8 +157,8 @@ export function KpiGroupForm({
             {/* Altri campi */}
             <div className="space-y-4 border-t pt-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Valore
+                <label className="label">
+                  <span className="label-text font-medium">Valore</span>
                 </label>
                 <input
                   type="text"
@@ -162,8 +168,8 @@ export function KpiGroupForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Colore sfondo
+                <label className="label">
+                  <span className="label-text font-medium">Colore sfondo</span>
                 </label>
                 <input
                   type="text"
@@ -173,8 +179,10 @@ export function KpiGroupForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Prefisso valore
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Prefisso valore
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -184,8 +192,10 @@ export function KpiGroupForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Suffisso valore
+                <label className="label">
+                  <span className="label-text font-medium">
+                    Suffisso valore
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -195,8 +205,8 @@ export function KpiGroupForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Percentuale
+                <label className="label">
+                  <span className="label-text font-medium">Percentuale</span>
                 </label>
                 <input
                   type="text"
@@ -206,8 +216,8 @@ export function KpiGroupForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Testo footer
+                <label className="label">
+                  <span className="label-text font-medium">Testo footer</span>
                 </label>
                 <input
                   type="text"
