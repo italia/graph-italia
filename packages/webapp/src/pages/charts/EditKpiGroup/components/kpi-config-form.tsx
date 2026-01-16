@@ -163,16 +163,14 @@ const KpiConfigForm = forwardRef<
                 <input
                   type="text"
                   value={
+                    // field.value
                     Array.isArray(field.value)
-                      ? field.value.join(", ")
+                      ? field.value.join(",")
                       : field.value
                   }
                   onChange={(e) =>
                     field.onChange(
-                      e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean)
+                      e.target.value.split(",").map((s) => s.trim())
                     )
                   }
                   placeholder="es: red, blue, green"
@@ -263,13 +261,10 @@ const KpiConfigForm = forwardRef<
               render={({ field }) => (
                 <input
                   type="text"
-                  value={field.value.join(", ")}
+                  value={field.value.join(",")}
                   onChange={(e) =>
                     field.onChange(
-                      e.target.value
-                        .split(",")
-                        .map((s) => s.trim())
-                        .filter(Boolean)
+                      e.target.value.split(",").map((s) => s.trim())
                     )
                   }
                   placeholder="es: #ff0000, #00ff00, #0000ff"
