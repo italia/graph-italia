@@ -60,7 +60,7 @@ export function KpiGroupForm({
               <input
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input input-bordered w-full"
                 {...register("title", { required: true })}
               />
             </div>
@@ -72,7 +72,7 @@ export function KpiGroupForm({
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="input input-bordered w-full"
                 {...register("openDataPath")}
               />
             </div>
@@ -111,7 +111,7 @@ export function KpiGroupForm({
                   Direzione andamento
                 </label>
                 <select
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 text-sm"
+                  className="input input-bordered w-full"
                   {...register("flow_direction")}
                   disabled={!showFlow}
                 >
@@ -129,7 +129,7 @@ export function KpiGroupForm({
                 <input
                   type="text"
                   disabled={!showFlow}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                  className="input input-bordered w-full"
                   {...register("flow_value")}
                 />
               </div>
@@ -142,7 +142,7 @@ export function KpiGroupForm({
                 <input
                   type="text"
                   disabled={!showFlow}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                  className="input input-bordered w-full"
                   {...register("flow_detail")}
                 />
               </div>
@@ -156,7 +156,7 @@ export function KpiGroupForm({
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("value", { required: true })}
                 />
               </div>
@@ -167,7 +167,7 @@ export function KpiGroupForm({
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("background_color")}
                 />
               </div>
@@ -178,7 +178,7 @@ export function KpiGroupForm({
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("value_prefix")}
                 />
               </div>
@@ -189,7 +189,7 @@ export function KpiGroupForm({
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("value_suffix")}
                 />
               </div>
@@ -200,7 +200,7 @@ export function KpiGroupForm({
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("percentage")}
                 />
               </div>
@@ -211,7 +211,7 @@ export function KpiGroupForm({
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input input-bordered w-full"
                   {...register("footer_text")}
                 />
               </div>
