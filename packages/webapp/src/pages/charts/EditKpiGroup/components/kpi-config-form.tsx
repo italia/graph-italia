@@ -162,12 +162,7 @@ const KpiConfigForm = forwardRef<
               render={({ field }) => (
                 <input
                   type="text"
-                  value={
-                    // field.value
-                    Array.isArray(field.value)
-                      ? field.value.join(",")
-                      : field.value
-                  }
+                  value={field.value}
                   onChange={(e) =>
                     field.onChange(
                       e.target.value.split(",").map((s) => s.trim())
