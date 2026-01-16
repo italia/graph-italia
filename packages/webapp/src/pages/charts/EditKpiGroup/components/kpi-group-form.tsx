@@ -44,7 +44,11 @@ export function KpiGroupForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full">
+    <form
+      id="kpi-group-form"
+      onSubmit={handleSubmit(onSubmitHandler)}
+      className="w-full"
+    >
       <div className="">
         <div className="">
           <div className="p-6 space-y-6">
@@ -211,13 +215,6 @@ export function KpiGroupForm({
                   {...register("footer_text")}
                 />
               </div>
-            </div>
-
-            {/* Submit button */}
-            <div className="pt-4">
-              <button type="submit" className="w-full btn btn-primary">
-                Salva
-              </button>
             </div>
           </div>
         </div>

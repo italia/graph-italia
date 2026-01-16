@@ -2,7 +2,6 @@ import { RenderChart } from "dataviz-components";
 import { useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
-import Dialog from "../../../components/layout/Dialog";
 import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import {
@@ -149,20 +148,27 @@ function EditKpiGroup() {
           </>
         )}
         {showFormModal && (
-          <Dialog
+          <GenericDialog
             toggle={showFormModal}
-            title="KPI"
-            callback={() => {
+            title="Nuovo KPI Group"
+            confirmCb={() => {
+              const formData = document
+                .getElementById("kpi-group-form")
+                ?.dispatchEvent(
+                  new Event("submit", { cancelable: true, bubbles: true })
+                );
+            }}
+            cancelCb={() => {
               closeFormModal();
             }}
           >
             <KpiGroupForm onSubmit={saveKpiHandler} />
-          </Dialog>
+          </GenericDialog>
         )}
         {showConfigModal && (
           <GenericDialog
             toggle={showConfigModal}
-            title="Configura Kpi Group"
+            title="Configurazione KPI Group"
             confirmCb={() => {
               const formData = kpiConfigFormRef.current?.getFormData();
               console.log("Configurazione KPI Group:", formData);
