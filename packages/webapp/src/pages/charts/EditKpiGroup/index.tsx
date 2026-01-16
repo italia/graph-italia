@@ -174,7 +174,7 @@ function EditKpiGroup() {
             }}
           >
             <div>Form to configure Kpi Group</div>
-            <KpiConfigForm ref={kpiConfigFormRef} />
+            <KpiConfigForm ref={kpiConfigFormRef} config={kpiGroup.config} />
           </GenericDialog>
         )}
       </div>

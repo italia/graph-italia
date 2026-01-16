@@ -19,13 +19,13 @@ type KpiGroupConfigType = Pick<
   | "background"
 >;
 
-const defaultValues = {
+const defaultValues: KpiGroupConfigType = {
   direction: "vertical",
   h: 0,
   labeLine: false,
   legend: false,
   legendPosition: "",
-  palette: [],
+  palette: [] as string[],
   tooltip: false,
   tooltipFormatter: "",
   valueFormatter: "",
@@ -33,7 +33,7 @@ const defaultValues = {
   tooltipTrigger: "",
   colors: [],
   background: "skyblue",
-} satisfies KpiGroupConfigType;
+};
 
 export type KpiGroupConfigFormValues = typeof defaultValues;
 
@@ -42,9 +42,15 @@ export interface KpiConfigFormHandle {
   resetForm: () => void;
 }
 
-const KpiConfigForm = forwardRef<KpiConfigFormHandle>((_, ref) => {
+const KpiConfigForm = forwardRef<
+  KpiConfigFormHandle,
+  { config: KpiGroupConfigType }
+>((props, ref) => {
   const { register, control, reset, getValues, watch, setValue } = useForm({
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      ...props.config,
+    },
   });
 
   const legendValue = watch("legend");
@@ -156,7 +162,11 @@ const KpiConfigForm = forwardRef<KpiConfigFormHandle>((_, ref) => {
               render={({ field }) => (
                 <input
                   type="text"
-                  value={field.value.join(", ")}
+                  value={
+                    Array.isArray(field.value)
+                      ? field.value.join(", ")
+                      : field.value
+                  }
                   onChange={(e) =>
                     field.onChange(
                       e.target.value
