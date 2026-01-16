@@ -27,7 +27,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
       }, 1000);
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage = (error as AxiosError).response?.data?.error?.message || (error as any).message || error;
+      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
       setMessage(errorMessage);
     }
   };

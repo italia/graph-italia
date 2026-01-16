@@ -34,7 +34,7 @@ export default function VerifyCodeComponent({
     } catch (error) {
       console.log('error', error);
       // setMessage('Error code invalid or expired');
-      const errorMessage = (error as AxiosError).response?.data?.error?.message || (error as any).message || error;
+      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
       setMessage(errorMessage);
     }
   }
