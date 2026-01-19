@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
 
 interface KpiDropdownProps {
   title: string;
@@ -52,11 +53,13 @@ function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
         <ul className="menu absolute top-full left-0 mt-1 bg-base-300 rounded-box z-10 w-32 p-2 shadow-lg border">
           <li>
             <span className="text-sm" onClick={handleEdit}>
+              <BsPencilFill />
               Edit
             </span>
           </li>
           <li>
             <span className="text-sm" onClick={handleDelete}>
+              <BsFillTrashFill />
               Delete
             </span>
           </li>
