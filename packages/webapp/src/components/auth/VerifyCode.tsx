@@ -3,16 +3,30 @@ import { PinInput } from 'react-input-pin-code';
 
 import * as api from '../../lib/api';
 import { useUserStore } from '../../store/user_store';
+import { AxiosError } from 'axios';
 
 export default function VerifyCodeComponent({
   uid = '',
   onCheckDone,
   onAskAnotherCode,
+  code = ''
 }: {
   uid: string;
   onCheckDone: (result: boolean) => void;
   onAskAnotherCode: () => void;
+  code?: string;
 }) {
+
+
+  useEffect(() => {
+    if (code && code.length === 6) {
+      setTimeout(() => {
+        setValues(code.split(''));
+      }, 1000);
+    }
+  }, [code]);
+
+
   const [values, setValues] = useState(['', '', '', '', '', '']);
   const [message, setMessage] = useState('');
   const { setUser } = useUserStore();
@@ -25,7 +39,6 @@ export default function VerifyCodeComponent({
     setMessage('');
     try {
       const result = await api.verify({ uid, code: value });
-      console.log('verify result', result);
       setShowState(true);
       const user = await api.getUser();
       console.log(user);
@@ -33,7 +46,9 @@ export default function VerifyCodeComponent({
       return onCheckDone(result);
     } catch (error) {
       console.log('error', error);
-      setMessage('Error code invalid or expired');
+      // setMessage('Error code invalid or expired');
+      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
+      setMessage(errorMessage);
     }
   }
 

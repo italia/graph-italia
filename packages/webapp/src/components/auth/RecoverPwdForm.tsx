@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import * as api from "../../lib/api";
+import { AxiosError } from "axios";
 
 function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
   const {
@@ -26,7 +27,8 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
       }, 1000);
     } catch (error) {
       console.error("Error:", error);
-      setMessage("" + error);
+      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
+      setMessage(errorMessage);
     }
   };
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as api from '../../lib/api';
 import { useUserStore } from '../../store/user_store';
+import { AxiosError } from 'axios';
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { setUser } = useUserStore();
@@ -31,7 +32,8 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessage('' + error);
+      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
+      setMessage(errorMessage);
     }
   };
 
