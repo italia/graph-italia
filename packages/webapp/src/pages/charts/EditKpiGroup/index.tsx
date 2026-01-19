@@ -7,6 +7,7 @@ import Loading from "../../../components/layout/Loading";
 import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
 import {
   KpiConfigForm,
+  KpiDropdown,
   KpiGroupForm,
   KpiGroupFormValues,
   type KpiConfigFormHandle,
@@ -141,13 +142,13 @@ function EditKpiGroup() {
                   },
                   index: number
                 ) => (
-                  <button
-                    key={`${ds.title}-${index}`}
-                    className="m-2 btn btn-xs btn-primary btn-outline"
-                    onClick={() => editKpiHandler(index)}
-                  >
-                    {ds.title}
-                  </button>
+                  <div key={`${ds.title}-${index}`} className="flex my-4 gap-4">
+                    <KpiDropdown
+                      title={ds.title}
+                      onEdit={() => editKpiHandler(index)}
+                      onDelete={() => deleteKpiHandler(index)}
+                    />
+                  </div>
                 )
               )}
             </div>
