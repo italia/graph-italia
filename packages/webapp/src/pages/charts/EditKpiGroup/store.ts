@@ -8,11 +8,14 @@ interface EditKpiGroupActions {
     reload: () => void;
     save: () => Promise<boolean>;
     addKpi: () => void;
+    editKpi: (index: number) => void;
     deleteKpi: (index: number) => void;
     closeFormModal: () => void;
+    closeEditKpiFormModal: () => void
     showConfigFormModal: () => void;
     closeConfigFormModal: (config?: KpiGroupConfigType) => void;
     saveKpi: (data: KpiGroupFormValues) => void;
+    updateKpi: (data: KpiGroupFormValues) => void;
 }
 
 type KpiGroupConfigType = Pick<ChartConfigType,
@@ -72,7 +75,10 @@ type EditKpiGroupState = {
     };
     showFormModal?: boolean;
     showConfigModal?: boolean;
+    showEditKpiGroupFormModal?: boolean;
     pendingChanges: boolean;
+    selectedKpi?: KpiGroupFormValues
+    selectedKpiIndex?: number
 }
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
@@ -118,8 +124,48 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         });
         console.log("KPI saved:", data);
     },
+    updateKpi: (data: KpiGroupFormValues) => {
+        const { kpiGroup, selectedKpiIndex } = get();
+
+        if (isNaN(Number(selectedKpiIndex))) {
+            throw new Error();
+        }
+
+        const dataSource = kpiGroup.dataSource;
+
+        set({
+            kpiGroup: {
+                ...kpiGroup,
+                dataSource: [
+                    ...dataSource.slice(0, selectedKpiIndex),
+                    data,
+                    ...dataSource.slice(selectedKpiIndex! + 1)
+                ]
+            },
+            showEditKpiGroupFormModal: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined
+        })
+    },
+    editKpi: (selectedKpiIndex: number) => {
+        const { kpiGroup } = get();
+        const selectedKpi = kpiGroup.dataSource[selectedKpiIndex];
+
+        set({
+            showEditKpiGroupFormModal: true,
+            selectedKpi,
+            selectedKpiIndex
+        })
+    },
     closeFormModal: () => {
         set({ showFormModal: false });
+    },
+    closeEditKpiFormModal: () => {
+        set({
+            showEditKpiGroupFormModal: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined
+        })
     },
     load: async (id: string) => {
         try {

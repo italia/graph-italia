@@ -21,13 +21,18 @@ function EditKpiGroup() {
     reload,
     save,
     addKpi,
+    editKpi,
     deleteKpi,
     saveKpi,
+    updateKpi,
     closeFormModal,
     showConfigFormModal,
     closeConfigFormModal,
+    closeEditKpiFormModal,
     showConfigModal,
     showFormModal,
+    showEditKpiGroupFormModal,
+    selectedKpi,
     vm,
     kpiGroup,
     isLoading,
@@ -50,6 +55,10 @@ function EditKpiGroup() {
     addKpi();
   }
 
+  function editKpiHandler(index: number) {
+    editKpi(index);
+  }
+
   function deleteKpiHandler(index: number) {
     deleteKpi(index);
   }
@@ -60,6 +69,10 @@ function EditKpiGroup() {
     saveKpi(data);
     //close form modal
     closeFormModal();
+  }
+
+  function updateKpiHandler(data: KpiGroupFormValues) {
+    updateKpi(data);
   }
 
   async function saveHandler() {
@@ -108,20 +121,19 @@ function EditKpiGroup() {
                 <h1 className="text-4xl font-bold">{vm.name}</h1>
                 <h4 className="text-xl">{vm.description}</h4>
               </div>
-              <button
-                className="btn btn-secondary"
-                onClick={changeConfigHandler}
-              >
-                Cambia configurazione
-              </button>
+              <div>
+                <button
+                  className="btn btn-secondary mr-4"
+                  onClick={changeConfigHandler}
+                >
+                  Cambia configurazione
+                </button>
+                <button className="btn btn-primary" onClick={addKpiHandler}>
+                  Aggiungi KPI +
+                </button>
+              </div>
             </div>
             <div className="flex flex-wrap items-center">
-              <button
-                className="m-2 btn btn-xs btn-primary"
-                onClick={addKpiHandler}
-              >
-                Aggiungi KPI +
-              </button>
               {kpiGroup.dataSource.map(
                 (
                   ds: {
@@ -131,8 +143,8 @@ function EditKpiGroup() {
                 ) => (
                   <button
                     key={`${ds.title}-${index}`}
-                    className="m-2 btn btn-xs btn-error"
-                    onClick={() => deleteKpiHandler(index)}
+                    className="m-2 btn btn-xs btn-primary btn-outline"
+                    onClick={() => editKpiHandler(index)}
                   >
                     {ds.title}
                   </button>
@@ -171,6 +183,27 @@ function EditKpiGroup() {
             }}
           >
             <KpiGroupForm onSubmit={saveKpiHandler} />
+          </GenericDialog>
+        )}
+        {showEditKpiGroupFormModal && (
+          <GenericDialog
+            toggle={showEditKpiGroupFormModal}
+            title="Modifica KPI Group"
+            confirmCb={() => {
+              document
+                .getElementById("kpi-group-form")
+                ?.dispatchEvent(
+                  new Event("submit", { cancelable: true, bubbles: true })
+                );
+            }}
+            cancelCb={() => {
+              closeEditKpiFormModal();
+            }}
+          >
+            <KpiGroupForm
+              onSubmit={updateKpiHandler}
+              initialValues={selectedKpi}
+            />
           </GenericDialog>
         )}
         {showConfigModal && (
