@@ -49,7 +49,7 @@ function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
       </button>
 
       {isOpen && (
-        <ul className="menu absolute top-full left-0 mt-1 bg-base-300 rounded-box z-10 w-52 p-2 shadow-lg border">
+        <ul className="menu absolute top-full left-0 mt-1 bg-base-300 rounded-box z-10 w-32 p-2 shadow-lg border">
           <li>
             <span className="text-sm" onClick={handleEdit}>
               Edit
