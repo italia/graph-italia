@@ -51,10 +51,14 @@ function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
       {isOpen && (
         <ul className="menu absolute top-full left-0 mt-1 bg-base-300 rounded-box z-10 w-52 p-2 shadow-lg border">
           <li>
-            <span onClick={handleEdit}>Edit</span>
+            <span className="text-sm" onClick={handleEdit}>
+              Edit
+            </span>
           </li>
           <li>
-            <span onClick={handleDelete}>Delete</span>
+            <span className="text-sm" onClick={handleDelete}>
+              Delete
+            </span>
           </li>
         </ul>
       )}
