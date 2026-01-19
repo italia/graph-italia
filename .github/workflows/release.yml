@@ -11,6 +11,13 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
+    inputs:
+      no_cache:
+        description: 'Build without Docker cache'
+        required: false
+        default: false
+        type: boolean
 
 env:
   REGISTRY: ghcr.io
@@ -83,7 +90,8 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ matrix.image }}:${{ needs.prepare.outputs.version }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ matrix.image }}:latest
           platforms: linux/amd64
-          cache-from: type=gha,scope=${{ matrix.component }}
+          no-cache: ${{ inputs.no_cache || false }}
+          cache-from: ${{ (!inputs.no_cache && format('type=gha,scope={0}', matrix.component)) || '' }}
           cache-to: type=gha,mode=max,scope=${{ matrix.component }}
 
   package-helm:
