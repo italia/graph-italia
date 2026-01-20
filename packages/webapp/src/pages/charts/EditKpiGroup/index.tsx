@@ -6,9 +6,11 @@ import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
 import {
+  KPI_FORM_ID,
   KpiConfigForm,
-  KpiGroupForm,
-  KpiGroupFormValues,
+  KpiDropdown,
+  KpiForm,
+  KpiFormValues,
   type KpiConfigFormHandle,
 } from "./components";
 import useEditKpiGroupStore from "./store";
@@ -20,14 +22,22 @@ function EditKpiGroup() {
     load,
     reload,
     save,
+    showAddKpiFormModal,
+    showEditKpiFormModal,
     addKpi,
-    deleteKpi,
-    saveKpi,
-    closeFormModal,
+    updateKpi,
+    closeKpiGroupFormModal,
     showConfigFormModal,
     closeConfigFormModal,
-    showConfigModal,
-    showFormModal,
+    closeEditKpiFormModal,
+    cancelDeleteModal,
+    confirmDeleteModal,
+    showDeleteKpiModal,
+    deleteModalVisible,
+    configModalVisible,
+    addKpiFormModalVisible,
+    editKpiGroupFormModalVisible,
+    selectedKpi,
     vm,
     kpiGroup,
     isLoading,
@@ -47,19 +57,23 @@ function EditKpiGroup() {
   }
 
   function addKpiHandler() {
-    addKpi();
+    showAddKpiFormModal();
+  }
+
+  function editKpiHandler(index: number) {
+    showEditKpiFormModal(index);
   }
 
   function deleteKpiHandler(index: number) {
-    deleteKpi(index);
+    showDeleteKpiModal(index);
   }
 
-  function saveKpiHandler(data: KpiGroupFormValues) {
-    //update store with new kpi
-    console.log("KPI data to save:", data);
-    saveKpi(data);
-    //close form modal
-    closeFormModal();
+  function saveKpiHandler(data: KpiFormValues) {
+    addKpi(data);
+  }
+
+  function updateKpiHandler(data: KpiFormValues) {
+    updateKpi(data);
   }
 
   async function saveHandler() {
@@ -84,14 +98,15 @@ function EditKpiGroup() {
       <div className="p-4">
         <div className="flex justify-between items-center">
           <Link to="/home" className="text-blue-500 hover:underline">
-            &lt; Torna alla lista
+            {/* &lt; Torna alla lista */}
+            &lt; Back to the list
           </Link>
           <div className="ml-auto flex space-x-2">
             <button onClick={resetHandler} className="btn btn-danger">
               Reset
             </button>
             <button onClick={saveHandler} className="btn btn-primary">
-              Salva
+              Save
             </button>
           </div>
         </div>
@@ -108,41 +123,41 @@ function EditKpiGroup() {
                 <h1 className="text-4xl font-bold">{vm.name}</h1>
                 <h4 className="text-xl">{vm.description}</h4>
               </div>
-              <button
-                className="btn btn-secondary"
-                onClick={changeConfigHandler}
-              >
-                Cambia configurazione
-              </button>
+              <div>
+                <button
+                  className="btn btn-secondary mr-4"
+                  onClick={changeConfigHandler}
+                >
+                  Change configuration
+                </button>
+                <button className="btn btn-primary" onClick={addKpiHandler}>
+                  Add KPI +
+                </button>
+              </div>
             </div>
             <div className="flex flex-wrap items-center">
-              <button
-                className="m-2 btn btn-xs btn-primary"
-                onClick={addKpiHandler}
-              >
-                Aggiungi KPI +
-              </button>
               {kpiGroup.dataSource.map(
                 (
                   ds: {
                     title: string;
                   },
-                  index: number
+                  index: number,
                 ) => (
-                  <button
-                    key={`${ds.title}-${index}`}
-                    className="m-2 btn btn-xs btn-error"
-                    onClick={() => deleteKpiHandler(index)}
-                  >
-                    {ds.title}
-                  </button>
-                )
+                  <div key={`${ds.title}-${index}`} className="flex my-4 gap-4">
+                    <KpiDropdown
+                      title={ds.title}
+                      onEdit={() => editKpiHandler(index)}
+                      onDelete={() => deleteKpiHandler(index)}
+                    />
+                  </div>
+                ),
               )}
             </div>
             <div className="relative border min-h-[60vh]">
               {kpiGroup.dataSource.length === 0 && (
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-500">
-                  Nessun KPI presente. Aggiungi un nuovo KPI.
+                  {/* Nessun KPI presente. Aggiungi un nuovo KPI. */}
+                  No KPIs. Add a new KPI.
                 </div>
               )}
               {kpiGroup.dataSource.length > 0 && (
@@ -155,28 +170,46 @@ function EditKpiGroup() {
             </div>
           </>
         )}
-        {showFormModal && (
+        {addKpiFormModalVisible && (
           <GenericDialog
-            toggle={showFormModal}
-            title="Nuovo KPI Group"
+            toggle={addKpiFormModalVisible}
+            title="New KPI"
             confirmCb={() => {
               document
-                .getElementById("kpi-group-form")
+                .getElementById(KPI_FORM_ID)
                 ?.dispatchEvent(
-                  new Event("submit", { cancelable: true, bubbles: true })
+                  new Event("submit", { cancelable: true, bubbles: true }),
                 );
             }}
             cancelCb={() => {
-              closeFormModal();
+              closeKpiGroupFormModal();
             }}
           >
-            <KpiGroupForm onSubmit={saveKpiHandler} />
+            <KpiForm onSubmit={saveKpiHandler} />
           </GenericDialog>
         )}
-        {showConfigModal && (
+        {editKpiGroupFormModalVisible && (
           <GenericDialog
-            toggle={showConfigModal}
-            title="Configurazione KPI Group"
+            toggle={editKpiGroupFormModalVisible}
+            title="Edit KPI"
+            confirmCb={() => {
+              document
+                .getElementById(KPI_FORM_ID)
+                ?.dispatchEvent(
+                  new Event("submit", { cancelable: true, bubbles: true }),
+                );
+            }}
+            cancelCb={() => {
+              closeEditKpiFormModal();
+            }}
+          >
+            <KpiForm onSubmit={updateKpiHandler} initialValues={selectedKpi} />
+          </GenericDialog>
+        )}
+        {configModalVisible && (
+          <GenericDialog
+            toggle={configModalVisible}
+            title="KPI Group Configuration"
             confirmCb={() => {
               const formData = kpiConfigFormRef.current?.getFormData();
               console.log("Configurazione KPI Group:", formData);
@@ -189,14 +222,26 @@ function EditKpiGroup() {
             <KpiConfigForm ref={kpiConfigFormRef} config={kpiGroup.config} />
           </GenericDialog>
         )}
+        {deleteModalVisible && (
+          <GenericDialog
+            toggle={deleteModalVisible}
+            title="Confirm deletion"
+            confirmCb={confirmDeleteModal}
+            cancelCb={cancelDeleteModal}
+          >
+            {/* <p>Sei sicuro di voler cancellare il KPI {selectedKpi?.title}</p> */}
+            <p>Do you want to delete KPI with title {selectedKpi?.title}?</p>
+          </GenericDialog>
+        )}
         {showConfirmNavigationModal && (
           <GenericDialog
             toggle={showConfirmNavigationModal}
-            title="Conferma navigazione"
+            title="Confirm exit"
             confirmCb={confirmNavigationModal}
             cancelCb={cancelNavigationModal}
           >
-            <p>Sei sicuro di voler uscire senza salvare le modifiche?</p>
+            {/* <p>Sei sicuro di voler uscire senza salvare le modifiche?</p> */}
+            <p>Do you want to exit without saving?</p>
           </GenericDialog>
         )}
       </div>

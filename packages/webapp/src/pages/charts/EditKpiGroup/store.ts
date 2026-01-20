@@ -1,38 +1,28 @@
-import { ChartConfigType, FieldDataType } from 'dataviz-components';
-import { create } from 'zustand';
+import { ChartConfigType, FieldDataType } from "dataviz-components";
+import { create } from "zustand";
 import * as api from "../../../lib/api";
-import { KpiGroupFormValues } from './components/kpi-group-form';
+import { KpiFormValues } from "./components/kpi-form";
 
-interface EditKpiGroupActions {
-    load: (id: string) => void;
-    reload: () => void;
-    save: () => Promise<boolean>;
-    addKpi: () => void;
-    deleteKpi: (index: number) => void;
-    closeFormModal: () => void;
-    showConfigFormModal: () => void;
-    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
-    saveKpi: (data: KpiGroupFormValues) => void;
-}
-
-type KpiGroupConfigType = Pick<ChartConfigType,
-    'direction' |
-    'h' |
-    'labeLine' |
-    'legend' |
-    'legendPosition' |
-    'palette' |
-    'tooltip' |
-    'tooltipFormatter' |
-    'valueFormatter' |
-    'totalLabel' |
-    'tooltipTrigger' |
-    'colors' |
-    'background'>;
+type KpiGroupConfigType = Pick<
+    ChartConfigType,
+    | "direction"
+    | "h"
+    | "labeLine"
+    | "legend"
+    | "legendPosition"
+    | "palette"
+    | "tooltip"
+    | "tooltipFormatter"
+    | "valueFormatter"
+    | "totalLabel"
+    | "tooltipTrigger"
+    | "colors"
+    | "background"
+>;
 
 type KpiGroupFieldDataType = FieldDataType & {
     config: KpiGroupConfigType;
-}
+};
 
 const defaultKpiGroupData: KpiGroupFieldDataType = {
     id: "kpi-group2",
@@ -54,15 +44,15 @@ const defaultKpiGroupData: KpiGroupFieldDataType = {
         background: "skyblue",
     },
     data: null,
-}
+};
 
 type EditKpiGroupVM = {
     name: string;
-    description: string,
-}
+    description: string;
+};
 
 type EditKpiGroupState = {
-    id?: string
+    id?: string;
     vm: EditKpiGroupVM;
     kpiGroup: KpiGroupFieldDataType;
     isLoading: boolean;
@@ -70,56 +60,148 @@ type EditKpiGroupState = {
     error?: {
         message: string;
     };
-    showFormModal?: boolean;
-    showConfigModal?: boolean;
+    addKpiFormModalVisible?: boolean;
+    configModalVisible?: boolean;
+    editKpiGroupFormModalVisible?: boolean;
+    deleteModalVisible?: boolean;
     pendingChanges: boolean;
+    selectedKpi?: KpiFormValues;
+    selectedKpiIndex?: number;
+};
+
+interface EditKpiGroupActions {
+    // server ops
+    load: (id: string) => void;
+    reload: () => void;
+    save: () => Promise<boolean>;
+    // add modal
+    showAddKpiFormModal: () => void;
+    closeKpiGroupFormModal: () => void;
+    // edit modal
+    showEditKpiFormModal: (index: number) => void;
+    closeEditKpiFormModal: () => void;
+    // config modal
+    showConfigFormModal: () => void;
+    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
+    // delete modal
+    confirmDeleteModal: () => void;
+    cancelDeleteModal: () => void;
+    showDeleteKpiModal: (index: number) => void;
+    // add or update KPIs to the state
+    addKpi: (data: KpiFormValues) => void;
+    updateKpi: (data: KpiFormValues) => void;
 }
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
-    vm: { name: '', description: '' },
+    vm: { name: "", description: "" },
     kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
     pendingChanges: false,
     showConfigFormModal: () => {
-        set({ showConfigModal: true });
+        set({ configModalVisible: true });
     },
     closeConfigFormModal: (config) => {
         // Implement the logic to change the configuration
         if (config) {
             const { kpiGroup } = get();
             set({
-                showConfigModal: false,
+                configModalVisible: false,
                 kpiGroup: { ...kpiGroup, config: { ...config } },
-                pendingChanges: true
+                pendingChanges: true,
             });
         } else {
-            set({ showConfigModal: false });
+            set({ configModalVisible: false });
         }
     },
-    addKpi: () => {
+    showAddKpiFormModal: () => {
         console.log("add item");
-        set({ showFormModal: true });
+        set({ addKpiFormModalVisible: true });
     },
-    deleteKpi: (index: number) => {
+    addKpi: (data: KpiFormValues) => {
         const { kpiGroup } = get();
         set({
-            kpiGroup: { ...kpiGroup, dataSource: kpiGroup.dataSource.filter((_: unknown, i: number) => i !== index) },
-            pendingChanges: true
-        });
-    },
-    saveKpi: (data: KpiGroupFormValues) => {
-        const { kpiGroup } = get();
-        set({
-            kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data], },
-            pendingChanges: true
+            kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] },
+            pendingChanges: true,
+            addKpiFormModalVisible: false,
         });
         console.log("KPI saved:", data);
     },
-    closeFormModal: () => {
-        set({ showFormModal: false });
+    updateKpi: (data: KpiFormValues) => {
+        const { kpiGroup, selectedKpiIndex } = get();
+
+        if (isNaN(Number(selectedKpiIndex))) {
+            throw new Error();
+        }
+
+        const dataSource = kpiGroup.dataSource;
+
+        set({
+            kpiGroup: {
+                ...kpiGroup,
+                dataSource: [
+                    ...dataSource.slice(0, selectedKpiIndex),
+                    data,
+                    ...dataSource.slice(selectedKpiIndex! + 1),
+                ],
+            },
+            editKpiGroupFormModalVisible: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined,
+        });
+    },
+    showEditKpiFormModal: (selectedKpiIndex: number) => {
+        const { kpiGroup } = get();
+        const selectedKpi = kpiGroup.dataSource[selectedKpiIndex];
+
+        set({
+            editKpiGroupFormModalVisible: true,
+            selectedKpi,
+            selectedKpiIndex,
+        });
+    },
+    showDeleteKpiModal: (selectedKpiIndex: number) => {
+        const { kpiGroup } = get();
+        const selectedKpi = kpiGroup.dataSource[selectedKpiIndex];
+        set({
+            deleteModalVisible: true,
+            selectedKpi,
+            selectedKpiIndex,
+        });
+    },
+    confirmDeleteModal: () => {
+        const { kpiGroup, selectedKpiIndex } = get();
+        set({
+            kpiGroup: {
+                ...kpiGroup,
+                dataSource: kpiGroup.dataSource.filter(
+                    (_: unknown, i: number) => i !== selectedKpiIndex,
+                ),
+            },
+            pendingChanges: true,
+            deleteModalVisible: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined,
+        });
+    },
+    cancelDeleteModal: () => {
+        set({
+            deleteModalVisible: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined,
+        });
+    },
+    closeKpiGroupFormModal: () => {
+        set({ addKpiFormModalVisible: false });
+    },
+    closeEditKpiFormModal: () => {
+        set({
+            editKpiGroupFormModalVisible: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined,
+        });
     },
     load: async (id: string) => {
         try {
@@ -133,7 +215,11 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                     loaded: true,
                     id,
                     pendingChanges: false,
-                    kpiGroup: { ...defaultKpiGroupData, config: { ...config }, dataSource }
+                    kpiGroup: {
+                        ...defaultKpiGroupData,
+                        config: { ...config },
+                        dataSource,
+                    },
                 });
             }
         } catch (error) {
@@ -157,7 +243,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             payload: {
                 config: kpiGroup.config,
                 dataSource: kpiGroup.dataSource,
-            }
+            },
         });
 
         set({ pendingChanges: false });
