@@ -60,7 +60,7 @@ type EditKpiGroupState = {
     error?: {
         message: string;
     };
-    kpiGroupFormModalVisible?: boolean;
+    addKpiFormModalVisible?: boolean;
     configModalVisible?: boolean;
     editKpiGroupFormModalVisible?: boolean;
     deleteModalVisible?: boolean;
@@ -118,7 +118,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     },
     showAddKpiFormModal: () => {
         console.log("add item");
-        set({ kpiGroupFormModalVisible: true });
+        set({ addKpiFormModalVisible: true });
     },
     addKpi: (data: KpiFormValues) => {
         const { kpiGroup } = get();
@@ -193,7 +193,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         });
     },
     closeKpiGroupFormModal: () => {
-        set({ kpiGroupFormModalVisible: false });
+        set({ addKpiFormModalVisible: false });
     },
     closeEditKpiFormModal: () => {
         set({

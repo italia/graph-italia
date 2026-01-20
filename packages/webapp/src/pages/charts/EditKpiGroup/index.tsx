@@ -35,7 +35,7 @@ function EditKpiGroup() {
     showDeleteKpiModal,
     deleteModalVisible,
     configModalVisible,
-    kpiGroupFormModalVisible,
+    addKpiFormModalVisible,
     editKpiGroupFormModalVisible,
     selectedKpi,
     vm,
@@ -174,9 +174,9 @@ function EditKpiGroup() {
             </div>
           </>
         )}
-        {kpiGroupFormModalVisible && (
+        {addKpiFormModalVisible && (
           <GenericDialog
-            toggle={kpiGroupFormModalVisible}
+            toggle={addKpiFormModalVisible}
             title="New KPI"
             confirmCb={() => {
               document
