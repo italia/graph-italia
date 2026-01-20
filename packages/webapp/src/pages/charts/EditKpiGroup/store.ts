@@ -79,7 +79,7 @@ type EditKpiGroupState = {
         message: string;
     };
     kpiGroupFormModalVisible?: boolean;
-    showConfigModal?: boolean;
+    configModalVisible?: boolean;
     showEditKpiGroupFormModal?: boolean;
     showDeleteModal?: boolean;
     pendingChanges: boolean;
@@ -96,19 +96,19 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     loaded: false,
     pendingChanges: false,
     showConfigFormModal: () => {
-        set({ showConfigModal: true });
+        set({ configModalVisible: true });
     },
     closeConfigFormModal: (config) => {
         // Implement the logic to change the configuration
         if (config) {
             const { kpiGroup } = get();
             set({
-                showConfigModal: false,
+                configModalVisible: false,
                 kpiGroup: { ...kpiGroup, config: { ...config } },
                 pendingChanges: true,
             });
         } else {
-            set({ showConfigModal: false });
+            set({ configModalVisible: false });
         }
     },
     addKpi: () => {

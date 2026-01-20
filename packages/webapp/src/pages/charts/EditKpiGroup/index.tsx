@@ -34,7 +34,7 @@ function EditKpiGroup() {
     confirmDeleteModal,
     showDeleteKpiModal,
     showDeleteModal,
-    showConfigModal,
+    configModalVisible,
     kpiGroupFormModalVisible,
     showEditKpiGroupFormModal,
     selectedKpi,
@@ -211,9 +211,9 @@ function EditKpiGroup() {
             />
           </GenericDialog>
         )}
-        {showConfigModal && (
+        {configModalVisible && (
           <GenericDialog
-            toggle={showConfigModal}
+            toggle={configModalVisible}
             title="Configurazione KPI Group"
             confirmCb={() => {
               const formData = kpiConfigFormRef.current?.getFormData();
