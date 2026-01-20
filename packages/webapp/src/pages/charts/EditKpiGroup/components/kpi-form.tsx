@@ -15,6 +15,8 @@ export type KpiFormValues = {
   footer_text?: string;
 };
 
+export const KPI_FORM_ID = "kpi-form";
+
 const defaultValues: KpiFormValues = {
   title: "",
   value: "",
@@ -45,7 +47,7 @@ export function KpiForm({
 
   return (
     <form
-      id="kpi-form"
+      id={KPI_FORM_ID}
       onSubmit={handleSubmit(onSubmitHandler)}
       className="w-full"
     >

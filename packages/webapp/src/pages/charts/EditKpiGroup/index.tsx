@@ -6,6 +6,7 @@ import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
 import {
+  KPI_FORM_ID,
   KpiConfigForm,
   KpiDropdown,
   KpiForm,
@@ -177,7 +178,7 @@ function EditKpiGroup() {
             title="Nuovo KPI Group"
             confirmCb={() => {
               document
-                .getElementById("kpi-form")
+                .getElementById(KPI_FORM_ID)
                 ?.dispatchEvent(
                   new Event("submit", { cancelable: true, bubbles: true }),
                 );
@@ -195,7 +196,7 @@ function EditKpiGroup() {
             title="Modifica KPI Group"
             confirmCb={() => {
               document
-                .getElementById("kpi-form")
+                .getElementById(KPI_FORM_ID)
                 ?.dispatchEvent(
                   new Event("submit", { cancelable: true, bubbles: true }),
                 );
