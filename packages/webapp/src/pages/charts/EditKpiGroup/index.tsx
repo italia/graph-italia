@@ -33,7 +33,7 @@ function EditKpiGroup() {
     cancelDeleteModal,
     confirmDeleteModal,
     showDeleteKpiModal,
-    showDeleteModal,
+    deleteModalVisible,
     configModalVisible,
     kpiGroupFormModalVisible,
     editKpiGroupFormModalVisible,
@@ -228,9 +228,9 @@ function EditKpiGroup() {
           </GenericDialog>
         )}
         ,
-        {showDeleteModal && (
+        {deleteModalVisible && (
           <GenericDialog
-            toggle={showDeleteModal}
+            toggle={deleteModalVisible}
             title="Conferma cancellazione"
             confirmCb={confirmDeleteModal}
             cancelCb={cancelDeleteModal}

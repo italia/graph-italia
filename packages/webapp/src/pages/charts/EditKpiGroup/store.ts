@@ -81,7 +81,7 @@ type EditKpiGroupState = {
     kpiGroupFormModalVisible?: boolean;
     configModalVisible?: boolean;
     editKpiGroupFormModalVisible?: boolean;
-    showDeleteModal?: boolean;
+    deleteModalVisible?: boolean;
     pendingChanges: boolean;
     selectedKpi?: KpiGroupFormValues;
     selectedKpiIndex?: number;
@@ -172,7 +172,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         const { kpiGroup } = get();
         const selectedKpi = kpiGroup.dataSource[selectedKpiIndex];
         set({
-            showDeleteModal: true,
+            deleteModalVisible: true,
             selectedKpi,
             selectedKpiIndex,
         });
@@ -187,14 +187,14 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                 ),
             },
             pendingChanges: true,
-            showDeleteModal: false,
+            deleteModalVisible: false,
             selectedKpi: undefined,
             selectedKpiIndex: undefined,
         });
     },
     cancelDeleteModal: () => {
         set({
-            showDeleteModal: false,
+            deleteModalVisible: false,
             selectedKpi: undefined,
             selectedKpiIndex: undefined,
         });
