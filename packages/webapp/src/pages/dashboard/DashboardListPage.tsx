@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Panel, PanelGroup } from 'react-resizable-panels';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Panel, PanelGroup } from "react-resizable-panels";
+import { useNavigate } from "react-router-dom";
 
-import type { FieldDataType } from '../../types';
+import type { FieldDataType } from "../../types";
 
-import * as api from '../../lib/api';
-import Layout from '../../components/layout';
-import Loading from '../../components/layout/Loading';
-import DashboardList from '../../components/DashboardList';
-import ConfirmDialog from '../../components/layout/ConfirmDialog';
-import GenericDialog from '../../components/layout/GenericDialog';
-import useDashboardsStoreState from '../../lib/dashboardListStore';
+import DashboardList from "../../components/DashboardList";
+import Layout from "../../components/layout";
+import ConfirmDialog from "../../components/layout/ConfirmDialog";
+import GenericDialog from "../../components/layout/GenericDialog";
+import Loading from "../../components/layout/Loading";
+import * as api from "../../lib/api";
+import useDashboardsStoreState from "../../lib/dashboardListStore";
 
 function DashboardsPage() {
   const { list, setList } = useDashboardsStoreState((state) => state);
@@ -130,24 +130,24 @@ function DashboardsPage() {
 
   return (
     <Layout>
-      <PanelGroup direction='horizontal' className='w-full'>
-        <Panel defaultSize={30} minSize={20} className='bg-base-100'>
-          <div className='p-4'>
+      <PanelGroup direction="horizontal" className="w-full">
+        <Panel defaultSize={30} minSize={20} className="bg-base-100">
+          <div className="p-4">
             <div>
               {loading ? (
                 <Loading />
               ) : (
                 <>
-                  <h4 className='text-4xl font-bold'>
-                    {list && list.length ? 'My Dashboards' : 'Welcome'}
+                  <h4 className="text-4xl font-bold">
+                    {list && list.length ? "My Dashboards" : "Welcome"}
                   </h4>
                   <div>
-                    <div className='flex my-5 gap-4'>
+                    <div className="flex my-5 gap-4">
                       <div
-                        className='btn btn-primary'
+                        className="btn btn-primary"
                         onClick={createClickHandler}
                       >
-                        + Aggiungi dashboard
+                        + Create dashboard
                       </div>
                     </div>
                   </div>
@@ -155,7 +155,7 @@ function DashboardsPage() {
                     list={list}
                     handleDeleteDashboard={deleteClickHandler}
                     handleEditDashboard={(item) => {
-                      editClickHandler(item.id ?? '');
+                      editClickHandler(item.id ?? "");
                     }}
                     handleViewDashboard={viewClickHandler}
                   ></DashboardList>
@@ -165,8 +165,8 @@ function DashboardsPage() {
             {showCreateModal && (
               <GenericDialog
                 toggle={showCreateModal}
-                title='Aggiungi Dashboard'
-                labels={{ confirm: 'Aggiungi', cancel: 'Annulla' }}
+                title="Aggiungi Dashboard"
+                labels={{ confirm: "Aggiungi", cancel: "Annulla" }}
                 confirmCb={() => {
                   if (!newDashboard) {
                     return;
@@ -177,13 +177,13 @@ function DashboardsPage() {
                   createModalCancelHandler();
                 }}
               >
-                <div className='bg-base-200'>
-                  <div className='p-4 my-5'>
-                    <label className='name'>Nome</label>
+                <div className="bg-base-200">
+                  <div className="p-4 my-5">
+                    <label className="name">Nome</label>
                     <input
-                      className='input w-full'
-                      type='text'
-                      name='name'
+                      className="input w-full"
+                      type="text"
+                      name="name"
                       onChange={(e) => {
                         const name = e.target.value;
                         const oldValue =
@@ -193,12 +193,12 @@ function DashboardsPage() {
                       }}
                     />
                   </div>
-                  <div className='p-4 my-5'>
-                    <label className='name'>Descrizione</label>
+                  <div className="p-4 my-5">
+                    <label className="name">Descrizione</label>
                     <input
-                      className='input w-full'
-                      type='text'
-                      name='description'
+                      className="input w-full"
+                      type="text"
+                      name="description"
                       onChange={(e) => {
                         const description = e.target.value;
                         const oldValue =
@@ -214,7 +214,7 @@ function DashboardsPage() {
             {showDeleteModal && (
               <ConfirmDialog
                 toggle={showDeleteModal}
-                title='Cancellazione Dashboard'
+                title="Cancellazione Dashboard"
                 message={`Vuoi cancellare la dashboard ${selectedItem?.name}?`}
                 confirmCb={dialogConfirmModalHandler}
                 cancelCb={dialogCancelModalHandler}
