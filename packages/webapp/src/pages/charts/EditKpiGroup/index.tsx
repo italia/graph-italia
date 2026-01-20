@@ -222,7 +222,6 @@ function EditKpiGroup() {
             <KpiConfigForm ref={kpiConfigFormRef} config={kpiGroup.config} />
           </GenericDialog>
         )}
-        ,
         {deleteModalVisible && (
           <GenericDialog
             toggle={deleteModalVisible}
