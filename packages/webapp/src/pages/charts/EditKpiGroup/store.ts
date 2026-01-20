@@ -8,8 +8,8 @@ interface EditKpiGroupActions {
     reload: () => void;
     save: () => Promise<boolean>;
     addKpi: () => void;
-    editKpi: (index: number) => void;
     deleteKpi: (index: number) => void;
+    showEditKpiFormModal: (index: number) => void;
     closeKpiGroupFormModal: () => void;
     closeEditKpiFormModal: () => void;
     showConfigFormModal: () => void;
@@ -80,7 +80,7 @@ type EditKpiGroupState = {
     };
     kpiGroupFormModalVisible?: boolean;
     configModalVisible?: boolean;
-    showEditKpiGroupFormModal?: boolean;
+    editKpiGroupFormModalVisible?: boolean;
     showDeleteModal?: boolean;
     pendingChanges: boolean;
     selectedKpi?: KpiGroupFormValues;
@@ -153,17 +153,17 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                     ...dataSource.slice(selectedKpiIndex! + 1),
                 ],
             },
-            showEditKpiGroupFormModal: false,
+            editKpiGroupFormModalVisible: false,
             selectedKpi: undefined,
             selectedKpiIndex: undefined,
         });
     },
-    editKpi: (selectedKpiIndex: number) => {
+    showEditKpiFormModal: (selectedKpiIndex: number) => {
         const { kpiGroup } = get();
         const selectedKpi = kpiGroup.dataSource[selectedKpiIndex];
 
         set({
-            showEditKpiGroupFormModal: true,
+            editKpiGroupFormModalVisible: true,
             selectedKpi,
             selectedKpiIndex,
         });
@@ -204,7 +204,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     },
     closeEditKpiFormModal: () => {
         set({
-            showEditKpiGroupFormModal: false,
+            editKpiGroupFormModalVisible: false,
             selectedKpi: undefined,
             selectedKpiIndex: undefined,
         });
