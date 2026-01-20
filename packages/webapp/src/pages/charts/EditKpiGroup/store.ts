@@ -1,7 +1,7 @@
 import { ChartConfigType, FieldDataType } from "dataviz-components";
 import { create } from "zustand";
 import * as api from "../../../lib/api";
-import { KpiGroupFormValues } from "./components/kpi-group-form";
+import { KpiFormValues } from "./components/kpi-form";
 
 type KpiGroupConfigType = Pick<
     ChartConfigType,
@@ -65,7 +65,7 @@ type EditKpiGroupState = {
     editKpiGroupFormModalVisible?: boolean;
     deleteModalVisible?: boolean;
     pendingChanges: boolean;
-    selectedKpi?: KpiGroupFormValues;
+    selectedKpi?: KpiFormValues;
     selectedKpiIndex?: number;
 };
 
@@ -88,8 +88,8 @@ interface EditKpiGroupActions {
     cancelDeleteModal: () => void;
     showDeleteKpiModal: (index: number) => void;
     // add or update KPIs to the state
-    addKpi: (data: KpiGroupFormValues) => void;
-    updateKpi: (data: KpiGroupFormValues) => void;
+    addKpi: (data: KpiFormValues) => void;
+    updateKpi: (data: KpiFormValues) => void;
 }
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
@@ -120,7 +120,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         console.log("add item");
         set({ kpiGroupFormModalVisible: true });
     },
-    addKpi: (data: KpiGroupFormValues) => {
+    addKpi: (data: KpiFormValues) => {
         const { kpiGroup } = get();
         set({
             kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] },
@@ -128,7 +128,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         });
         console.log("KPI saved:", data);
     },
-    updateKpi: (data: KpiGroupFormValues) => {
+    updateKpi: (data: KpiFormValues) => {
         const { kpiGroup, selectedKpiIndex } = get();
 
         if (isNaN(Number(selectedKpiIndex))) {

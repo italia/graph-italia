@@ -8,8 +8,8 @@ import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
 import {
   KpiConfigForm,
   KpiDropdown,
-  KpiGroupForm,
-  KpiGroupFormValues,
+  KpiForm,
+  KpiFormValues,
   type KpiConfigFormHandle,
 } from "./components";
 import useEditKpiGroupStore from "./store";
@@ -67,7 +67,7 @@ function EditKpiGroup() {
     showDeleteKpiModal(index);
   }
 
-  function saveKpiHandler(data: KpiGroupFormValues) {
+  function saveKpiHandler(data: KpiFormValues) {
     //update store with new kpi
     console.log("KPI data to save:", data);
     addKpi(data);
@@ -75,7 +75,7 @@ function EditKpiGroup() {
     closeKpiGroupFormModal();
   }
 
-  function updateKpiHandler(data: KpiGroupFormValues) {
+  function updateKpiHandler(data: KpiFormValues) {
     updateKpi(data);
   }
 
@@ -177,7 +177,7 @@ function EditKpiGroup() {
             title="Nuovo KPI Group"
             confirmCb={() => {
               document
-                .getElementById("kpi-group-form")
+                .getElementById("kpi-form")
                 ?.dispatchEvent(
                   new Event("submit", { cancelable: true, bubbles: true }),
                 );
@@ -186,7 +186,7 @@ function EditKpiGroup() {
               closeKpiGroupFormModal();
             }}
           >
-            <KpiGroupForm onSubmit={saveKpiHandler} />
+            <KpiForm onSubmit={saveKpiHandler} />
           </GenericDialog>
         )}
         {editKpiGroupFormModalVisible && (
@@ -195,7 +195,7 @@ function EditKpiGroup() {
             title="Modifica KPI Group"
             confirmCb={() => {
               document
-                .getElementById("kpi-group-form")
+                .getElementById("kpi-form")
                 ?.dispatchEvent(
                   new Event("submit", { cancelable: true, bubbles: true }),
                 );
@@ -204,10 +204,7 @@ function EditKpiGroup() {
               closeEditKpiFormModal();
             }}
           >
-            <KpiGroupForm
-              onSubmit={updateKpiHandler}
-              initialValues={selectedKpi}
-            />
+            <KpiForm onSubmit={updateKpiHandler} initialValues={selectedKpi} />
           </GenericDialog>
         )}
         {configModalVisible && (

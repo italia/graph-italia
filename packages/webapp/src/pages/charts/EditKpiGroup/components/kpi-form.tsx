@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 
-export type KpiGroupFormValues = {
+export type KpiFormValues = {
   title: string;
   openDataPath?: string;
   show_flow?: boolean;
@@ -15,19 +15,19 @@ export type KpiGroupFormValues = {
   footer_text?: string;
 };
 
-const defaultValues: KpiGroupFormValues = {
+const defaultValues: KpiFormValues = {
   title: "",
   value: "",
 };
 
-export function KpiGroupForm({
+export function KpiForm({
   initialValues = {},
   onSubmit,
 }: {
-  initialValues?: Partial<KpiGroupFormValues>;
-  onSubmit?: (data: KpiGroupFormValues) => void;
+  initialValues?: Partial<KpiFormValues>;
+  onSubmit?: (data: KpiFormValues) => void;
 }) {
-  const { register, handleSubmit, watch } = useForm<KpiGroupFormValues>({
+  const { register, handleSubmit, watch } = useForm<KpiFormValues>({
     defaultValues: {
       ...defaultValues,
       ...initialValues,
@@ -36,7 +36,7 @@ export function KpiGroupForm({
 
   const showFlow = watch("show_flow");
 
-  const onSubmitHandler = (data: KpiGroupFormValues) => {
+  const onSubmitHandler = (data: KpiFormValues) => {
     console.log(data);
     if (onSubmit) {
       onSubmit(data);
@@ -45,7 +45,7 @@ export function KpiGroupForm({
 
   return (
     <form
-      id="kpi-group-form"
+      id="kpi-form"
       onSubmit={handleSubmit(onSubmitHandler)}
       className="w-full"
     >
