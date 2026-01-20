@@ -102,14 +102,15 @@ function EditKpiGroup() {
       <div className="p-4">
         <div className="flex justify-between items-center">
           <Link to="/home" className="text-blue-500 hover:underline">
-            &lt; Torna alla lista
+            {/* &lt; Torna alla lista */}
+            &lt; Back to the list
           </Link>
           <div className="ml-auto flex space-x-2">
             <button onClick={resetHandler} className="btn btn-danger">
               Reset
             </button>
             <button onClick={saveHandler} className="btn btn-primary">
-              Salva
+              Save
             </button>
           </div>
         </div>
@@ -131,10 +132,10 @@ function EditKpiGroup() {
                   className="btn btn-secondary mr-4"
                   onClick={changeConfigHandler}
                 >
-                  Cambia configurazione
+                  Change configuration
                 </button>
                 <button className="btn btn-primary" onClick={addKpiHandler}>
-                  Aggiungi KPI +
+                  Add KPI +
                 </button>
               </div>
             </div>
@@ -159,7 +160,8 @@ function EditKpiGroup() {
             <div className="relative border min-h-[60vh]">
               {kpiGroup.dataSource.length === 0 && (
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-500">
-                  Nessun KPI presente. Aggiungi un nuovo KPI.
+                  {/* Nessun KPI presente. Aggiungi un nuovo KPI. */}
+                  No KPIs. Add a new KPI.
                 </div>
               )}
               {kpiGroup.dataSource.length > 0 && (
@@ -175,7 +177,7 @@ function EditKpiGroup() {
         {kpiGroupFormModalVisible && (
           <GenericDialog
             toggle={kpiGroupFormModalVisible}
-            title="Nuovo KPI Group"
+            title="New KPI"
             confirmCb={() => {
               document
                 .getElementById(KPI_FORM_ID)
@@ -193,7 +195,7 @@ function EditKpiGroup() {
         {editKpiGroupFormModalVisible && (
           <GenericDialog
             toggle={editKpiGroupFormModalVisible}
-            title="Modifica KPI Group"
+            title="Edit KPI"
             confirmCb={() => {
               document
                 .getElementById(KPI_FORM_ID)
@@ -211,7 +213,7 @@ function EditKpiGroup() {
         {configModalVisible && (
           <GenericDialog
             toggle={configModalVisible}
-            title="Configurazione KPI Group"
+            title="KPI Group Configuration"
             confirmCb={() => {
               const formData = kpiConfigFormRef.current?.getFormData();
               console.log("Configurazione KPI Group:", formData);
@@ -228,21 +230,23 @@ function EditKpiGroup() {
         {deleteModalVisible && (
           <GenericDialog
             toggle={deleteModalVisible}
-            title="Conferma cancellazione"
+            title="Confirm deletion"
             confirmCb={confirmDeleteModal}
             cancelCb={cancelDeleteModal}
           >
-            <p>Sei sicuro di voler cancellare il KPI {selectedKpi?.title}</p>
+            {/* <p>Sei sicuro di voler cancellare il KPI {selectedKpi?.title}</p> */}
+            <p>Do you want to delete KPI with title {selectedKpi?.title}?</p>
           </GenericDialog>
         )}
         {showConfirmNavigationModal && (
           <GenericDialog
             toggle={showConfirmNavigationModal}
-            title="Conferma navigazione"
+            title="Confirm exit"
             confirmCb={confirmNavigationModal}
             cancelCb={cancelNavigationModal}
           >
-            <p>Sei sicuro di voler uscire senza salvare le modifiche?</p>
+            {/* <p>Sei sicuro di voler uscire senza salvare le modifiche?</p> */}
+            <p>Do you want exit without saving?</p>
           </GenericDialog>
         )}
       </div>
