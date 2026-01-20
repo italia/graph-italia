@@ -95,7 +95,7 @@ const KpiConfigForm = forwardRef<
           {/* Height - register con valueAsNumber */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Altezza (h)</span>
+              <span className="label-text font-medium">Height</span>
             </label>
             <input
               {...register("h", { valueAsNumber: true })}
@@ -124,7 +124,7 @@ const KpiConfigForm = forwardRef<
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label className="ml-2 text-sm font-medium text-gray-700">
-              <span className="label-text font-medium">Legenda</span>
+              <span className="label-text font-medium">Legend</span>
             </label>
           </div>
 
@@ -132,15 +132,13 @@ const KpiConfigForm = forwardRef<
           {legendValue && (
             <div>
               <label className="label">
-                <span className="label-text font-medium">
-                  Posizione Legenda
-                </span>
+                <span className="label-text font-medium">Legend Position</span>
               </label>
               <select
                 {...register("legendPosition")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Nessuna</option>
+                <option value="">--select a value--</option>
                 <option value="top">Top</option>
                 <option value="bottom">Bottom</option>
                 <option value="left">Left</option>
@@ -214,7 +212,7 @@ const KpiConfigForm = forwardRef<
                 {...register("tooltipTrigger")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Nessuno</option>
+                <option value="">--select a value--</option>
                 <option value="item">Item</option>
                 <option value="axis">Axis</option>
               </select>
@@ -237,7 +235,7 @@ const KpiConfigForm = forwardRef<
           {/* Total Label - register */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Label Totale</span>
+              <span className="label-text font-medium">Total Label</span>
             </label>
             <input
               {...register("totalLabel")}
@@ -251,7 +249,7 @@ const KpiConfigForm = forwardRef<
           <div>
             <label className="label">
               <span className="label-text font-medium">
-                Colori (separati dalla virgola)
+                Colors (comma separated)
               </span>
             </label>
             <Controller
