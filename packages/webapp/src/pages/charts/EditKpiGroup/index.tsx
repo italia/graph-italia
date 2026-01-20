@@ -242,7 +242,7 @@ function EditKpiGroup() {
             cancelCb={cancelNavigationModal}
           >
             {/* <p>Sei sicuro di voler uscire senza salvare le modifiche?</p> */}
-            <p>Do you want exit without saving?</p>
+            <p>Do you want to exit without saving?</p>
           </GenericDialog>
         )}
       </div>
