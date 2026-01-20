@@ -26,7 +26,7 @@ function EditKpiGroup() {
     deleteKpi,
     saveKpi,
     updateKpi,
-    closeFormModal,
+    closeKpiGroupFormModal,
     showConfigFormModal,
     closeConfigFormModal,
     closeEditKpiFormModal,
@@ -35,7 +35,7 @@ function EditKpiGroup() {
     showDeleteKpiModal,
     showDeleteModal,
     showConfigModal,
-    showFormModal,
+    kpiGroupFormModalVisible,
     showEditKpiGroupFormModal,
     selectedKpi,
     vm,
@@ -73,7 +73,7 @@ function EditKpiGroup() {
     console.log("KPI data to save:", data);
     saveKpi(data);
     //close form modal
-    closeFormModal();
+    closeKpiGroupFormModal();
   }
 
   function updateKpiHandler(data: KpiGroupFormValues) {
@@ -172,9 +172,9 @@ function EditKpiGroup() {
             </div>
           </>
         )}
-        {showFormModal && (
+        {kpiGroupFormModalVisible && (
           <GenericDialog
-            toggle={showFormModal}
+            toggle={kpiGroupFormModalVisible}
             title="Nuovo KPI Group"
             confirmCb={() => {
               document
@@ -184,7 +184,7 @@ function EditKpiGroup() {
                 );
             }}
             cancelCb={() => {
-              closeFormModal();
+              closeKpiGroupFormModal();
             }}
           >
             <KpiGroupForm onSubmit={saveKpiHandler} />

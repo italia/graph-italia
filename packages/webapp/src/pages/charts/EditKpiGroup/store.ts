@@ -10,7 +10,7 @@ interface EditKpiGroupActions {
     addKpi: () => void;
     editKpi: (index: number) => void;
     deleteKpi: (index: number) => void;
-    closeFormModal: () => void;
+    closeKpiGroupFormModal: () => void;
     closeEditKpiFormModal: () => void;
     showConfigFormModal: () => void;
     closeConfigFormModal: (config?: KpiGroupConfigType) => void;
@@ -78,7 +78,7 @@ type EditKpiGroupState = {
     error?: {
         message: string;
     };
-    showFormModal?: boolean;
+    kpiGroupFormModalVisible?: boolean;
     showConfigModal?: boolean;
     showEditKpiGroupFormModal?: boolean;
     showDeleteModal?: boolean;
@@ -113,7 +113,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     },
     addKpi: () => {
         console.log("add item");
-        set({ showFormModal: true });
+        set({ kpiGroupFormModalVisible: true });
     },
     deleteKpi: (index: number) => {
         const { kpiGroup } = get();
@@ -199,8 +199,8 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             selectedKpiIndex: undefined,
         });
     },
-    closeFormModal: () => {
-        set({ showFormModal: false });
+    closeKpiGroupFormModal: () => {
+        set({ kpiGroupFormModalVisible: false });
     },
     closeEditKpiFormModal: () => {
         set({
