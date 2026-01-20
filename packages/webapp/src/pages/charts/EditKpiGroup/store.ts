@@ -1,7 +1,7 @@
-import { ChartConfigType, FieldDataType } from 'dataviz-components';
-import { create } from 'zustand';
+import { ChartConfigType, FieldDataType } from "dataviz-components";
+import { create } from "zustand";
 import * as api from "../../../lib/api";
-import { KpiGroupFormValues } from './components/kpi-group-form';
+import { KpiGroupFormValues } from "./components/kpi-group-form";
 
 interface EditKpiGroupActions {
     load: (id: string) => void;
@@ -11,31 +11,36 @@ interface EditKpiGroupActions {
     editKpi: (index: number) => void;
     deleteKpi: (index: number) => void;
     closeFormModal: () => void;
-    closeEditKpiFormModal: () => void
+    closeEditKpiFormModal: () => void;
     showConfigFormModal: () => void;
     closeConfigFormModal: (config?: KpiGroupConfigType) => void;
     saveKpi: (data: KpiGroupFormValues) => void;
     updateKpi: (data: KpiGroupFormValues) => void;
+    confirmDeleteModal: () => void;
+    cancelDeleteModal: () => void;
+    showDeleteKpiModal: (index: number) => void;
 }
 
-type KpiGroupConfigType = Pick<ChartConfigType,
-    'direction' |
-    'h' |
-    'labeLine' |
-    'legend' |
-    'legendPosition' |
-    'palette' |
-    'tooltip' |
-    'tooltipFormatter' |
-    'valueFormatter' |
-    'totalLabel' |
-    'tooltipTrigger' |
-    'colors' |
-    'background'>;
+type KpiGroupConfigType = Pick<
+    ChartConfigType,
+    | "direction"
+    | "h"
+    | "labeLine"
+    | "legend"
+    | "legendPosition"
+    | "palette"
+    | "tooltip"
+    | "tooltipFormatter"
+    | "valueFormatter"
+    | "totalLabel"
+    | "tooltipTrigger"
+    | "colors"
+    | "background"
+>;
 
 type KpiGroupFieldDataType = FieldDataType & {
     config: KpiGroupConfigType;
-}
+};
 
 const defaultKpiGroupData: KpiGroupFieldDataType = {
     id: "kpi-group2",
@@ -57,15 +62,15 @@ const defaultKpiGroupData: KpiGroupFieldDataType = {
         background: "skyblue",
     },
     data: null,
-}
+};
 
 type EditKpiGroupVM = {
     name: string;
-    description: string,
-}
+    description: string;
+};
 
 type EditKpiGroupState = {
-    id?: string
+    id?: string;
     vm: EditKpiGroupVM;
     kpiGroup: KpiGroupFieldDataType;
     isLoading: boolean;
@@ -76,15 +81,16 @@ type EditKpiGroupState = {
     showFormModal?: boolean;
     showConfigModal?: boolean;
     showEditKpiGroupFormModal?: boolean;
+    showDeleteModal?: boolean;
     pendingChanges: boolean;
-    selectedKpi?: KpiGroupFormValues
-    selectedKpiIndex?: number
-}
+    selectedKpi?: KpiGroupFormValues;
+    selectedKpiIndex?: number;
+};
 
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
-    vm: { name: '', description: '' },
+    vm: { name: "", description: "" },
     kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
@@ -99,7 +105,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             set({
                 showConfigModal: false,
                 kpiGroup: { ...kpiGroup, config: { ...config } },
-                pendingChanges: true
+                pendingChanges: true,
             });
         } else {
             set({ showConfigModal: false });
@@ -112,15 +118,20 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     deleteKpi: (index: number) => {
         const { kpiGroup } = get();
         set({
-            kpiGroup: { ...kpiGroup, dataSource: kpiGroup.dataSource.filter((_: unknown, i: number) => i !== index) },
-            pendingChanges: true
+            kpiGroup: {
+                ...kpiGroup,
+                dataSource: kpiGroup.dataSource.filter(
+                    (_: unknown, i: number) => i !== index,
+                ),
+            },
+            pendingChanges: true,
         });
     },
     saveKpi: (data: KpiGroupFormValues) => {
         const { kpiGroup } = get();
         set({
-            kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data], },
-            pendingChanges: true
+            kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] },
+            pendingChanges: true,
         });
         console.log("KPI saved:", data);
     },
@@ -139,13 +150,13 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                 dataSource: [
                     ...dataSource.slice(0, selectedKpiIndex),
                     data,
-                    ...dataSource.slice(selectedKpiIndex! + 1)
-                ]
+                    ...dataSource.slice(selectedKpiIndex! + 1),
+                ],
             },
             showEditKpiGroupFormModal: false,
             selectedKpi: undefined,
-            selectedKpiIndex: undefined
-        })
+            selectedKpiIndex: undefined,
+        });
     },
     editKpi: (selectedKpiIndex: number) => {
         const { kpiGroup } = get();
@@ -154,8 +165,39 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         set({
             showEditKpiGroupFormModal: true,
             selectedKpi,
-            selectedKpiIndex
-        })
+            selectedKpiIndex,
+        });
+    },
+    showDeleteKpiModal: (selectedKpiIndex: number) => {
+        const { kpiGroup } = get();
+        const selectedKpi = kpiGroup.dataSource[selectedKpiIndex];
+        set({
+            showDeleteModal: true,
+            selectedKpi,
+            selectedKpiIndex,
+        });
+    },
+    confirmDeleteModal: () => {
+        const { kpiGroup, selectedKpiIndex } = get();
+        set({
+            kpiGroup: {
+                ...kpiGroup,
+                dataSource: kpiGroup.dataSource.filter(
+                    (_: unknown, i: number) => i !== selectedKpiIndex,
+                ),
+            },
+            pendingChanges: true,
+            showDeleteModal: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined,
+        });
+    },
+    cancelDeleteModal: () => {
+        set({
+            showDeleteModal: false,
+            selectedKpi: undefined,
+            selectedKpiIndex: undefined,
+        });
     },
     closeFormModal: () => {
         set({ showFormModal: false });
@@ -164,8 +206,8 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         set({
             showEditKpiGroupFormModal: false,
             selectedKpi: undefined,
-            selectedKpiIndex: undefined
-        })
+            selectedKpiIndex: undefined,
+        });
     },
     load: async (id: string) => {
         try {
@@ -179,7 +221,11 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                     loaded: true,
                     id,
                     pendingChanges: false,
-                    kpiGroup: { ...defaultKpiGroupData, config: { ...config }, dataSource }
+                    kpiGroup: {
+                        ...defaultKpiGroupData,
+                        config: { ...config },
+                        dataSource,
+                    },
                 });
             }
         } catch (error) {
@@ -203,7 +249,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             payload: {
                 config: kpiGroup.config,
                 dataSource: kpiGroup.dataSource,
-            }
+            },
         });
 
         set({ pendingChanges: false });

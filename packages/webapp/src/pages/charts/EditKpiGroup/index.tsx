@@ -30,6 +30,10 @@ function EditKpiGroup() {
     showConfigFormModal,
     closeConfigFormModal,
     closeEditKpiFormModal,
+    cancelDeleteModal,
+    confirmDeleteModal,
+    showDeleteKpiModal,
+    showDeleteModal,
     showConfigModal,
     showFormModal,
     showEditKpiGroupFormModal,
@@ -61,7 +65,7 @@ function EditKpiGroup() {
   }
 
   function deleteKpiHandler(index: number) {
-    deleteKpi(index);
+    showDeleteKpiModal(index);
   }
 
   function saveKpiHandler(data: KpiGroupFormValues) {
@@ -140,7 +144,7 @@ function EditKpiGroup() {
                   ds: {
                     title: string;
                   },
-                  index: number
+                  index: number,
                 ) => (
                   <div key={`${ds.title}-${index}`} className="flex my-4 gap-4">
                     <KpiDropdown
@@ -149,7 +153,7 @@ function EditKpiGroup() {
                       onDelete={() => deleteKpiHandler(index)}
                     />
                   </div>
-                )
+                ),
               )}
             </div>
             <div className="relative border min-h-[60vh]">
@@ -176,7 +180,7 @@ function EditKpiGroup() {
               document
                 .getElementById("kpi-group-form")
                 ?.dispatchEvent(
-                  new Event("submit", { cancelable: true, bubbles: true })
+                  new Event("submit", { cancelable: true, bubbles: true }),
                 );
             }}
             cancelCb={() => {
@@ -194,7 +198,7 @@ function EditKpiGroup() {
               document
                 .getElementById("kpi-group-form")
                 ?.dispatchEvent(
-                  new Event("submit", { cancelable: true, bubbles: true })
+                  new Event("submit", { cancelable: true, bubbles: true }),
                 );
             }}
             cancelCb={() => {
@@ -221,6 +225,17 @@ function EditKpiGroup() {
             }}
           >
             <KpiConfigForm ref={kpiConfigFormRef} config={kpiGroup.config} />
+          </GenericDialog>
+        )}
+        ,
+        {showDeleteModal && (
+          <GenericDialog
+            toggle={showDeleteModal}
+            title="Conferma cancellazione"
+            confirmCb={confirmDeleteModal}
+            cancelCb={cancelDeleteModal}
+          >
+            <p>Sei sicuro di voler cancellare il KPI {selectedKpi?.title}</p>
           </GenericDialog>
         )}
         {showConfirmNavigationModal && (
