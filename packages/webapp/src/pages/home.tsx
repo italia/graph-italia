@@ -168,12 +168,9 @@ function Home() {
 
               {!data && (!list || list?.length === 0) && <QuickstartInfo />}
               <div>
-                <div className="flex my-b gap-4">
-                  <details className="dropdown my-10 bg-base-100 z-10">
-                    <summary className="btn btn-primary m-1">
-                      {" "}
-                      + Create new
-                    </summary>
+                <div className="flex my-5 gap-4">
+                  <details className="dropdown bg-base-100 z-10">
+                    <summary className="btn btn-primary"> + Create new</summary>
                     <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border">
                       <li>
                         <a onClick={() => setShowCreateChartModal(true)}>
