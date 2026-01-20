@@ -3,24 +3,6 @@ import { create } from "zustand";
 import * as api from "../../../lib/api";
 import { KpiGroupFormValues } from "./components/kpi-group-form";
 
-interface EditKpiGroupActions {
-    load: (id: string) => void;
-    reload: () => void;
-    save: () => Promise<boolean>;
-    addKpi: () => void;
-    showEditKpiFormModal: (index: number) => void;
-    closeKpiGroupFormModal: () => void;
-    closeEditKpiFormModal: () => void;
-    showConfigFormModal: () => void;
-    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
-    saveKpi: (data: KpiGroupFormValues) => void;
-    updateKpi: (data: KpiGroupFormValues) => void;
-    // delete
-    confirmDeleteModal: () => void;
-    cancelDeleteModal: () => void;
-    showDeleteKpiModal: (index: number) => void;
-}
-
 type KpiGroupConfigType = Pick<
     ChartConfigType,
     | "direction"
@@ -87,6 +69,29 @@ type EditKpiGroupState = {
     selectedKpiIndex?: number;
 };
 
+interface EditKpiGroupActions {
+    // server ops
+    load: (id: string) => void;
+    reload: () => void;
+    save: () => Promise<boolean>;
+    // add modal
+    showAddKpiFormModal: () => void;
+    closeKpiGroupFormModal: () => void;
+    // edit modal
+    showEditKpiFormModal: (index: number) => void;
+    closeEditKpiFormModal: () => void;
+    // config modal
+    showConfigFormModal: () => void;
+    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
+    // delete modal
+    confirmDeleteModal: () => void;
+    cancelDeleteModal: () => void;
+    showDeleteKpiModal: (index: number) => void;
+    // add or update KPIs to the state
+    saveKpi: (data: KpiGroupFormValues) => void;
+    updateKpi: (data: KpiGroupFormValues) => void;
+}
+
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
@@ -111,7 +116,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             set({ configModalVisible: false });
         }
     },
-    addKpi: () => {
+    showAddKpiFormModal: () => {
         console.log("add item");
         set({ kpiGroupFormModalVisible: true });
     },

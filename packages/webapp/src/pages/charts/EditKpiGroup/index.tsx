@@ -21,7 +21,7 @@ function EditKpiGroup() {
     load,
     reload,
     save,
-    addKpi,
+    showAddKpiFormModal,
     showEditKpiFormModal,
     saveKpi,
     updateKpi,
@@ -56,7 +56,7 @@ function EditKpiGroup() {
   }
 
   function addKpiHandler() {
-    addKpi();
+    showAddKpiFormModal();
   }
 
   function editKpiHandler(index: number) {
