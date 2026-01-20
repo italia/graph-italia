@@ -23,7 +23,7 @@ function EditKpiGroup() {
     save,
     showAddKpiFormModal,
     showEditKpiFormModal,
-    saveKpi,
+    addKpi,
     updateKpi,
     closeKpiGroupFormModal,
     showConfigFormModal,
@@ -70,7 +70,7 @@ function EditKpiGroup() {
   function saveKpiHandler(data: KpiGroupFormValues) {
     //update store with new kpi
     console.log("KPI data to save:", data);
-    saveKpi(data);
+    addKpi(data);
     //close form modal
     closeKpiGroupFormModal();
   }

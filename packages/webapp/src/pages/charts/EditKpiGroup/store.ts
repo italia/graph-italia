@@ -88,7 +88,7 @@ interface EditKpiGroupActions {
     cancelDeleteModal: () => void;
     showDeleteKpiModal: (index: number) => void;
     // add or update KPIs to the state
-    saveKpi: (data: KpiGroupFormValues) => void;
+    addKpi: (data: KpiGroupFormValues) => void;
     updateKpi: (data: KpiGroupFormValues) => void;
 }
 
@@ -120,7 +120,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         console.log("add item");
         set({ kpiGroupFormModalVisible: true });
     },
-    saveKpi: (data: KpiGroupFormValues) => {
+    addKpi: (data: KpiGroupFormValues) => {
         const { kpiGroup } = get();
         set({
             kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] },
