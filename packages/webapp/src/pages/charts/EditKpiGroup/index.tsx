@@ -23,7 +23,6 @@ function EditKpiGroup() {
     save,
     addKpi,
     showEditKpiFormModal,
-    deleteKpi,
     saveKpi,
     updateKpi,
     closeKpiGroupFormModal,
