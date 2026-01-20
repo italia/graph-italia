@@ -66,7 +66,7 @@ function ChartSelection(props: ChartSelectionProps) {
               props.onSelect(chart);
             }}
           >
-            <option value="">{`-seleziona un grafico-`}</option>
+            <option value="">{`-select a chart-`}</option>
             {charts.map((c, index) => {
               return (
                 <option key={`${c.id}-${index}`} value={c.id}>
@@ -82,7 +82,7 @@ function ChartSelection(props: ChartSelectionProps) {
 }
 // narrow the props if you want stronger typing;
 const ResponsiveReactGridLayout = WidthProvider(
-  Responsive
+  Responsive,
 ) as unknown as React.ComponentType<any>;
 const cols = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 } as const;
 
@@ -146,14 +146,14 @@ function DashboardEditPage() {
           <div className="p-4">
             <div className="flex justify-between items-center">
               <Link to="/dashboards" className="text-blue-500 hover:underline">
-                &lt; Torna alla lista
+                &lt; Back to the list
               </Link>
               <div className="ml-auto flex space-x-2">
                 <button onClick={resetHandler} className="btn btn-primary">
                   Reset
                 </button>
                 <button onClick={saveHandler} className="btn btn-primary">
-                  Salva
+                  Save
                 </button>
               </div>
             </div>
