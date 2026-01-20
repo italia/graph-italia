@@ -158,7 +158,7 @@ export function KpiGroupForm({
             <div className="space-y-4 border-t pt-6">
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Valore</span>
+                  <span className="label-text font-medium">Valore *</span>
                 </label>
                 <input
                   type="text"
