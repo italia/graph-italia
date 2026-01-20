@@ -67,6 +67,17 @@ export function KpiForm({
               />
             </div>
 
+            <div>
+              <label className="label">
+                <span className="label-text font-medium">Value *</span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                {...register("value", { required: true })}
+              />
+            </div>
+
             {/* Open Data Path */}
             <div>
               <label className="label">
@@ -152,17 +163,6 @@ export function KpiForm({
 
             {/* Altri campi */}
             <div className="space-y-4 border-t pt-6">
-              <div>
-                <label className="label">
-                  <span className="label-text font-medium">Value *</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered w-full"
-                  {...register("value", { required: true })}
-                />
-              </div>
-
               <div>
                 <label className="label">
                   <span className="label-text font-medium">
