@@ -125,6 +125,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         set({
             kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] },
             pendingChanges: true,
+            addKpiFormModalVisible: false,
         });
         console.log("KPI saved:", data);
     },

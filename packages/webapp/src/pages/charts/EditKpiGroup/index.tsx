@@ -69,11 +69,7 @@ function EditKpiGroup() {
   }
 
   function saveKpiHandler(data: KpiFormValues) {
-    //update store with new kpi
-    console.log("KPI data to save:", data);
     addKpi(data);
-    //close form modal
-    closeKpiGroupFormModal();
   }
 
   function updateKpiHandler(data: KpiFormValues) {
