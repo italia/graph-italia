@@ -82,7 +82,7 @@ export function KpiForm({
             {/* Info aggiuntive */}
             <div className="border-t pt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Info aggiuntive
+                Additional infos
               </h3>
 
               {/* Mostra andamento */}
@@ -102,7 +102,7 @@ export function KpiForm({
                     </div>
                   </div>
                   <span className="text-sm font-medium text-gray-700">
-                    Mostra andamento
+                    Show flow
                   </span>
                 </label>
               </div>
@@ -110,27 +110,23 @@ export function KpiForm({
               {/* Direzione andamento */}
               <div className="mb-4">
                 <label className="label">
-                  <span className="label-text font-medium">
-                    Direzione andamento
-                  </span>
+                  <span className="label-text font-medium">Flow direction</span>
                 </label>
                 <select
                   className="input input-bordered w-full"
                   {...register("flow_direction")}
                   disabled={!showFlow}
                 >
-                  <option>--Seleziona un valore--</option>
-                  <option value="+">Positivo (+)</option>
-                  <option value="-">Negativo (-)</option>
+                  <option>--Select a value--</option>
+                  <option value="+">Positive (+)</option>
+                  <option value="-">Negative (-)</option>
                 </select>
               </div>
 
               {/* Valore andamento */}
               <div className="mb-4">
                 <label className="label">
-                  <span className="label-text font-medium">
-                    Valore andamento
-                  </span>
+                  <span className="label-text font-medium">Flow value</span>
                 </label>
                 <input
                   type="text"
@@ -143,9 +139,7 @@ export function KpiForm({
               {/* Dettaglio andamento */}
               <div className="mb-6">
                 <label className="label">
-                  <span className="label-text font-medium">
-                    Dettaglio andamento
-                  </span>
+                  <span className="label-text font-medium">Flow detail</span>
                 </label>
                 <input
                   type="text"
@@ -160,7 +154,7 @@ export function KpiForm({
             <div className="space-y-4 border-t pt-6">
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Valore *</span>
+                  <span className="label-text font-medium">Value *</span>
                 </label>
                 <input
                   type="text"
@@ -171,7 +165,9 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Colore sfondo</span>
+                  <span className="label-text font-medium">
+                    Background color
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -182,9 +178,7 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">
-                    Prefisso valore
-                  </span>
+                  <span className="label-text font-medium">Value prefix</span>
                 </label>
                 <input
                   type="text"
@@ -195,9 +189,7 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">
-                    Suffisso valore
-                  </span>
+                  <span className="label-text font-medium">Value suffix</span>
                 </label>
                 <input
                   type="text"
@@ -208,7 +200,7 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Percentuale</span>
+                  <span className="label-text font-medium">Percentage</span>
                 </label>
                 <input
                   type="text"
@@ -219,7 +211,7 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Testo footer</span>
+                  <span className="label-text font-medium">Footer text</span>
                 </label>
                 <input
                   type="text"
