@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { defaultConfig, getFields, palettes } from "../lib/constants";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
@@ -31,30 +32,35 @@ function ChartOptions({
   const fields = getFields(availabelPalettes, defaultPalette);
   const {
     register,
-    handleSubmit,
     watch,
     formState: { errors },
   } = useForm({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
       ...defaultConfig,
       palette: defaultPalette,
       ...config,
     },
   });
-  const watchPalette = watch("palette", config?.palette || defaultPalette);
-  const watchDirection = watch("direction", null);
-  const watchToltip = watch("tooltip", true);
-  const watchLegend = watch("legend", true);
-  const watchShowPieLabels = watch("showPieLabels", true);
-  const watchVisualMap = watch("visualMap", true);
+  
+  // Watch all form values for auto-update
+  const formValues = watch();
+  const watchPalette = formValues.palette || config?.palette || defaultPalette;
+  const watchDirection = formValues.direction || null;
+  const watchToltip = formValues.tooltip ?? true;
+  const watchLegend = formValues.legend ?? true;
+  const watchShowPieLabels = formValues.showPieLabels ?? true;
+  const watchVisualMap = formValues.visualMap ?? true;
 
-  const onSubmit = (data: any) => {
-    const { h, w, palette, ...rest } = data;
-    const colors = palettes[palette];
-    const newConfig = { h: Number(h), w: Number(w), ...rest, colors, palette };
-    setConfig(newConfig);
-  };
+  // Auto-apply changes when form values change
+  useEffect(() => {
+    const { h, w, palette, ...rest } = formValues;
+    if (palette) {
+      const colors = palettes[palette];
+      const newConfig = { h: Number(h), w: Number(w), ...rest, colors, palette };
+      setConfig(newConfig);
+    }
+  }, [JSON.stringify(formValues)]);
 
   if (!chart) {
     return (
@@ -103,30 +109,8 @@ function ChartOptions({
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Apply button at the top */}
-        <div className="sticky top-0 bg-base-100 py-3 z-10 border-b border-base-200 mb-4">
-          <button className="btn btn-primary w-full gap-2" type="submit">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            Apply changes
-          </button>
-        </div>
-
-        {/* Fields grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Fields grid - changes are applied automatically */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredFields.map((field) => {
             // Text, number, color input fields
             if (["text", "email", "number", "color"].includes(field.type)) {
@@ -245,8 +229,7 @@ function ChartOptions({
               </div>
             );
           })}
-        </div>
-      </form>
+      </div>
     </div>
   );
 }
