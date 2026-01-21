@@ -28,6 +28,10 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV !== "production";
 
+// Build info for healthcheck (injected at build time)
+const BUILD_SHA = process.env.BUILD_SHA || "unknown";
+const BUILD_TIME = process.env.BUILD_TIME || "unknown";
+
 
 // Main app with base path
 const app = ROUTES_PREFIX
@@ -71,7 +75,13 @@ if (isDev) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Health check endpoint (minimal response for k8s probes)
-app.get("/", (c) => c.json({ status: "ok", message: "^^" }));
+app.get("/", (c) => c.json({ 
+	status: "ok", 
+	version: { 
+		sha: BUILD_SHA, 
+		buildTime: BUILD_TIME 
+	} 
+}));
 
 
 

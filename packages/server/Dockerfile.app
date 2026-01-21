@@ -104,6 +104,12 @@ COPY --from=build /usr/src/app/packages/server/prisma ./packages/server/prisma
 # Copy seeds directory (needed for seeding jobs)
 COPY --from=build /usr/src/app/packages/server/seeds ./packages/server/seeds
 
+# Build info for healthcheck (injected at build time via --build-arg)
+ARG BUILD_SHA=unknown
+ARG BUILD_TIME=unknown
+ENV BUILD_SHA=${BUILD_SHA}
+ENV BUILD_TIME=${BUILD_TIME}
+
 USER bun
 
 EXPOSE 3003/tcp
