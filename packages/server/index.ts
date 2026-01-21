@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.ts";
 import chartRoutes from "./routes/charts.ts";
 import dashRoutes from "./routes/dashboards.ts";
 import suggestionsRoutes from "./routes/hints.ts";
+import kpiGroupRoutes from "./routes/kpi-group.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
@@ -77,6 +78,7 @@ app.get("/", (c) => c.json({ status: "ok", message: "^^" }));
 // API routes
 app.route("/auth", authRoutes);
 app.route("/charts", chartRoutes);
+app.route("/charts/kpi-group", kpiGroupRoutes);
 app.route("/dashboards", dashRoutes);
 app.route("/hints", suggestionsRoutes);
 

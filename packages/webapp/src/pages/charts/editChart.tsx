@@ -295,13 +295,11 @@ function EditChartPage() {
               />
               {/* Publish toggle */}
               <div className="flex items-center gap-3">
-                <span
-                  role="switch"
-                  aria-checked={chartPublish}
-                  onClick={() => setChartPublish(!chartPublish)}
-                  className={`toggle toggle-sm ${
-                    chartPublish ? "toggle-primary" : ""
-                  } cursor-pointer`}
+                <input
+                  type="checkbox"
+                  checked={chartPublish}
+                  onChange={() => setChartPublish(!chartPublish)}
+                  className="toggle toggle-sm toggle-primary cursor-pointer"
                 />
                 <span className="text-sm text-base-content/60">
                   {chartPublish ? "Public" : "Private"}
@@ -587,6 +585,7 @@ function EditChartPage() {
                                 </div>
                               )}
                               <RenderChart
+                                id={id || paramId || "preview-map"}
                                 chart={chart}
                                 data={data}
                                 config={config}
