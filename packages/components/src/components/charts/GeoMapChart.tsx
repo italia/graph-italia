@@ -1,6 +1,6 @@
 import * as echarts from "echarts";
 import ReactEcharts from "echarts-for-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
@@ -19,8 +19,11 @@ function GeoMapChart({
   const [weDoNotHaveInstance, setWeDoNotHaveInstance] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
+  // Fallback id for map registration if not provided (stable across renders)
+  const mapId = useMemo(() => id || `map-${Date.now()}`, [id]);
+
   function getOptions(data: FieldDataType, geoData: any) {
-    echarts.registerMap(id as string, geoData);
+    echarts.registerMap(mapId as string, geoData);
     const config = data.config;
 
     const tooltip = {
@@ -115,7 +118,7 @@ function GeoMapChart({
               areaColor: config.areaColor || "#F2F7FC",
             },
           },
-          map: id,
+          map: mapId,
           nameProperty: config.nameProperty ? config.nameProperty : "NAME",
         };
       }),
@@ -177,7 +180,7 @@ function GeoMapChart({
   const effectiveHeight = rowHeight || chartHeight;
   return (
     <ErrorBoundary fallback={<div>Errore nel rendering della mappa</div>}>
-      <div key={id} id={"chart_" + id}>
+      <div key={mapId} id={"chart_" + mapId}>
         {error && <div className="alert error">{error}</div>}
         {!geoData && <div>In attesa dei dati geo...</div>}
         {!options ? (

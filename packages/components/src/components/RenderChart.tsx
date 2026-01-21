@@ -1,13 +1,12 @@
-import React from "react";
-import BasicChart from "./charts/BasicChart";
-import PieChart from "./charts/PieChart";
-import GeoMapChart from "./charts/GeoMapChart";
-import { getPieValues, getBasicValues, getMapValues } from "../lib/utils";
-import { useEffect, useState, useRef } from "react";
-import ClusterMap from "./maps/ClusterMap";
-import KpiGroup from "./kpi/KpiGroup";
 import type { EChartsType } from "echarts";
+import React, { useEffect, useRef, useState } from "react";
+import { getBasicValues, getMapValues, getPieValues } from "../lib/utils";
 import type { FieldDataType } from "../types";
+import BasicChart from "./charts/BasicChart";
+import GeoMapChart from "./charts/GeoMapChart";
+import PieChart from "./charts/PieChart";
+import KpiGroup from "./kpi/KpiGroup";
+import ClusterMap from "./maps/ClusterMap";
 
 type RenderProps = FieldDataType & {
   rowHeight?: number;
