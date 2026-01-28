@@ -59,6 +59,10 @@ function EditChartPage() {
   const [chartPreviewOpen, setChartPreviewOpen] = useState(true);
   const [dataPreviewOpen, setDataPreviewOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [chartPreviewHeight, setChartPreviewHeight] = useState(380);
+  const isResizingRef = useRef(false);
+  const startYRef = useRef(0);
+  const startHeightRef = useRef(0);
 
   // Ref to sync the right card height with the left one
   const leftCardRef = useRef<HTMLDivElement>(null);
@@ -104,6 +108,47 @@ function EditChartPage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Chart preview resize handlers
+  const handleResizeMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      isResizingRef.current = true;
+      startYRef.current = e.clientY;
+      startHeightRef.current = chartPreviewHeight;
+      document.body.style.cursor = "ns-resize";
+      document.body.style.userSelect = "none";
+    },
+    [chartPreviewHeight],
+  );
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizingRef.current) return;
+      const deltaY = e.clientY - startYRef.current;
+      const newHeight = Math.max(
+        200,
+        Math.min(800, startHeightRef.current + deltaY),
+      );
+      setChartPreviewHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      if (isResizingRef.current) {
+        isResizingRef.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
 
@@ -190,7 +235,7 @@ function EditChartPage() {
   // Generate default name based on chart type and date
   const getDefaultName = () => {
     return `${chart || "new"}chart-${dayjs(Date.now()).format(
-      "YYYY-MM-DD_HH-mm"
+      "YYYY-MM-DD_HH-mm",
     )}`;
   };
 
@@ -573,7 +618,10 @@ function EditChartPage() {
                         </div>
                         {chartPreviewOpen && (
                           <div className="card-body pt-0">
-                            <div className="overflow-auto h-[380px] relative">
+                            <div
+                              className="overflow-auto relative"
+                              style={{ height: `${chartPreviewHeight}px` }}
+                            >
                               {!preview && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
                                   <div className="flex flex-col items-center gap-3">
@@ -592,6 +640,13 @@ function EditChartPage() {
                                 dataSource={null}
                                 getPicture={(pic: string) => setPreview(pic)}
                               />
+                            </div>
+                            {/* Resize handle */}
+                            <div
+                              className="h-2 cursor-ns-resize flex items-center justify-center group hover:bg-base-200 rounded-b transition-colors"
+                              onMouseDown={handleResizeMouseDown}
+                            >
+                              <div className="w-12 h-1 bg-base-300 rounded-full group-hover:bg-primary/50 transition-colors" />
                             </div>
                           </div>
                         )}
