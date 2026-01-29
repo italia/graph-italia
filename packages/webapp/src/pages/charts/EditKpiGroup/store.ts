@@ -41,7 +41,7 @@ const defaultKpiGroupData: KpiGroupFieldDataType = {
         totalLabel: "",
         tooltipTrigger: "",
         colors: [],
-        background: "skyblue",
+        background: "",
     },
     data: null,
 };

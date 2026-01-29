@@ -39,7 +39,7 @@ router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
                 totalLabel: "",
                 tooltipTrigger: "",
                 colors: [],
-                background: "skyblue",
+                background: "",
             },
             data: [],
             ...body,
