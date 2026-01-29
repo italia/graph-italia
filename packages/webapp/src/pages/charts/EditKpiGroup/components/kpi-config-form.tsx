@@ -32,7 +32,7 @@ const defaultValues: KpiGroupConfigType = {
   totalLabel: "",
   tooltipTrigger: "",
   colors: [],
-  background: "skyblue",
+  background: "",
 };
 
 export type KpiGroupConfigFormValues = typeof defaultValues;
@@ -289,7 +289,7 @@ const KpiConfigForm = forwardRef<
                   />
                   <input
                     type="color"
-                    value={field.value}
+                    value={field.value || "#FFFFFF"}
                     onChange={(e) => field.onChange(e.target.value)}
                     className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
                   />
