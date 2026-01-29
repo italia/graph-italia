@@ -79,12 +79,13 @@ Componente per visualizzare indicatori chiave di performance (KPI)
 
 ### Dipendenze Peer
 Le dipendenze sono dichiarate come `peerDependencies` per evitare duplicazioni:
-- React, React-DOM
-- ECharts, echarts-for-react
-- OpenLayers
-- dayjs
-- react-error-boundary
-- react-markdown
+- React ^19.1.0, React-DOM ^19.1.0
+- ECharts ^5.6.0, echarts-for-react ^3.0.2
+- OpenLayers ^10.5.0
+- dayjs ^1.11.13
+- react-error-boundary ^6.0.0
+- react-markdown ^10.1.0, remark-gfm ^4.0.1
+- @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities (drag-and-drop)
 
 ### Integrazione
 I pacchetti interni (`webapp` e `ui-example-app`) utilizzano il componente tramite:
@@ -245,8 +246,17 @@ Il sistema supporta due ruoli:
 - `PUT /:id/slots` - Aggiorna slots del dashboard
 - `DELETE /:id` - Elimina dashboard
 
+#### `/charts/kpi-group`
+- `POST /` - Crea nuovo KPI Group
+- `GET /:id` - Dettaglio KPI Group
+- `PUT /:id` - Aggiorna KPI Group (config e dataSource)
+
 #### `/hints`
 - `POST /` - Suggerimenti AI per creazione grafici (richiede OpenAI)
+
+#### Documentazione API
+- `GET /openapi.json` - Specifica OpenAPI 3.0
+- `GET /docs` - Documentazione API interattiva (Scalar UI)
 
 ### Middleware
 - `checkAuth`: Verifica JWT token
@@ -382,9 +392,10 @@ stateDiagram-v2
 
 ### Routing
 Router configurato con React Router v6:
-- Route pubbliche: `/`, `/charts/:id/view`, `/dashboards/:id/view`
-- Route protette: `/home`, `/charts/:id/edit`, `/dashboards`
-- Route auth: `/login`, `/register`, `/verify/:uid`, `/recover-password`
+- Route pubbliche: `/`, `/charts/:id/view`, `/dashboards/:id/view`, `/charts/:id/embed`, `/dashboards/:id/embed`
+- Route protette: `/home`, `/edit/chart/:id?`, `/edit/kpi/:id?`, `/dashboards`, `/dashboards/:id/edit`
+- Route auth: `/login`, `/verify/:uid`, `/recover-password`, `/change-password`
+- Route utility: `/load-data`, `/generate-data`, `/geo`
 
 ---
 
@@ -526,7 +537,9 @@ Dal `package.json` root:
 - `UPLOAD_SIZE_LIMIT`: Limite upload (default: 15mb)
 - `ROUTES_PREFIX`: Prefisso route API
 - `APP_URL`: URL applicazione frontend
-- Database PostgreSQL connection string (per Prisma)
+- `DATABASE_URL`: Connection string PostgreSQL (per Prisma)
+- `BUILD_SHA`: SHA del commit (iniettato a build time, visibile in healthcheck)
+- `BUILD_TIME`: Timestamp della build (iniettato a build time, visibile in healthcheck)
 
 ### Docker
 - `packages/server/Dockerfile`: Immagine Docker per server
@@ -685,6 +698,182 @@ Gli utenti possono registrarsi autonomamente tramite l'interfaccia web:
 **Requisiti per email:**
 - Configurare `RESEND_API_KEY` con chiave valida
 - Configurare `SENDER_EMAIL` con dominio verificato su Resend (es. `noreply@dataviz.example.com`)
+
+---
+
+## GitFlow e Branching Strategy
+
+Il progetto utilizza un workflow Git basato su due branch principali con feature branches per lo sviluppo.
+
+### Flusso di Lavoro
+
+```mermaid
+gitGraph
+    commit id: "initial"
+    branch develop
+    checkout main
+    commit id: "v1.0.0" tag: "v1.0.0"
+    
+    checkout main
+    branch feature/nuova-funzionalita
+    commit id: "feat: add new component"
+    commit id: "feat: add tests"
+    
+    checkout develop
+    merge feature/nuova-funzionalita id: "merge to develop" type: HIGHLIGHT
+    commit id: "test in staging"
+    
+    checkout main
+    merge develop id: "release to prod" type: HIGHLIGHT
+    commit id: "v1.1.0" tag: "v1.1.0"
+```
+
+### Branch Principali
+
+| Branch | Ambiente | Descrizione |
+|--------|----------|-------------|
+| `main` | **Production** | Branch stabile, ogni commit viene deployato in produzione |
+| `develop` | **Test/Staging** | Branch di integrazione, deploy automatico su ambiente di test |
+
+### Workflow per Nuove Funzionalità
+
+```mermaid
+flowchart LR
+    subgraph "1️⃣ Sviluppo"
+        A[Crea feature branch<br/>da main] --> B[Sviluppa la<br/>funzionalità]
+        B --> C[Commit e push]
+    end
+    
+    subgraph "2️⃣ Testing"
+        C --> D[Merge in develop]
+        D --> E[Deploy automatico<br/>su dataviz-test]
+        E --> F{Test OK?}
+    end
+    
+    subgraph "3️⃣ Produzione"
+        F -->|Sì| G[Merge in main]
+        G --> H[Deploy automatico<br/>su dataviz]
+    end
+    
+    F -->|No| B
+```
+
+### Istruzioni Operative
+
+#### 1. Creare una nuova feature
+
+```bash
+# Parti sempre da main aggiornato
+git checkout main
+git pull origin main
+
+# Crea il feature branch
+git checkout -b feature/nome-funzionalita
+```
+
+#### 2. Sviluppare e testare localmente
+
+```bash
+# Sviluppa la funzionalità
+# ... modifiche al codice ...
+
+# Commit delle modifiche
+git add .
+git commit -m "feat: descrizione della funzionalità"
+
+# Push del branch
+git push -u origin feature/nome-funzionalita
+```
+
+#### 3. Deploy su ambiente di Test
+
+```bash
+# Merge in develop per il deploy su staging
+git checkout develop
+git pull origin develop
+git merge feature/nome-funzionalita
+git push origin develop
+
+# ✅ CI/CD deploya automaticamente su dataviz-test
+# URL: https://dataviz-test.innovazione.gov.it
+```
+
+#### 4. Promuovere in Produzione
+
+Dopo aver verificato che tutto funziona su staging:
+
+```bash
+# Merge in main per il deploy in produzione
+git checkout main
+git pull origin main
+git merge develop  # oppure: git merge feature/nome-funzionalita
+git push origin main
+
+# ✅ CI/CD deploya automaticamente su dataviz (produzione)
+# URL: https://dataviz.innovazione.gov.it
+```
+
+#### 5. (Opzionale) Creare un Tag di Release
+
+Per release ufficiali con versione semantica:
+
+```bash
+git checkout main
+git tag -a v1.2.0 -m "Release 1.2.0: descrizione"
+git push origin v1.2.0
+
+# Il tag triggera una build con versione 1.2.0 invece di 0.0.0-test.SHA
+```
+
+### Flusso CI/CD Completo
+
+```mermaid
+flowchart TB
+    subgraph "Developer"
+        Dev[Push su branch]
+    end
+    
+    subgraph "GitHub Actions"
+        PR{È una PR?}
+        Branch{Quale branch?}
+        
+        Build[🏗️ Build Images<br/>webapp + server]
+        Helm[📦 Package Helm]
+        
+        DeployTest[🧪 Deploy Test<br/>dataviz-test]
+        DeployProd[🚀 Deploy Prod<br/>dataviz]
+    end
+    
+    subgraph "Kubernetes"
+        Test[dataviz-test<br/>namespace]
+        Prod[dataviz<br/>namespace]
+    end
+    
+    Dev --> PR
+    PR -->|Sì| Build
+    Build -->|Solo build| End[Fine]
+    
+    PR -->|No| Branch
+    Branch -->|develop| Build
+    Branch -->|main/tag| Build
+    
+    Build --> Helm
+    
+    Helm -->|develop| DeployTest
+    Helm -->|main/tag| DeployProd
+    
+    DeployTest --> Test
+    DeployProd --> Prod
+```
+
+### Riepilogo Deploy Automatici
+
+| Evento | Ambiente Target | Versione |
+|--------|-----------------|----------|
+| Push su `develop` | dataviz-test | `0.0.0-test.<sha>` |
+| Push su `main` | dataviz (prod) | `0.0.0-test.<sha>` |
+| Tag `v*.*.*` | dataviz (prod) | Versione dal tag |
+| Pull Request | Nessuno | Solo build di verifica |
 
 ---
 
