@@ -3,14 +3,14 @@ import Layout from '../../components/layout';
 import RecoverPasswordForm from '../../components/auth/RecoverPwdForm';
 import ChangePasswordForm from '../../components/auth/ChangePasswordForm';
 import { useUserStore } from '../../store/user_store';
+import { HOME_ROUTE } from '../../router';
 
 function AuthPage({ action = 'recover' }) {
   const { user } = useUserStore();
   const navigate = useNavigate();
 
   function redirectHome() {
-    // alert('changed'); todo use a toast
-    navigate('/home');
+    navigate(HOME_ROUTE);
   }
 
   return (

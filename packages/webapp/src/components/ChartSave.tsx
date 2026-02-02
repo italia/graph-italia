@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as api from "../lib/api";
+import { HOME_ROUTE } from "../router";
 
 function ChartSave({ item, handleSave }: any) {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ function ChartSave({ item, handleSave }: any) {
     const result = await saveChart(formData);
     if (result) {
       handleSave();
-      navigate("/home");
+      navigate(HOME_ROUTE);;
     }
   };
 
@@ -96,9 +97,8 @@ function ChartSave({ item, handleSave }: any) {
           <input
             id="chart-name"
             type="text"
-            className={`input input-bordered w-full ${
-              errors["name"] ? "input-error" : ""
-            }`}
+            className={`input input-bordered w-full ${errors["name"] ? "input-error" : ""
+              }`}
             placeholder="E.g.: Monthly sales 2024"
             {...register("name", { required: true })}
           />
@@ -136,9 +136,8 @@ function ChartSave({ item, handleSave }: any) {
             <span
               role="switch"
               aria-checked={publishValue}
-              className={`toggle toggle-primary ${
-                publishValue ? "toggle-checked" : ""
-              }`}
+              className={`toggle toggle-primary ${publishValue ? "toggle-checked" : ""
+                }`}
             />
             <div>
               <span className="label-text font-medium block">

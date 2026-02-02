@@ -18,10 +18,11 @@ import GenerateDataPage from "./pages/utility/GenerateDataPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 
+export const HOME_ROUTE = "/";
 const router = createBrowserRouter([
   //PRIVATE PART
   {
-    path: "/",
+    path: HOME_ROUTE,
     element: (
       <ProtectedRoute>
         <HomePage />

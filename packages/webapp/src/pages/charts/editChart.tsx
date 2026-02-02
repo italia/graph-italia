@@ -16,6 +16,7 @@ import * as api from "../../lib/api";
 import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
+import { HOME_ROUTE } from "../../router";
 
 // Step definitions for the chart creation wizard (only 2 steps now)
 const STEPS = [
@@ -213,7 +214,7 @@ function EditChartPage() {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
         handleSaveChart();
-        navigate("/home");
+        navigate(HOME_ROUTE);;
       }
     } catch (error) {
       console.error("Error saving chart:", error);
@@ -252,7 +253,7 @@ function EditChartPage() {
           {/* Back navigation */}
           <div className="flex items-center gap-2 mb-4 -ml-2">
             <button
-              onClick={() => navigate("/home")}
+              onClick={() => navigate(HOME_ROUTE)}
               className="btn btn-ghost btn-sm gap-2 text-base-content/70 hover:text-base-content"
             >
               <svg
@@ -365,25 +366,21 @@ function EditChartPage() {
               return (
                 <li
                   key={step.id}
-                  className={`step ${
-                    index <= currentStepIndex ? "step-primary" : ""
-                  } ${
-                    isStepClickable && !isCurrentStep ? "cursor-pointer" : ""
-                  }`}
+                  className={`step ${index <= currentStepIndex ? "step-primary" : ""
+                    } ${isStepClickable && !isCurrentStep ? "cursor-pointer" : ""
+                    }`}
                   data-content={index < currentStepIndex ? "✓" : index + 1}
                   onClick={handleStepClick}
                 >
                   <div className="hidden sm:block">
                     <span
-                      className={`font-medium ${
-                        isStepClickable && !isCurrentStep
-                          ? "hover:text-primary transition-colors"
-                          : ""
-                      } ${
-                        !isStepClickable && index > currentStepIndex
+                      className={`font-medium ${isStepClickable && !isCurrentStep
+                        ? "hover:text-primary transition-colors"
+                        : ""
+                        } ${!isStepClickable && index > currentStepIndex
                           ? "text-base-content/40"
                           : ""
-                      }`}
+                        }`}
                     >
                       {step.label}
                     </span>
@@ -556,9 +553,8 @@ function EditChartPage() {
                           </div>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`h-4 w-4 transition-transform ${
-                              chartPreviewOpen ? "rotate-180" : ""
-                            }`}
+                            className={`h-4 w-4 transition-transform ${chartPreviewOpen ? "rotate-180" : ""
+                              }`}
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -629,9 +625,8 @@ function EditChartPage() {
                         </div>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className={`h-4 w-4 transition-transform ${
-                            dataPreviewOpen ? "rotate-180" : ""
-                          }`}
+                          className={`h-4 w-4 transition-transform ${dataPreviewOpen ? "rotate-180" : ""
+                            }`}
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -723,7 +718,7 @@ function EditChartPage() {
           </div>
         </div>
       </div>
-    </Layout>
+    </Layout >
   );
 }
 
