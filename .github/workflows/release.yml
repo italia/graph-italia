@@ -11,6 +11,13 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
+    inputs:
+      no_cache:
+        description: 'Build without Docker cache'
+        required: false
+        default: false
+        type: boolean
 
 env:
   REGISTRY: ghcr.io
@@ -27,6 +34,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       is_production: ${{ steps.version.outputs.is_production }}
+      build_time: ${{ steps.version.outputs.build_time }}
     steps:
       - name: 🏷️ Extract version
         id: version
@@ -39,8 +47,10 @@ jobs:
             VERSION="0.0.0-test.${SHORT_SHA}"
             IS_PRODUCTION="false"
           fi
+          BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "is_production=$IS_PRODUCTION" >> $GITHUB_OUTPUT
+          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
 
   build-images:
     name: 🏗️ Build Docker Images
@@ -83,7 +93,11 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ matrix.image }}:${{ needs.prepare.outputs.version }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ matrix.image }}:latest
           platforms: linux/amd64
-          cache-from: type=gha,scope=${{ matrix.component }}
+          build-args: |
+            BUILD_SHA=${{ github.sha }}
+            BUILD_TIME=${{ needs.prepare.outputs.build_time }}
+          no-cache: ${{ inputs.no_cache || false }}
+          cache-from: ${{ (!inputs.no_cache && format('type=gha,scope={0}', matrix.component)) || '' }}
           cache-to: type=gha,mode=max,scope=${{ matrix.component }}
 
   package-helm:
@@ -113,7 +127,7 @@ jobs:
     name: 🚀 Deploy to Production
     runs-on: arc-runner-italia
     needs: [prepare, build-images, package-helm]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     permissions:
       contents: read
       packages: read

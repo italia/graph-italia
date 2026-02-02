@@ -1,4 +1,5 @@
 import Layout from '../components/layout';
+import { HOME_ROUTE } from '../router';
 import { useUserStore } from '../store/user_store';
 
 export default function Landing() {
@@ -110,7 +111,7 @@ export default function Landing() {
                 interface to bring your numbers to life.
               </p>
               <div className='mt-10 flex items-center justify-center gap-x-6'>
-                <a href={user ? '/home' : '/login'} className='btn btn-primary'>
+                <a href={user ? HOME_ROUTE : '/login'} className='btn btn-primary'>
                   Get started
                 </a>
               </div>

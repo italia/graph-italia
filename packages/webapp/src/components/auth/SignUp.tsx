@@ -223,11 +223,13 @@ function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => 
                   <a
                     className='link link-primary font-semibold'
                     target='_blank'
-                    href='/policy'
+                    href='/gdpr'
                   >
-                    policy
+                    privacy policy
                   </a>{' '}
                   agreement.
+                  <hr />
+                  <small>Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours.</small>
                 </label>
                 {errors['policyAcknologment'] && (
                   <p className='pl-4 text-error'>{errors['policyAcknologment'].message}</p>

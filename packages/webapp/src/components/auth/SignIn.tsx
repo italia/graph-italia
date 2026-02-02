@@ -4,6 +4,7 @@ import { useState } from 'react';
 import * as api from '../../lib/api';
 import { useUserStore } from '../../store/user_store';
 import { AxiosError } from 'axios';
+import { HOME_ROUTE } from '../../router';
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { setUser } = useUserStore();
@@ -26,7 +27,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
         const user = await api.getUser();
         // console.log(user);
         setUser(user);
-        navigate('/home');
+        navigate(HOME_ROUTE);
       } else {
         setMessage('Error while logging in');
       }

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { activate } from '../../lib/api';
 import { useNavigate } from 'react-router-dom';
 import ChangePasswordForm from '../../components/auth/ChangePasswordForm';
+import { HOME_ROUTE } from '../../router';
 
 function AuthPage() {
   const { uid } = useParams();
@@ -26,7 +27,7 @@ function AuthPage() {
   }, []);
 
   function redirectHome() {
-    navigate('/home');
+    navigate(HOME_ROUTE);
   }
 
   function handleAskAnotherCode() {
@@ -87,7 +88,7 @@ function AuthPage() {
           {isValid && action === 'init' && (
             <div>
               <p>You can now close this window or
-                <a href='/home' className='link font-semibold link-primary'>enter</a>
+                <a href={HOME_ROUTE} className='link font-semibold link-primary'>enter</a>
               </p>
             </div>
           )}

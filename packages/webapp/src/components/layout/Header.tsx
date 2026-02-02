@@ -1,4 +1,5 @@
 import { logout } from '../../lib/api';
+import { HOME_ROUTE } from '../../router';
 import { useUserStore } from '../../store/user_store';
 
 export default function Header() {
@@ -18,7 +19,7 @@ export default function Header() {
   const menu = [
     {
       name: 'Charts',
-      link: '/home',
+      link: HOME_ROUTE,
     },
     {
       name: 'Dashboards',

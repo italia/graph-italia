@@ -72,19 +72,20 @@ Componente per visualizzare indicatori chiave di performance (KPI)
 
 ### Struttura Build
 - **Input**: `src/index.ts`
-- **Output**: 
+- **Output**:
   - `dist/index.js` (CommonJS)
   - `dist/index.esm.js` (ESM)
   - `dist/types/index.d.ts` (TypeScript definitions)
 
 ### Dipendenze Peer
 Le dipendenze sono dichiarate come `peerDependencies` per evitare duplicazioni:
-- React, React-DOM
-- ECharts, echarts-for-react
-- OpenLayers
-- dayjs
-- react-error-boundary
-- react-markdown
+- React ^19.1.0, React-DOM ^19.1.0
+- ECharts ^5.6.0, echarts-for-react ^3.0.2
+- OpenLayers ^10.5.0
+- dayjs ^1.11.13
+- react-error-boundary ^6.0.0
+- react-markdown ^10.1.0, remark-gfm ^4.0.1
+- @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities (drag-and-drop)
 
 ### Integrazione
 I pacchetti interni (`webapp` e `ui-example-app`) utilizzano il componente tramite:
@@ -117,12 +118,12 @@ erDiagram
     User ||--o{ Dashboard : "crea"
     User ||--o{ DataSource : "crea"
     User ||--o{ Code : "ha"
-    
+
     Dashboard ||--o{ Slot : "contiene"
     Chart ||--o{ Slot : "usato_in"
     Chart ||--o{ SourceLink : "collegato_a"
     DataSource ||--o{ SourceLink : "collegato_a"
-    
+
     User {
         string id PK
         string email UK
@@ -132,7 +133,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     Chart {
         string id PK
         string userId FK
@@ -148,7 +149,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     Dashboard {
         string id PK
         string userId FK
@@ -158,7 +159,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     Slot {
         string dashboardId PK,FK
         string chartId PK,FK
@@ -168,7 +169,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     DataSource {
         string id PK
         string userId FK
@@ -183,7 +184,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     Code {
         string id PK
         string userId FK
@@ -192,7 +193,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     SourceLink {
         string dataSourceId PK,FK
         string chartId PK,FK
@@ -245,8 +246,17 @@ Il sistema supporta due ruoli:
 - `PUT /:id/slots` - Aggiorna slots del dashboard
 - `DELETE /:id` - Elimina dashboard
 
+#### `/charts/kpi-group`
+- `POST /` - Crea nuovo KPI Group
+- `GET /:id` - Dettaglio KPI Group
+- `PUT /:id` - Aggiorna KPI Group (config e dataSource)
+
 #### `/hints`
 - `POST /` - Suggerimenti AI per creazione grafici (richiede OpenAI)
+
+#### Documentazione API
+- `GET /openapi.json` - Specifica OpenAPI 3.0
+- `GET /docs` - Documentazione API interattiva (Scalar UI)
 
 ### Middleware
 - `checkAuth`: Verifica JWT token
@@ -287,33 +297,33 @@ flowchart TD
     Login -->|No| Auth[Login/Registrazione]
     Auth --> Home[Home Page]
     Login -->|Sì| Home
-    
+
     Home --> Create[+ Create New Chart]
     Create --> Load[Caricamento Dati]
-    
+
     Load --> CSV[Upload CSV]
     Load --> URL[Carica da URL]
     Load --> Gen[Genera Dati Random]
-    
+
     CSV --> Transform[Trasformazione Dati]
     URL --> Transform
     Gen --> Transform
-    
+
     Transform --> Config[Configurazione Grafico]
     Config --> SelectType[Seleziona Tipo:<br/>bar/line/pie/map/kpi]
     Config --> Customize[Personalizza:<br/>colori, legende, tooltip]
-    
+
     SelectType --> Preview[Anteprima Grafico]
     Customize --> Preview
-    
+
     Preview --> Save{Salvare?}
     Save -->|Sì| SaveDB[Salva nel Database]
     Save -->|No| Config
-    
+
     SaveDB --> Publish{Pubblicare?}
     Publish -->|Sì| Public[Pubblica Pubblicamente]
     Publish -->|No| Private[Salva Privato]
-    
+
     Public --> Share[Condividi URL]
     Private --> List[Lista Charts]
     Share --> List
@@ -382,9 +392,10 @@ stateDiagram-v2
 
 ### Routing
 Router configurato con React Router v6:
-- Route pubbliche: `/`, `/charts/:id/view`, `/dashboards/:id/view`
-- Route protette: `/home`, `/charts/:id/edit`, `/dashboards`
-- Route auth: `/login`, `/register`, `/verify/:uid`, `/recover-password`
+- Route pubbliche: `/`, `/charts/:id/view`, `/dashboards/:id/view`, `/charts/:id/embed`, `/dashboards/:id/embed`
+- Route protette: `/`, `/edit/chart/:id?`, `/edit/kpi/:id?`, `/dashboards`, `/dashboards/:id/edit`
+- Route auth: `/login`, `/verify/:uid`, `/recover-password`, `/change-password`
+- Route utility: `/load-data`, `/generate-data`, `/geo`
 
 ---
 
@@ -423,7 +434,7 @@ graph TB
     Components[Components<br/>React Library]
     Server[Server<br/>Hono + Bun]
     DB[(PostgreSQL<br/>Prisma ORM)]
-    
+
     Webapp -->|usa| Components
     Webapp <-->|HTTP API| Server
     Server -->|query| DB
@@ -435,12 +446,12 @@ graph TB
 ```mermaid
 graph LR
     Root[Root Package<br/>Bun Workspaces]
-    
+
     Root --> Components[packages/components<br/>React Component Library<br/>Pubblicabile su npm]
     Root --> Server[packages/server<br/>Backend API<br/>Hono + Bun]
     Root --> Webapp[packages/webapp<br/>Web Application<br/>React + Vite]
     Root --> Example[packages/ui-example-app<br/>Example App<br/>Demo Components]
-    
+
     Webapp -->|workspace:*| Components
     Example -->|link:| Components
     Webapp <-->|HTTP REST API| Server
@@ -526,7 +537,9 @@ Dal `package.json` root:
 - `UPLOAD_SIZE_LIMIT`: Limite upload (default: 15mb)
 - `ROUTES_PREFIX`: Prefisso route API
 - `APP_URL`: URL applicazione frontend
-- Database PostgreSQL connection string (per Prisma)
+- `DATABASE_URL`: Connection string PostgreSQL (per Prisma)
+- `BUILD_SHA`: SHA del commit (iniettato a build time, visibile in healthcheck)
+- `BUILD_TIME`: Timestamp della build (iniettato a build time, visibile in healthcheck)
 
 ### Docker
 - `packages/server/Dockerfile`: Immagine Docker per server
@@ -546,17 +559,17 @@ graph TB
             Ingress[Ingress<br/>nginx] --> Webapp[Webapp<br/>nginx + React]
             Ingress --> Server[Server<br/>Bun + Hono]
             Server --> DB[(PostgreSQL<br/>Azure)]
-            
+
             subgraph "Helm Hooks"
                 Migration[Job: db-migration<br/>prisma db push]
                 Seed[Job: db-seed<br/>seed-users.ts]
             end
-            
+
             Migration -.->|pre-upgrade| Server
             Seed -.->|pre-upgrade| Server
         end
     end
-    
+
     CI[GitHub Actions] -->|helm upgrade| Ingress
 ```
 
@@ -601,17 +614,17 @@ sequenceDiagram
     participant Seed as db-seed Job
     participant Server as Server Pod
     participant DB as PostgreSQL
-    
+
     Helm->>Migration: pre-upgrade hook (weight: -5)
     Migration->>DB: prisma db push
     DB-->>Migration: Schema synced
     Migration-->>Helm: Job completed
-    
+
     Helm->>Seed: pre-upgrade hook (weight: 0)
     Seed->>DB: Check/create users
     DB-->>Seed: Users ready
     Seed-->>Helm: Job completed
-    
+
     Helm->>Server: Deploy new pods
     Server->>DB: Connect & serve
 ```
@@ -631,7 +644,7 @@ dbSeed:
       password: "SecurePassword123!"
       verifyed: true
       role: "ADMIN"
-    
+
     # Aggiorna utente esistente (richiede id)
     - id: "existing-user-id"
       email: "updated@example.com"
@@ -688,6 +701,182 @@ Gli utenti possono registrarsi autonomamente tramite l'interfaccia web:
 
 ---
 
+## GitFlow e Branching Strategy
+
+Il progetto utilizza un workflow Git basato su due branch principali con feature branches per lo sviluppo.
+
+### Flusso di Lavoro
+
+```mermaid
+gitGraph
+    commit id: "initial"
+    branch develop
+    checkout main
+    commit id: "v1.0.0" tag: "v1.0.0"
+
+    checkout main
+    branch feature/nuova-funzionalita
+    commit id: "feat: add new component"
+    commit id: "feat: add tests"
+
+    checkout develop
+    merge feature/nuova-funzionalita id: "merge to develop" type: HIGHLIGHT
+    commit id: "test in staging"
+
+    checkout main
+    merge develop id: "release to prod" type: HIGHLIGHT
+    commit id: "v1.1.0" tag: "v1.1.0"
+```
+
+### Branch Principali
+
+| Branch | Ambiente | Descrizione |
+|--------|----------|-------------|
+| `main` | **Production** | Branch stabile, ogni commit viene deployato in produzione |
+| `develop` | **Test/Staging** | Branch di integrazione, deploy automatico su ambiente di test |
+
+### Workflow per Nuove Funzionalità
+
+```mermaid
+flowchart LR
+    subgraph "1️⃣ Sviluppo"
+        A[Crea feature branch<br/>da main] --> B[Sviluppa la<br/>funzionalità]
+        B --> C[Commit e push]
+    end
+
+    subgraph "2️⃣ Testing"
+        C --> D[Merge in develop]
+        D --> E[Deploy automatico<br/>su dataviz-test]
+        E --> F{Test OK?}
+    end
+
+    subgraph "3️⃣ Produzione"
+        F -->|Sì| G[Merge in main]
+        G --> H[Deploy automatico<br/>su dataviz]
+    end
+
+    F -->|No| B
+```
+
+### Istruzioni Operative
+
+#### 1. Creare una nuova feature
+
+```bash
+# Parti sempre da main aggiornato
+git checkout main
+git pull origin main
+
+# Crea il feature branch
+git checkout -b feature/nome-funzionalita
+```
+
+#### 2. Sviluppare e testare localmente
+
+```bash
+# Sviluppa la funzionalità
+# ... modifiche al codice ...
+
+# Commit delle modifiche
+git add .
+git commit -m "feat: descrizione della funzionalità"
+
+# Push del branch
+git push -u origin feature/nome-funzionalita
+```
+
+#### 3. Deploy su ambiente di Test
+
+```bash
+# Merge in develop per il deploy su staging
+git checkout develop
+git pull origin develop
+git merge feature/nome-funzionalita
+git push origin develop
+
+# ✅ CI/CD deploya automaticamente su dataviz-test
+# URL: https://dataviz-test.innovazione.gov.it
+```
+
+#### 4. Promuovere in Produzione
+
+Dopo aver verificato che tutto funziona su staging:
+
+```bash
+# Merge in main per il deploy in produzione
+git checkout main
+git pull origin main
+git merge develop  # oppure: git merge feature/nome-funzionalita
+git push origin main
+
+# ✅ CI/CD deploya automaticamente su dataviz (produzione)
+# URL: https://dataviz.innovazione.gov.it
+```
+
+#### 5. (Opzionale) Creare un Tag di Release
+
+Per release ufficiali con versione semantica:
+
+```bash
+git checkout main
+git tag -a v1.2.0 -m "Release 1.2.0: descrizione"
+git push origin v1.2.0
+
+# Il tag triggera una build con versione 1.2.0 invece di 0.0.0-test.SHA
+```
+
+### Flusso CI/CD Completo
+
+```mermaid
+flowchart TB
+    subgraph "Developer"
+        Dev[Push su branch]
+    end
+
+    subgraph "GitHub Actions"
+        PR{È una PR?}
+        Branch{Quale branch?}
+
+        Build[🏗️ Build Images<br/>webapp + server]
+        Helm[📦 Package Helm]
+
+        DeployTest[🧪 Deploy Test<br/>dataviz-test]
+        DeployProd[🚀 Deploy Prod<br/>dataviz]
+    end
+
+    subgraph "Kubernetes"
+        Test[dataviz-test<br/>namespace]
+        Prod[dataviz<br/>namespace]
+    end
+
+    Dev --> PR
+    PR -->|Sì| Build
+    Build -->|Solo build| End[Fine]
+
+    PR -->|No| Branch
+    Branch -->|develop| Build
+    Branch -->|main/tag| Build
+
+    Build --> Helm
+
+    Helm -->|develop| DeployTest
+    Helm -->|main/tag| DeployProd
+
+    DeployTest --> Test
+    DeployProd --> Prod
+```
+
+### Riepilogo Deploy Automatici
+
+| Evento | Ambiente Target | Versione |
+|--------|-----------------|----------|
+| Push su `develop` | dataviz-test | `0.0.0-test.<sha>` |
+| Push su `main` | dataviz (prod) | `0.0.0-test.<sha>` |
+| Tag `v*.*.*` | dataviz (prod) | Versione dal tag |
+| Pull Request | Nessuno | Solo build di verifica |
+
+---
+
 ## CI/CD e Build
 
 ### CI/CD Implementato
@@ -734,37 +923,37 @@ flowchart TB
         Tag[Tag v*]
         PR[Pull Request]
     end
-    
+
     subgraph Prepare["📋 Prepare"]
         Version[Generate Version<br/>0.0.0-test.SHA / v1.0.0]
     end
-    
+
     subgraph Build["🏗️ Build Images"]
         direction LR
         BuildServer[Build Server<br/>Dockerfile.app]
         BuildWebapp[Build Webapp<br/>Dockerfile]
     end
-    
+
     subgraph Package["📦 Package Helm"]
         HelmPkg[helm package]
         HelmPush[helm push OCI]
     end
-    
+
     subgraph Deploy["🚀 Deploy"]
         DeployTest[Deploy Test<br/>dataviz-test namespace]
         DeployProd[Deploy Production<br/>dataviz namespace]
     end
-    
+
     Push --> Prepare
     Tag --> Prepare
     PR --> Prepare
-    
+
     Prepare --> Build
     Build --> Package
-    
+
     Package --> DeployTest
     DeployTest -->|main branch| DeployProd
-    
+
     BuildServer --> GHCR1[ghcr.io/italia/dataviz-srv]
     BuildWebapp --> GHCR2[ghcr.io/italia/dataviz-webapp]
     HelmPush --> GHCR3[ghcr.io/italia/charts/dataviz]
@@ -805,15 +994,15 @@ Workflow per automazione AI-assisted tramite Pullfrog:
 graph TB
     Start[Start Build] --> Root[Root Package.json]
     Root -->|bun run build| Filter[Filter All Packages]
-    
+
     Filter --> BuildComponents[Build Components<br/>rollup -c]
     Filter --> BuildWebapp[Build Webapp<br/>tsc && vite build]
     Filter --> BuildServer[Build Server<br/>TypeScript Check]
-    
+
     BuildComponents --> ComponentsOutput[dist/index.js<br/>dist/index.esm.js<br/>dist/types/]
     BuildWebapp --> WebappOutput[dist/ static files]
     BuildServer --> ServerOutput[TypeScript Compiled]
-    
+
     ComponentsOutput --> Docker[Optional: Docker Build]
     WebappOutput --> Docker
     ServerOutput --> Docker
@@ -850,7 +1039,7 @@ cd packages/components && npm run build
 
 **Processo**:
 1. **TypeScript Compilation**: Verifica tipi e compila (`tsc`)
-2. **Vite Build**: 
+2. **Vite Build**:
    - Bundle React app
    - Minificazione e ottimizzazione
    - Code splitting automatico
@@ -964,19 +1153,19 @@ graph LR
     subgraph "GitHub Actions"
         CI[CI/CD Pipeline]
     end
-    
+
     subgraph "Kubernetes Cluster"
         subgraph "Test Environment"
             TestNS[dataviz-test namespace]
             TestDB[(Azure PostgreSQL)]
         end
-        
+
         subgraph "Production Environment"
             ProdNS[dataviz namespace]
             ProdDB[(Azure PostgreSQL)]
         end
     end
-    
+
     CI -->|develop/main push| TestNS
     CI -->|main push only| ProdNS
     TestNS --> TestDB
@@ -1133,7 +1322,7 @@ Poi crea l'utente:
 kubectl run -n dataviz db-create-user --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "INSERT INTO \"User\" (id, email, password, verifyed, role, \"createdAt\", \"updatedAt\") 
+  -c "INSERT INTO \"User\" (id, email, password, verifyed, role, \"createdAt\", \"updatedAt\")
       VALUES ('user-001', 'email@example.com', '\$2b\$10\$HASH...', true, 'USER', NOW(), NOW());"
 ```
 
