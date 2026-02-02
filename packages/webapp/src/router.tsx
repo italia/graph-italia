@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import AboutPage from "./pages";
+import PolicyPage from "./pages/gdpr";
+import TermsPage from "./pages/terms";
 import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
@@ -20,7 +21,7 @@ import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 const router = createBrowserRouter([
   //PRIVATE PART
   {
-    path: "/home",
+    path: "/",
     element: (
       <ProtectedRoute>
         <HomePage />
@@ -71,8 +72,12 @@ const router = createBrowserRouter([
   },
   //PUBLIC PART
   {
-    path: "/",
-    element: <AboutPage />,
+    path: "/gdpr",
+    element: <PolicyPage />,
+  },
+  {
+    path: "/terms-of-service",
+    element: <TermsPage />,
   },
   //AUTH STUFF
   {
