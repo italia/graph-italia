@@ -14,6 +14,7 @@ import {
   type KpiConfigFormHandle,
 } from "./components";
 import useEditKpiGroupStore from "./store";
+import { HOME_ROUTE } from "../../../router";
 
 function EditKpiGroup() {
   const { id } = useParams();
@@ -97,7 +98,7 @@ function EditKpiGroup() {
     <Layout>
       <div className="p-4">
         <div className="flex justify-between items-center">
-          <Link to="/home" className="text-blue-500 hover:underline">
+          <Link to={HOME_ROUTE} className="text-blue-500 hover:underline">
             {/* &lt; Torna alla lista */}
             &lt; Back to the list
           </Link>
