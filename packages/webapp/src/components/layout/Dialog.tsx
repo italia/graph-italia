@@ -14,9 +14,9 @@ export default function Dialog({ title, children, toggle, callback }: any) {
 
   return (
     <dialog ref={ref} className="modal">
-      <div className="modal-box">
+      <div className="modal-box w-50vw h-60vh max-w-[700px] max-h-full">
         <h3 className="font-bold text-lg">{title}</h3>
-        <div>{children}</div>
+        {children}
         <div className="modal-action">
           <button className="btn btn-primary" onClick={() => callback()}>
             Close

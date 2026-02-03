@@ -17,10 +17,10 @@ export default function Header() {
   };
 
   const menu = [
-    {
-      name: 'Home',
-      link: HOME_ROUTE,
-    },
+    // {
+    //   name: 'Home',
+    //   link: HOME_ROUTE,
+    // },
     // {
     //   name: 'Dashboards',
     //   link: '/dashboards',

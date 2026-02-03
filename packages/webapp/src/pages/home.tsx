@@ -14,6 +14,7 @@ import * as api from "../lib/api";
 import useChartsStoreState from "../lib/chartListStore";
 import stepMachine from "../lib/stepMachine";
 import useStoreState from "../lib/storeState";
+import ChartTable from "../components/ChartTable";
 
 type GenericChartPayload = {
   name: string;
@@ -185,7 +186,7 @@ function Home() {
                     </ul>
                   </details>
                 </div>
-                <ChartList
+                <ChartTable
                   list={list as FieldDataType[]}
                   handleLoadChart={handleLoadChart}
                   handleDeleteChart={handleDeleteChart}

@@ -5,7 +5,7 @@ import {
   transposeData,
 } from "../../lib/utils";
 import Layout from "../../components/layout";
-import DataTable from "../../components/DataTable";
+import DataTable from "../../components/OldDataTable";
 import useStoreState from "../../lib/storeState";
 import GenerateRandomData from "../../components/GenerateRandomData";
 import { downloadCSV, dataToCSV, downloadJSON } from "../../lib/downloadUtils";
