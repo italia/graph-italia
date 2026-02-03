@@ -18,13 +18,13 @@ export default function Header() {
 
   const menu = [
     {
-      name: 'Charts',
+      name: 'Home',
       link: HOME_ROUTE,
     },
-    {
-      name: 'Dashboards',
-      link: '/dashboards',
-    },
+    // {
+    //   name: 'Dashboards',
+    //   link: '/dashboards',
+    // },
     {
       name: 'Tools',
       link: '',
@@ -142,7 +142,7 @@ export default function Header() {
               >
                 logout
               </button>
-              <span className='px-2'>{user.name}</span>
+              {/* <span className='px-2'>{user.name}</span> */}
             </span>
           </div>
         ) : (
