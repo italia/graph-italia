@@ -292,7 +292,7 @@ export const processMemory = new Gauge(
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Paths to exclude from metrics (to avoid metric explosion)
-const EXCLUDED_PATHS = ['/metrics', '/health', '/healthz', '/ready', '/live'];
+const EXCLUDED_PATHS = ['/metrics', '/health', '/healthz', '/ready', '/live', '/api/health'];
 
 export const metricsMiddleware = createMiddleware(async (c, next) => {
   const path = c.req.path;

@@ -232,7 +232,14 @@ server:
     - name: var-tmp
       mountPath: /var/tmp
   # Health check configuration
-  # Note: path should match ROUTES_PREFIX (e.g., /api if ROUTES_PREFIX=/api)
+  # Note: paths should match ROUTES_PREFIX (e.g., /api if ROUTES_PREFIX=/api)
+  # 
+  # livenessProbe: Is the app alive? (restart if fails)
+  # readinessProbe: Is the app ready to serve traffic? (no traffic if fails)
+  # startupProbe: Did the app start correctly? (gives more time for initial startup)
+  #
+  # The /health/ready endpoint verifies database connectivity, preventing
+  # traffic to pods with broken database connections (like Prisma version mismatch)
   livenessProbe:
     httpGet:
       path: /api
@@ -243,12 +250,20 @@ server:
     failureThreshold: 3
   readinessProbe:
     httpGet:
-      path: /api
+      path: /api/health/ready  # Deep check: verifies database connection
       port: http
     initialDelaySeconds: 10
-    periodSeconds: 5
-    timeoutSeconds: 3
+    periodSeconds: 10
+    timeoutSeconds: 5
     failureThreshold: 3
+  startupProbe:
+    httpGet:
+      path: /api/health/ready  # Verify DB on startup before receiving traffic
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 30  # 30 * 5s = 150s max startup time
 
 # Unified Ingress configuration
 # Supports both single host with paths and multiple hosts
