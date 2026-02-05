@@ -52,8 +52,10 @@ interface LogEntry {
 const EXCLUDED_PATHS = new Set([
 	"/api", // healthcheck (exact match only)
 	"/api/", // healthcheck with slash
+	"/api/health/ready", // deep health check (db connection)
 	"/metrics", // prometheus metrics
 	"/health", // explicit health endpoint
+	"/health/ready", // deep health check without prefix
 	"/healthz", // k8s health endpoint
 	"/ready", // readiness probe
 	"/live", // liveness probe
