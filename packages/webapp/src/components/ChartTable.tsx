@@ -6,13 +6,21 @@ import {
   FaChartBar,
   FaChartLine,
   FaChartPie,
-  FaMapMarkerAlt,
-  FaRegListAlt,
-  FaRegMap,
-} from "react-icons/fa";
+  FaCode,
+  FaEye,
+  FaMapLocationDot,
+  FaList,
+  FaMap,
+  FaLink,
+  FaTable,
+  FaRegSquare,
+  FaTrashCan,
+  FaPenToSquare,
+  FaCopy
+} from "react-icons/fa6";
+
 import Dialog from "./layout/Dialog";
 import { RenderChart } from "dataviz-components";
-import ReactMarkdown from 'react-markdown';
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -44,6 +52,8 @@ createTheme(
   },
 );
 
+const actionColor = "";
+const actionSize = 16;
 
 export default function ChartTable({
   list,
@@ -63,7 +73,7 @@ export default function ChartTable({
         <DataTable
           columns={[{
             name: "Type",
-            maxWidth: '100px',
+            maxWidth: '80px',
             selector: (row: FieldDataType) => row.chart,
             cell: (row: FieldDataType) => {
               let IconComponent;
@@ -77,14 +87,18 @@ export default function ChartTable({
                 case "pie":
                   IconComponent = FaChartPie;
                   break;
-                case "point_map":
-                  IconComponent = FaMapMarkerAlt;
+                case "kpiGroup":
+                  IconComponent = FaList;
                   break;
-                case "choropleth_map":
-                  IconComponent = FaRegMap;
+                case "point_map":
+                  IconComponent = FaMapLocationDot;
+                  break;
+                case "map":
+                case "geo":
+                  IconComponent = FaMap;
                   break;
                 default:
-                  IconComponent = FaRegListAlt;
+                  IconComponent = FaRegSquare;
               }
               return (
                 <div className="overflow-hidden">
@@ -107,40 +121,18 @@ export default function ChartTable({
           },
 
 
-          // {
-          //   name: "Preview",
-          //   selector: (row: FieldDataTypeWithPreview) => row.preview,
-          //   cell: (row: FieldDataTypeWithPreview) => (
-          //     <div>
-          //       {row.preview ? (
-          //         <img
-          //           src={row.preview}
-          //           alt="chart preview"
-          //           className="w-24 h-16 object-contain border"
-          //         />
-          //       ) : (
-          //         <div className="w-24 h-16 flex items-center justify-center bg-base-200 border">
-          //           <FaRegListAlt className="text-3xl text-base-content/50" />
-          //         </div>
-          //       )}
-          //     </div>
-          //   ),
-          // },
-
 
           {
             name: "Is Remote",
             selector: (row: FieldDataType) => row.isRemote,
             cell: (row: FieldDataType) =>
               row.remoteUrl ? (
-                <a
-                  href={row.remoteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-500 underline"
-                >
-                  link
-                </a>
+                <div className="flex gap-2">
+                  <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" >
+                    <FaLink fill={actionColor} size={actionSize} title={row.remoteUrl} />
+                  </a>
+                  <FaCopy fill={actionColor} size={actionSize} title={"preview"} onClick={() => alert("copy")} />
+                </div>
               ) : (
                 "No"
               ),
@@ -153,6 +145,7 @@ export default function ChartTable({
               dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
             sortable: true,
           },
+
           {
             name: "Updated At",
             selector: (row: FieldDataType) => row.updatedAt,
@@ -193,43 +186,33 @@ export default function ChartTable({
             ),
           },
           {
-            name: "preview",
+            name: "Share",
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
-                <button className="btn btn-sm" onClick={() => setData(row)}>
-                  Preview
-                </button >
-                <button
-                  className="btn btn-sm "
-                  onClick={() =>
-                    setShow(
-                      `<iframe width="600" height="400" src="${window.location.origin}/embed/chart/${row.id}" frameborder="0" allowfullscreen></iframe>`,
-                    )
-                  }
-                >
-                  Embed
-                </button>
-              </div>)
+
+                <FaEye fill={actionColor} size={actionSize} title={"preview"} onClick={() => setData(row)} />
+                <FaCode fill={actionColor} size={actionSize} title={"embed"} onClick={() => setShow(
+                  `<iframe width="600" height="400" src="${window.location.origin}/charts/${row.id}/embed" frameborder="0" allowfullscreen></iframe>`,
+                )} />
+                <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer">
+                  <FaLink fill={actionColor} size={actionSize} title={"view"} />
+                </a>
+                <FaCopy fill={actionColor} size={actionSize} title={"preview"} onClick={() => alert("copy")} />
+              </div>
+            ),
           },
+
           {
             name: "Actions",
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
-                <button
-                  className="btn btn-sm "
-                  onClick={() => handleDeleteChart(row.id)}
-                >
-                  Delete
-                </button>
-
+                <FaTrashCan fill={actionColor} size={actionSize} title={"delete"} onClick={() => handleDeleteChart(row.id)} />
                 <a
-                  className="btn btn-sm "
                   href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
                     }`}
                 >
-                  Edit
+                  <FaPenToSquare fill={actionColor} size={actionSize} title={"edit"} onClick={() => setData(row)} />
                 </a>
-
 
               </div>
             ),

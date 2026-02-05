@@ -50,7 +50,7 @@ function RenderChart(props: RenderProps) {
     let w: number = 500;
     try {
       w = element.clientWidth || element.getBoundingClientRect().width;
-    } catch (error) {}
+    } catch (error) { }
     if (w) setWidth(w);
   }
 
@@ -65,6 +65,7 @@ function RenderChart(props: RenderProps) {
   /** Loading */
   if (loading) return null;
 
+  const height = props.config?.h || 500;
   /** Default style */
   const baseStyle = {
     width: "100%",
@@ -73,16 +74,16 @@ function RenderChart(props: RenderProps) {
   };
   let chartWrapStyle = {
     ...baseStyle,
-    minHeight: rowHeight ? rowHeight : props.config.h,
+    minHeight: rowHeight ? rowHeight : height,
   };
 
   /** Render  */
+
   return (
     <div style={baseStyle}>
       <div
-        className={`w-full min-height-[${
-          rowHeight ? rowHeight + "px" : props.config.h + "px"
-        }] h-full max-height-full p-4`}
+        className={`w-full min-height-[${rowHeight ? rowHeight + "px" : height + "px"
+          }] h-full max-height-full p-4`}
         style={chartWrapStyle}
       >
         <div ref={wrapRef}>
