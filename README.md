@@ -732,7 +732,7 @@ gitGraph
 
 | Branch | Ambiente | Descrizione |
 |--------|----------|-------------|
-| `main` | **Production** | Branch stabile, ogni commit viene deployato in produzione |
+| `main` | **Production** | Branch stabile, deploy in produzione solo tramite tag semantici (`v*.*.*`) |
 | `develop` | **Test/Staging** | Branch di integrazione, deploy automatico su ambiente di test |
 
 ### Workflow per Nuove Funzionalità
@@ -752,7 +752,8 @@ flowchart LR
 
     subgraph "3️⃣ Produzione"
         F -->|Sì| G[Merge in main]
-        G --> H[Deploy automatico<br/>su dataviz]
+        G --> H[Crea tag v*.*.*]
+        H --> I[Deploy automatico<br/>su dataviz]
     end
 
     F -->|No| B
@@ -803,26 +804,32 @@ git push origin develop
 Dopo aver verificato che tutto funziona su staging:
 
 ```bash
-# Merge in main per il deploy in produzione
+# Merge in main
 git checkout main
 git pull origin main
 git merge develop  # oppure: git merge feature/nome-funzionalita
 git push origin main
 
-# ✅ CI/CD deploya automaticamente su dataviz (produzione)
-# URL: https://dataviz.innovazione.gov.it
+# ⚠️ Il push su main NON deploya automaticamente in produzione
+# È necessario creare un tag per il deploy (vedi step 5)
 ```
 
-#### 5. (Opzionale) Creare un Tag di Release
+#### 5. Creare un Tag di Release (obbligatorio per deploy in prod)
 
-Per release ufficiali con versione semantica:
+Il deploy in produzione avviene **solo** tramite tag semantici:
 
 ```bash
 git checkout main
 git tag -a v1.2.0 -m "Release 1.2.0: descrizione"
 git push origin v1.2.0
 
-# Il tag triggera una build con versione 1.2.0 invece di 0.0.0-test.SHA
+# ✅ CI/CD deploya automaticamente su dataviz (produzione)
+# URL: https://dataviz.innovazione.gov.it
+#
+# Il tag triggera:
+# - Build immagini Docker con versione 1.2.0
+# - Package Helm chart con versione 1.2.0
+# - Deploy automatico in produzione
 ```
 
 ### Flusso CI/CD Completo
@@ -835,7 +842,7 @@ flowchart TB
 
     subgraph "GitHub Actions"
         PR{È una PR?}
-        Branch{Quale branch?}
+        Branch{Quale branch/tag?}
 
         Build[🏗️ Build Images<br/>webapp + server]
         Helm[📦 Package Helm]
@@ -855,12 +862,13 @@ flowchart TB
 
     PR -->|No| Branch
     Branch -->|develop| Build
-    Branch -->|main/tag| Build
+    Branch -->|main| Build
+    Branch -->|tag v*| Build
 
     Build --> Helm
 
     Helm -->|develop| DeployTest
-    Helm -->|main/tag| DeployProd
+    Helm -->|tag v*| DeployProd
 
     DeployTest --> Test
     DeployProd --> Prod
@@ -870,10 +878,12 @@ flowchart TB
 
 | Evento | Ambiente Target | Versione |
 |--------|-----------------|----------|
-| Push su `develop` | dataviz-test | `0.0.0-test.<sha>` |
-| Push su `main` | dataviz (prod) | `0.0.0-test.<sha>` |
-| Tag `v*.*.*` | dataviz (prod) | Versione dal tag |
+| Push su `develop` | dataviz-test | `0.0.0-dev.<sha>` |
+| Push su `main` | Nessuno (solo build) | `0.0.0-main.<sha>` |
+| Tag `v*.*.*` | dataviz (prod) | Versione dal tag (es. `1.2.0`) |
 | Pull Request | Nessuno | Solo build di verifica |
+
+> **Nota**: Il deploy in produzione richiede sempre un tag semantico. I push su `main` eseguono solo la build per verificare che il codice sia pronto per il rilascio.
 
 ---
 
@@ -925,7 +935,7 @@ flowchart TB
     end
 
     subgraph Prepare["📋 Prepare"]
-        Version[Generate Version<br/>0.0.0-test.SHA / v1.0.0]
+        Version[Generate Version<br/>0.0.0-dev.SHA / 1.2.0]
     end
 
     subgraph Build["🏗️ Build Images"]
@@ -951,8 +961,8 @@ flowchart TB
     Prepare --> Build
     Build --> Package
 
-    Package --> DeployTest
-    DeployTest -->|main branch| DeployProd
+    Package -->|develop| DeployTest
+    Package -->|tag v*| DeployProd
 
     BuildServer --> GHCR1[ghcr.io/italia/dataviz-srv]
     BuildWebapp --> GHCR2[ghcr.io/italia/dataviz-webapp]
@@ -966,12 +976,12 @@ flowchart TB
 | `prepare` | Genera versione semantica | Sempre |
 | `build-images` | Build Docker server + webapp | Sempre |
 | `package-helm` | Package e push Helm chart | Non PR |
-| `deploy-test` | Deploy su dataviz-test | Non PR |
-| `deploy-production` | Deploy su dataviz | Solo main + non PR |
+| `deploy-test` | Deploy su dataviz-test | Solo develop |
+| `deploy-production` | Deploy su dataviz | Solo tag `v*.*.*` |
 
 **Versioning**:
-- Branch `develop`: `0.0.0-test.<short-sha>`
-- Branch `main`: `0.0.0-test.<short-sha>`
+- Branch `develop`: `0.0.0-dev.<short-sha>`
+- Branch `main`: `0.0.0-main.<short-sha>` (solo build, no deploy)
 - Tag `v1.2.3`: `1.2.3`
 
 **Artefatti Prodotti**:
@@ -1166,16 +1176,16 @@ graph LR
         end
     end
 
-    CI -->|develop/main push| TestNS
-    CI -->|main push only| ProdNS
+    CI -->|develop push| TestNS
+    CI -->|tag v*| ProdNS
     TestNS --> TestDB
     ProdNS --> ProdDB
 ```
 
-| Environment | Namespace | Database | Branch | URL |
-|-------------|-----------|----------|--------|-----|
-| Test | `dataviz-test` | Azure PostgreSQL | develop, main | `dataviz-test.innovazione.gov.it` |
-| Production | `dataviz` | Azure PostgreSQL | main | `dataviz.innovazione.gov.it` |
+| Environment | Namespace | Database | Trigger | URL |
+|-------------|-----------|----------|---------|-----|
+| Test | `dataviz-test` | Azure PostgreSQL | Push su `develop` | `dataviz-test.innovazione.gov.it` |
+| Production | `dataviz` | Azure PostgreSQL | Tag `v*.*.*` | `dataviz.innovazione.gov.it` |
 
 ### Monitoring & Alerting
 
