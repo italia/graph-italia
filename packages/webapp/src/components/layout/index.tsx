@@ -1,5 +1,6 @@
 import Footer from "./Footer";
-import Header from "./Header";
+import SlimHeader from "./SlimHeader";
+
 function Layout({ children }: any) {
   return (
     <div
@@ -7,7 +8,7 @@ function Layout({ children }: any) {
       className="w-full min-h-screen flex flex-col"
       style={{ overflowX: "clip" }}
     >
-      <Header />
+      <SlimHeader />
       <div className="p-5 flex-grow">{children}</div>
       <Footer />
     </div>
