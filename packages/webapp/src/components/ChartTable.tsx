@@ -62,16 +62,8 @@ export default function ChartTable({
       {list && <div>
         <DataTable
           columns={[{
-            name: "Name",
-            selector: (row: FieldDataType) => row.name,
-            sortable: true,
-            cell: (row: FieldDataType) => (
-              <div className="text-md font-medium">
-                <div>{row.name}</div>
-                <small className="truncate"><ReactMarkdown >{row.description}</ReactMarkdown></small></div>
-            ),
-          }, {
             name: "Type",
+            maxWidth: '100px',
             selector: (row: FieldDataType) => row.chart,
             cell: (row: FieldDataType) => {
               let IconComponent;
@@ -97,12 +89,21 @@ export default function ChartTable({
               return (
                 <div className="overflow-hidden">
                   <div className="flex items-center gap-2">
-                    <IconComponent fill="#06c" size={24} />
-                    <span className="capitalize">{row.chart}</span>
+                    <IconComponent fill="#06c" size={24} title={row.chart} />
+                    {/* <span className="capitalize">{row.chart}</span> */}
                   </div>
                 </div>
               );
             },
+          }, {
+            name: "Name",
+            selector: (row: FieldDataType) => row.name,
+            sortable: true,
+            cell: (row: FieldDataType) => (
+              <div className="text-md font-medium">
+                <div>{row.name}</div>
+              </div>
+            ),
           },
 
 
