@@ -71,7 +71,20 @@ export function getBasicValues({
   data: any;
   chart: string;
 }) {
-  const categories = data[0].slice(1) || [];
+  if (!data || data.length === 0) {
+    return {
+      config,
+      data,
+      chart,
+      dataSource: {
+        categories: [],
+        series: [],
+      },
+    };
+  }
+
+
+  const categories = data?.[0].slice(1) || [];
   const series = data.slice(1).map((row: any) => {
     const [name, ...data] = row;
     return {

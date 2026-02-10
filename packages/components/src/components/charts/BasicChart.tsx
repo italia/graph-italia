@@ -31,7 +31,13 @@ function BasicChart({
     }
   }, [loaded, refCanvas.current]);
   function getOptions(data: FieldDataType) {
+
+    if (!data || !data.config) {
+      return <div>No config found</div>;
+    }
+
     const config: any = data.config;
+
     const responsive: boolean =
       typeof config.responsive === "undefined" ? true : config.responsive;
     let grid = {
@@ -93,57 +99,57 @@ function BasicChart({
 
     let xName = config.xLabel
       ? {
-          name: config.xLabel,
-          nameLocation: "middle",
-          nameGap: config.nameGap,
-        }
+        name: config.xLabel,
+        nameLocation: "middle",
+        nameGap: config.nameGap,
+      }
       : {};
     let yName = config.yLabel
       ? {
-          name: config.yLabel,
-          nameLocation: "middle",
-          nameGap: config.nameGap,
-        }
+        name: config.yLabel,
+        nameLocation: "middle",
+        nameGap: config.nameGap,
+      }
       : {};
 
     const axis =
       config.direction === "vertical"
         ? {
-            xAxis: {
-              ...xName,
-              type: "category",
-              data: data.dataSource?.categories,
-              axisTick: { show: false },
-              axisLabel: {
-                hideOverlap: true,
-              },
+          xAxis: {
+            ...xName,
+            type: "category",
+            data: data.dataSource?.categories,
+            axisTick: { show: false },
+            axisLabel: {
+              hideOverlap: true,
             },
-            yAxis: {
-              ...yName,
-              nameRotate: 90,
-              type: "value",
-              axisTick: { show: false },
-              axisLabel: { show: responsive ? !isMobile : true },
-            },
-          }
+          },
+          yAxis: {
+            ...yName,
+            nameRotate: 90,
+            type: "value",
+            axisTick: { show: false },
+            axisLabel: { show: responsive ? !isMobile : true },
+          },
+        }
         : {
-            yAxis: {
-              ...xName,
-              nameRotate: 90,
-              type: "category",
-              data: data.dataSource?.categories,
-              axisTick: { show: false },
-              axisLabel: { show: responsive ? !isMobile : true },
+          yAxis: {
+            ...xName,
+            nameRotate: 90,
+            type: "category",
+            data: data.dataSource?.categories,
+            axisTick: { show: false },
+            axisLabel: { show: responsive ? !isMobile : true },
+          },
+          xAxis: {
+            ...yName,
+            type: "value",
+            axisTick: { show: false },
+            axisLabel: {
+              hideOverlap: true,
             },
-            xAxis: {
-              ...yName,
-              type: "value",
-              axisTick: { show: false },
-              axisLabel: {
-                hideOverlap: true,
-              },
-            },
-          };
+          },
+        };
 
     const tooltip = {
       trigger: config.tooltipTrigger || "item",
