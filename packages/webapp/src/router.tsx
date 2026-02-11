@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import LandingPage from "./pages/about";
 import AuthPage from "./pages/auth/AuthPage";
@@ -11,6 +11,7 @@ import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
+import QuickStartPage from "./pages/QuickStartPage";
 import RootRoute from "./pages/RootRoute";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import DashboardViewPage from "./pages/show/ShowDashboardPage";
@@ -20,7 +21,9 @@ import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 
 export const HOME_ROUTE = "/";
-const router = createBrowserRouter([
+
+// Assertion necessaria per compatibilità React 19 / react-router-dom (element: ReactElement vs ReactNode)
+const routes = [
   // Root: landing se non loggato, home Charts se loggato
   {
     path: HOME_ROUTE,
@@ -30,6 +33,11 @@ const router = createBrowserRouter([
   {
     path: "/about",
     element: <LandingPage />,
+  },
+  // Guida rapida / Quick Start
+  {
+    path: "/quickstart",
+    element: <QuickStartPage />,
   },
   //PRIVATE PART
   {
@@ -135,6 +143,8 @@ const router = createBrowserRouter([
     path: "/dashboards/:id/embed",
     element: <EmbedDashboardPage />,
   },
-]);
+] as RouteObject[];
+
+const router = createBrowserRouter(routes);
 
 export default router;

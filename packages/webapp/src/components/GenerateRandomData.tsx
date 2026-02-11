@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateItems, fillArray, transposeData } from "../lib/utils";
+import { fillArray, generateItems } from "../lib/utils";
 
 function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
   const [rows, setRows] = useState(3);
@@ -13,7 +13,7 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
     const rowLabels = generateItems("SERIE", rows);
     const colLabels = ["_", ...generateItems("T", cols)];
 
-    let matrix = [];
+    const matrix: (string | number)[][] = [];
     matrix[0] = colLabels;
     for (let i = 1; i <= rows; i++) {
       matrix[i] = [
@@ -24,75 +24,83 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
     setData(matrix);
   }
 
+  const inputClass =
+    "input input-bordered w-full rounded-md border-gray-300 focus:border-[#0066cc] focus:ring-1 focus:ring-[#0066cc]";
+  const labelClass = "label text-gray-700 font-medium";
+
   return (
-    <div className='mt-5'>
-      <div className='rounded-md grid grid-cols-2 lg:grid-cols-3 gap-1 bg-base-200 p-4'>
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Parameters</h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div>
-          <label className='label'>ROWS:</label>
+          <label className={labelClass}>Rows</label>
           <input
-            className='input'
-            type='number'
-            placeholder='rows'
+            className={inputClass}
+            type="number"
+            min={1}
             value={rows}
-            onChange={(e) => setRows(Number.parseInt(e.target.value))}
+            onChange={(e) => setRows(Number.parseInt(e.target.value) || 1)}
           />
         </div>
         <div>
-          <label className='label'>COLS</label>
+          <label className={labelClass}>Columns</label>
           <input
-            className='input'
-            type='number'
-            placeholder='Cols'
+            className={inputClass}
+            type="number"
+            min={1}
             value={cols}
-            onChange={(e) => setCols(Number.parseInt(e.target.value))}
+            onChange={(e) => setCols(Number.parseInt(e.target.value) || 1)}
           />
         </div>
         <div>
-          <label className='label'> Range Min:</label>
+          <label className={labelClass}>Range min</label>
           <input
-            className='input'
-            type='number'
-            placeholder='min'
+            className={inputClass}
+            type="number"
             value={min}
-            onChange={(e) => setMin(Number.parseInt(e.target.value))}
+            onChange={(e) => setMin(Number.parseInt(e.target.value) || 0)}
           />
         </div>
         <div>
-          <label className='label'>Range Max:</label>
+          <label className={labelClass}>Range max</label>
           <input
-            className='input'
-            type='number'
-            placeholder='Max'
+            className={inputClass}
+            type="number"
             value={max}
-            onChange={(e) => setMax(Number.parseInt(e.target.value))}
+            onChange={(e) => setMax(Number.parseInt(e.target.value) || 100)}
           />
         </div>
         <div>
-          <label className='label'>Offset</label>
+          <label className={labelClass}>Offset</label>
           <input
-            className='input'
-            type='number'
-            placeholder='offset'
+            className={inputClass}
+            type="number"
             value={offset}
-            onChange={(e) => setOffset(Number.parseInt(e.target.value))}
+            onChange={(e) => setOffset(Number.parseInt(e.target.value) || 0)}
           />
         </div>
         <div>
-          <label className='label'>Multiplier</label>
+          <label className={labelClass}>Multiplier</label>
           <input
-            className='input'
-            type='number'
+            className={inputClass}
+            type="number"
             step={0.5}
-            placeholder='multiplier'
             value={multiplier}
-            onChange={(e) => setMultiplier(Number.parseFloat(e.target.value))}
+            onChange={(e) =>
+              setMultiplier(Number.parseFloat(e.target.value) || 1)
+            }
           />
         </div>
       </div>
-
-      <button className='my-5 btn btn-primary' onClick={() => generate()}>
-        GENERATE
-      </button>
+      <div className="mt-6">
+        <button
+          type="button"
+          className="btn-italia btn-italia-primary"
+          onClick={generate}
+        >
+          Generate data
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,16 +1,16 @@
 import { useEffect } from "react";
+import DataTable from "../../components/DataTable";
+import GenerateRandomData from "../../components/GenerateRandomData";
+import Layout from "../../components/layout";
+import { dataToCSV, downloadCSV, downloadJSON } from "../../lib/downloadUtils";
+import useStoreState from "../../lib/storeState";
 import {
   getAvailablePalettes,
   getPalette,
   transposeData,
 } from "../../lib/utils";
-import Layout from "../../components/layout";
-import DataTable from "../../components/DataTable";
-import useStoreState from "../../lib/storeState";
-import GenerateRandomData from "../../components/GenerateRandomData";
-import { downloadCSV, dataToCSV, downloadJSON } from "../../lib/downloadUtils";
 
-function Home() {
+function GenerateDataPage() {
   const { config, setConfig, rawData, setRawData, resetItem, setData } =
     useStoreState((state) => state);
 
@@ -22,7 +22,6 @@ function Home() {
   function transpose() {
     setRawData(null);
     const transposed = transposeData(rawData);
-    // setChart("");
     setTimeout(() => {
       handleChangeData(transposed);
     }, 300);
@@ -31,7 +30,7 @@ function Home() {
   function handleChangeData(d: any) {
     if (!config.palette) {
       const numSeries = d.length - 1;
-      let palette = getAvailablePalettes(numSeries)[0];
+      const palette = getAvailablePalettes(numSeries)[0];
       config.palette = palette;
       config.colors = getPalette(palette);
       setConfig(config);
@@ -45,14 +44,23 @@ function Home() {
 
   return (
     <Layout>
-      <div>
-        <>
-          <h4 className='text-4xl font-bold'>Generate data</h4>
+      <div className="generate-data-page mx-auto max-w-4xl px-4">
+        <header className="my-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Generate data
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Create a random dataset with configurable rows, columns and value
+            range. Use it to try charts or export as CSV/JSON.
+          </p>
+        </header>
+
+        <section className="mb-10">
           <GenerateRandomData setData={setRawData} />
-        </>
+        </section>
 
         {rawData && (
-          <div>
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <DataTable
               data={rawData}
               reset={reset}
@@ -63,15 +71,16 @@ function Home() {
               downloadJSON={() => {
                 downloadJSON(
                   JSON.stringify(rawData, null, 2),
-                  "generated-data-" + Date.now()
+                  "generated-data-" + Date.now(),
                 );
               }}
+              buttonVariant="italia"
             />
-          </div>
+          </section>
         )}
       </div>
     </Layout>
   );
 }
 
-export default Home;
+export default GenerateDataPage;

@@ -9,7 +9,7 @@ function Layout({ children }: any) {
       style={{ overflowX: "clip" }}
     >
       <SlimHeader />
-      <div className="p-5 flex-grow">{children}</div>
+      <div className="flex-grow">{children}</div>
       <Footer />
     </div>
   );
