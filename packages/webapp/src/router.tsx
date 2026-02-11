@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import PolicyPage from "./pages/gdpr";
-import TermsPage from "./pages/terms";
+import LandingPage from "./pages/about";
 import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
@@ -11,24 +10,28 @@ import DashboardEditPage from "./pages/dashboard/DashboardEditPage";
 import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
-import HomePage from "./pages/home";
+import PolicyPage from "./pages/gdpr";
+import RootRoute from "./pages/RootRoute";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import DashboardViewPage from "./pages/show/ShowDashboardPage";
+import TermsPage from "./pages/terms";
 import GenerateDataPage from "./pages/utility/GenerateDataPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 
 export const HOME_ROUTE = "/";
 const router = createBrowserRouter([
-  //PRIVATE PART
+  // Root: landing se non loggato, home Charts se loggato
   {
     path: HOME_ROUTE,
-    element: (
-      <ProtectedRoute>
-        <HomePage />
-      </ProtectedRoute>
-    ),
+    element: <RootRoute />,
   },
+  // Landing page raggiungibile anche da /about
+  {
+    path: "/about",
+    element: <LandingPage />,
+  },
+  //PRIVATE PART
   {
     path: "/edit/chart/:id?",
     element: (

@@ -14,7 +14,7 @@ type MenuItem =
   | { name: string; link: string; subMenu: readonly MenuSubItem[] };
 
 const MENU: readonly MenuItem[] = [
-  { name: "Charts", link: "/home" },
+  { name: "Charts", link: "/" },
   { name: "Dashboards", link: "/dashboards" },
   {
     name: "Tools",
