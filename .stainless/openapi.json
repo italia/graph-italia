@@ -1,0 +1,821 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Dataviz API",
+    "description": "API documentation for the Dataviz application",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": { "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" } }
+  },
+  "security": [{ "bearerAuth": [] }],
+  "servers": [
+    { "url": "http://localhost:3000", "description": "Local server" },
+    { "url": "http://dataviz-test.innovazione.gov.it", "description": "Staging server" },
+    { "url": "http://dataviz.innovazione.gov.it", "description": "Production server" }
+  ],
+  "paths": {
+    "/api/auth/user": {
+      "get": {
+        "operationId": "getApiAuthUser",
+        "description": "If the user is authenticated, returns the user information along with current token.",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": { "application/json": { "schema": { "type": "object", "properties": {} } } }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "postApiAuthRegister",
+        "description": "Register a new user with email and password.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "uid": { "type": "string" } },
+                  "required": ["uid"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User Already Exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "password": { "type": "string", "minLength": 8 }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "postApiAuthLogin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": { "200": {} }
+      }
+    },
+    "/api/auth/recover": {
+      "post": {
+        "operationId": "postApiAuthRecover",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": { "200": {} }
+      }
+    },
+    "/api/auth/verify": {
+      "post": {
+        "operationId": "postApiAuthVerify",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "uid": { "type": "string" }, "code": { "type": "string" } },
+                "required": ["uid", "code"]
+              }
+            }
+          }
+        },
+        "responses": { "200": {} }
+      }
+    },
+    "/api/auth/confirm/{uid}/{code}": {
+      "get": {
+        "operationId": "getApiAuthConfirmByUidByCode",
+        "parameters": [
+          { "in": "path", "name": "uid", "schema": { "type": "string" }, "required": true },
+          { "in": "path", "name": "code", "schema": { "type": "string" }, "required": true }
+        ],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/auth/pwd": {
+      "put": {
+        "operationId": "putApiAuthPwd",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "password": { "type": "string", "minLength": 8 } },
+                "required": ["password"]
+              }
+            }
+          }
+        },
+        "responses": { "200": {} }
+      }
+    },
+    "/api/charts": {
+      "get": {
+        "operationId": "getApiCharts",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "userId": { "type": "string" },
+                      "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                      "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                      "chart": { "type": "string" },
+                      "config": { "anyOf": [{}, { "type": "null" }] },
+                      "data": { "anyOf": [{}, { "type": "null" }] },
+                      "isRemote": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+                      "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                      "publish": { "type": "boolean" },
+                      "createdAt": { "type": "string" },
+                      "updatedAt": { "type": "string" }
+                    },
+                    "required": [
+                      "id",
+                      "userId",
+                      "name",
+                      "description",
+                      "chart",
+                      "config",
+                      "data",
+                      "isRemote",
+                      "remoteUrl",
+                      "publish",
+                      "createdAt",
+                      "updatedAt"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postApiCharts",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "userId": { "type": "string" },
+                    "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "chart": { "type": "string" },
+                    "config": { "anyOf": [{}, { "type": "null" }] },
+                    "data": { "anyOf": [{}, { "type": "null" }] },
+                    "isRemote": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+                    "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "publish": { "type": "boolean" },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "name",
+                    "description",
+                    "chart",
+                    "config",
+                    "data",
+                    "isRemote",
+                    "remoteUrl",
+                    "publish",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "chart": { "type": "string" },
+                  "config": {},
+                  "data": {},
+                  "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                  "isRemote": { "type": "boolean" },
+                  "publish": { "type": "boolean" },
+                  "preview": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+                },
+                "required": ["chart"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/charts/{id}": {
+      "get": {
+        "operationId": "getApiChartsById",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "userId": { "type": "string" },
+                    "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "chart": { "type": "string" },
+                    "config": { "anyOf": [{}, { "type": "null" }] },
+                    "data": { "anyOf": [{}, { "type": "null" }] },
+                    "isRemote": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+                    "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "publish": { "type": "boolean" },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "name",
+                    "description",
+                    "chart",
+                    "config",
+                    "data",
+                    "isRemote",
+                    "remoteUrl",
+                    "publish",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [{ "in": "path", "name": "id", "schema": { "type": "string" }, "required": true }]
+      },
+      "delete": {
+        "operationId": "deleteApiChartsById",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "userId": { "type": "string" },
+                    "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "chart": { "type": "string" },
+                    "config": { "anyOf": [{}, { "type": "null" }] },
+                    "data": { "anyOf": [{}, { "type": "null" }] },
+                    "isRemote": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+                    "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "publish": { "type": "boolean" },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "name",
+                    "description",
+                    "chart",
+                    "config",
+                    "data",
+                    "isRemote",
+                    "remoteUrl",
+                    "publish",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [{ "in": "path", "name": "id", "schema": { "type": "string" }, "required": true }]
+      },
+      "put": {
+        "operationId": "putApiChartsById",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "userId": { "type": "string" },
+                    "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "chart": { "type": "string" },
+                    "config": { "anyOf": [{}, { "type": "null" }] },
+                    "data": { "anyOf": [{}, { "type": "null" }] },
+                    "isRemote": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+                    "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "publish": { "type": "boolean" },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "name",
+                    "description",
+                    "chart",
+                    "config",
+                    "data",
+                    "isRemote",
+                    "remoteUrl",
+                    "publish",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [{ "in": "path", "name": "id", "schema": { "type": "string" }, "required": true }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "chart": { "type": "string" },
+                  "config": {},
+                  "data": {},
+                  "publish": { "type": "boolean" },
+                  "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                  "isRemote": { "type": "boolean" },
+                  "id": { "type": "string" },
+                  "preview": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                  "slots": {
+                    "anyOf": [{ "type": "array", "items": { "type": "string" } }, { "type": "null" }]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/charts/show/{id}": {
+      "get": {
+        "operationId": "getApiChartsShowById",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "userId": { "type": "string" },
+                    "name": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "description": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "chart": { "type": "string" },
+                    "config": { "anyOf": [{}, { "type": "null" }] },
+                    "data": { "anyOf": [{}, { "type": "null" }] },
+                    "isRemote": { "anyOf": [{ "type": "boolean" }, { "type": "null" }] },
+                    "remoteUrl": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+                    "publish": { "type": "boolean" },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "name",
+                    "description",
+                    "chart",
+                    "config",
+                    "data",
+                    "isRemote",
+                    "remoteUrl",
+                    "publish",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [{ "in": "path", "name": "id", "schema": { "type": "string" }, "required": true }]
+      }
+    },
+    "/api/charts/publish/{id}": {
+      "post": {
+        "operationId": "postApiChartsPublishById",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "published": { "type": "boolean" } },
+                  "required": ["published"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [{ "in": "path", "name": "id", "schema": { "type": "string" }, "required": true }]
+      }
+    },
+    "/api/hints": {
+      "post": {
+        "operationId": "postApiHints",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hint": { "type": "string" },
+                      "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+                    },
+                    "required": ["hint", "confidence"]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "error": { "type": "string" } },
+                  "required": ["error"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
