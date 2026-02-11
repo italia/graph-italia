@@ -60,7 +60,7 @@ function GenerateDataPage() {
         </section>
 
         {rawData && (
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm mb-8">
             <DataTable
               data={rawData}
               reset={reset}
