@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Panel, PanelGroup } from "react-resizable-panels";
+import { Panel, type PanelGroup } from "react-resizable-panels";
 import { useNavigate } from "react-router-dom";
 
 import type { FieldDataType } from "../../types";

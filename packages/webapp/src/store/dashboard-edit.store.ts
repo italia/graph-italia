@@ -5,7 +5,7 @@ import type { DashboardDetail } from '../lib/api';
 type TChartRef = { id: string };
 type TItem = `item-${number}`;
 
-interface ChartLookup extends TChartRef {
+export interface ChartLookup extends TChartRef {
   name: string;
   description: string;
 }

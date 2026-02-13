@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getSuggestions } from "../lib/api";
-import type { AISuggestion, MatrixType } from "../types";
+import type { AISuggestion } from "../types";
 import {
   FaChartPie,
   FaChartLine,

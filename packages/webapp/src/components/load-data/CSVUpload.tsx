@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import { useEffect, useState, useTransition } from "react";
 import { log, moveDataColumn, transposeData } from "../../lib/utils";
-import { MatrixType } from "../../types";
+import type { MatrixType } from "../../types";
 
 type selectOptionType = {
   value: string;

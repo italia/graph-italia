@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MatrixType, StoreStateType } from "../types";
+import type { MatrixType, StoreStateType } from "../types";
 import { defaultConfig } from "./constants";
 // import { persist } from "zustand/middleware";
 

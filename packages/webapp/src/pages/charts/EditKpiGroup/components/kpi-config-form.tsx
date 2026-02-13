@@ -1,4 +1,4 @@
-import { ChartConfigType } from "dataviz-components";
+import type { ChartConfigType } from "dataviz-components";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
 

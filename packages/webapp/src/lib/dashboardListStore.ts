@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { FieldDataType, RemoteStoreStateType } from "../types";
+import type { FieldDataType, RemoteStoreStateType } from "../types";
 
 const useDashboardsStoreState = create<RemoteStoreStateType>()((set, get) => ({
   list: [],

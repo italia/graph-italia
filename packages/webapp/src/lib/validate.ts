@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { transposeData } from "./utils";
-import { MatrixType } from "../types";
+import type { MatrixType } from "../types";
 
 export function validateStructure(data: MatrixType) {
   const schema = z.array(z.array(z.union([z.string(), z.number()])));

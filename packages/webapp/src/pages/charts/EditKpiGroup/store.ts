@@ -1,7 +1,7 @@
-import { ChartConfigType, FieldDataType } from "dataviz-components";
+import type { ChartConfigType, FieldDataType } from "dataviz-components";
+import type { KpiFormValues } from "./components/kpi-form";
 import { create } from "zustand";
 import * as api from "../../../lib/api";
-import { KpiFormValues } from "./components/kpi-form";
 
 type KpiGroupConfigType = Pick<
     ChartConfigType,

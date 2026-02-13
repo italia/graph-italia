@@ -1,7 +1,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { log, moveDataColumn, transposeData } from "../../lib/utils";
 import { validateStructure } from "../../lib/validate";
-import { MatrixType } from "../../types";
+import type { MatrixType } from "../../types";
 
 type selectOptionType = {
   value: string;

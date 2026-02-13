@@ -1,20 +1,16 @@
-import { RenderChart } from "dataviz-components";
 import { useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
 import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
-import {
-  KPI_FORM_ID,
-  KpiConfigForm,
-  KpiDropdown,
-  KpiForm,
-  KpiFormValues,
-  type KpiConfigFormHandle,
-} from "./components";
+import { KPI_FORM_ID, KpiForm } from "./components/kpi-form";
+import { KpiDropdown } from "./components/kpi-dropdown";
 import useEditKpiGroupStore from "./store";
 import { HOME_ROUTE } from "../../../router";
+import type { KpiConfigFormHandle } from "./components/kpi-config-form";
+import { RenderChart } from "dataviz-components";
+import KpiConfigForm from "./components/kpi-config-form";
 
 function EditKpiGroup() {
   const { id } = useParams();

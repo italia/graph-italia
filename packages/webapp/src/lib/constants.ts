@@ -1,4 +1,5 @@
-import type { ChartConfigType, FieldDataType } from '../types';
+import type { FieldDataType } from '../types';
+// import type { ChartConfigType } from '../types';
 import { generateGradient, hexToHsla } from './utils';
 
 export const palettes: any = {
