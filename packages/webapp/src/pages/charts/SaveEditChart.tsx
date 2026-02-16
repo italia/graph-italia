@@ -66,7 +66,47 @@ function EditChartPage() {
   const headerRef = useRef<HTMLDivElement>(null);
   const [leftCardHeight, setLeftCardHeight] = useState<number | null>(null);
 
+  // Update height when the left card content changes
+  const updateLeftCardHeight = useCallback(() => {
+    if (leftCardRef.current) {
+      setLeftCardHeight(leftCardRef.current.offsetHeight);
+    }
+  }, []);
 
+  // Observe size changes of the left card
+  useEffect(() => {
+    updateLeftCardHeight();
+
+    // Use ResizeObserver to detect size changes
+    const resizeObserver = new ResizeObserver(() => {
+      updateLeftCardHeight();
+    });
+
+    if (leftCardRef.current) {
+      resizeObserver.observe(leftCardRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [updateLeftCardHeight, state.value, data]);
+
+  // Track scroll to show/hide header save button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const rect = headerRef.current.getBoundingClientRect();
+        setIsScrolled(rect.bottom < 100);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // Load existing chart when there's a paramId
   useEffect(() => {
@@ -207,57 +247,38 @@ function EditChartPage() {
 
   return (
     <Layout>
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 p-4 rounded-lg">
-        <button
-          onClick={() => navigate(HOME_ROUTE)}
-          className="btn btn-default"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Back to list
-        </button>
-
-          <div className="flex-shrink-0">
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Header with chart info inputs and Save button */}
+        <div ref={headerRef} className="mb-8">
+          {/* Back navigation */}
+          <div className="flex items-center gap-2 mb-4 -ml-2">
             <button
-              onClick={saveChart}
-              disabled={!canSave || isSaving}
-              className="btn btn-primary gap-2"
+              onClick={() => navigate(HOME_ROUTE)}
+              className="btn btn-ghost btn-sm gap-2 text-base-content/70 hover:text-base-content"
             >
-              {isSaving ? (
-                <>
-                  <span className="loading loading-spinner loading-sm"></span>
-                  Saving...
-                </>
-              ) : (
-                <>
-                  Save
-                </>
-              )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back to list
             </button>
           </div>
-      </div>
-
-      <div className="mx-auto">
-        {/* Header with chart info inputs and Save button */}
-        <div  className="mb-8 ">
 
           {/* Main header with inputs */}
-          <div className="flex flex-col lg:items-start lg:justify-between gap-4 p-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             {/* Left side: Name, Description, Publish */}
-            {/* <div className="flex-1 space-y-2 max-w-md">
-
+            <div className="flex-1 space-y-2 max-w-md">
+              {/* Chart name as editable title */}
               <input
                 type="text"
                 value={chartName}
@@ -265,7 +286,7 @@ function EditChartPage() {
                 placeholder={getDefaultName()}
                 className="input input-bordered text-2xl font-bold h-auto py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
               />
-
+              {/* Description */}
               <input
                 type="text"
                 value={chartDescription}
@@ -273,7 +294,7 @@ function EditChartPage() {
                 placeholder="Add a description..."
                 className="input input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
               />
-
+              {/* Publish toggle */}
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
@@ -285,112 +306,174 @@ function EditChartPage() {
                   {chartPublish ? "Public" : "Private"}
                 </span>
               </div>
-            </div> */}
-            <h1 className="text-2xl font-bold">{chartName}</h1>
-            {chartDescription && <details className="collapse bg-base-100 border border-base-300">
-              <summary className="collapse-title font-semibold">Description</summary>
-              <div className="collapse-content text-sm" dangerouslySetInnerHTML={{ __html: chartDescription }}/>
-            </details>}
+            </div>
+
+            {/* Save button in header - visible when not scrolled and in config step */}
+            {!isScrolled && state.matches("config") && (
+              <div className="flex-shrink-0">
+                <button
+                  onClick={saveChart}
+                  disabled={!canSave || isSaving}
+                  className="btn btn-primary gap-2"
+                >
+                  {isSaving ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Save
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-      <hr className="border-base-200"/>
+        {/* Stepper - Progress indicator (clickable) */}
+        <div className="mb-8">
+          <ul className="steps steps-horizontal w-full">
+            {STEPS.map((step, index) => {
+              // Determine if step is clickable
+              const isStepClickable = index === 0 || (index === 1 && haveData);
+              const isCurrentStep = index === currentStepIndex;
 
+              const handleStepClick = () => {
+                if (!isStepClickable || isCurrentStep) return;
+                if (index === 0) {
+                  send({ type: "IDLE" });
+                } else if (index === 1) {
+                  send({ type: "CONFIG" });
+                }
+              };
+
+              return (
+                <li
+                  key={step.id}
+                  className={`step ${index <= currentStepIndex ? "step-primary" : ""
+                    } ${isStepClickable && !isCurrentStep ? "cursor-pointer" : ""
+                    }`}
+                  data-content={index < currentStepIndex ? "✓" : index + 1}
+                  onClick={handleStepClick}
+                >
+                  <div className="hidden sm:block">
+                    <span
+                      className={`font-medium ${isStepClickable && !isCurrentStep
+                        ? "hover:text-primary transition-colors"
+                        : ""
+                        } ${!isStepClickable && index > currentStepIndex
+                          ? "text-base-content/40"
+                          : ""
+                        }`}
+                    >
+                      {step.label}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* Main content in two columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left column: Form/Configuration */}
           <div className="space-y-6">
-
-
             {/* Step 1: Data loading */}
             {(state.matches("idle") || state.matches("input")) && (
-
-              <div className="collapse collapse-arrow bg-base-100 border border-base-300">
-                <input type="radio" name="my-accordion" defaultChecked />
-                <div className="collapse-title font-semibold">Load Data</div>
-                <div className="collapse-content text-sm">
-                  <div
-                    ref={leftCardRef}
-                    className="card bg-base-100 shadow-sm border border-base-200"
-                  >
-                    <div className="card-body">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-primary font-bold">1</span>
-                        </div>
-                        <div>
-                          <h2 className="card-title text-xl">Load your data</h2>
-                          <p className="text-sm text-base-content/60">
-                            Import data from CSV, JSON files or from a remote source
-                          </p>
-                        </div>
-                      </div>
-                      <ChooseLoader
-                        handleUpload={handleUpload}
-                        remoteUrl={remoteUrl}
-                        handleSetRemoteData={handleSetRemoteData}
-                        initialData={data}
-                      />
-
-                      {/* Button to proceed to configuration */}
-                      {haveData && chart && (
-                        <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => send({ type: "CONFIG" })}
-                          >
-                            Proceed to configuration
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4 ml-1"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
+              <div
+                ref={leftCardRef}
+                className="card bg-base-100 shadow-sm border border-base-200"
+              >
+                <div className="card-body">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-primary font-bold">1</span>
+                    </div>
+                    <div>
+                      <h2 className="card-title text-xl">Load your data</h2>
+                      <p className="text-sm text-base-content/60">
+                        Import data from CSV, JSON files or from a remote source
+                      </p>
                     </div>
                   </div>
+                  <ChooseLoader
+                    handleUpload={handleUpload}
+                    remoteUrl={remoteUrl}
+                    handleSetRemoteData={handleSetRemoteData}
+                    initialData={data}
+                  />
+
+                  {/* Button to proceed to configuration */}
+                  {haveData && chart && (
+                    <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => send({ type: "CONFIG" })}
+                      >
+                        Proceed to configuration
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 ml-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
             {/* Step 2: Configuration */}
             {state.matches("config") && (
-              <div className="collapse collapse-arrow bg-base-100 border border-base-300">
-                <input type="radio" name="my-accordion" defaultChecked />
-                <div className="collapse-title font-semibold">Configure Chart</div>
-                <div className="collapse-content text-sm">
-                  <div className="card bg-base-100 shadow-sm border border-base-200">
-                    <div className="card-body">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-primary font-bold">2</span>
-                        </div>
-                        <div>
-                          <h2 className="card-title text-xl">
-                            Configure the chart
-                          </h2>
-                          <p className="text-sm text-base-content/60">
-                            Choose the chart type and customize its appearance
-                          </p>
-                        </div>
-                      </div>
-                      <SelectChart setChart={setChart} chart={chart} />
-                      <div className="divider my-2"></div>
-                      <ChartOptions
-                        config={config}
-                        setConfig={setConfig}
-                        chart={chart}
-                        numSeries={(data as any)?.length - 1 || 0}
-                      />
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <span className="text-primary font-bold">2</span>
+                    </div>
+                    <div>
+                      <h2 className="card-title text-xl">
+                        Configure the chart
+                      </h2>
+                      <p className="text-sm text-base-content/60">
+                        Choose the chart type and customize its appearance
+                      </p>
                     </div>
                   </div>
+                  <SelectChart setChart={setChart} chart={chart} />
+                  <div className="divider my-2"></div>
+                  <ChartOptions
+                    config={config}
+                    setConfig={setConfig}
+                    chart={chart}
+                    numSeries={(data as any)?.length - 1 || 0}
+                  />
                 </div>
               </div>
             )}
@@ -569,16 +652,72 @@ function EditChartPage() {
               </>
             )}
 
+            {/* Placeholder when there's no data */}
             {!haveData && (
               <div className="card bg-base-200/50 border-2 border-dashed border-base-300 min-h-[300px]">
-                <p className="text-sm text-base-content/40 max-w-xs">
-                  Load your data to display the chart preview
-                </p>
+                <div className="card-body items-center justify-center text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16 text-base-content/30 mb-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-medium text-base-content/60">
+                    Chart preview
+                  </h3>
+                  <p className="text-sm text-base-content/40 max-w-xs">
+                    Load your data to display the chart preview
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Save button - pushed to bottom, visible when scrolled and in config step */}
+            {isScrolled && state.matches("config") && (
+              <div className="mt-auto pt-4 flex justify-end sticky bottom-4">
+                <button
+                  onClick={saveChart}
+                  disabled={!canSave || isSaving}
+                  className="btn btn-primary gap-2 shadow-lg"
+                >
+                  {isSaving ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Save
+                    </>
+                  )}
+                </button>
               </div>
             )}
           </div>
         </div>
-
+      </div>
     </Layout >
   );
 }

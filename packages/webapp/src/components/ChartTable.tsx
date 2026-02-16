@@ -21,6 +21,7 @@ import {
 
 import Dialog from "./layout/Dialog";
 import { RenderChart } from "dataviz-components";
+import { useCopyToClipboard } from 'usehooks-ts'
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -64,6 +65,20 @@ export default function ChartTable({
   const [data, setData] = useState<FieldDataType | null>(null);
 
   const currentTheme = "default";
+
+const [copiedText, copy] = useCopyToClipboard()
+
+const handleCopy = (text: string) => () => {
+    copy(text)
+      .then(() => {
+        console.log('Copied!', { text })
+      })
+      .catch(error => {
+        console.error('Failed to copy!', error)
+      })
+  }
+
+
 
   return (
 
@@ -131,7 +146,7 @@ export default function ChartTable({
                   <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" >
                     <FaLink fill={actionColor} size={actionSize} title={row.remoteUrl} />
                   </a>
-                  <FaCopy fill={actionColor} size={actionSize} title={"preview"} onClick={() => alert("copy")} />
+                  <FaCopy className="cursor-pointer" role="button" fill={actionColor} size={actionSize} title={"copy"}  onClick={handleCopy(`${row.remoteUrl||""}`)} />
                 </div>
               ) : (
                 "No"
@@ -197,7 +212,7 @@ export default function ChartTable({
                 <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer">
                   <FaLink fill={actionColor} size={actionSize} title={"view"} />
                 </a>
-                <FaCopy fill={actionColor} size={actionSize} title={"preview"} onClick={() => alert("copy")} />
+                <FaCopy className="cursor-pointer" role="button" fill={actionColor} size={actionSize} title={"copy"} onClick={handleCopy(`${window.location.origin}/charts/${row.id}/view`)} />
               </div>
             ),
           },
