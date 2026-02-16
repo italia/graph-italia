@@ -57,7 +57,7 @@ const actionSize = 16;
 
 export default function ChartTable({
   list,
-  handleLoadChart,
+  handleLoadChart: _handleLoadChart,
   handleDeleteChart,
 }: CharTableProps) {
   const [show, setShow] = useState<string | null>(null);
@@ -111,7 +111,7 @@ export default function ChartTable({
             },
           }, {
             name: "Name",
-            selector: (row: FieldDataType) => row.name,
+            selector: (row: FieldDataType) => row.name ?? "",
             sortable: true,
             cell: (row: FieldDataType) => (
               <div className="text-md font-medium">
@@ -124,7 +124,7 @@ export default function ChartTable({
 
           {
             name: "Is Remote",
-            selector: (row: FieldDataType) => row.isRemote,
+            selector: (row: FieldDataType) => row.isRemote ?? false,
             cell: (row: FieldDataType) =>
               row.remoteUrl ? (
                 <div className="flex gap-2">
@@ -140,7 +140,7 @@ export default function ChartTable({
           },
           {
             name: "Created At",
-            selector: (row: FieldDataType) => row.createdAt,
+            selector: (row: FieldDataType) => row.createdAt ?? "",
             cell: (row: FieldDataType) =>
               dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
             sortable: true,
@@ -148,7 +148,7 @@ export default function ChartTable({
 
           {
             name: "Updated At",
-            selector: (row: FieldDataType) => row.updatedAt,
+            selector: (row: FieldDataType) => row.updatedAt ?? "",
             cell: (row: FieldDataType) =>
               dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm"),
             sortable: true,
@@ -206,7 +206,7 @@ export default function ChartTable({
             name: "Actions",
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
-                <FaTrashCan fill={actionColor} size={actionSize} title={"delete"} onClick={() => handleDeleteChart(row.id)} />
+                <FaTrashCan fill={actionColor} size={actionSize} title={"delete"} onClick={() => handleDeleteChart(row.id ?? "")} />
                 <a
                   href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
                     }`}
@@ -230,7 +230,7 @@ export default function ChartTable({
         title="Preview Chart"
         callback={() => setData(null)}
       >
-        <div className="w-full h-full p-4" width="800" height="600">
+        <div className="w-full h-full p-4" style={{ width: "800px", height: "600px" }}>
           {data && <RenderChart {...data} />}
         </div>
       </Dialog>

@@ -5,7 +5,7 @@ import ChangePasswordForm from '../../components/auth/ChangePasswordForm';
 import { useUserStore } from '../../store/user_store';
 import { HOME_ROUTE } from '../../router';
 
-function AuthPage({ action = 'recover' }) {
+function AuthPage({ action: _action = 'recover' }: { action?: string }) {
   const { user } = useUserStore();
   const navigate = useNavigate();
 

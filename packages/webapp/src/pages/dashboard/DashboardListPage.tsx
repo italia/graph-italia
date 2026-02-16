@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Panel, type PanelGroup } from "react-resizable-panels";
+import { Panel, Group as PanelGroup } from "react-resizable-panels";
 import { useNavigate } from "react-router-dom";
 
 import type { FieldDataType } from "../../types";
@@ -130,7 +130,7 @@ function DashboardsPage() {
 
   return (
     <Layout>
-      <PanelGroup direction="horizontal" className="w-full">
+      <PanelGroup orientation="horizontal" className="w-full">
         <Panel defaultSize={30} minSize={20} className="bg-base-100">
           <div className="p-4">
             <div>

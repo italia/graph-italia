@@ -69,13 +69,13 @@ export default function Header() {
             tabIndex={0}
             className='menu menu-sm dropdown-content bg-base-100 text-primary rounded-box z-[1] mt-3 w-52 p-2 shadow'
           >
-            {menu.map((item, index) => {
+            {menu.map((item) => {
               if (item.subMenu) {
                 return (
                   <li key={`mobile-${item.name}`}>
                     <a>{item.name}</a>
                     <ul className='p-2'>
-                      {item.subMenu.map((subItem, subIndex) => {
+                      {item.subMenu.map((subItem) => {
                         return (
                           <li key={`mobile-sub-${subItem.name}`}>
                             <a href={subItem.link}>{subItem.name}</a>
@@ -101,14 +101,14 @@ export default function Header() {
       </div>
       <div className='navbar-center hidden lg:flex'>
         <ul className='menu menu-horizontal px-1 bg-base text-content'>
-          {menu.map((item, index) => {
+          {menu.map((item) => {
             if (item.subMenu) {
               return (
                 <li key={`menu-${item.name}`}>
                   <details>
                     <summary>{item.name}</summary>
                     <ul className='min-w-[160px] bg-base-100 text-primary z-10'>
-                      {item.subMenu.map((subItem, subIndex) => {
+                      {item.subMenu.map((subItem) => {
                         return (
                           <li
                             key={`menu-sub-${subItem.name}`}

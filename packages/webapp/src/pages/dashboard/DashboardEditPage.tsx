@@ -10,6 +10,7 @@ import * as api from "../../lib/api";
 import useDashboardEditStore, {
   type ChartLookup,
   type TChartRef,
+  type TLayoutItem,
 } from "../../store/dashboard-edit.store";
 
 const ROW_HEIGHT = 360;
@@ -182,13 +183,14 @@ function DashboardEditPage() {
             </div>
             <div className="relative border min-h-[60vh]">
               <ResponsiveReactGridLayout
-                onLayoutChange={setLayout}
+                onLayoutChange={(layout) => setLayout([...layout] as TLayoutItem[])}
                 onBreakpointChange={setBreakpoint}
                 className="react-grid-layout"
                 layouts={{ lg: layout }}
                 cols={cols}
                 margin={[10, 10]}
                 rowHeight={ROW_HEIGHT + WIDGET_HEIGHT}
+                width={1200}
               >
                 {layout.map((item) => (
                   <div

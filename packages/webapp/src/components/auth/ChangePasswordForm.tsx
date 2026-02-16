@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import * as z from "zod";
 import * as api from "../../lib/api";
 
 const passwordSchema = z
@@ -21,7 +21,7 @@ const passwordSchema = z
     message: "Must contain at least one special character",
   });
 
-export const updatePasswordSchema = z
+const updatePasswordSchema = z
   .object({
     password: passwordSchema,
     confirmPassword: passwordSchema,

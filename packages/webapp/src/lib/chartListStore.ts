@@ -37,13 +37,13 @@ const useChartsStoreState = create<ChartListStoreState>()((set) => ({
       }),
     })),
   setList: (items: FieldDataType[]) => {
-    set((state) => ({ list: [...items] }));
+    set(() => ({ list: [...items] }));
   },
   setShowCreateKpiGroupModal: (showCreateKpiGroupModal: boolean) => {
-    set((state) => ({ ...state, showCreateKpiGroupModal }));
+    set(() => ({ showCreateKpiGroupModal }));
   },
   setShowCreateChartModal: (showCreateChartModal: boolean) => {
-    set((state) => ({ ...state, showCreateChartModal }));
+    set(() => ({ showCreateChartModal }));
   },
 }));
 export default useChartsStoreState;

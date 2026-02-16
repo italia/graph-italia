@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from "react-resizable-panels";
 import { useMachine } from "@xstate/react";
 import { RenderChart, DataTable, type FieldDataType } from "dataviz-components";
 
@@ -141,7 +141,7 @@ function Home() {
 
 	return (
 		<Layout>
-			<PanelGroup direction="horizontal" className="w-full">
+			<PanelGroup orientation="horizontal" className="w-full">
 				<Panel defaultSize={10} minSize={10} className="bg-base-100">
 					<Steps
 						hasData={data ? true : false}

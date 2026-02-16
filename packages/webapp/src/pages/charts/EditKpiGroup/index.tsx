@@ -4,7 +4,7 @@ import Layout from "../../../components/layout";
 import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
-import { KPI_FORM_ID, KpiForm } from "./components/kpi-form";
+import { KPI_FORM_ID, KpiForm, type KpiFormValues } from "./components/kpi-form";
 import { KpiDropdown } from "./components/kpi-dropdown";
 import useEditKpiGroupStore from "./store";
 import { HOME_ROUTE } from "../../../router";

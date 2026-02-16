@@ -38,7 +38,7 @@ interface DashboardViewSelectors {
 
 type DashboardViewState = DashboardViewActions & DashboardViewSelectors;
 
-const useDashboardViewStore = create<DashboardViewState>((set, get) => ({
+const useDashboardViewStore = create<DashboardViewState>((set) => ({
   name: '',
   description: '',
   isLoading: true,

@@ -74,7 +74,7 @@ export default function VerifyCodeComponent({
           <div>
             <PinInput
               values={values}
-              onChange={(value, index, values) => setValues(values)}
+              onChange={(_, __, values) => setValues(values)}
               showState={showState}
             />
             {message && (
@@ -83,6 +83,7 @@ export default function VerifyCodeComponent({
             <div className='text-sm leading-6 my-4'>
               Resend code? &nbsp;
               <button
+                type='button'
                 onClick={() => onAskAnotherCode()}
                 className='link font-semibold text-primary'
               >

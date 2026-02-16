@@ -69,6 +69,7 @@ function DashboardViewPage() {
                   cols={cols}
                   margin={[10, 10]}
                   rowHeight={ROW_HEIGHT + WIDGET_HEIGHT}
+                  width={1200}
                 >
                   {layout.map((item) => (
                     <div

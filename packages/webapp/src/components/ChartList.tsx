@@ -25,7 +25,7 @@ type ChartListProps = {
 
 export default function ChartList({
   list,
-  handleLoadChart,
+  handleLoadChart: _handleLoadChart,
   handleDeleteChart,
 }: ChartListProps) {
   const [show, setShow] = useState<string | null>(null);

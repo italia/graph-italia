@@ -181,5 +181,5 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   },
 }));
 
-export type { ChartLookup, TChartRef, TLayoutItem };
+export type { TChartRef, TLayoutItem };
 export default useDashboardEditStore;
