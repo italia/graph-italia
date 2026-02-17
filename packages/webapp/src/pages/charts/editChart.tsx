@@ -18,11 +18,7 @@ import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
 import { HOME_ROUTE } from "../../router";
 
-// Step definitions for the chart creation wizard (only 2 steps now)
-const STEPS = [
-  { id: "input", label: "Load Data", description: "Import your data" },
-  { id: "config", label: "Configure", description: "Customize the chart" },
-];
+
 
 function EditChartPage() {
   const { id: paramId } = useParams();
@@ -52,6 +48,7 @@ function EditChartPage() {
     resetItem,
   } = useStoreState((state) => state);
 
+  const [currentTab, setCurrentTab] = useState("info");
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
@@ -84,6 +81,7 @@ function EditChartPage() {
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
             setChartPublish(chartData.publish ?? true);
+            setCurrentTab("chart");
             // Go to config step only if chart already has data loaded
             const hasExistingData =
               chartData.data?.length > 0 || chartData.dataSource;
@@ -212,175 +210,58 @@ function EditChartPage() {
           onClick={() => navigate(HOME_ROUTE)}
           className="btn btn-default"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
           Back to list
         </button>
 
-          <div className="flex-shrink-0">
-            <button
-              onClick={saveChart}
-              disabled={!canSave || isSaving}
-              className="btn btn-primary gap-2"
-            >
-              {isSaving ? (
-                <>
-                  <span className="loading loading-spinner loading-sm"></span>
-                  Saving...
-                </>
-              ) : (
-                <>
-                  Save
-                </>
-              )}
-            </button>
-          </div>
+        <div className="flex-shrink-0">
+          <button
+            onClick={saveChart}
+            disabled={!canSave || isSaving}
+            className="btn btn-primary gap-2"
+          >
+            {isSaving ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Saving...
+              </>
+            ) : (
+              <>
+                Save
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
+
       <div className="mx-auto">
-        {/* Header with chart info inputs and Save button */}
-        <div  className="mb-8 ">
-
-          {/* Main header with inputs */}
-          <div className="flex flex-col lg:items-start lg:justify-between gap-4 p-6">
-            {/* Left side: Name, Description, Publish */}
-            {/* <div className="flex-1 space-y-2 max-w-md">
-
-              <input
-                type="text"
-                value={chartName}
-                onChange={(e) => setChartName(e.target.value)}
-                placeholder={getDefaultName()}
-                className="input input-bordered text-2xl font-bold h-auto py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
-              />
-
-              <input
-                type="text"
-                value={chartDescription}
-                onChange={(e) => setChartDescription(e.target.value)}
-                placeholder="Add a description..."
-                className="input input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
-              />
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={chartPublish}
-                  onChange={() => setChartPublish(!chartPublish)}
-                  className="toggle toggle-sm toggle-primary cursor-pointer"
-                />
-                <span className="text-sm text-base-content/60">
-                  {chartPublish ? "Public" : "Private"}
-                </span>
-              </div>
-            </div> */}
-            <h1 className="text-2xl font-bold">{chartName}</h1>
-            {chartDescription && <details className="collapse bg-base-100 border border-base-300">
-              <summary className="collapse-title font-semibold">Description</summary>
-              <div className="collapse-content text-sm" dangerouslySetInnerHTML={{ __html: chartDescription }}/>
-            </details>}
-          </div>
-        </div>
-
-      <hr className="border-base-200"/>
-
-          <div className="space-y-6">
+        <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
+          <div className="space-y-1 xl:col-span-2">
 
 
-            {/* Step 1: Data loading */}
-            {(state.matches("idle") || state.matches("input")) && (
-
-              <div className="collapse collapse-arrow bg-base-100 border border-base-300">
-                <input type="radio" name="my-accordion" defaultChecked />
-                <div className="collapse-title font-semibold">Load Data</div>
-                <div className="collapse-content text-sm">
-                  <div
-                    ref={leftCardRef}
-                    className="card bg-base-100 shadow-sm border border-base-200"
-                  >
-                    <div className="card-body">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-primary font-bold">1</span>
-                        </div>
-                        <div>
-                          <h2 className="card-title text-xl">Load your data</h2>
-                          <p className="text-sm text-base-content/60">
-                            Import data from CSV, JSON files or from a remote source
-                          </p>
-                        </div>
-                      </div>
-                      <ChooseLoader
-                        handleUpload={handleUpload}
-                        remoteUrl={remoteUrl}
-                        handleSetRemoteData={handleSetRemoteData}
-                        initialData={data}
-                      />
-
-                      {/* Button to proceed to configuration */}
-                      {haveData && chart && (
-                        <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => send({ type: "CONFIG" })}
-                          >
-                            Proceed to configuration
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4 ml-1"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
-                    </div>
+            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0">
+              <summary className="collapse-title font-semibold">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary font-bold">2</span>
+                  </div>
+                  <div>
+                    <h2 className="card-title text-xl">
+                      Configure the chart
+                    </h2>
+                    <p className="text-sm text-base-content/60">
+                      Choose the chart type and customize its appearance
+                    </p>
                   </div>
                 </div>
-              </div>
-            )}
+              </summary>
+              <div className="collapse-content text-sm">
+                {state.matches("config") && (
 
-            {/* Step 2: Configuration */}
-            {state.matches("config") && (
-              <div className="collapse collapse-arrow bg-base-100 border border-base-300">
-                <input type="radio" name="my-accordion" defaultChecked />
-                <div className="collapse-title font-semibold">Configure Chart</div>
-                <div className="collapse-content text-sm">
+
                   <div className="card bg-base-100 shadow-sm border border-base-200">
                     <div className="card-body">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-primary font-bold">2</span>
-                        </div>
-                        <div>
-                          <h2 className="card-title text-xl">
-                            Configure the chart
-                          </h2>
-                          <p className="text-sm text-base-content/60">
-                            Choose the chart type and customize its appearance
-                          </p>
-                        </div>
-                      </div>
+
                       <SelectChart setChart={setChart} chart={chart} />
                       <div className="divider my-2"></div>
                       <ChartOptions
@@ -391,194 +272,188 @@ function EditChartPage() {
                       />
                     </div>
                   </div>
+
+
+                )}
+              </div>
+            </details>
+
+            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-1" open>
+              <summary className="collapse-title font-semibold">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary font-bold">1</span>
+                  </div>
+                  <div>
+                    <h2 className="card-title text-xl">Load your data</h2>
+                    <p className="text-sm text-base-content/60">
+                      Import data from CSV, JSON files or from a remote source
+                    </p>
+                  </div>
+                </div>
+              </summary>
+              <div className="collapse-content text-sm">
+                {/* Step 1: Data loading */}
+                <div className="card bg-base-100 shadow-sm border border-base-200">
+                  <div className="card-body">
+                    <ChooseLoader
+                      handleUpload={handleUpload}
+                      remoteUrl={remoteUrl}
+                      handleSetRemoteData={handleSetRemoteData}
+                      initialData={data}
+                    />
+                    {haveData && chart && (
+                      <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => send({ type: "CONFIG" })}
+                        >
+                          Proceed to configuration
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            </details>
+
+            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0">
+              <summary className="collapse-title font-semibold">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary font-bold">0</span>
+                  </div>
+                  <div>
+                    <h2 className="card-title text-xl">Setup Info</h2>
+                    <p className="text-sm text-base-content/60">
+                      Name, description and visibility of the chart
+                    </p>
+                  </div>
+                </div>
+              </summary>
+              <div className="collapse-content text-sm">
+                <div className="card bg-base-100 shadow-sm border border-base-200">
+                  <div className="card-body">
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="checkbox"
+                          checked={chartPublish}
+                          onChange={() => setChartPublish(!chartPublish)}
+                          className="toggle toggle-sm toggle-primary cursor-pointer"
+                        />
+                        <span className="text-sm text-base-content/70">
+                          Chart Visibility:
+                        </span>
+                        <span className="text-sm text-base-content font-bold">
+                          {chartPublish ? "Public" : "Private"}
+                        </span>
+                      </div>
+                      <label htmlFor="chart_title" className="mt-4 text-base-content/70">Chart Title:</label>
+                      <input
+                        id="chart_title"
+                        type="text"
+                        value={chartName}
+                        onChange={(e) => setChartName(e.target.value)}
+                        placeholder={getDefaultName()}
+                        className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                      />
+                      <label htmlFor="chart_description" className="mt-4 text-base-content/70">Chart Description:</label>
+                      <textarea
+                        id="chart_description"
+                        value={chartDescription}
+                        rows={3}
+                        onChange={(e) => setChartDescription(e.target.value)}
+                        placeholder="Add a description..."
+                        className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                      />
+
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
+            </details>
+
           </div>
 
           {/* Right column: Preview */}
-          <div className="flex flex-col min-h-[calc(100vh-280px)]">
-            {haveData && (
-              <>
-                {/* Data Preview Card - Visible only in Step 1 */}
-                {(state.matches("idle") || state.matches("input")) && (
-                  <div
-                    className="card bg-base-100 shadow-sm border border-base-200 flex flex-col"
-                    style={{
-                      maxHeight: leftCardHeight
-                        ? `${leftCardHeight}px`
-                        : "500px",
-                    }}
-                  >
-                    <div className="card-body flex flex-col min-h-0">
-                      <h3 className="card-title text-lg flex items-center gap-2 flex-shrink-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-base-content/60"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 3v4M15 3v4M4 11h16"
-                          />
-                        </svg>
-                        Data preview
-                      </h3>
-                      <div className="overflow-auto flex-1 min-h-0">
-                        <DataTable data={data as any} />
-                      </div>
-                    </div>
-                  </div>
-                )}
+          <div className="xl:col-span-4 flex flex-col h-full p-10 border border-base-300 rounded-lg" >
+            {/*
+            <div role="tablist" className="tabs tabs-border">
+              <button type="button" role="tab" className={`tab ${currentTab === "chart" ? "tab-active" : ""}`} onClick={() => setCurrentTab("chart")}>Chart</button>
+              <button type="button" role="tab" className={`tab ${currentTab === "data" ? "tab-active" : ""}`} onClick={() => setCurrentTab("data")}>Data</button>
+              <button type="button" role="tab" className={`tab ${currentTab === "info" ? "tab-active" : ""}`} onClick={() => setCurrentTab("info")}>Info</button>
+            </div>
+            */}
 
-                {/* Preview Accordions - Visible in Step 2 (Configure) */}
-                {state.matches("config") && (
-                  <div className="space-y-3 sticky top-4 z-10">
-                    {/* Chart Preview Accordion */}
-                    {chart && (
-                      <div className="card bg-base-100 shadow-sm border border-base-200">
-                        <div
-                          className="card-title text-base px-4 py-3 cursor-pointer flex items-center justify-between"
-                          onClick={() => setChartPreviewOpen(!chartPreviewOpen)}
-                        >
-                          <div className="flex items-center gap-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5 text-base-content/60"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                              />
-                            </svg>
-                            Chart preview
-                          </div>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className={`h-4 w-4 transition-transform ${chartPreviewOpen ? "rotate-180" : ""
-                              }`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
+            <div className="bg-base-100 bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
+
+              {/* {currentTab === "info" && ( */}
+              <div  >
+                <h1 className="text-2xl font-bold">{chartName}</h1>
+                <div className="text-base-content/80">
+                  {chartDescription ? (
+                    <div dangerouslySetInnerHTML={{ __html: chartDescription.replace(/\n/g, "<br />") }} />
+                  ) : (
+                    <p className="italic text-base-content">
+                      No description provided for this chart.
+                    </p>
+                  )}
+                </div>
+              </div>
+              {/* )} */}
+
+              {/* {currentTab === "chart" && ( */}
+              <div  >
+                {state.matches("config") && chart ? (
+
+                  <div className="overflow-auto min-h-[380px] relative">
+                    {!preview && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
+                        <div className="flex flex-col items-center gap-3">
+                          <span className="loading loading-spinner loading-lg text-primary"></span>
+                          <span className="text-sm text-base-content/60">
+                            Loading chart...
+                          </span>
                         </div>
-                        {chartPreviewOpen && (
-                          <div className="card-body pt-0">
-                            <div className="overflow-auto h-[380px] relative">
-                              {!preview && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
-                                  <div className="flex flex-col items-center gap-3">
-                                    <span className="loading loading-spinner loading-lg text-primary"></span>
-                                    <span className="text-sm text-base-content/60">
-                                      Loading chart...
-                                    </span>
-                                  </div>
-                                </div>
-                              )}
-                              <RenderChart
-                                id={id || paramId || "preview-map"}
-                                chart={chart}
-                                data={data}
-                                config={config}
-                                dataSource={null}
-                                getPicture={(pic: string) => setPreview(pic)}
-                              />
-                            </div>
-                          </div>
-                        )}
                       </div>
                     )}
-
-                    {/* Data Preview Accordion */}
-                    <div className="card bg-base-100 shadow-sm border border-base-200">
-                      <div
-                        className="card-title text-base px-4 py-3 cursor-pointer flex items-center justify-between"
-                        onClick={() => setDataPreviewOpen(!dataPreviewOpen)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-base-content/60"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 3v4M15 3v4M4 11h16"
-                            />
-                          </svg>
-                          Data preview
-                        </div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className={`h-4 w-4 transition-transform ${dataPreviewOpen ? "rotate-180" : ""
-                            }`}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </div>
-                      {dataPreviewOpen && (
-                        <div className="card-body pt-0">
-                          <div className="overflow-auto max-h-[300px]">
-                            <DataTable data={data as any} />
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <RenderChart
+                      id={id || paramId || "preview-map"}
+                      chart={chart}
+                      data={data}
+                      config={config}
+                      dataSource={null}
+                      getPicture={(pic: string) => setPreview(pic)}
+                    />
                   </div>
-                )}
-              </>
-            )}
 
-            {!haveData && (
-              <div className="card bg-base-200/50 border-2 border-dashed border-base-300 min-h-[300px]">
-                <p className="text-sm text-base-content/40 max-w-xs">
-                  Load your data to display the chart preview
-                </p>
+                ) : (<div> sorry canot show preview </div>)}
               </div>
-            )}
+              {/* )} */}
+
+              {/* {currentTab === "data" && ( */}
+              <div >
+                {!haveData ? (
+                  <p className="italic text-base-content">
+                    Load your data to display the chart preview
+                  </p>
+                ) :
+                  (
+                    <div className="overflow-auto flex-1 min-h-0">
+                      <DataTable data={data as any} />
+                    </div>
+                  )}
+
+              </div>
+              {/* )} */}
+
+
+            </div>
           </div>
         </div>
-
+      </div>
     </Layout >
   );
 }
