@@ -1,3 +1,7 @@
+/**
+ * Slim Header – una sola fascia blu (solo quando l'utente È loggato).
+ * Brand Dataviz, menu nav, lingua, nome utente / Esci.
+ */
 import { useEffect, useRef, useState } from "react";
 import { logout } from "../../lib/api";
 import { useUserStore } from "../../store/user_store";
@@ -70,167 +74,161 @@ export default function SlimHeader() {
   }, []);
 
   return (
-    <header className="it-header-slim-wrapper" role="banner">
-      <div className="it-header-slim">
-        <div className="it-header-slim-container">
-          <div className="it-header-slim-row">
-            <div className="it-header-slim-col">
-              <div className="it-header-slim-wrapper-content">
-                <div className="it-header-slim-brand">
-                  <a href="/" className="it-header-slim-brand-title">
-                    Dataviz
-                  </a>
-                  <button
-                    type="button"
-                    className="it-header-slim-hamburger"
-                    aria-label="Menu"
-                    aria-expanded={menuMobileAperto}
-                    onClick={() => setMenuMobileAperto((v) => !v)}
-                  >
-                    <span />
-                    <span />
-                    <span />
-                  </button>
-                  <span className="it-header-slim-sep" aria-hidden="true" />
-                  <nav className="it-header-slim-nav" aria-label="Principale">
-                    <ul className="it-header-slim-nav-list">
-                      {MENU.map((item) => {
-                        if ("subMenu" in item) {
-                          return (
-                            <li
-                              key={item.name}
-                              className="it-header-slim-nav-item it-header-slim-nav-dropdown"
-                              ref={dropdownToolsRef}
-                            >
-                              <button
-                                type="button"
-                                className="it-header-slim-nav-link"
-                                aria-expanded={dropdownToolsAperto}
-                                aria-haspopup="true"
-                                onClick={() =>
-                                  setDropdownToolsAperto((v) => !v)
-                                }
-                              >
-                                {item.name}
-                                <svg
-                                  className="it-header-slim-icon it-header-slim-icon-expand"
-                                  aria-hidden="true"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
-                                </svg>
-                              </button>
-                              <ul
-                                className={`it-header-slim-dropdown-menu${dropdownToolsAperto ? " show" : ""}`}
-                                role="menu"
-                              >
-                                {item.subMenu.map((sub: MenuSubItem) => (
-                                  <li key={sub.name} role="none">
-                                    <a
-                                      href={sub.link}
-                                      className="it-header-slim-dropdown-item"
-                                      role="menuitem"
-                                    >
-                                      {sub.name}
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            </li>
-                          );
-                        }
-                        return (
-                          <li
-                            key={item.name}
-                            className="it-header-slim-nav-item"
+    <header className="it-slim-only-wrapper" role="banner">
+      <div className="it-slim-only">
+        <div className="it-slim-only-container">
+          <div className="it-slim-only-content">
+            <div className="it-slim-only-brand">
+              <a href="/" className="it-slim-only-brand-title">
+                Dataviz
+              </a>
+              <button
+                type="button"
+                className="it-slim-only-hamburger"
+                aria-label="Menu"
+                aria-expanded={menuMobileAperto}
+                onClick={() => setMenuMobileAperto((v) => !v)}
+              >
+                <span />
+                <span />
+                <span />
+              </button>
+              <span className="it-slim-only-sep" aria-hidden="true" />
+              <nav className="it-slim-only-nav" aria-label="Principale">
+                <ul className="it-slim-only-nav-list">
+                  {MENU.map((item) => {
+                    if ("subMenu" in item) {
+                      return (
+                        <li
+                          key={item.name}
+                          className="it-slim-only-nav-item it-slim-only-nav-dropdown"
+                          ref={dropdownToolsRef}
+                        >
+                          <button
+                            type="button"
+                            className="it-slim-only-nav-link"
+                            aria-expanded={dropdownToolsAperto}
+                            aria-haspopup="true"
+                            onClick={() =>
+                              setDropdownToolsAperto((v) => !v)
+                            }
                           >
-                            <a
-                              href={item.link}
-                              className="it-header-slim-nav-link"
+                            {item.name}
+                            <svg
+                              className="it-slim-only-icon it-slim-only-icon-expand"
+                              aria-hidden="true"
+                              viewBox="0 0 24 24"
                             >
-                              {item.name}
-                            </a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </nav>
-                </div>
+                              <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
+                            </svg>
+                          </button>
+                          <ul
+                            className={`it-slim-only-dropdown-menu${dropdownToolsAperto ? " show" : ""}`}
+                            role="menu"
+                          >
+                            {item.subMenu.map((sub: MenuSubItem) => (
+                              <li key={sub.name} role="none">
+                                <a
+                                  href={sub.link}
+                                  className="it-slim-only-dropdown-item"
+                                  role="menuitem"
+                                >
+                                  {sub.name}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      );
+                    }
+                    return (
+                      <li
+                        key={item.name}
+                        className="it-slim-only-nav-item"
+                      >
+                        <a
+                          href={item.link}
+                          className="it-slim-only-nav-link"
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
+            </div>
 
-                <div className="it-header-slim-actions">
-                  <div
-                    className={`it-header-slim-language dropdown${dropdownLinguaAperto ? " open" : ""}`}
-                    ref={dropdownLinguaRef}
+            <div className="it-slim-only-actions">
+              <span className="it-slim-only-sep" aria-hidden="true" />
+              <div
+                className={`it-slim-only-language dropdown${dropdownLinguaAperto ? " open" : ""}`}
+                ref={dropdownLinguaRef}
+              >
+                <button
+                  type="button"
+                  className="it-slim-only-language-toggle"
+                  aria-expanded={dropdownLinguaAperto}
+                  aria-haspopup="true"
+                  aria-label={`Lingua selezionata: ${linguaSelezionata}`}
+                  id="slim-language-selector"
+                  onClick={() => setDropdownLinguaAperto((v) => !v)}
+                >
+                  <span aria-hidden="true">{linguaSelezionata}</span>
+                  <svg
+                    className="it-slim-only-icon it-slim-only-icon-expand"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
                   >
+                    <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
+                  </svg>
+                </button>
+                <div
+                  className={`it-slim-only-dropdown-menu it-slim-only-lang-menu${dropdownLinguaAperto ? " show" : ""}`}
+                  aria-labelledby="slim-language-selector"
+                  role="list"
+                >
+                  {LINGUE.map((l) => (
+                    <a
+                      key={l.code}
+                      className={`it-slim-only-dropdown-item${linguaSelezionata === l.code ? " active" : ""}`}
+                      href="#"
+                      role="listitem"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setLinguaSelezionata(l.code);
+                        setDropdownLinguaAperto(false);
+                      }}
+                    >
+                      {l.code}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="it-slim-only-actions-right">
+                {user ? (
+                  <span className="it-slim-only-user">
+                    <span className="it-slim-only-user-name">
+                      {user.name}
+                    </span>
                     <button
                       type="button"
-                      className="it-header-slim-language-toggle"
-                      aria-expanded={dropdownLinguaAperto}
-                      aria-haspopup="true"
-                      aria-label={`Lingua: ${linguaSelezionata}`}
-                      id="language-selector"
-                      onClick={() => setDropdownLinguaAperto((v) => !v)}
+                      className="it-slim-only-btn it-slim-only-btn-outline"
+                      onClick={handleLogout}
                     >
-                      <span className="it-header-slim-d-none it-header-slim-d-md-inline">
-                        Lingua:{" "}
-                      </span>
-                      <span aria-hidden="true">{linguaSelezionata}</span>
-                      <svg
-                        className="it-header-slim-icon it-header-slim-icon-expand"
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
-                      </svg>
+                      Esci
                     </button>
-                    <div
-                      className={`it-header-slim-dropdown-menu it-header-slim-lang-menu${dropdownLinguaAperto ? " show" : ""}`}
-                      aria-labelledby="language-selector"
-                      role="list"
-                    >
-                      {LINGUE.map((l) => (
-                        <a
-                          key={l.code}
-                          className={`it-header-slim-dropdown-item${linguaSelezionata === l.code ? " active" : ""}`}
-                          href="#"
-                          role="listitem"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setLinguaSelezionata(l.code);
-                            setDropdownLinguaAperto(false);
-                          }}
-                        >
-                          {l.code}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="it-header-slim-actions-right">
-                    {user ? (
-                      <span className="it-header-slim-user">
-                        <span className="it-header-slim-user-name">
-                          {user.name}
-                        </span>
-                        <button
-                          type="button"
-                          className="it-header-slim-btn it-header-slim-btn-outline"
-                          onClick={handleLogout}
-                        >
-                          Esci
-                        </button>
-                      </span>
-                    ) : (
-                      <a
-                        href="/login"
-                        className="it-header-slim-btn it-header-slim-btn-outline"
-                        aria-label="Accedi"
-                      >
-                        Accedi
-                      </a>
-                    )}
-                  </div>
-                </div>
+                  </span>
+                ) : (
+                  <a
+                    href="/login"
+                    className="it-slim-only-btn it-slim-only-btn-outline"
+                    aria-label="Accedi"
+                  >
+                    Accedi
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -238,18 +236,18 @@ export default function SlimHeader() {
       </div>
 
       <div
-        className={`it-header-slim-mobile-menu${menuMobileAperto ? " open" : ""}`}
+        className={`it-slim-only-mobile-menu${menuMobileAperto ? " open" : ""}`}
         aria-hidden={!menuMobileAperto}
       >
-        <ul className="it-header-slim-mobile-list">
+        <ul className="it-slim-only-mobile-list">
           {MENU.map((item) => {
             if ("subMenu" in item) {
               return (
                 <li key={item.name}>
-                  <span className="it-header-slim-mobile-label">
+                  <span className="it-slim-only-mobile-label">
                     {item.name}
                   </span>
-                  <ul className="it-header-slim-mobile-sublist">
+                  <ul className="it-slim-only-mobile-sublist">
                     {item.subMenu.map((sub: MenuSubItem) => (
                       <li key={sub.name}>
                         <a
