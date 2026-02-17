@@ -7,11 +7,6 @@ import { logout } from "../../lib/api";
 import { useUserStore } from "../../store/user_store";
 import "./SlimHeader.css";
 
-const LINGUE = [
-  { code: "ITA", label: "Italiano" },
-  { code: "ENG", label: "English" },
-] as const;
-
 type MenuSubItem = { name: string; link: string };
 type MenuItem =
   | { name: string; link: string }
@@ -20,6 +15,7 @@ type MenuItem =
 const MENU: readonly MenuItem[] = [
   { name: "Charts", link: "/" },
   { name: "Dashboards", link: "/dashboards" },
+  { name: "Quick Start", link: "/quickstart" },
   {
     name: "Tools",
     link: "",
@@ -33,13 +29,8 @@ const MENU: readonly MenuItem[] = [
 
 export default function SlimHeader() {
   const { user, clearUser } = useUserStore();
-  const [linguaSelezionata, setLinguaSelezionata] = useState<"ITA" | "ENG">(
-    "ITA",
-  );
-  const [dropdownLinguaAperto, setDropdownLinguaAperto] = useState(false);
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
-  const dropdownLinguaRef = useRef<HTMLDivElement>(null);
   const dropdownToolsRef = useRef<HTMLLIElement>(null);
 
   const handleLogout = async () => {
@@ -56,12 +47,6 @@ export default function SlimHeader() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      if (
-        dropdownLinguaRef.current &&
-        !dropdownLinguaRef.current.contains(target)
-      ) {
-        setDropdownLinguaAperto(false);
-      }
       if (
         dropdownToolsRef.current &&
         !dropdownToolsRef.current.contains(target)
@@ -160,52 +145,6 @@ export default function SlimHeader() {
             </div>
 
             <div className="it-slim-only-actions">
-              <span className="it-slim-only-sep" aria-hidden="true" />
-              <div
-                className={`it-slim-only-language dropdown${dropdownLinguaAperto ? " open" : ""}`}
-                ref={dropdownLinguaRef}
-              >
-                <button
-                  type="button"
-                  className="it-slim-only-language-toggle"
-                  aria-expanded={dropdownLinguaAperto}
-                  aria-haspopup="true"
-                  aria-label={`Lingua selezionata: ${linguaSelezionata}`}
-                  id="slim-language-selector"
-                  onClick={() => setDropdownLinguaAperto((v) => !v)}
-                >
-                  <span aria-hidden="true">{linguaSelezionata}</span>
-                  <svg
-                    className="it-slim-only-icon it-slim-only-icon-expand"
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
-                  </svg>
-                </button>
-                <div
-                  className={`it-slim-only-dropdown-menu it-slim-only-lang-menu${dropdownLinguaAperto ? " show" : ""}`}
-                  aria-labelledby="slim-language-selector"
-                  role="list"
-                >
-                  {LINGUE.map((l) => (
-                    <a
-                      key={l.code}
-                      className={`it-slim-only-dropdown-item${linguaSelezionata === l.code ? " active" : ""}`}
-                      href="#"
-                      role="listitem"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setLinguaSelezionata(l.code);
-                        setDropdownLinguaAperto(false);
-                      }}
-                    >
-                      {l.code}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
               <div className="it-slim-only-actions-right">
                 {user ? (
                   <span className="it-slim-only-user">
