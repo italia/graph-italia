@@ -92,6 +92,7 @@ export default function ChooseLoader({
       <div role="tablist" className="tabs tabs-boxed bg-base-200 p-1">
         {TABS.map((tab) => (
           <button
+            type="button"
             key={tab.id}
             role="tab"
             className={`tab gap-2 transition-all ${currentTab === tab.id

@@ -1,382 +1,391 @@
-import Layout from '../components/layout';
-import { HOME_ROUTE } from '../router';
-import { useUserStore } from '../store/user_store';
+import Layout from "../components/layout";
+import { HOME_ROUTE } from "../router";
+import { useUserStore } from "../store/user_store";
 
 export default function Landing() {
   const { user } = useUserStore();
 
-  const faqs = [
-    {
-      id: 1,
-      question: 'What is skishu?',
-      answer: 'Skishu is you divinity...',
-    },
-    {
-      id: 2,
-      question: 'Shamalaya?',
-      answer: 'Yes we can ....',
-    },
-
-    {
-      id: 3,
-      question: 'Who am I?',
-      answer: 'Roots of creation...',
-    },
-  ];
-
   const features = [
     {
-      name: 'Upload & Parse Your Data in Seconds',
+      name: "Upload & Parse Your Data in Seconds",
       description:
-        'Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks.',
+        "Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks.",
+      icon: "upload",
     },
     {
-      name: 'Customizable Chart Creation',
+      name: "Customizable Chart Creation",
       description:
-        "Choose how to represent your data by selecting which columns to display as series, and easily define your X and Y axes. Dataviz offers a range of chart types: <b>Bar </b>, <b>Line</b> , <b>Pie</b> charts and <b>Geographical Maps</b> (Geomap), No matter the type, you have full control over your data's presentation!",
+        "Choose how to represent your data by selecting which columns to display as series, and easily define your X and Y axes. Dataviz offers a range of chart types: Bar, Line, Pie charts and Geographical Maps (Geomap). No matter the type, you have full control over your data's presentation!",
+      icon: "chart",
     },
     {
-      name: 'Intuitive Filtering & Data Selection',
+      name: "Intuitive Filtering & Data Selection",
       description:
-        'Only want to display specific data points? No problem. Use our simple filtering options to select which columns or data sets to include in your visualization, ensuring clarity and focus in your chart.',
+        "Only want to display specific data points? Use our simple filtering options to select which columns or data sets to include in your visualization, ensuring clarity and focus in your chart.",
+      icon: "filter",
     },
     {
-      name: 'Fine-Tune Chart Parameters',
+      name: "Fine-Tune Chart Parameters",
       description:
-        'Tweak and customize each aspect of your chart. From colors to data labels, control every detail to ensure your chart perfectly fits your needs and looks great.',
+        "Tweak and customize each aspect of your chart. From colors to data labels, control every detail to ensure your chart perfectly fits your needs and looks great.",
+      icon: "palette",
     },
     {
-      name: 'Save, Edit & Reuse Your Charts',
+      name: "Save, Edit & Reuse Your Charts",
       description:
-        'Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips.',
+        "Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips.",
+      icon: "save",
     },
     {
-      name: 'Publish & Embed Your Charts',
+      name: "Publish & Embed Your Charts",
       description:
-        'Share your work with the world! Once your chart is ready, publish it directly from Dataviz and get an embed code to seamlessly integrate your visualizations into any website or platform.',
+        "Share your work with the world! Once your chart is ready, publish it directly from Dataviz and get an embed code to seamlessly integrate your visualizations into any website or platform.",
+      icon: "share",
     },
   ];
+
+  const FeatureIcon = ({ name }: { name: string }) => {
+    const c = "text-[#0066cc]";
+    switch (name) {
+      case "upload":
+        return (
+          <svg
+            className={`w-8 h-8 ${c}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+            />
+          </svg>
+        );
+      case "chart":
+        return (
+          <svg
+            className={`w-8 h-8 ${c}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+            />
+          </svg>
+        );
+      case "filter":
+        return (
+          <svg
+            className={`w-8 h-8 ${c}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+            />
+          </svg>
+        );
+      case "palette":
+        return (
+          <svg
+            className={`w-8 h-8 ${c}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.38 3.39a15.995 15.995 0 004.769-2.95m-4.69-4.688a15.99 15.99 0 014.69 4.688"
+            />
+          </svg>
+        );
+      case "save":
+        return (
+          <svg
+            className={`w-8 h-8 ${c}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
+            />
+          </svg>
+        );
+      case "share":
+        return (
+          <svg
+            className={`w-8 h-8 ${c}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
+            />
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <Layout>
-      <div className=''>
-        <div className='relative isolate pt-14'>
-          <svg
-            aria-hidden='true'
-            className='absolute inset-0 -z-10 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]'
-          >
-            <defs>
-              <pattern
-                x='50%'
-                y={-1}
-                id='83fd4e5a-9d52-42fc-97b6-718e5d7ee527'
-                width={200}
-                height={200}
-                patternUnits='userSpaceOnUse'
-              >
-                <path d='M100 200V.5M.5 .5H200' fill='none' />
-              </pattern>
-            </defs>
-            <svg x='50%' y={-1} className='overflow-visible fill-gray-50'>
-              <path
-                d='M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z'
-                strokeWidth={0}
-              />
-            </svg>
-            <rect
-              fill='url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)'
-              width='100%'
-              height='100%'
+      <div className="landing relative isolate min-h-[80vh] z-0">
+        {/* Sfondo a quadrati – stessa sfumatura di Quick Start (radiale da top-right) */}
+        <svg
+          aria-hidden="true"
+          className="landing__bg absolute inset-0 z-[-1] h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+        >
+          <defs>
+            <pattern
+              x="50%"
+              y={-1}
+              id="landing-grid"
+              width={200}
+              height={200}
+              patternUnits="userSpaceOnUse"
+            >
+              <path d="M100 200V.5M.5 .5H200" fill="none" />
+            </pattern>
+          </defs>
+          <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
+            <path
+              d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
               strokeWidth={0}
             />
           </svg>
-          <div className='mx-auto max-w-6xl pb-32  lg:pb-56  '>
-            <div className='hidden sm:mb-8 sm:flex sm:justify-center'>
-              <div className='relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20'>
-                This project is in heavy design/development.{' '}
-                <a href='#' className='font-semibold text-primary'>
-                  <span aria-hidden='true' className='absolute inset-0' />
-                  Get Involved <span aria-hidden='true'>&rarr;</span>
-                </a>
-              </div>
-            </div>
-            <div className='text-center'>
-              <h1 className='text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl'>
-                Transform Data Into Stunning Visuals with Dataviz
+          <rect
+            fill="url(#landing-grid)"
+            width="100%"
+            height="100%"
+            strokeWidth={0}
+          />
+        </svg>
+
+        {/* Sezione Hero – più alta e UI fantasiosa, sfondo/mask invariati */}
+        <section
+          className="landing__hero relative isolate min-h-[70vh] flex flex-col justify-center pt-20 pb-32 lg:min-h-[75vh] lg:pt-28 lg:pb-40"
+          aria-label="Hero"
+        >
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 w-full">
+            <div className="text-center">
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#0066cc]/20 bg-[#0066cc]/5 px-4 py-1.5 text-sm font-medium text-[#0066cc]">
+                <span className="relative flex h-2 w-2" aria-hidden>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0066cc]/40" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0066cc]" />
+                </span>
+                Data visualization made simple
+              </p>
+              <h1 className="mt-8 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
+                <span className="block">Transform Data Into</span>
+                <span className="mt-1 block py-1 bg-gradient-to-r from-[#0066cc] to-[#004a99] bg-clip-text text-transparent leading-[1.4]">
+                  Stunning Visuals
+                </span>
+                <span className="block mt-1">
+                  with{" "}
+                  <span className="inline-block bg-gradient-to-r from-[#0066cc] to-[#004a99] bg-clip-text py-0.5 font-semibold tracking-wide text-transparent drop-shadow-[0_0_20px_rgba(0,102,204,0.25)]">
+                    Dataviz
+                  </span>
+                </span>
               </h1>
-              <p className='mt-6 text-lg leading-8 text-gray-600'>
+              <p className="mt-8 text-lg leading-8 text-gray-600 max-w-2xl mx-auto sm:text-xl">
                 Effortlessly convert your CSV data into beautiful, interactive
                 charts with Dataviz. Whether you're a data analyst, business
                 professional, or content creator, Dataviz offers an intuitive
                 interface to bring your numbers to life.
               </p>
-              <div className='mt-10 flex items-center justify-center gap-x-6'>
-                <a href={user ? HOME_ROUTE : '/login'} className='btn btn-primary'>
+              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href={user ? HOME_ROUTE : "/login"}
+                  className="btn-italia btn-italia-primary"
+                >
                   Get started
                 </a>
+                <a
+                  href="/quickstart"
+                  className="btn-italia btn-italia-secondary-outline"
+                >
+                  Quick start guide
+                </a>
               </div>
-            </div>
-          </div>
-          <div className='mx-auto max-w-6xl pb-32  lg:pb-56'>
-            <div className='mx-auto max-w-7xl px-6 lg:px-8'>
-              <div className='mx-auto max-w-4xl lg:mx-0'>
-                <h2 className='text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-                  Everything you need
-                </h2>
-                <p className='mt-6 text-lg leading-8 text-gray-600'>
-                  Start Visualizing Your Data with Dataviz Today Dataviz makes
-                  data visualization quick, simple, and powerful. Try it and see
-                  how easily you can create, edit, and publish stunning charts
-                  in minutes.
-                </p>
-              </div>
-              <dl className='mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 text-base leading-7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3'>
-                {features.map((feature) => (
-                  <div key={feature.name}>
-                    <dt className='font-semibold text-gray-900'>
-                      {feature.name}
-                    </dt>
-                    <dd
-                      className='mt-1 text-gray-600'
-                      dangerouslySetInnerHTML={{
-                        __html: `${feature.description}`,
-                      }}
-                    />
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-          <div className='bg-primary  sm:px-10 sm:mx-auto w-full py-12'>
-            <div className='rounded-md mx-auto max-w-6xl p-12 prose bg-base-100  text-content'>
-              <h2 className='text-3xl font-bold tracking-tight  sm:text-4xl '>
-                Quick Start Guide: Creating Your First Chart with Dataviz
-              </h2>
-              <p>
-                Ready to jump in and create your first chart? Follow this simple
-                guide to visualize your data in no time. Whether you're using
-                sample data or generating your own, these steps will get you
-                started.
-              </p>
-              <h3 className='h3'>Step 1: Click on "Create New Chart"</h3>
-              <ul>
-                <li>Begin by logging into your Dataviz account.</li>
-                <li>
-                  On the dashboard, locate and click the{' '}
-                  <strong>"Create New Chart"</strong> button to start a new
-                  project.
-                </li>
-              </ul>
-              <h3>Step 2: Upload Your Data</h3>
-              <ul>
-                <li>
-                  You'll be prompted to upload your data. If you don't have data
-                  yet, no worries—use one of these options:
-                  <ul>
-                    <li>
-                      <strong>Sample Data</strong>: Select from a set of sample
-                      data provided by Dataviz. Click{' '}
-                      <strong>"Use Sample Data"</strong> to explore how the tool
-                      works.
-                    </li>
-                    <li>
-                      <strong>Generate Data</strong>: Click on{' '}
-                      <strong>"Generate Data"</strong> in the delegate section
-                      to create a simple CSV dataset automatically.
-                    </li>
-                    <li>
-                      <strong>Upload Your Own CSV</strong>: If you have your own
-                      data, simply upload a CSV file. Dataviz will instantly
-                      parse and display it in a table.
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-              <h3>Step 3: Choose Your Chart Type and Configure (Optional)</h3>
-              <ul>
-                <li>
-                  After uploading or generating your data, select a chart type
-                  that best represents your data. You can choose from:
-                  <ul>
-                    <li>
-                      <strong>Bar Chart</strong>
-                    </li>
-                    <li>
-                      <strong>Line Chart</strong>
-                    </li>
-                    <li>
-                      <strong>Pie Chart</strong>
-                    </li>
-                    <li>
-                      <strong>Geographical Map (Geomap)</strong>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  To customize your chart:
-                  <ul>
-                    <li>Select which data columns to display.</li>
-                    <li>Assign your X and Y axes (for bar or line charts).</li>
-                    <li>
-                      Adjust chart parameters, such as colors, labels, and data
-                      points. This step is optional, but it's a great way to
-                      fine-tune your chart's appearance.
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-              <h3>Step 4: Save Your Chart</h3>
-              <ul>
-                <li>
-                  Once you're satisfied with your chart, click{' '}
-                  <strong>"Save"</strong> to store it for future editing.
-                </li>
-                <li>
-                  Your chart will be saved to your dashboard, where you can:
-                  <ul>
-                    <li>Re-edit it later.</li>
-                    <li>Publish it for sharing.</li>
-                    <li>
-                      Generate an embed code to add the chart to your website.
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-              <hr />
-              <p>
-                And that's it! You've successfully created and saved your first
-                chart with Dataviz. Continue experimenting with different
-                datasets, chart types, and configurations to fully unlock the
-                power of your visualizations.
-              </p>
-            </div>
-          </div>
-
-          {/*
-          <div className='space-y-2 mx-auto max-w-4xl pb-32 sm:pb-48 lg:pb-56'>
-          <h2 className='text-4xl font-bold'>FAQS</h2>
-          {faqs.map((faq) => (
-              <details
-                className='group [&_summary::-webkit-details-marker]:hidden'
-                key={faq.id}
+              <div
+                className="mt-16 flex items-center justify-center gap-8 text-sm text-gray-500"
+                aria-hidden
               >
-                <summary className='flex cursor-pointer items-center justify-between gap-1.5 rounded-lg  p-4  bg-accent text-accent-content'>
-                  <h2 className='font-medium'>{faq.question}</h2>
-
+                <span className="flex items-center gap-2">
                   <svg
-                    className='size-5 shrink-0 transition duration-300 group-open:-rotate-180'
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    stroke='currentColor'
+                    className="h-5 w-5 text-[#0066cc]/60"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
                     <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M19 9l-7 7-7-7'
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
                     />
                   </svg>
-                </summary>
-
-                <p className='mt-4 px-4 leading-relaxed text-content'>
-                  {faq.answer}
-                </p>
-              </details>
-              ))}
-          </div>
-             */}
-        </div>
-
-        {/* <div className="my-5">
-
-       <div className="mx-auto max-w-4xl pb-32 sm:pb-48 lg:pb-56">
-          <h2 className="text-4xl font-bold">How It Works</h2>
-          <p>Import your data e create a chart with it in few simple steps</p>
-          <ul className="steps steps-vertical">
-            <li className="step step-primary">
-              1 Upload your data as a CSV file
-            </li>
-            <li className="step step-primary">
-              2 Select and filter what you want from raw data
-            </li>
-            <li className="step step-primary">
-              3 Choose chart type and tweak chart settings
-            </li>
-            <li className="step step-primary">
-              4 Preview and save your chart, publish if you want
-            </li>
-            <li className="step step-primary">
-              5 Organize your charts in dashboard and share with world
-            </li>
-          </ul>
-        </div>
-        <div className="stats bg-base-300 border-base-300 border shadow">
-          <div className="stat">
-            <div className="stat-title">Total Page Views</div>
-            <div className="stat-value">89,400</div>
-            <div className="stat-desc">21% more than last month</div>
-          </div>
-        </div>
-      </div>
-      <div className="my-5">
-        <div className="stats shadow my-10">
-          <div className="stat">
-            <div className="stat-figure text-primary">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block h-8 w-8 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                ></path>
-              </svg>
-            </div>
-            <div className="stat-title">Total Likes</div>
-            <div className="stat-value text-primary">25.6K</div>
-            <div className="stat-desc">21% more than last month</div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-figure text-secondary">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block h-8 w-8 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                ></path>
-              </svg>
-            </div>
-            <div className="stat-title">Page Views</div>
-            <div className="stat-value text-secondary">2.6M</div>
-            <div className="stat-desc">21% more than last month</div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-figure text-secondary">
-              <div className="avatar online">
-                <div className="w-16 rounded-full">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
+                  CSV upload
+                </span>
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="h-5 w-5 shrink-0 text-[#0066cc]/80"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                    />
+                  </svg>
+                  Charts & maps
+                </span>
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="h-5 w-5 text-[#0066cc]/60"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
+                    />
+                  </svg>
+                  Publish & embed
+                </span>
               </div>
             </div>
-            <div className="stat-value">86%</div>
-            <div className="stat-title">Tasks done</div>
-            <div className="stat-desc text-secondary">31 tasks remaining</div>
           </div>
-        </div>
-      </div> */}
+        </section>
+
+        {/* Divisore tra Hero e Features */}
+        <div
+          className="landing__divider h-px w-full mx-auto bg-gray-200/80"
+          aria-hidden="true"
+        />
+
+        {/* Sezione Everything you need – senza blur per scroll fluido */}
+        <section
+          className="landing__features relative overflow-hidden py-16 lg:py-24"
+          aria-labelledby="features-heading"
+        >
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50"
+            aria-hidden="true"
+          />
+
+          <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="inline-block text-sm font-medium text-[#0066cc] uppercase tracking-wider mb-3">
+                Features
+              </span>
+              <h2
+                id="features-heading"
+                className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+              >
+                Everything you need
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-gray-600">
+                Start visualizing your data with Dataviz today. Dataviz makes
+                data visualization quick, simple, and powerful. Try it and see
+                how easily you can create, edit, and publish stunning charts in
+                minutes.
+              </p>
+            </div>
+
+            <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature) => (
+                <article
+                  key={feature.name}
+                  className="landing__feature-card group relative flex flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#0066cc]/10 hover:border-[#0066cc]/30"
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#0066cc]/10 text-[#0066cc] transition-colors group-hover:bg-[#0066cc]/15">
+                    <FeatureIcon name={feature.icon} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {feature.name}
+                  </h3>
+                  <p className="mt-2 flex-grow text-base leading-relaxed text-gray-600">
+                    {feature.description}
+                  </p>
+                  <div
+                    className="mt-4 h-px w-12 rounded-full bg-[#0066cc]/30 transition-all group-hover:w-full group-hover:bg-[#0066cc]/50"
+                    aria-hidden="true"
+                  />
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Divisore tra Features e CTA */}
+        <div
+          className="landing__divider h-px w-full bg-gray-200"
+          aria-hidden="true"
+        />
+
+        {/* Sezione Ready to create your first chart */}
+        <section
+          className="landing__cta relative bg-white/80 py-16 lg:py-20"
+          aria-label="Call to action"
+        >
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              Ready to create your first chart?
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 max-w-xl mx-auto">
+              Follow the step-by-step quick start guide or log in and get
+              started.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="/quickstart"
+                className="btn-italia btn-italia-primary btn-italia-lg"
+              >
+                Go to Quick start guide
+              </a>
+              <a
+                href={user ? HOME_ROUTE : "/login"}
+                className="btn-italia btn-italia-secondary-outline btn-italia-lg"
+              >
+                {user ? "Go to my charts" : "Log in"}
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
     </Layout>
   );

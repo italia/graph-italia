@@ -26,17 +26,17 @@ function EditChartPage() {
   const navigate = useNavigate();
   const [state, send] = useMachine(stepMachine);
   const {
-    config,
-    chart,
-    data,
     id,
-    name,
-    description,
-    publish,
+    chart,
+    config,
+    data,
     isRemote,
     remoteUrl,
-    // preview,
     dataSource,
+    // name,
+    // description,
+    // publish,
+    // preview,
 
     // setPreview,
     setConfig,
@@ -44,7 +44,6 @@ function EditChartPage() {
     setData,
     setRemoteUrl,
     setIsRemote,
-
     loadItem,
     resetItem,
   } = useStoreState((state) => state);
@@ -55,17 +54,10 @@ function EditChartPage() {
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [chartPreviewOpen, setChartPreviewOpen] = useState(true);
-  const [dataPreviewOpen, setDataPreviewOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
 
-  // Ref to sync the right card height with the left one
-  const leftCardRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const [leftCardHeight, setLeftCardHeight] = useState<number | null>(null);
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  // useUnsavedChanges(hasUnsavedChanges, "You have unsaved changes. Are you sure you want to leave?");
+  useUnsavedChanges(hasUnsavedChanges, "You have unsaved changes. Are you sure you want to leave?");
 
   // Load existing chart when there's a paramId
   useEffect(() => {
@@ -123,6 +115,7 @@ function EditChartPage() {
     setHasUnsavedChanges(true);
     // Don't transition automatically - user must click "Proceed to configuration"
   }
+
   const haveData =
     data && data[0].length > 0 ? true : dataSource ? true : false;
 
@@ -134,6 +127,7 @@ function EditChartPage() {
       send({ type: "NEXT" }); // Only from idle to input
     }
   }
+
   function handleSetRemoteData(d: any) {
     setHasUnsavedChanges(true);
     setIsRemote(true);
@@ -146,16 +140,11 @@ function EditChartPage() {
     }
   }
 
-  // function handleSaveChart() {
-  //   send({ type: "IDLE" });
-  //   setHasUnsavedChanges(false);
-  //   resetItem();
-  // }
 
   // Generate default name based on chart type and date
   const getDefaultName = () => {
     return `${chart || "new"}chart-${dayjs(Date.now()).format(
-      "YYYY-MM-DD_HH-mm"
+      "YYYY-MM-DD_HH-mm",
     )}`;
   };
 
@@ -215,6 +204,7 @@ function EditChartPage() {
     <Layout>
       <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 p-4 rounded-lg">
         <button
+          type="button"
           onClick={() => navigate(HOME_ROUTE)}
           className="btn btn-default"
         >
@@ -222,11 +212,12 @@ function EditChartPage() {
         </button>
         <div className="flex gap-4">
           <span>step: {currentStepIndex}</span>
-          <span>status: {state.value}</span>
+          <span>status: {state.value as string}</span>
           <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span>
         </div>
         <div className="flex-shrink-0">
           <button
+            type="button"
             onClick={saveChart}
             disabled={!hasUnsavedChanges || !canSave || isSaving}
             className="btn btn-primary gap-2"
@@ -317,10 +308,11 @@ function EditChartPage() {
                     {haveData && chart && (
                       <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
                         <button
+                          type="button"
                           className="btn btn-primary"
                           onClick={() => send({ type: "CONFIG" })}
                         >
-                          Proceed to configuration
+                          Use this data
                         </button>
                       </div>
                     )}

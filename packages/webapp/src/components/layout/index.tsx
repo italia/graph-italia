@@ -1,14 +1,19 @@
+import { useUserStore } from "../../store/user_store";
 import Footer from "./Footer";
-import Header from "./Header";
+import HeaderCompleta from "./HeaderCompleta";
+import SlimHeader from "./SlimHeader";
+
 function Layout({ children }: any) {
+  const user = useUserStore((s) => s.user);
+
   return (
     <div
       data-theme="italia"
       className="w-full min-h-screen flex flex-col"
       style={{ overflowX: "clip" }}
     >
-      <Header />
-      <div className="p-5 flex-grow">{children}</div>
+      {user ? <SlimHeader /> : <HeaderCompleta />}
+      <div className="flex-grow">{children}</div>
       <Footer />
     </div>
   );
