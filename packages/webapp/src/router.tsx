@@ -1,6 +1,6 @@
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import LandingPage from "./pages/about";
+import AboutPage from "./pages/about";
 import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
@@ -12,27 +12,33 @@ import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
 import QuickStartPage from "./pages/QuickStartPage";
-import RootRoute from "./pages/RootRoute";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import DashboardViewPage from "./pages/show/ShowDashboardPage";
+import RootRoute from "./pages/Splash";
 import TermsPage from "./pages/terms";
 import GenerateDataPage from "./pages/utility/GenerateDataPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
+import PrivateAreePage from "./pages/home";
 
-export const HOME_ROUTE = "/";
+export const HOME_ROUTE = "/home";
 
 // Assertion necessaria per compatibilità React 19 / react-router-dom (element: ReactElement vs ReactNode)
 const routes = [
   // Root: landing se non loggato, home Charts se loggato
   {
     path: HOME_ROUTE,
+    element: <PrivateAreePage />,
+  },
+  // Root: landing se non loggato, home Charts se loggato
+  {
+    path: "/",
     element: <RootRoute />,
   },
   // Landing page raggiungibile anche da /about
   {
     path: "/about",
-    element: <LandingPage />,
+    element: <AboutPage />,
   },
   // Guida rapida / Quick Start
   {
