@@ -21,6 +21,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.992.0",
+    "@aws-sdk/s3-request-presigner": "^3.992.0",
     "@hono/standard-validator": "^0.2.1",
     "@hono/zod-validator": "^0.7.5",
     "@prisma/adapter-pg": "^7.0.1",
