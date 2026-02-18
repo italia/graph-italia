@@ -6,7 +6,6 @@ import Layout from "../components/layout";
 // import RenderChart from "../components/RenderChart";
 import ChartList from "../components/ChartList";
 import Loading from "../components/layout/Loading";
-import QuickstartInfo from "../components/layout/QuickstartInfo";
 
 import { useNavigate } from "react-router-dom";
 import GenericDialog from "../components/layout/GenericDialog";
@@ -42,14 +41,12 @@ function Home() {
     remoteUrl,
     preview,
     dataSource,
-
     setPreview,
     setConfig,
     setChart,
     setData,
     setRemoteUrl,
     setIsRemote,
-
     loadItem,
     resetItem,
   } = useStoreState((state) => state);
@@ -167,7 +164,6 @@ function Home() {
                 {list && list.length ? "My Charts" : "Welcome"}
               </h4>
 
-              {!data && (!list || list?.length === 0) && <QuickstartInfo />}
               <div>
                 <div className="flex my-5 gap-4">
                   <details className="dropdown bg-base-100 z-10">

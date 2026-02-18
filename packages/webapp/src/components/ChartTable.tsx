@@ -66,9 +66,9 @@ export default function ChartTable({
 
   const currentTheme = "default";
 
-const [copiedText, copy] = useCopyToClipboard()
+  const [copiedText, copy] = useCopyToClipboard()
 
-const handleCopy = (text: string) => () => {
+  const handleCopy = (text: string) => () => {
     copy(text)
       .then(() => {
         console.log('Copied!', { text })
@@ -146,7 +146,7 @@ const handleCopy = (text: string) => () => {
                   <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" >
                     <FaLink fill={actionColor} size={actionSize} title={row.remoteUrl} />
                   </a>
-                  <FaCopy className="cursor-pointer" role="button" fill={actionColor} size={actionSize} title={"copy"}  onClick={handleCopy(`${row.remoteUrl||""}`)} />
+                  <FaCopy className="cursor-pointer" role="button" fill={actionColor} size={actionSize} title={"copy"} onClick={handleCopy(`${row.remoteUrl || ""}`)} />
                 </div>
               ) : (
                 "No"
@@ -226,7 +226,7 @@ const handleCopy = (text: string) => () => {
                   href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
                     }`}
                 >
-                  <FaPenToSquare fill={actionColor} size={actionSize} title={"edit"} onClick={() => setData(row)} />
+                  <FaPenToSquare fill={actionColor} size={actionSize} title={"edit"} />
                 </a>
 
               </div>
@@ -245,7 +245,7 @@ const handleCopy = (text: string) => () => {
         title="Preview Chart"
         callback={() => setData(null)}
       >
-        <div className="w-full h-full p-4" style={{ width: "800px", height: "600px" }}>
+        <div className="w-full h-full p-4" style={{ minHeight: "400px" }}>
           {data && <RenderChart {...data} />}
         </div>
       </Dialog>

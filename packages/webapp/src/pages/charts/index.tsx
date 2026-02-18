@@ -9,7 +9,6 @@ import {
 } from '../../lib/utils';
 import Layout from '../../components/layout';
 import Loading from '../../components/layout/Loading';
-import QuickstartInfo from '../../components/layout/QuickstartInfo';
 import ChartTable from '../../components/ChartTable';
 
 import useStoreState from '../../lib/storeState';

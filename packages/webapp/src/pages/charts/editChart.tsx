@@ -1,5 +1,5 @@
 import { useMachine } from "@xstate/react";
-import { DataTable, RenderChart } from "dataviz-components";
+import { DataTable, RenderChart, type MatrixType } from "dataviz-components";
 import "dataviz-components/dist/style.css";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -17,8 +17,9 @@ import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
 import { HOME_ROUTE } from "../../router";
+import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 
-
+import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 
 function EditChartPage() {
   const { id: paramId } = useParams();
@@ -34,10 +35,10 @@ function EditChartPage() {
     publish,
     isRemote,
     remoteUrl,
-    preview,
+    // preview,
     dataSource,
 
-    setPreview,
+    // setPreview,
     setConfig,
     setChart,
     setData,
@@ -48,7 +49,7 @@ function EditChartPage() {
     resetItem,
   } = useStoreState((state) => state);
 
-  const [currentTab, setCurrentTab] = useState("info");
+
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
@@ -63,7 +64,8 @@ function EditChartPage() {
   const headerRef = useRef<HTMLDivElement>(null);
   const [leftCardHeight, setLeftCardHeight] = useState<number | null>(null);
 
-
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  // useUnsavedChanges(hasUnsavedChanges, "You have unsaved changes. Are you sure you want to leave?");
 
   // Load existing chart when there's a paramId
   useEffect(() => {
@@ -81,7 +83,7 @@ function EditChartPage() {
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
             setChartPublish(chartData.publish ?? true);
-            setCurrentTab("chart");
+
             // Go to config step only if chart already has data loaded
             const hasExistingData =
               chartData.data?.length > 0 || chartData.dataSource;
@@ -118,12 +120,14 @@ function EditChartPage() {
     }
     // setChart("");
     setData(d);
+    setHasUnsavedChanges(true);
     // Don't transition automatically - user must click "Proceed to configuration"
   }
   const haveData =
     data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
+    setHasUnsavedChanges(true);
     setData(d);
     // Don't transition automatically - user must click "Proceed to configuration"
     if (state.matches("idle")) {
@@ -131,20 +135,22 @@ function EditChartPage() {
     }
   }
   function handleSetRemoteData(d: any) {
-    console.log("handleSetRemoteData", d);
+    setHasUnsavedChanges(true);
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
     setData(d.data);
+
     // Don't transition automatically - user must click "Proceed to configuration"
     if (state.matches("idle")) {
       send({ type: "NEXT" }); // Only from idle to input
     }
   }
 
-  function handleSaveChart() {
-    send({ type: "IDLE" });
-    resetItem();
-  }
+  // function handleSaveChart() {
+  //   send({ type: "IDLE" });
+  //   setHasUnsavedChanges(false);
+  //   resetItem();
+  // }
 
   // Generate default name based on chart type and date
   const getDefaultName = () => {
@@ -171,8 +177,10 @@ function EditChartPage() {
     try {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
-        handleSaveChart();
-        navigate(HOME_ROUTE);;
+        setHasUnsavedChanges(false);
+        //   handleSaveChart();
+        //   navigate(HOME_ROUTE);;
+        alert("Chart saved successfully!");
       }
     } catch (error) {
       console.error("Error saving chart:", error);
@@ -212,11 +220,15 @@ function EditChartPage() {
         >
           Back to list
         </button>
-
+        <div className="flex gap-4">
+          <span>step: {currentStepIndex}</span>
+          <span>status: {state.value}</span>
+          <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span>
+        </div>
         <div className="flex-shrink-0">
           <button
             onClick={saveChart}
-            disabled={!canSave || isSaving}
+            disabled={!hasUnsavedChanges || !canSave || isSaving}
             className="btn btn-primary gap-2"
           >
             {isSaving ? (
@@ -233,17 +245,17 @@ function EditChartPage() {
         </div>
       </div>
 
-
       <div className="mx-auto">
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
           <div className="space-y-1 xl:col-span-2">
 
-
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0">
+            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0" aria-disabled={currentStepIndex === 0 ? true : false} open={currentStepIndex > 0 ? true : false}>
               <summary className="collapse-title font-semibold">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">2</span>
+                    <span className="text-primary font-bold">
+                      <FaCog />
+                    </span>
                   </div>
                   <div>
                     <h2 className="card-title text-xl">
@@ -256,33 +268,33 @@ function EditChartPage() {
                 </div>
               </summary>
               <div className="collapse-content text-sm">
-                {state.matches("config") && (
-
+                {state.matches("config") ? (
 
                   <div className="card bg-base-100 shadow-sm border border-base-200">
                     <div className="card-body">
 
-                      <SelectChart setChart={setChart} chart={chart} />
+                      <SelectChart setChart={(value: string) => { setHasUnsavedChanges(true); setChart(value); }} chart={chart} />
                       <div className="divider my-2"></div>
                       <ChartOptions
                         config={config}
-                        setConfig={setConfig}
+                        setConfig={(value) => { setHasUnsavedChanges(true); setConfig(value); }}
                         chart={chart}
-                        numSeries={(data as any)?.length - 1 || 0}
+                        numSeries={(data as MatrixType)?.length - 1 || 0}
                       />
                     </div>
                   </div>
 
-
-                )}
+                ) : <div> Please load data and proceed to configuration step to see chart options </div>}
               </div>
             </details>
 
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-1" open>
+            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-1" open={currentStepIndex === 0 ? true : false}>
               <summary className="collapse-title font-semibold">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">1</span>
+                    <span className="text-primary font-bold">
+                      <FaDatabase />
+                    </span>
                   </div>
                   <div>
                     <h2 className="card-title text-xl">Load your data</h2>
@@ -322,7 +334,9 @@ function EditChartPage() {
               <summary className="collapse-title font-semibold">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">0</span>
+                    <span className="text-primary font-bold">
+                      <FaInfo />
+                    </span>
                   </div>
                   <div>
                     <h2 className="card-title text-xl">Setup Info</h2>
@@ -340,7 +354,10 @@ function EditChartPage() {
                         <input
                           type="checkbox"
                           checked={chartPublish}
-                          onChange={() => setChartPublish(!chartPublish)}
+                          onChange={() => {
+                            setHasUnsavedChanges(true);
+                            setChartPublish(!chartPublish);
+                          }}
                           className="toggle toggle-sm toggle-primary cursor-pointer"
                         />
                         <span className="text-sm text-base-content/70">
@@ -355,7 +372,10 @@ function EditChartPage() {
                         id="chart_title"
                         type="text"
                         value={chartName}
-                        onChange={(e) => setChartName(e.target.value)}
+                        onChange={(e) => {
+                          setHasUnsavedChanges(true);
+                          setChartName(e.target.value);
+                        }}
                         placeholder={getDefaultName()}
                         className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
                       />
@@ -364,7 +384,10 @@ function EditChartPage() {
                         id="chart_description"
                         value={chartDescription}
                         rows={3}
-                        onChange={(e) => setChartDescription(e.target.value)}
+                        onChange={(e) => {
+                          setHasUnsavedChanges(true);
+                          setChartDescription(e.target.value);
+                        }}
                         placeholder="Add a description..."
                         className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
                       />
@@ -397,7 +420,7 @@ function EditChartPage() {
                     <div dangerouslySetInnerHTML={{ __html: chartDescription.replace(/\n/g, "<br />") }} />
                   ) : (
                     <p className="italic text-base-content">
-                      No description provided for this chart.
+                      -
                     </p>
                   )}
                 </div>
@@ -409,7 +432,7 @@ function EditChartPage() {
                 {state.matches("config") && chart ? (
 
                   <div className="overflow-auto min-h-[380px] relative">
-                    {!preview && (
+                    {/* {!preview && (
                       <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
                         <div className="flex flex-col items-center gap-3">
                           <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -418,18 +441,18 @@ function EditChartPage() {
                           </span>
                         </div>
                       </div>
-                    )}
+                    )} */}
                     <RenderChart
                       id={id || paramId || "preview-map"}
                       chart={chart}
                       data={data}
                       config={config}
                       dataSource={null}
-                      getPicture={(pic: string) => setPreview(pic)}
+                    // getPicture={(pic: string) => console.log("Chart picture", pic)}
                     />
                   </div>
 
-                ) : (<div> sorry canot show preview </div>)}
+                ) : (<p className="italic text-base-content"></p>)}
               </div>
               {/* )} */}
 
@@ -437,7 +460,7 @@ function EditChartPage() {
               <div >
                 {!haveData ? (
                   <p className="italic text-base-content">
-                    Load your data to display the chart preview
+                    Load your data to display the data preview
                   </p>
                 ) :
                   (
