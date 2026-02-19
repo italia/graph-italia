@@ -6,7 +6,10 @@
 import { useEffect, useRef, useState } from "react";
 import { logout } from "../../lib/api";
 import { useUserStore } from "../../store/user_store";
+// import { HOME_ROUTE } from "../../router";
 import "./HeaderCompleta.css";
+
+const HOME_ROUTE = "/home";
 
 type MenuSubItem = { name: string; link: string };
 type MenuItem =
@@ -14,11 +17,13 @@ type MenuItem =
   | { name: string; link: string; subMenu: readonly MenuSubItem[] };
 
 const MENU: readonly MenuItem[] = [
-  { name: "Quick Start", link: "/quickstart" },
+
+  { name: "Charts", link: HOME_ROUTE || "/" },
   {
     name: "Tools",
     link: "",
     subMenu: [
+      { name: "Quick Start", link: "/quickstart" },
       { name: "Generate Data", link: "/generate-data" },
       { name: "Load Remote Data", link: "/load-data" },
       { name: "Check GeoJSon File", link: "/geo" },
@@ -76,12 +81,12 @@ export default function HeaderCompleta() {
                       className="it-header-slim-btn"
                       onClick={handleLogout}
                     >
-                      Esci
+                      logout
                     </button>
                   </span>
                 ) : (
-                  <a href="/login" className="it-header-slim-btn" aria-label="Accedi">
-                    Accedi
+                  <a href="/login" className="it-header-slim-btn" aria-label="Login">
+                    Login
                   </a>
                 )}
               </div>
@@ -107,8 +112,8 @@ export default function HeaderCompleta() {
             </div>
             <div className="it-header-center-right">
               <div className="it-header-center-social">
-                <span className="it-header-center-social-label">Seguici su</span>
-                <ul className="it-header-center-social-list" aria-label="Seguici su">
+                <span className="it-header-center-social-label">Source on</span>
+                <ul className="it-header-center-social-list" aria-label="Source on">
                   <li>
                     <a
                       href="https://github.com/italia/dataviz"

@@ -18,6 +18,8 @@ export type FieldDataType = {
   remoteUrl?: string;
   isRemote?: boolean;
   preview?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Step = {

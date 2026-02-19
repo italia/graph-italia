@@ -20,6 +20,7 @@ import { HOME_ROUTE } from "../../router";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
+import toast from 'react-hot-toast';
 
 function EditChartPage() {
   const { id: paramId } = useParams();
@@ -37,7 +38,6 @@ function EditChartPage() {
     // description,
     // publish,
     // preview,
-
     // setPreview,
     setConfig,
     setChart,
@@ -169,10 +169,11 @@ function EditChartPage() {
         setHasUnsavedChanges(false);
         //   handleSaveChart();
         //   navigate(HOME_ROUTE);;
-        alert("Chart saved successfully!");
+        toast.success("Chart saved successfully!");
       }
     } catch (error) {
       console.error("Error saving chart:", error);
+      toast.error('Error saving chart!');
     } finally {
       setIsSaving(false);
     }

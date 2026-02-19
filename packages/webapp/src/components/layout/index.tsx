@@ -1,7 +1,8 @@
 import { useUserStore } from "../../store/user_store";
 import Footer from "./Footer";
-import HeaderCompleta from "./HeaderCompleta";
+import FullHeader from "./FullHeader";
 import SlimHeader from "./SlimHeader";
+import { Toaster } from 'react-hot-toast';
 
 function Layout({ children }: any) {
   const user = useUserStore((s) => s.user);
@@ -12,9 +13,10 @@ function Layout({ children }: any) {
       className="w-full min-h-screen flex flex-col"
       style={{ overflowX: "clip" }}
     >
-      {user ? <SlimHeader /> : <HeaderCompleta />}
+      {user ? <SlimHeader /> : <FullHeader />}
       <div className="flex-grow">{children}</div>
       <Footer />
+      <Toaster />
     </div>
   );
 }

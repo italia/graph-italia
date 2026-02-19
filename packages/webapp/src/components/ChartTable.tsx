@@ -22,6 +22,9 @@ import {
 import Dialog from "./layout/Dialog";
 import { RenderChart } from "dataviz-components";
 import { useCopyToClipboard } from 'usehooks-ts'
+import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
+
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -30,6 +33,7 @@ type CharTableProps = {
   handleLoadChart: (item: FieldDataType) => void;
   handleDeleteChart: (id: string) => void;
 };
+
 
 
 createTheme(
@@ -71,13 +75,19 @@ export default function ChartTable({
   const handleCopy = (text: string) => () => {
     copy(text)
       .then(() => {
-        console.log('Copied!', { text })
+        toast.success('Copied to clipboard!')
       })
       .catch(error => {
         console.error('Failed to copy!', error)
+        toast.error('Failed to copy!')
       })
   }
 
+  const navigate = useNavigate();
+  function handleRowClick(item: FieldDataType) {
+    const path = `/edit/${item.chart === "kpiGroup" ? "kpi" : "chart"}/${item.id}`;
+    navigate(path);
+  }
 
 
   return (
@@ -86,12 +96,15 @@ export default function ChartTable({
 
       {list && <div>
         <DataTable
+          onRowClicked={(row) => handleRowClick(row)}
           columns={[{
             name: "Type",
             maxWidth: '80px',
             selector: (row: FieldDataType) => row.chart,
+            sortable: true,
             cell: (row: FieldDataType) => {
-              let IconComponent;
+              // let iconName = "";
+              let IconComponent = FaRegSquare;
               switch (row.chart) {
                 case "bar":
                   IconComponent = FaChartBar;
@@ -119,7 +132,7 @@ export default function ChartTable({
                 <div className="overflow-hidden">
                   <div className="flex items-center gap-2">
                     <IconComponent fill="#06c" size={24} title={row.chart} />
-                    {/* <span className="capitalize">{row.chart}</span> */}
+                    <span className="capitalize">{row.chart}</span>
                   </div>
                 </div>
               );
@@ -169,17 +182,17 @@ export default function ChartTable({
             sortable: true,
           },
           {
-            name: "status",
+            name: "Visibility",
             cell: (row: FieldDataType) => (
               <div>
 
                 {row.publish ? (
-                  <span className="text-success">{`Public `}</span>
+                  <span className="text-content">{`Public `}</span>
                 ) : (
-                  <span className="text-info">{`Private`}</span>
+                  <span className="text-content">{`Private`}</span>
                 )}
 
-                <span className="ml-2">
+                {/* <span className="ml-2">
                   {row.publish ? (
                     <button
                       className="btn btn-xs "
@@ -195,7 +208,7 @@ export default function ChartTable({
                       Toggle
                     </button>
                   )}
-                </span>
+                </span> */}
 
               </div>
             ),
