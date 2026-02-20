@@ -85,6 +85,7 @@ export default function ChooseLoader({
   initialData,
 }: ChooseLoaderProps) {
   const [currentTab, setCurrentTab] = useState<number>(0);
+  const [remoteType, setRemoteType] = useState<string>("csv"); // "json" or "csv"
 
   return (
     <div className="space-y-4">
@@ -128,22 +129,49 @@ export default function ChooseLoader({
           />
         )}
         {currentTab === 2 && (
-          <>
-
+          <div className="p-4 space-y-4">
 
             {/* <b>TODO: ADD RADIO BUTTONS TO CHOOSE JSON OR CSV</b> */}
+            <div>
+              <label className="cursor-pointer label mr-4">
+                <input
+                  type="radio"
+                  name="remoteType"
+                  className="radio"
+                  value="csv"
+                  checked={remoteType === "csv"}
+                  onChange={() => setRemoteType("csv")}
+                />
+                <span className="label-text ml-2">CSV</span>
+              </label>
+              <label className="cursor-pointer label ">
+                <input
+                  type="radio"
+                  name="remoteType"
+                  className="radio"
+                  value="json"
+                  checked={remoteType === "json"}
+                  onChange={() => setRemoteType("json")}
+                />
+                <span className="label-text ml-2">JSON</span>
+              </label>
 
-            <LoadRemoteJsonSource
-              currentValue={remoteUrl}
-              setData={(d: any) => handleSetRemoteData(d)}
-            />
-            <LoadRemoteCSVSource
-              currentValue={remoteUrl}
-              setData={(d: any) => handleSetRemoteData(d)}
-            />
-          </>
+            </div>
+
+            {remoteType === "json" ? (
+              <LoadRemoteJsonSource
+                currentValue={remoteUrl}
+                setData={(d: any) => handleSetRemoteData(d)}
+              />
+            ) : (
+              <LoadRemoteCSVSource
+                currentValue={remoteUrl}
+                setData={(d: any) => handleSetRemoteData(d)}
+              />
+            )}
+          </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
