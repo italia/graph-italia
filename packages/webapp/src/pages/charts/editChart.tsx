@@ -313,7 +313,7 @@ function EditChartPage() {
                       handleUpload={handleUpload}
                       remoteUrl={remoteUrl}
                       handleSetRemoteData={handleSetRemoteData}
-                      initialData={currentData || data}
+                      initialData={data}
                     />
                     {haveData && chart && (
                       <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
