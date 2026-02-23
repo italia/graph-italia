@@ -54,6 +54,7 @@ function EditChartPage() {
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentData, setCurrentData] = useState(null);
 
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -102,26 +103,26 @@ function EditChartPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramId]);
 
-  function handleChangeData(d: any) {
-    if (!config.palette) {
-      const numSeries = d.length - 1;
-      let palette = getAvailablePalettes(numSeries)[0];
-      config.palette = palette;
-      config.colors = getPalette(palette);
-      setConfig(config);
-    }
-    // setChart("");
-    setData(d);
-    setHasUnsavedChanges(true);
-    // Don't transition automatically - user must click "Proceed to configuration"
-  }
+  // function handleChangeData(d: any) {
+  //   if (!config.palette) {
+  //     const numSeries = d.length - 1;
+  //     let palette = getAvailablePalettes(numSeries)[0];
+  //     config.palette = palette;
+  //     config.colors = getPalette(palette);
+  //     setConfig(config);
+  //   }
+  //   // setChart("");
+  //   setData(d);
+  //   setHasUnsavedChanges(true);
+  //   // Don't transition automatically - user must click "Proceed to configuration"
+  // }
 
-  const haveData =
+  const haveData = currentData && currentData[0].length > 0 ? true :
     data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
     setHasUnsavedChanges(true);
-    setData(d);
+    setCurrentData(d);
     // Don't transition automatically - user must click "Proceed to configuration"
     if (state.matches("idle")) {
       send({ type: "NEXT" }); // Only from idle to input
@@ -132,7 +133,7 @@ function EditChartPage() {
     setHasUnsavedChanges(true);
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
-    setData(d.data);
+    setCurrentData(d.data);
 
     // Don't transition automatically - user must click "Proceed to configuration"
     if (state.matches("idle")) {
@@ -140,6 +141,14 @@ function EditChartPage() {
     }
   }
 
+
+  function handleAssignData() {
+    if (currentData) {
+      setData(currentData);
+      setCurrentData(null); // Clear temp data
+      send({ type: "CONFIG" }); // Move to config step after data is assigned
+    }
+  }
 
   // Generate default name based on chart type and date
   const getDefaultName = () => {
@@ -304,14 +313,14 @@ function EditChartPage() {
                       handleUpload={handleUpload}
                       remoteUrl={remoteUrl}
                       handleSetRemoteData={handleSetRemoteData}
-                      initialData={data}
+                      initialData={currentData || data}
                     />
                     {haveData && chart && (
                       <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
                         <button
                           type="button"
                           className="btn btn-primary"
-                          onClick={() => send({ type: "CONFIG" })}
+                          onClick={() => handleAssignData()}
                         >
                           Use this data
                         </button>
@@ -458,7 +467,7 @@ function EditChartPage() {
                 ) :
                   (
                     <div className="overflow-auto flex-1 min-h-0">
-                      <DataTable data={data as any} />
+                      <DataTable data={(currentData || data) as any} />
                     </div>
                   )}
 
