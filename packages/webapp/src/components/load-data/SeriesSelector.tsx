@@ -1,4 +1,4 @@
-import { useTransition, useEffect, useState, } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { moveDataColumn, transposeData } from "../../lib/utils";
 import type { MatrixType } from "../../types";
 
@@ -12,7 +12,7 @@ function cleanupValue(v: string | number) {
   try {
     const value = parseFloat("" + v);
     return value;
-  } catch (error) {
+  } catch {
     return 0;
   }
 }
@@ -28,21 +28,24 @@ function cleanupData(matrix: MatrixType) {
 }
 
 export default function SeriesSelector({ setData, initialData, uploadData }: {
-  setData: () => void;
-  initialData?: any;
-  uploadData?: any;
+  setData: (data: MatrixType) => void;
+  initialData?: MatrixType;
+  uploadData?: MatrixType;
 }) {
-  // const [_, startTransition] = useTransition();
-  const [rawData, setRawData] = useState<any>(null);
+  const [rawData, setRawData] = useState<MatrixType | null>(null);
   const [category, setCategory] = useState<selectOptionType | null>(null);
-  const [series, setSeries] = useState<selectOptionType[] | []>([]);
+  const [series, setSeries] = useState<selectOptionType[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const setDataRef = useRef(setData);
+  useEffect(() => {
+    setDataRef.current = setData;
+  }, [setData]);
 
   function isSameObject(a: object, b: object) {
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
-  function getFirstOfMAtrix(matrix: any) {
+  function getFirstOfMatrix(matrix: MatrixType) {
     const val = matrix[0][0];
     return typeof val === "string" ? val.trim() : String(val);
   }
@@ -55,15 +58,15 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
   }
 
   function filterData(
-    data: any,
+    data: MatrixType,
     cat: selectOptionType | null,
     ser: selectOptionType[]
-  ) {
+  ): MatrixType | null {
     if (!ser || !cat) return null;
-    const cols = [cat, ...ser].map((col: any) => col.value);
-    const filtered = data.map((row: any) => {
-      return row.filter((_r: any, i: number) => {
-        return cols.includes(data[0][i].trim());
+    const cols = [cat, ...ser].map((col) => col.value);
+    const filtered = data.map((row) => {
+      return row.filter((_r, i: number) => {
+        return cols.includes(String(data[0][i]).trim());
       });
     });
     return filtered;
@@ -71,7 +74,7 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
   function transpose() {
     const transposed = transposeData(rawData);
     setRawData(transposed);
-    const c = getFirstOfMAtrix(transposed);
+    const c = getFirstOfMatrix(transposed);
     const newCategory = { value: c, label: c };
     setCategory(newCategory);
     setSeries(
@@ -87,23 +90,27 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
 
 
   function handleChangeCategory(newValue: string) {
+    if (!rawData) return;
     setSeries([]);
-    const newCategory: any = getCols(rawData[0]).find(
+    const newCategory = getCols(rawData[0]).find(
       (i) => i.value === newValue
     );
-    setCategory(newCategory);
-    setRawData(moveDataColumn(rawData, newValue));
+    if (newCategory) {
+      setCategory(newCategory);
+      setRawData(moveDataColumn(rawData, newValue));
+    }
   }
 
   function handleChangeSerie(options: string[]) {
-    const newSeries = getCols(rawData[0]).filter((i: any) =>
+    if (!rawData) return;
+    const newSeries = getCols(rawData[0]).filter((i) =>
       options.map((o) => o).includes(i.value)
     );
     setSeries(newSeries);
   }
 
-  function updateState(data: any) {
-    const c = getFirstOfMAtrix(data);
+  const updateState = useCallback((data: MatrixType) => {
+    const c = getFirstOfMatrix(data);
     const newCategory = { value: c, label: c };
     const cols = getCols(data[0]);
     const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
@@ -111,32 +118,36 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
     setRawData(data);
     setCategory(newCategory);
     setSeries(newSeries);
-    // });
-  }
+  }, []);
 
-  // Initialize with existing data
+  // Initialize with existing data (once only to prevent update loop)
   useEffect(() => {
     if (initialData && initialData.length > 0 && !initialized) {
-      updateState(initialData);
+      queueMicrotask(() => {
+        updateState(initialData);
+        setInitialized(true);
+      });
     }
-  }, [initialData, initialized]);
-
+  }, [initialData, initialized, updateState]);
 
   useEffect(() => {
     if (uploadData) {
-      updateState(uploadData);
-      setInitialized(true);
+      queueMicrotask(() => {
+        updateState(uploadData);
+        setInitialized(true);
+      });
     }
-  }, [uploadData]);
+  }, [uploadData, updateState]);
 
 
 
   // Automatically update data when category or series change
+  // setData not in deps: parent recreates it each render, would cause infinite loop
   useEffect(() => {
     if (rawData && category && series.length > 0) {
       const filtered = filterData(rawData, category, series);
       if (filtered) {
-        setData(cleanupData(filtered));
+        setDataRef.current(cleanupData(filtered));
       }
     }
   }, [rawData, category, series]);

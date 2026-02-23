@@ -21,7 +21,9 @@ export function getAvailablePalettes(numSeries: number) {
   const availabelPalettes = [
     ...keys.slice(1, 7),
     ...keys.filter((k) => k.indexOf(`_${numSeries}_`) > -1),
-  ].sort();
+  ]
+    .sort()
+    .filter((k) => k !== "default"); // avoid duplicate "default" (already prepended)
 
   return ["default", ...availabelPalettes];
 }
