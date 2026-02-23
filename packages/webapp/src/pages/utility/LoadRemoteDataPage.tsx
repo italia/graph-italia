@@ -5,7 +5,6 @@ import {
   transposeData,
 } from "../../lib/utils";
 import Layout from "../../components/layout";
-import DataTable from "../../components/OldDataTable";
 import useStoreState from "../../lib/storeState";
 import LoadSource from "../../components/load-data/LoadRemoteCSVSource";
 import { downloadCSV, dataToCSV } from "../../lib/downloadUtils";
@@ -60,7 +59,7 @@ function Home() {
           </div>
           <LoadSource currentValue={""} setData={setRawData} />
         </>
-        {rawData && (
+        {/* {rawData && (
           <div>
             <DataTable
               data={rawData}
@@ -71,7 +70,7 @@ function Home() {
               }}
             />
           </div>
-        )}
+        )} */}
       </div>
     </Layout>
   );

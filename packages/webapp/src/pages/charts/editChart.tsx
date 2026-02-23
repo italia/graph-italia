@@ -21,6 +21,7 @@ import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import toast from 'react-hot-toast';
+import TransformData from "../../components/load-data/TransformData";
 
 function EditChartPage() {
   const { id: paramId } = useParams();
@@ -54,7 +55,7 @@ function EditChartPage() {
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [currentData, setCurrentData] = useState(null);
+  const [currentData, setCurrentData] = useState<MatrixType | null>(null);
 
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -468,6 +469,11 @@ function EditChartPage() {
                   (
                     <div className="overflow-auto flex-1 min-h-0">
                       <DataTable data={(currentData || data) as any} />
+
+                      <TransformData
+                        currentData={(currentData || data) as any}
+                        handleTransformData={(d) => { setCurrentData(d); setHasUnsavedChanges(true); }}
+                      />
                     </div>
                   )}
 
