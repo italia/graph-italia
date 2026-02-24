@@ -1,5 +1,6 @@
 import type { EChartsType } from "echarts";
 import React, { useEffect, useRef, useState } from "react";
+import "../themes";
 import { getBasicValues, getMapValues, getPieValues } from "../lib/utils";
 import type { FieldDataType } from "../types";
 import BasicChart from "./charts/BasicChart";

@@ -1,22 +1,25 @@
 import React from "react";
 import { Responsive } from "react-grid-layout";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import Loading from "../../components/layout/Loading";
-// import RenderChart from "../../components/RenderCellChart";
-import { RenderChart } from "dataviz-components";
+import { RenderChart, ColorSchemeProvider } from "dataviz-components";
 import useDashboardViewStore from "../../store/dashboard-view.store";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
 
 const ResponsiveReactGridLayout = Responsive;
-// narrow the props if you want stronger typing
 const cols = { lg: 4, md: 2, sm: 1, xs: 1, xxs: 1 } as const;
 
 function DashboardViewPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const { load, layout, charts, name, description, isLoading, loaded, error } =
     useDashboardViewStore();
+
+  const themeParam = searchParams.get("theme");
+  const scheme =
+    themeParam === "dark" || themeParam === "light" ? themeParam : undefined;
 
   React.useEffect(() => {
     if (id) {
@@ -25,6 +28,7 @@ function DashboardViewPage() {
   }, [load]);
 
   return (
+    <ColorSchemeProvider scheme={scheme}>
     <div style={{ width: "100vw", height: "100vh" }}>
       <div className="p-4">
         <div className="flex justify-between items-center">
@@ -98,6 +102,7 @@ function DashboardViewPage() {
         </div>
       </div>
     </div>
+    </ColorSchemeProvider>
   );
 }
 

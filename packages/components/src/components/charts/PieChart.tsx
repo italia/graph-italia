@@ -2,6 +2,7 @@ import ReactEcharts, { type EChartsOption } from "echarts-for-react";
 import React, { useEffect, useRef, useState } from "react";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 
 function PieChart({
   id,
@@ -11,6 +12,7 @@ function PieChart({
   rowHeight,
   hFactor = 1,
 }: ChartPropsType) {
+  const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
@@ -68,8 +70,9 @@ function PieChart({
     } catch (error) {}
 
     const showLabels = config.showPieLabels === false ? false : true;
+    const colorOpt = config.colors?.length ? { color: config.colors } : {};
+
     let options = {
-      backgroundColor: config.background ? config.background : "#F2F7FC",
       title: {
         text: `${config?.totalLabel || "Totale"}\n${total ? total : "0"}`,
         left: "center",
@@ -79,20 +82,9 @@ function PieChart({
           fontFamily: "Titillium Web",
           fontWeight: "600",
           fontSize: 16,
-          color: "#003366",
         },
       },
-      color: config.colors || [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc",
-      ],
+      ...colorOpt,
       series: {
         ...dataSource.series,
         labelLine: {
@@ -131,6 +123,7 @@ function PieChart({
     <div key={id} id={"chart_" + id}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
+        theme={resolvedTheme}
         ref={refCanvas}
         style={{
           height,

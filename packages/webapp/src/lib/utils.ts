@@ -19,13 +19,13 @@ export function isEqual(a: object, b: object) {
 export function getAvailablePalettes(numSeries: number) {
   const keys = Object.keys(palettes);
   const availabelPalettes = [
-    ...keys.slice(1, 7),
+    ...keys.filter((k) => k !== "theme").slice(0, 6),
     ...keys.filter((k) => k.indexOf(`_${numSeries}_`) > -1),
   ]
     .sort()
-    .filter((k) => k !== "default"); // avoid duplicate "default" (already prepended)
+    .filter((k) => k !== "theme");
 
-  return ["default", ...availabelPalettes];
+  return ["theme", ...availabelPalettes];
 }
 
 // function to get palette colors for map type, adds default colors
@@ -33,9 +33,11 @@ export function getMapPalettes() {
   const keys = Object.keys(palettes);
   const availabelPalettes = [
     ...keys.filter((k) => k.indexOf(`_${2}_`) > -1),
-    ...keys.slice(0, 7),
-  ].sort();
-  return availabelPalettes;
+    ...keys.filter((k) => !["theme"].includes(k)).slice(0, 7),
+  ]
+    .sort()
+    .filter((k) => k !== "theme");
+  return ["theme", ...availabelPalettes];
 }
 
 // function to get palette colors by name

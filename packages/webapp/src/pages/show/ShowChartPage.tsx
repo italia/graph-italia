@@ -30,7 +30,7 @@ function ShowChartPage() {
             <span>{error.message}</span>
           </div>
         )}
-        {data && <RenderChart {...(data as any)} />}
+        {data && <RenderChart {...(data as React.ComponentProps<typeof RenderChart>)} />}
       </div>
     </Layout>
   );

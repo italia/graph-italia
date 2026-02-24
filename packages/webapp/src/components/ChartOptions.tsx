@@ -4,9 +4,6 @@ import { defaultConfig, getFields, palettes } from "../lib/constants";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
 import ShowPalette from "./ShowPalette";
 
-// Labels are already in English, no translation needed
-// Keeping functions for consistency but they return the original values
-
 function translateLabel(label: string): string {
   return label;
 }
@@ -43,7 +40,6 @@ function ChartOptions({
     },
   });
   
-  // Watch all form values for auto-update
   const formValues = watch();
   const watchPalette = formValues.palette || config?.palette || defaultPalette;
   const watchDirection = formValues.direction || null;
@@ -52,11 +48,10 @@ function ChartOptions({
   const watchShowPieLabels = formValues.showPieLabels ?? true;
   const watchVisualMap = formValues.visualMap ?? true;
 
-  // Auto-apply changes when form values change
   useEffect(() => {
     const { h, w, palette, ...rest } = formValues;
     if (palette) {
-      const colors = palettes[palette];
+      const colors = palette === "theme" ? undefined : palettes[palette];
       const newConfig = { h: Number(h), w: Number(w), ...rest, colors, palette };
       setConfig(newConfig);
     }
@@ -109,10 +104,8 @@ function ChartOptions({
 
   return (
     <div className="space-y-4">
-      {/* Fields grid - changes are applied automatically */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredFields.map((field) => {
-            // Text, number, color input fields
             if (["text", "email", "number", "color"].includes(field.type)) {
               const layoutValue = field.layout ? Number(field.layout) : 1;
               const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
@@ -149,7 +142,6 @@ function ChartOptions({
               );
             }
 
-            // Checkbox fields
             if (["checkbox"].includes(field.type)) {
               const layoutValue = field.layout ? Number(field.layout) : 1;
               const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
@@ -178,7 +170,6 @@ function ChartOptions({
               );
             }
 
-            // Select fields
             if (["select"].includes(field.type)) {
               const layoutValue = field.layout ? Number(field.layout) : 1;
               const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
@@ -197,7 +188,9 @@ function ChartOptions({
                   >
                     {field.options.map((option: string) => (
                       <option key={option} value={option}>
-                        {option}
+                        {field.name === "palette" && option === "theme"
+                          ? "Dal tema"
+                          : option}
                       </option>
                     ))}
                   </select>
@@ -208,7 +201,7 @@ function ChartOptions({
                       </span>
                     </label>
                   )}
-                  {field.name === "palette" && watchPalette && (
+                  {field.name === "palette" && watchPalette && watchPalette !== "theme" && (
                     <div className="mt-2">
                       <ShowPalette palette={palettes[watchPalette]} />
                     </div>
@@ -217,7 +210,6 @@ function ChartOptions({
               );
             }
 
-            // Section separators
             return (
               <div key={field.name} className="col-span-full mt-4 first:mt-0">
                 <div className="flex items-center gap-2">

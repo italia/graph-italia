@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 
 function GeoMapChart({
   data,
@@ -12,6 +13,7 @@ function GeoMapChart({
   hFactor = 1,
   rowHeight,
 }: ChartPropsType) {
+  const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [error, setError] = useState("");
   const [geoData, setGeoData] = useState(null);
@@ -19,7 +21,6 @@ function GeoMapChart({
   const [weDoNotHaveInstance, setWeDoNotHaveInstance] = useState(true);
   const [loaded, setLoaded] = useState(false);
 
-  // Fallback id for map registration if not provided (stable across renders)
   const mapId = useMemo(() => id || `map-${Date.now()}`, [id]);
 
   function getOptions(data: FieldDataType, geoData: any) {
@@ -28,9 +29,6 @@ function GeoMapChart({
 
     const tooltip = {
       trigger: "item",
-      // valueFormatter: (value) => {
-      //   return formatTooltip(value, config);
-      // },
       show: config.tooltip ?? true,
       formatter: (params: any) => {
         const value = params.value;
@@ -51,9 +49,10 @@ function GeoMapChart({
       ...data.dataSource.series[0].data.map((d: any) => d.value)
     );
 
+    const colorOpt = config.colors?.length ? { color: config.colors } : {};
+
     const options = {
-      backgroundColor: config.background ? config.background : "#F2F7FC",
-      color: config.colors,
+      ...colorOpt,
       textStyle: {
         fontFamily: "Titillium Web, sans-serif",
         fontSize: 12,
@@ -78,7 +77,6 @@ function GeoMapChart({
           `${formatTooltip(max, config)} `,
           `${formatTooltip(min, config)} `,
         ],
-        backgroundColor: "rgba(255,255,255,1)",
         inverse: config.visualMapOrient === "vertical",
         textStyle: {
           fontSize: 11,
@@ -87,9 +85,7 @@ function GeoMapChart({
         },
         padding: 15,
         calculable: false,
-        inRange: {
-          color: config.colors,
-        },
+        ...(config.colors?.length ? { inRange: { color: config.colors } } : {}),
         show: config.visualMap || false,
       },
       series: data.dataSource.series.map((serie: any) => {
@@ -173,10 +169,7 @@ function GeoMapChart({
     }
   }, [loaded, refCanvas.current, weDoNotHaveInstance]);
 
-  // Altezza base del chart: usa config.h (in px) se presente, altrimenti 500px.
   const chartHeight = (data.config?.h || 500) * hFactor;
-  // Se rowHeight è valorizzato (es. dentro ChartWrapper), usiamolo come altezza esplicita
-  // invece di "100%", così ReactEcharts non dipende dall'altezza del parent.
   const effectiveHeight = rowHeight || chartHeight;
   return (
     <ErrorBoundary fallback={<div>Errore nel rendering della mappa</div>}>
@@ -188,6 +181,7 @@ function GeoMapChart({
         ) : (
           <ReactEcharts
             option={options}
+            theme={resolvedTheme}
             ref={refCanvas}
             style={{
               height: effectiveHeight,

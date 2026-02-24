@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import ReactEcharts, { type EChartsOption } from "echarts-for-react";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { formatTooltip } from "../../lib/utils";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import React from "react";
 
 function BasicChart({
@@ -11,6 +12,7 @@ function BasicChart({
   isMobile = false,
   hFactor = 1,
 }: ChartPropsType) {
+  const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
@@ -169,19 +171,10 @@ function BasicChart({
       show: config.tooltip ?? true,
     };
 
+    const colorOpt = config.colors?.length ? { color: config.colors } : {};
+
     let options = {
-      backgroundColor: config.background ? config.background : "#F2F7FC",
-      color: config.colors || [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc",
-      ],
+      ...colorOpt,
       ...axis,
       grid,
       series: data.dataSource?.series?.map((serie: any) => {
@@ -240,6 +233,7 @@ function BasicChart({
     <div style={{ textAlign: "left" }}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
+        theme={resolvedTheme}
         ref={refCanvas as any}
         style={{
           width: "100%",
