@@ -75,6 +75,8 @@ function GenerateDataPage() {
                 );
               }}
               buttonVariant="italia"
+              onRenameHeaders={(renamedData) => setRawData(renamedData)}
+              onReorderColumns={(reorderedData) => setRawData(reorderedData)}
             />
           </section>
         )}

@@ -3,7 +3,7 @@ import { fillArray, generateItems } from "../lib/utils";
 
 function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
   const [rows, setRows] = useState(3);
-  const [cols, setCols] = useState(9);
+  const [cols, setCols] = useState(2);
   const [min, setMin] = useState(1);
   const [max, setMax] = useState(100);
   const [offset, setOffset] = useState(0);
