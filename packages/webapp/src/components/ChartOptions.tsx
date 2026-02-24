@@ -186,7 +186,7 @@ function ChartOptions({
                     {...field.otherProps}
                     {...register(field.name, { required: field.required })}
                   >
-                    {field.options.map((option: string) => (
+                    {(field.options ?? []).map((option: string) => (
                       <option key={option} value={option}>
                         {field.name === "palette" && option === "theme"
                           ? "Dal tema"

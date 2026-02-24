@@ -8,7 +8,7 @@ function UploadJSON({
   setData,
   initialData,
 }: {
-  setData: () => void;
+  setData: (d: any) => void;
   initialData?: any;
 }) {
 

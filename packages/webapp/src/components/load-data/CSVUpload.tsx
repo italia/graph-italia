@@ -7,7 +7,7 @@ function UploadCSV({
   setData,
   initialData,
 }: {
-  setData: () => void;
+  setData: (d: any) => void;
   initialData?: any;
 }) {
   const [uploadData, setUploadData] = useState<MatrixType>();
@@ -15,9 +15,9 @@ function UploadCSV({
 
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setUploadData(null);
+    setUploadData(undefined);
     setError(null);
-    const file = e?.target?.files[0] || null;
+    const file = e?.target?.files?.[0] || null;
     if (!file) {
       setError("The file is empty");
       return;
