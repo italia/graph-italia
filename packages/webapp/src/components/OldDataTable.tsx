@@ -274,6 +274,12 @@ export default function DataTable({
             </div>
           </div>
 
+          {sortState && (
+            <div className="mt-2 text-xs text-base-content/50 italic">
+              Sorted by <strong>{sortState.columnKey}</strong> ({sortState.direction})
+            </div>
+          )}
+
           {showRenameForm && (
             <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
               <h4 className="text-sm font-semibold mb-3">Rename column headers</h4>
@@ -329,7 +335,7 @@ export default function DataTable({
               responsive
               onColumnOrderChange={handleColumnOrderChange}
               onSort={handleSort}
-              sortServer
+              sortServer={false}
             />
           </div>
         </div>
