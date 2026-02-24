@@ -468,8 +468,7 @@ function EditChartPage() {
                 ) :
                   (
                     <div className="overflow-auto flex-1 min-h-0">
-                      <DataTable data={(currentData || data) as any} />
-
+                      {/* <DataTable data={(currentData || data) as any} /> */}
                       <TransformData
                         currentData={(currentData || data) as any}
                         handleTransformData={(d) => { setCurrentData(d); setHasUnsavedChanges(true); }}

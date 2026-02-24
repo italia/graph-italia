@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import DataTable, { createTheme } from "react-data-table-component";
 import type { TableColumn } from "react-data-table-component";
+import { transposeData } from "../../lib/utils";
 import type { MatrixType } from "../../types";
 
 createTheme(
@@ -41,10 +42,13 @@ export default function TransformData({
   currentData,
   handleTransformData,
 }: TransformDataProps) {
-  // Derive headers and row data from the matrix
+  // State: working copy of the data matrix (supports transpose)
+  const [workingData, setWorkingData] = useState<MatrixType>(() => currentData);
+
+  // Derive headers and row data from the working matrix
   const allHeaders = useMemo(
-    () => (currentData[0] ?? []).map(String),
-    [currentData],
+    () => (workingData[0] ?? []).map(String),
+    [workingData],
   );
 
   // State: which columns are visible
@@ -58,9 +62,28 @@ export default function TransformData({
   // State: current sort
   const [sortState, setSortState] = useState<SortState>(null);
 
+  // Transpose the data matrix
+  const transpose = useCallback(() => {
+    const transposed = transposeData(workingData);
+    setWorkingData(transposed);
+    const newHeaders = (transposed[0] ?? []).map(String);
+    setVisibleColumns(new Set(newHeaders));
+    setColumnOrder([...newHeaders]);
+    setSortState(null);
+  }, [workingData]);
+
+  // Reset to the original data
+  const resetData = useCallback(() => {
+    setWorkingData(currentData);
+    const originalHeaders = (currentData[0] ?? []).map(String);
+    setVisibleColumns(new Set(originalHeaders));
+    setColumnOrder([...originalHeaders]);
+    setSortState(null);
+  }, [currentData]);
+
   // Convert matrix rows to object array for the DataTable
   const objectData: RowRecord[] = useMemo(() => {
-    const rows = currentData.slice(1);
+    const rows = workingData.slice(1);
     return rows.map((row) => {
       const obj: RowRecord = {};
       allHeaders.forEach((key, i) => {
@@ -68,7 +91,7 @@ export default function TransformData({
       });
       return obj;
     });
-  }, [currentData, allHeaders]);
+  }, [workingData, allHeaders]);
 
   // Build DataTable columns from columnOrder + visibleColumns
   const columns: TableColumn<RowRecord>[] = useMemo(() => {
@@ -159,13 +182,38 @@ export default function TransformData({
 
   // Check if any changes have been made
   const hasChanges = useMemo(() => {
+    const originalHeaders = (currentData[0] ?? []).map(String);
+    const dataChanged = workingData !== currentData;
     const visibleChanged = visibleColumns.size !== allHeaders.length;
-    const orderChanged = columnOrder.some((key, i) => key !== allHeaders[i]);
-    return visibleChanged || orderChanged || sortState !== null;
-  }, [visibleColumns, columnOrder, allHeaders, sortState]);
+    const orderChanged = columnOrder.some((key, i) => key !== originalHeaders[i]);
+    return dataChanged || visibleChanged || orderChanged || sortState !== null;
+  }, [visibleColumns, columnOrder, allHeaders, sortState, workingData, currentData]);
 
   return (
     <div className="mt-10">
+      {/* Transpose & Reset controls */}
+      <div className="mb-4 flex items-center justify-between">
+        <h4 className="text-sm font-semibold text-base-content/70">
+          Transform Data
+        </h4>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className="btn btn-sm btn-default"
+            onClick={transpose}
+          >
+            Transpose
+          </button>
+          <button
+            type="button"
+            className="btn btn-sm btn-default"
+            onClick={resetData}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
       {/* Column toggle controls */}
       <div className="mb-4">
         <h4 className="text-sm font-semibold mb-2 text-base-content/70">
