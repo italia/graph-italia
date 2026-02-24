@@ -13,44 +13,36 @@ const isDev = process.env.NODE_ENV !== "production";
 const router = new Hono();
 
 // ─── OIDC callback ────────────────────────────────────────────────────────────
-router.get('/callback', async (c) => {
-    console.log('→ callback hit')
-    console.log('→ query params:', c.req.query())
-    console.log('→ cookies:', c.req.header('cookie'))
-    try {
-        await processOAuthCallback(c)
-        console.log('→ processOAuthCallback completato')
-    } catch (e) {
-        console.error('→ errore in processOAuthCallback:', e)
-        throw e
-    }
-    // Dopo il callback, getAuth() ha i dati dell'utente OIDC
+// Step 1 — ricevi il code dal provider e completa lo scambio token
+router.get('/callback', (c) => processOAuthCallback(c))
+
+// Step 2 — ora il cookie oidc-auth è nel browser, getAuth() funziona
+router.use('/complete', oidcAuthMiddleware())
+router.get('/complete', async (c) => {
     const oidcAuth = await getAuth(c)
     console.log('→ oidcAuth:', oidcAuth)
+
     if (!oidcAuth?.email) return c.json({ error: 'OIDC auth failed' }, 401)
 
-    // Trova o crea l'utente nel tuo DB
     let user = await db.findUserByEmail(oidcAuth.email)
     if (!user) {
         user = await db.createUserByEmailAndPassword({
             email: oidcAuth.email,
-            password: crypto.randomUUID(), // password casuale, non usata
+            password: crypto.randomUUID(),
         })
-        await db.setVerifyed(user.id) // già verificato via OIDC
+        await db.setVerifyed(user.id)
     }
 
-    // Crea la sessione con il tuo sistema JWT esistente
     const { accessToken } = generateTokens(user)
     setAccessTokenCookie(c, accessToken)
 
     logger.info('User logged in via OIDC', { userId: user.id, email: oidcAuth.email })
-
     return c.redirect(APP_URL)
 })
 
 // ─── OIDC login ───────────────────────────────────────────────────────────────
 router.use('/login', (c, next) => {
-    setCookie(c, 'continue', APP_URL, {
+    setCookie(c, 'continue', 'http://127.0.0.1:3003/oidc/complete', {
         path: '/',
         httpOnly: true,
         secure: !isDev,
