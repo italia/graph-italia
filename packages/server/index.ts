@@ -7,13 +7,14 @@ import chartRoutes from "./routes/charts.ts";
 import dashRoutes from "./routes/dashboards.ts";
 import suggestionsRoutes from "./routes/hints.ts";
 import kpiGroupRoutes from "./routes/kpi-group.ts";
+import oidcRoutes from "./routes/oidc.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
 
-import { openAPIRouteHandler } from "hono-openapi"
 import { Scalar } from "@scalar/hono-api-reference";
+import { openAPIRouteHandler } from "hono-openapi";
 
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
@@ -38,6 +39,38 @@ const app = ROUTES_PREFIX
 	? new Hono().basePath(ROUTES_PREFIX)
 	: new Hono();
 
+// Fix cookie per sviluppo locale
+app.use('*', async (c, next) => {
+	await next()
+	if (!isDev) return
+
+	const setCookieHeaders = c.res.headers.getSetCookie?.()
+		?? [c.res.headers.get('set-cookie') ?? ''].filter(Boolean)
+
+	if (setCookieHeaders.length === 0) return
+
+	// Rimuovi tutti i set-cookie esistenti
+	c.res.headers.delete('set-cookie')
+
+	// Riscrivili senza Secure e con Path=/
+	for (const cookie of setCookieHeaders) {
+		const fixed = cookie
+			.replace(/;\s*Secure/gi, '')
+			.replace(/;\s*Path=[^;]*/gi, '; Path=/')
+		c.res.headers.append('set-cookie', fixed)
+		console.log('→ cookie fixato:', fixed)
+	}
+})
+
+// // ─── DEBUG ────────────────────────────────────────────────────────────────────
+// app.use('*', async (c, next) => {
+// 	await next()
+// 	if (c.req.path.includes('/auth/oidc/login')) {
+// 		console.log('→ response status:', c.res.status)
+// 		console.log('→ response headers:', Object.fromEntries(c.res.headers.entries()))
+// 	}
+// })
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🔧 MIDDLEWARE STACK
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -49,13 +82,16 @@ app.use("*", metricsMiddleware);
 app.use("*", httpLogger);
 
 // CSRF protection
-app.use(
-	csrf({
+app.use("*", async (c, next) => {
+	if (c.req.path.includes('/auth/oidc')) {
+		return next() // salta CSRF per il flusso OIDC
+	}
+	return csrf({
 		origin: isDev
 			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
 			: process.env.HOST,
-	}),
-);
+	})
+});
 
 // CORS (only in dev)
 if (isDev) {
@@ -75,12 +111,12 @@ if (isDev) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Health check endpoint (minimal response for k8s liveness probes)
-app.get("/", (c) => c.json({ 
-	status: "ok", 
-	version: { 
-		sha: BUILD_SHA, 
-		buildTime: BUILD_TIME 
-	} 
+app.get("/", (c) => c.json({
+	status: "ok",
+	version: {
+		sha: BUILD_SHA,
+		buildTime: BUILD_TIME
+	}
 }));
 
 // Deep health check for k8s readiness probes (verifies database connection)
@@ -88,29 +124,29 @@ app.get("/health/ready", async (c) => {
 	try {
 		// Import prisma here to test if the client works
 		const { prisma } = await import("./lib/db/prisma.ts");
-		
+
 		// Execute a simple query to verify database connection
 		await prisma.$queryRaw`SELECT 1`;
-		
-		return c.json({ 
+
+		return c.json({
 			status: "ready",
 			database: "connected",
-			version: { 
-				sha: BUILD_SHA, 
-				buildTime: BUILD_TIME 
+			version: {
+				sha: BUILD_SHA,
+				buildTime: BUILD_TIME
 			}
 		});
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : "Unknown error";
 		logger.error("Health check failed: database connection error", { error: errorMessage });
-		
-		return c.json({ 
+
+		return c.json({
 			status: "not_ready",
 			database: "disconnected",
 			error: errorMessage,
-			version: { 
-				sha: BUILD_SHA, 
-				buildTime: BUILD_TIME 
+			version: {
+				sha: BUILD_SHA,
+				buildTime: BUILD_TIME
 			}
 		}, 503);
 	}
@@ -212,18 +248,50 @@ app.onError((err, c) => {
 let rootApp: Hono;
 
 
+const oidcApp = new Hono()
+oidcApp.use('*', cors({
+	origin: whitelist,
+	credentials: true,
+}))
+
+// Fix cookie Secure per sviluppo locale
+oidcApp.use('*', async (c, next) => {
+	await next()
+	if (!isDev) return
+
+	const setCookieHeaders = c.res.headers.getSetCookie?.()
+		?? [c.res.headers.get('set-cookie') ?? ''].filter(Boolean)
+
+	if (setCookieHeaders.length === 0) return
+
+	c.res.headers.delete('set-cookie')
+
+	for (const cookie of setCookieHeaders) {
+		const fixed = cookie
+			.replace(/;\s*Secure/gi, '')
+			.replace(/;\s*Path=[^;]*/gi, '; Path=/')
+		c.res.headers.append('set-cookie', fixed)
+		console.log('→ oidcApp cookie fixato:', fixed)
+	}
+})
+
+oidcApp.route('/oidc', oidcRoutes) // solo le route oidc/login, oidc/callback, oidc/logout
+
 
 if (ROUTES_PREFIX) {
 	// Create a separate app for metrics (no auth, no prefix)
 	rootApp = new Hono();
 	// Mount metrics at /metrics (outside of /api prefix)
 	rootApp.route("/metrics", metricsRouter);
+	// Mount oidc at /oidc (outside of /api prefix)
+	rootApp.route("/", oidcApp);
 	// Mount the main app
 	rootApp.route("/", app);
 
 } else {
 	// If no ROUTES_PREFIX, use the main app as root
 	app.route("/metrics", metricsRouter);
+	app.route("/", oidcApp);
 	rootApp = app;
 }
 
@@ -238,6 +306,7 @@ logStartup();
 
 const server = {
 	port: PORT,
+	hostname: '0.0.0.0',
 	fetch: rootApp.fetch,
 };
 

@@ -4,7 +4,7 @@ import { Hono } from 'hono'
 import { SignJWT, exportJWK, generateKeyPair } from 'jose'
 
 const PORT = 9090
-const ISSUER = `http://localhost:${PORT}`
+const ISSUER = `http://127.0.0.1:${PORT}`
 
 const app = new Hono()
 
@@ -66,7 +66,7 @@ app.post('/token', async (c) => {
 
     const idToken = await new SignJWT({
         sub: 'user-1',
-        email: 'mario@example.com',
+        email: 'lp@lp.lp',
         name: 'Mario Rossi',
         nonce,
         iss: ISSUER,

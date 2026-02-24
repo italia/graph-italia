@@ -89,7 +89,7 @@ export async function upsertChart(payload: any, id?: string) {
     : `${getServerUrlWithApi()}/charts/`;
   const method = id ? "PUT" : "POST";
 
-  let response = await (method === "PUT"
+  const response = await (method === "PUT"
     ? axios.put(url, payload)
     : axios.post(url, payload));
   if (response.status === 200) {
@@ -232,6 +232,10 @@ export async function recoverPasssword(email: string) {
 /** logout */
 export function logout() {
   return axios.get(`${getServerUrlWithApi()}/auth/logout`);
+}
+
+export function redirectToLoginOidc() {
+  return `${getServerUrl()}/oidc/login`
 }
 
 /** DAHSBOARDS calls */
