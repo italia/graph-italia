@@ -154,7 +154,7 @@ export default function CheckGeo() {
       <div style={{ display: "flex" }}>
         {geoProps && (
           <div>
-            <DataTable data={geoProps} reset={undefined} transpose={() => { }} />
+            <DataTable data={geoProps} onApplyData={setGeoProps} />
           </div>
         )}
         {geoUrl && geoProps && (
@@ -222,8 +222,7 @@ export default function CheckGeo() {
           <div>
             <DataTable
               data={data}
-              reset={() => setData(null)}
-              transpose={() => setData((d) => transposeData(d))}
+              onApplyData={setData}
             />
           </div>
         )}

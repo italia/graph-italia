@@ -1,17 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DataTableComponent, { type TableColumn } from "react-data-table-component";
+import { transposeData } from "../lib/utils";
 
 type RowRecord = Record<string, string | number>;
 
 type DataTableProps = {
   data: any;
-  reset?: () => void;
-  transpose: () => void;
+  onApplyData: (transformedData: any) => void;
   download?: () => void;
   downloadJSON?: () => void;
   buttonVariant?: "default" | "italia";
-  onRenameHeaders?: (renamedData: any) => void;
-  onReorderColumns?: (reorderedData: any) => void;
 };
 
 const btnClass = (variant: "default" | "italia") =>
@@ -19,103 +17,212 @@ const btnClass = (variant: "default" | "italia") =>
 
 export default function DataTable({
   data,
-  reset,
-  transpose,
+  onApplyData,
   download,
   downloadJSON,
   buttonVariant = "default",
-  onRenameHeaders,
-  onReorderColumns,
 }: DataTableProps) {
   const b = btnClass(buttonVariant);
+  const [workingData, setWorkingData] = useState<any>(data);
   const [showRenameForm, setShowRenameForm] = useState(false);
   const [renameValues, setRenameValues] = useState<string[]>([]);
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set());
+  const [sortState, setSortState] = useState<{
+    columnKey: string;
+    direction: "asc" | "desc";
+  } | null>(null);
 
-  // Reset form when data changes
+  // Sync workingData and visibleColumns when data prop changes
+  useEffect(() => {
+    setWorkingData(data);
+    setSortState(null);
+    if (data?.[0]) {
+      setVisibleColumns(new Set(data[0].map(String)));
+    }
+  }, [data]);
+
+  // Reset rename form when workingData changes
   useEffect(() => {
     setShowRenameForm(false);
     setRenameValues([]);
-  }, [data]);
+  }, [workingData]);
 
   const headers: string[] = useMemo(() => {
-    if (!data?.[0]) return [];
-    return data[0].map(String);
-  }, [data]);
+    if (!workingData?.[0]) return [];
+    return workingData[0].map(String);
+  }, [workingData]);
 
   const columns = useMemo(() => {
-    return headers.map((key, i) => ({
-      name: key,
-      selector: (row: RowRecord) => row[key],
-      sortable: true,
-      reorder: true,
-      wrap: true,
-      style: i === 0 ? { fontWeight: "bold" } : undefined,
-    }));
-  }, [headers]);
+    return headers
+      .filter((key) => visibleColumns.has(key))
+      .map((key, i) => ({
+        name: key,
+        selector: (row: RowRecord) => row[key],
+        sortable: true,
+        reorder: true,
+        wrap: true,
+        style: i === 0 ? { fontWeight: "bold" } : undefined,
+      }));
+  }, [headers, visibleColumns]);
 
   const rows: RowRecord[] = useMemo(() => {
-    if (!data || data.length < 2) return [];
-    return data.slice(1).map((row: (string | number)[]) => {
+    if (!workingData || workingData.length < 2) return [];
+    return workingData.slice(1).map((row: (string | number)[]) => {
       const obj: RowRecord = {};
       headers.forEach((key, i) => {
         obj[key] = row[i];
       });
       return obj;
     });
-  }, [data, headers]);
+  }, [workingData, headers]);
+
+  const hasChanges = useMemo(() => {
+    const originalHeaders = (data[0] ?? []).map(String);
+    const dataChanged = JSON.stringify(data) !== JSON.stringify(workingData);
+    const visibilityChanged = visibleColumns.size !== originalHeaders.length;
+    return dataChanged || visibilityChanged || sortState !== null;
+  }, [data, workingData, visibleColumns, sortState]);
+
+  function internalTranspose() {
+    const transposed = transposeData(workingData);
+    setWorkingData(transposed);
+    if (transposed?.[0]) {
+      setVisibleColumns(new Set(transposed[0].map(String)));
+    }
+  }
+
+  function internalReset() {
+    setWorkingData(data);
+    setSortState(null);
+    if (data?.[0]) {
+      setVisibleColumns(new Set(data[0].map(String)));
+    }
+  }
+
+  function toggleColumn(colName: string) {
+    setVisibleColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(colName)) {
+        next.delete(colName);
+      } else {
+        next.add(colName);
+      }
+      return next;
+    });
+  }
+
+  function internalApply() {
+    // Reconstruct matrix with only visible columns
+    const finalHeaders = headers.filter((h) => visibleColumns.has(h));
+    const headerRow = workingData[0];
+    const indexMap = finalHeaders.map((h) => headers.indexOf(h));
+
+    let finalRows = workingData.slice(1).map((row: any[]) =>
+      indexMap.map((i) => row[i])
+    );
+
+    // Apply Sort if active
+    if (sortState) {
+      const colIndex = finalHeaders.indexOf(sortState.columnKey);
+      if (colIndex >= 0) {
+        finalRows = [...finalRows].sort((a, b) => {
+          const valA = a[colIndex];
+          const valB = b[colIndex];
+          if (typeof valA === "number" && typeof valB === "number") {
+            return sortState.direction === "asc" ? valA - valB : valB - valA;
+          }
+          const cmp = String(valA).localeCompare(String(valB));
+          return sortState.direction === "asc" ? cmp : -cmp;
+        });
+      }
+    }
+
+    onApplyData([finalHeaders, ...finalRows]);
+  }
 
   function openRenameForm() {
-    if (!data?.[0]) return;
-    setRenameValues(data[0].map(String));
+    if (!workingData?.[0]) return;
+    setRenameValues(workingData[0].map(String));
     setShowRenameForm(true);
   }
 
   function applyRenames() {
-    if (!onRenameHeaders) return;
-    const newData = data.map((row: (string | number)[], rowIndex: number) => {
+    const newData = workingData.map((row: (string | number)[], rowIndex: number) => {
       if (rowIndex === 0) return renameValues;
       return row;
     });
-    onRenameHeaders(newData);
+
+    // Update visibility set with new names
+    setVisibleColumns((prev) => {
+      const next = new Set<string>();
+      renameValues.forEach((newName, i) => {
+        const oldName = headers[i];
+        if (prev.has(oldName)) {
+          next.add(newName);
+        }
+      });
+      return next;
+    });
+
+    setWorkingData(newData);
     setShowRenameForm(false);
   }
 
+  const handleSort = useCallback(
+    (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
+      const key = typeof column.name === "string" ? column.name : "";
+      if (key) {
+        setSortState({ columnKey: key, direction });
+      }
+    },
+    [],
+  );
+
   const handleColumnOrderChange = useCallback(
     (newCols: TableColumn<RowRecord>[]) => {
-      if (!onReorderColumns || !data?.[0]) return;
+      if (!workingData?.[0]) return;
       const newOrder = newCols
         .map((c) => (typeof c.name === "string" ? c.name : ""))
         .filter(Boolean);
 
-      // Map new column order to original indices
+      // Map new column order to indices in current workingData
       const indexMap = newOrder.map((name) => headers.indexOf(name));
 
       // Rebuild matrix with reordered columns
-      const reordered = data.map((row: (string | number)[]) =>
+      const reordered = workingData.map((row: (string | number)[]) =>
         indexMap.map((i) => row[i]),
       );
-      onReorderColumns(reordered);
+      setWorkingData(reordered);
     },
-    [onReorderColumns, data, headers],
+    [workingData, headers],
   );
   return (
     <>
       {data && data[0] && (
         <div>
           <p className="text-sm text-gray-600">
-            {data.length} rows, {data[0].length} columns
+            {workingData.length} rows, {workingData[0].length} columns
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
-            {transpose && (
-              <button type="button" className={b} onClick={() => transpose()}>
-                Transpose
-              </button>
-            )}
-            {reset && (
-              <button type="button" className={b} onClick={() => reset()}>
-                Reset
-              </button>
-            )}
+            <button type="button" className={b} onClick={internalTranspose}>
+              Transpose
+            </button>
+            <button
+              type="button"
+              className={`btn btn-primary ${!hasChanges ? "btn-disabled" : ""}`}
+              onClick={internalApply}
+              disabled={!hasChanges}
+            >
+              Apply Changes
+            </button>
+            <button
+              type="button"
+              className={`${b} ${!hasChanges ? "btn-disabled" : ""}`}
+              onClick={internalReset}
+              disabled={!hasChanges}
+            >
+              Reset
+            </button>
             {download && (
               <button type="button" className={b} onClick={() => download()}>
                 Download CSV
@@ -130,17 +237,41 @@ export default function DataTable({
                 Download JSON
               </button>
             )}
-            {onRenameHeaders && (
-              <button
-                type="button"
-                className={b}
-                onClick={() =>
-                  showRenameForm ? setShowRenameForm(false) : openRenameForm()
-                }
-              >
-                {showRenameForm ? "Cancel Rename" : "Rename Headers"}
-              </button>
-            )}
+            <button
+              type="button"
+              className={b}
+              onClick={() =>
+                showRenameForm ? setShowRenameForm(false) : openRenameForm()
+              }
+            >
+              {showRenameForm ? "Cancel Rename" : "Rename Headers"}
+            </button>
+          </div>
+
+          <div className="mt-6 mb-4">
+            <h4 className="text-sm font-semibold mb-2 text-base-content/70">
+              Toggle columns
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {headers.map((colName) => (
+                <label
+                  key={colName}
+                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
+                    visibleColumns.has(colName)
+                      ? "bg-primary/10 border-primary/30 text-primary"
+                      : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.has(colName)}
+                    onChange={() => toggleColumn(colName)}
+                    className="checkbox checkbox-xs checkbox-primary"
+                  />
+                  {colName}
+                </label>
+              ))}
+            </div>
           </div>
 
           {showRenameForm && (
@@ -196,7 +327,9 @@ export default function DataTable({
               fixedHeader
               fixedHeaderScrollHeight="360px"
               responsive
-              onColumnOrderChange={onReorderColumns ? handleColumnOrderChange : undefined}
+              onColumnOrderChange={handleColumnOrderChange}
+              onSort={handleSort}
+              sortServer
             />
           </div>
         </div>

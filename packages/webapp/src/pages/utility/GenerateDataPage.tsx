@@ -63,8 +63,7 @@ function GenerateDataPage() {
           <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm mb-8">
             <DataTable
               data={rawData}
-              reset={reset}
-              transpose={transpose}
+              onApplyData={setRawData}
               download={() => {
                 downloadCSV(dataToCSV(rawData), "generated-data-" + Date.now());
               }}
@@ -75,8 +74,6 @@ function GenerateDataPage() {
                 );
               }}
               buttonVariant="italia"
-              onRenameHeaders={(renamedData) => setRawData(renamedData)}
-              onReorderColumns={(reorderedData) => setRawData(reorderedData)}
             />
           </section>
         )}

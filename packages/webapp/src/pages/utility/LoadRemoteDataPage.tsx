@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import DataTable from "../../components/OldDataTable";
 import {
   getAvailablePalettes,
   getPalette,
@@ -59,18 +60,17 @@ function Home() {
           </div>
           <LoadSource currentValue={""} setData={setRawData} />
         </>
-        {/* {rawData && (
+        {rawData && (
           <div>
             <DataTable
               data={rawData}
-              reset={reset}
-              transpose={transpose}
+              onApplyData={setRawData}
               download={() => {
                 downloadCSV(dataToCSV(rawData), "remote-data-" + Date.now());
               }}
             />
           </div>
-        )} */}
+        )}
       </div>
     </Layout>
   );
