@@ -39,7 +39,7 @@ export function generateSamplePoints(totalPoints: number = 1000): PointData[] {
     points.push({
       id: i,
       name: `Tuscan Point ${i + 1}`,
-      lon: getRandomInRange(TUSCANY_BOUNDS.minLon, TUSCANY_BOUNDS.maxLon),
+      lng: getRandomInRange(TUSCANY_BOUNDS.minLon, TUSCANY_BOUNDS.maxLon),
       lat: getRandomInRange(TUSCANY_BOUNDS.minLat, TUSCANY_BOUNDS.maxLat),
       region: "Tuscany",
     });

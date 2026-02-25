@@ -20,9 +20,27 @@ import GenerateDataPage from "./pages/utility/GenerateDataPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 import PrivateAreePage from "./pages/home";
+import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
 
 export const HOME_ROUTE = "/home";
-
+export type MenuSubItem = { name: string; link: string };
+export type MenuItem =
+  | { name: string; link: string }
+  | { name: string; link: string; subMenu: readonly MenuSubItem[] };
+export const MENU: readonly MenuItem[] = [
+  { name: "Charts", link: HOME_ROUTE || "/" },
+  {
+    name: "Tools",
+    link: "",
+    subMenu: [
+      { name: "Quick Start", link: "/quickstart" },
+      { name: "Generate Data", link: "/generate-data" },
+      { name: "Generate Pois", link: "/generate-poi" },
+      { name: "Load Remote Data", link: "/load-data" },
+      { name: "Check GeoJSon File", link: "/geo" },
+    ],
+  },
+];
 // Assertion necessaria per compatibilità React 19 / react-router-dom (element: ReactElement vs ReactNode)
 const routes = [
   // Root: landing se non loggato, home Charts se loggato
@@ -124,6 +142,10 @@ const routes = [
   {
     path: "/generate-data",
     element: <GenerateDataPage />,
+  },
+  {
+    path: "/generate-poi",
+    element: <GeneratePoiPage />,
   },
   {
     path: "/geo",

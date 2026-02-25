@@ -3,7 +3,7 @@ import * as echarts from "echarts";
 import ReactEcharts from "echarts-for-react";
 import { useForm } from "react-hook-form";
 
-import DataTable from "./OldDataTable";
+import DataTable from "./DataMngTable";
 import { transposeData } from "../lib/utils";
 // import UploadCSV from "./CSVUpload";
 

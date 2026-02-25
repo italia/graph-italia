@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import DataTable from "../../components/OldDataTable";
+import DataTable from "../../components/DataMngTable";
 import GenerateRandomData from "../../components/GenerateRandomData";
 import Layout from "../../components/layout";
 import { dataToCSV, downloadCSV, downloadJSON } from "../../lib/downloadUtils";

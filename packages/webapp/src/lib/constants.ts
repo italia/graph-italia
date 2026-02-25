@@ -94,7 +94,7 @@ export const defaultConfig = {
   colors: [...palettes.divergente],
   palette: 'divergente',
   direction: 'vertical',
-  h: 350,
+  h: 550,
   labeLine: false,
   legend: true,
   legendPosition: 'top',

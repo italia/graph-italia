@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import DataTable from "../../components/OldDataTable";
+import DataTable from "../../components/DataMngTable";
 import {
   getAvailablePalettes,
   getPalette,

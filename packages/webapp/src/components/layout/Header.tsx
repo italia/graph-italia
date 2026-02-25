@@ -34,6 +34,10 @@ export default function Header() {
           link: '/generate-data',
         },
         {
+          name: 'Generate Pois',
+          link: '/generate-poi',
+        },
+        {
           name: 'Load Remote Data',
           link: '/load-data',
         },
