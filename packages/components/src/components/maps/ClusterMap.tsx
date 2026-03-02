@@ -265,7 +265,7 @@ const ClusterMapComponent = ({
 		});
 		// ----------------------------------------------------
 
-		const extentOfAllPoints = source.getExtent();
+		const extentOfAllPoints = source.getExtent() || createEmpty();
 		if (!isEmpty(extentOfAllPoints)) {
 			mapView.fit(extentOfAllPoints, {
 				padding: [50, 50, 50, 50],
