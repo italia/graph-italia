@@ -1,4 +1,4 @@
-import { ChartWrapper, type FieldDataType } from "dataviz-components";
+import { ColorSchemeProvider, ChartWrapper, type FieldDataType } from "dataviz-components";
 
 function App() {
   const sampleData: FieldDataType = {
@@ -99,14 +99,16 @@ function App() {
   };
   return (
     <div>
-      <ChartWrapper
-        id='jcdjdkwbcl'
-        data={sampleData}
-        info={info}
-        enableDownloadData={true}
-        enableDownloadImage={true}
-        shareFunction={() => console.log("Share function called")}
-      />
+      <ColorSchemeProvider scheme="dark">
+        <ChartWrapper
+          id='jcdjdkwbcl'
+          data={sampleData}
+          info={info}
+          enableDownloadData={true}
+          enableDownloadImage={true}
+          shareFunction={() => console.log("Share function called")}
+        />
+      </ColorSchemeProvider>
     </div>
   );
 }
