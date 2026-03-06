@@ -49,10 +49,10 @@ function GeoMapChart({
       ...data.dataSource.series[0].data.map((d: any) => d.value)
     );
 
-    const colorOpt = config.colors?.length ? { color: config.colors } : {};
+    // const colorOpt = config.colors?.length ? { color: config.colors } : {};
 
     const options = {
-      ...colorOpt,
+      // ...colorOpt,
       textStyle: {
         fontFamily: "Titillium Web, sans-serif",
         fontSize: 12,

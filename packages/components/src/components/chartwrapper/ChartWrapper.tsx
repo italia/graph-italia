@@ -4,6 +4,7 @@ import { dataToCSV, downloadCSV, downloadPng } from "../../lib/downloadUtils";
 import { FieldDataType, InfosType } from "../../types";
 import DataTable from "../dataTable/DataTable";
 import RenderChart from "../RenderChart";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import "./chartWrapper.css";
 import {
   cleanupInfoText,
@@ -24,8 +25,9 @@ export type ChartWrapperProps = {
   enableDownloadData?: boolean;
   shareFunction?: (id: string) => void;
 };
-
 export default function ChartWrapper(props: ChartWrapperProps) {
+
+  const resolvedTheme = useResolvedTheme();
   const {
     data,
     info,
@@ -89,10 +91,10 @@ export default function ChartWrapper(props: ChartWrapperProps) {
 
   return (
     <div
-      className="cw-container"
-      style={{
-        backgroundColor: data.config.background || "#F2F7FC",
-      }}
+      className={`${resolvedTheme} cw-container`}
+    // style={{
+    //   backgroundColor: data.config.background || "#F2F7FC",
+    // }}
     >
       {title && <h3 className="cw-title">{title}</h3>}
       {subTitle && (

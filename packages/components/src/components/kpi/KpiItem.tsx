@@ -20,7 +20,7 @@ export default function Kpi({ data }: { data: KpiItemType }) {
   } = data;
 
   return (
-    <div className="dv-kpi-item dv-kpi-white-bg">
+    <div className="dv-kpi-item dv-kpi-bg">
       <div
         className={`dv-kpi-p-2 dv-kpi-ps-3 ${
           background_color || ""

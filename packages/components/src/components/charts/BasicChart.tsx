@@ -171,10 +171,10 @@ function BasicChart({
       show: config.tooltip ?? true,
     };
 
-    const colorOpt = config.colors?.length ? { color: config.colors } : {};
+    // const colorOpt = config.colors?.length ? { color: config.colors } : {};
 
     let options = {
-      ...colorOpt,
+      // ...colorOpt,
       ...axis,
       grid,
       series: data.dataSource?.series?.map((serie: any) => {

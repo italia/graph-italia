@@ -3,16 +3,16 @@
  */
 export const darkTheme = {
   color: [
-    "#4992FF",
-    "#7CFFB2",
-    "#FFC53D",
-    "#FF6B6B",
-    "#4DD2FF",
-    "#FF9F7F",
-    "#67E0E3",
-    "#B49FDB",
+    "#004D99",
+    "#0066CC",
+    "#207AD5",
+    "#4392E0",
     "#37A2DA",
-    "#32C5E9",
+    "#D48D22",
+    "#CC7A00",
+    "#B36B00",
+    "#995C00",
+    "#804D00",
   ],
   backgroundColor: "#1a1a2e",
   textStyle: {

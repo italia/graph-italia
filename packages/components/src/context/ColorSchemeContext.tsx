@@ -35,7 +35,7 @@ function isCustomThemeObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
-const POST_MESSAGE_TYPE = "DATAVIZ_THEME";
+export const POST_MESSAGE_TYPE = "DATAVIZ_THEME";
 
 /**
  * Provider per il color scheme dei chart.

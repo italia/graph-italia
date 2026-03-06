@@ -25,10 +25,19 @@ hr {
 .dv-kpi-primary-border-color-a9.dv-kpi-border {
   border-color: hsl(210, 100%, 25%) !important;
 }
-
+/*
 .dv-kpi-white-bg {
   background-color: #fff !important;
+} */
+
+.dv-kpi-bg {
+  background-color: #fff !important;
 }
+
+/* .dataviz-dark .dv-kpi-bg {
+  background-color: #222 !important;
+  color: #fff !important;
+} */
 
 .dv-kpi-bg-success {
   background-color: rgb(0, 128, 85) !important;
@@ -190,6 +199,8 @@ hr {
 .dv-kpi-group.div {
   box-sizing: border-box;
   font-size: medium;
+  color: inherit;
+  background-color: transparent;
 }
 
 .dv-kpi-group-vertical,
