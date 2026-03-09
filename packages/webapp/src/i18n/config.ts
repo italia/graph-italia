@@ -5,18 +5,19 @@ import translationEn from './locales/en.json';
 import translationIt from './locales/it.json';
 
 const resources = {
-    en: { translationEn },
-    it: { translationIt },
-} as const;
+    en: { translation: translationEn },
+    it: { translation: translationIt },
+};
 
 i18next
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
         //lng: 'en', // if you're using a language detector, do not define the lng option
-        debug: true,
+        debug: import.meta.env.DEV,
         resources,
         supportedLngs: Object.keys(resources),
+        nonExplicitSupportedLngs: true,
         fallbackLng: 'it',
         detection: {
             order: ["querystring", "navigator", "htmlTag", "path", "subdomain"],
@@ -26,7 +27,4 @@ i18next
             lookupSessionStorage: "lang",
             caches: [],
         }
-        // if you see an error like: "Argument of type 'DefaultTFuncReturn' is not assignable to parameter of type xyz"
-        // set returnNull to false (and also in the i18next.d.ts options)
-        // returnNull: false,
     });
