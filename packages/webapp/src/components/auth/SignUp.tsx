@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import * as api from "../../lib/api";
@@ -236,23 +236,23 @@ function SignUp({
                   htmlFor="policy"
                   className="ml-3 block text-sm leading-6 "
                 >
-                  I accept the{" "}
-                  <a
-                    className="link link-primary font-semibold"
-                    target="_blank"
-                    href="/gdpr"
-                  >
-                    privacy policy
-                  </a>{" "}
-                  agreement.
+                  <Trans
+                    i18nKey={`${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.main`}
+                    components={{
+                      privacyLink: (
+                        <a
+                          className="link link-primary font-semibold"
+                          target="_blank"
+                          href="/gdpr"
+                        ></a>
+                      ),
+                    }}
+                  />
                   <hr />
                   <small>
-                    Privacy at a Glance: We value your data. Dataviz uses only
-                    one strictly necessary, server-side cookie for
-                    authentication. We do not use third-party cookies, trackers,
-                    or analytics. We only store your email address to manage
-                    your account and keep your charts saved. Your data stays
-                    yours.
+                    {t(
+                      `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.small`,
+                    )}
                   </small>
                 </label>
                 {errors["policyAcknologment"] && (
