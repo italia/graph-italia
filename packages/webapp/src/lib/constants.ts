@@ -1,6 +1,7 @@
 import type { ChartConfigType, FieldDataType } from '../types';
 import { generateGradient, hexToHsla } from './utils';
 
+
 export const palettes: Record<string, string[]> = {
   theme: [],
   divergente: [
@@ -19,7 +20,7 @@ export const palettes: Record<string, string[]> = {
     '#003366',
     '#004D99',
     '#0066CC',
-    '#207AD5',
+    '#080809',
     '#4392E0',
     '#D48D22',
     '#CC7A00',
