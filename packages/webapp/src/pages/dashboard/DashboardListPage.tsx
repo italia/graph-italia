@@ -60,7 +60,7 @@ function DashboardsPage() {
   }
 
   function deleteClickHandler(id: string) {
-    const item = list.find((l) => l.id === id);
+    const item = list.find((l: FieldDataType) => l.id === id);
     if (item) {
       setSelectedItem(item);
       setShowDeleteModal(true);

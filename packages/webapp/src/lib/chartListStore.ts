@@ -24,7 +24,7 @@ const useChartsStoreState = create<ChartListStoreState>()((set) => ({
   },
   removeItem: (id: string) => {
     set((state) => ({
-      list: state.list.filter((i) => i.id !== id),
+      list: state.list.filter((i: FieldDataType) => i.id !== id),
     }));
   },
   updateItem: (newItem: FieldDataType) =>
