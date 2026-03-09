@@ -1,55 +1,88 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import * as api from '../../lib/api';
-import { AxiosError } from 'axios';
-import { z } from "zod";
+import { AxiosError } from "axios";
+import type { TFunction } from "i18next";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Trans, useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { z as zod } from "zod";
+import * as api from "../../lib/api";
 
-const passwordSchema = z
-  .string()
-  .min(8, { message: "Password must be at least 8 characters long" })
-  // .max(20, { message: maxLengthErrorMessage })
-  .refine((password) => /[A-Z]/.test(password), {
-    message: "Password must have at least one uppercase letter",
-  })
-  .refine((password) => /[a-z]/.test(password), {
-    message: "Password must have at least one lowercase letter",
-  })
-  .refine((password) => /[0-9]/.test(password), {
-    message: "Must contain a number",
-  })
-  .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: "Must contain at least one special character",
-  });
+const getSignupSchema = (
+  z: typeof zod,
+  t: TFunction<"translation", undefined>,
+  TRANSLATION_KEY_PATH: string,
+) => {
+  const passwordSchema = z
+    .string()
+    .min(8, {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.minLength`,
+      ),
+    })
+    // .max(20, { message: maxLengthErrorMessage })
+    .refine((password) => /[A-Z]/.test(password), {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.uppercase`,
+      ),
+    })
+    .refine((password) => /[a-z]/.test(password), {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.lowercase`,
+      ),
+    })
+    .refine((password) => /[0-9]/.test(password), {
+      message: t(`${TRANSLATION_KEY_PATH}.form.fields.password.errors.number`),
+    })
+    .refine((password) => /[!@#$%^&*]/.test(password), {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.specialChar`,
+      ),
+    });
 
-export const signupSchema = z
-  .object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
-    policyAcknologment: z.boolean().refine((val) => val === true, {
-      message: "You must accept the policy agreement",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+  const signupSchema = z
+    .object({
+      email: z.string().email({ message: "Invalid email address" }),
+      password: passwordSchema,
+      confirmPassword: passwordSchema,
+      policyAcknologment: z.boolean().refine((val) => val === true, {
+        message: t(
+          `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.errors.mustAccept`,
+        ),
+      }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t(`${TRANSLATION_KEY_PATH}.form.errors.passwordDontMatch`),
+      path: ["confirmPassword"],
+    });
 
-function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => void, handleRegistered: () => void, }) {
-  let navigate = useNavigate();
-  const [message, setMessage] = useState('');
+  return signupSchema;
+};
+
+function SignUp({
+  setLogin,
+  handleRegistered,
+}: {
+  setLogin: (login: boolean) => void;
+  handleRegistered: () => void;
+}) {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const TRANSLATION_KEY_PATH = "pages.auth.signup";
+  const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const signupSchema = getSignupSchema(zod, t, TRANSLATION_KEY_PATH);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({ resolver: zodResolver(signupSchema), });
+  } = useForm({
+    resolver: zodResolver(signupSchema),
+  });
 
   const onSubmit = async (submittedData: any) => {
-    setMessage('');
+    setMessage("");
 
     const isValid = signupSchema.parse(submittedData);
     console.log("isValid", isValid);
@@ -58,52 +91,58 @@ function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => 
     try {
       const { email, password } = submittedData;
       const result = await api.register({ email, password });
-      console.log('Registration result', result);
+      console.log("Registration result", result);
       if (result?.uid) {
         // const path = `/verify/${result.uid}?action=init`;
         // navigate(path);
         handleRegistered();
-
       } else {
-        setMessage('Error while registering');
+        setMessage("Error while registering");
       }
     } catch (error) {
-      console.log('error', error);
-      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
+      console.log("error", error);
+      const errorMessage =
+        ((error as AxiosError).response?.data as any).error?.message ||
+        (error as any).message ||
+        error;
       setMessage(errorMessage);
     }
   };
 
   return (
-    <div className='flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
-      <div className='mx-auto w-full max-w-sm lg:w-96'>
+    <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
-          <h2 className='mt-8 text-2xl font-bold leading-9 tracking-tight text-content'>
-            Sign up
+          <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
+            {t(`${TRANSLATION_KEY_PATH}.header.label`)}
           </h2>
         </div>
 
-        <div className='mt-10'>
+        <div className="mt-10">
           <div>
-            <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <label
-                  htmlFor='email'
-                  className='block text-sm font-medium leading-6'
+                  htmlFor="email"
+                  className="block text-sm font-medium leading-6"
                 >
-                  Email address
+                  {t(`${TRANSLATION_KEY_PATH}.form.fields.email.label`)}
                 </label>
-                <div className='mt-2 form-control'>
+                <div className="mt-2 form-control">
                   <input
-                    id='email'
-                    {...register('email', { required: true })}
-                    type='email'
+                    id="email"
+                    {...register("email", { required: true })}
+                    type="email"
                     required
-                    autoComplete='email'
-                    className='w-full rounded-md'
+                    autoComplete="email"
+                    className="w-full rounded-md"
                   />
-                  {errors['email'] && (
-                    <p className='text-error'>This field is required</p>
+                  {errors["email"] && (
+                    <p className="text-error">
+                      {t(
+                        `${TRANSLATION_KEY_PATH}.form.fields.email.errors.required`,
+                      )}
+                    </p>
                   )}
                 </div>
               </div>
@@ -113,7 +152,7 @@ function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => 
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Password
+                  {t(`${TRANSLATION_KEY_PATH}.form.fields.password.label`)}
                 </label>
                 <div className="mt-2">
                   <div className="relative">
@@ -190,7 +229,9 @@ function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => 
                   htmlFor="confirm-password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Confirm Password
+                  {t(
+                    `${TRANSLATION_KEY_PATH}.form.fields.confirmPassword.label`,
+                  )}
                 </label>
                 <div className="mt-2">
                   <input
@@ -208,48 +249,57 @@ function SignUp({ setLogin, handleRegistered }: { setLogin: (login: boolean) => 
                 </div>
               </div>
 
-              <div className='flex items-center'>
+              <div className="flex items-center">
                 <input
-                  id='policy'
-                  type='checkbox'
-                  className='h-4 w-4 rounded'
-                  {...register('policyAcknologment', { required: true })}
+                  id="policy"
+                  type="checkbox"
+                  className="h-4 w-4 rounded"
+                  {...register("policyAcknologment", { required: true })}
                 />
                 <label
-                  htmlFor='policy'
-                  className='ml-3 block text-sm leading-6 '
+                  htmlFor="policy"
+                  className="ml-3 block text-sm leading-6 "
                 >
-                  I accept the{' '}
-                  <a
-                    className='link link-primary font-semibold'
-                    target='_blank'
-                    href='/gdpr'
-                  >
-                    privacy policy
-                  </a>{' '}
-                  agreement.
+                  <Trans
+                    i18nKey={`${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.main`}
+                    components={{
+                      privacyLink: (
+                        <a
+                          className="link link-primary font-semibold"
+                          target="_blank"
+                          href="/gdpr"
+                        ></a>
+                      ),
+                    }}
+                  />
                   <hr />
-                  <small>Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours.</small>
+                  <small>
+                    {t(
+                      `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.small`,
+                    )}
+                  </small>
                 </label>
-                {errors['policyAcknologment'] && (
-                  <p className='pl-4 text-error'>{errors['policyAcknologment'].message}</p>
+                {errors["policyAcknologment"] && (
+                  <p className="pl-4 text-error">
+                    {errors["policyAcknologment"].message}
+                  </p>
                 )}
               </div>
 
-              {message && <p className='text-error'>{message}</p>}
+              {message && <p className="text-error">{message}</p>}
               <div>
-                <button type='submit' className='btn btn-primary w-full'>
-                  Sign Up
+                <button type="submit" className="btn btn-primary w-full">
+                  {t(`${TRANSLATION_KEY_PATH}.form.actions.submit.label`)}
                 </button>
               </div>
             </form>
-            <div className='text-sm leading-6 my-4'>
-              Already have account? &nbsp;
+            <div className="text-sm leading-6 my-4">
+              {t(`${TRANSLATION_KEY_PATH}.bottom.label`)} &nbsp;
               <button
                 onClick={() => setLogin(true)}
-                className='link font-semibold text-primary'
+                className="link font-semibold text-primary"
               >
-                Sign in
+                {t(`${TRANSLATION_KEY_PATH}.bottom.actions.signin.label`)}
               </button>
             </div>
           </div>
