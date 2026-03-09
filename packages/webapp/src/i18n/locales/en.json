@@ -44,6 +44,52 @@
             }
           }
         }
+      },
+      "signup": {
+        "header": {
+          "label": "Sign in to your account"
+        },
+        "form": {
+          "fields": {
+            "email": {
+              "label": "Email address",
+              "errors": {
+                "required": "This field is required"
+              }
+            },
+            "password": {
+              "label": "Password",
+              "errors": {
+                "required": "This field is required"
+              }
+            },
+            "confirmPassword": {
+              "label": "Confirm Password",
+              "errors": {
+                "required": "This field is required"
+              }
+            },
+            "policyAcknologment": {
+              "label": {
+                "main": "I accept the <link>privacy policy</link> agreement.",
+                "small": "Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
+              }
+            }
+          },
+          "actions": {
+            "submit": {
+              "label": "Sign Up"
+            }
+          }
+        },
+        "bottom": {
+          "label": "Already have account?",
+          "actions": {
+            "signin": {
+              "label": "Sign In"
+            }
+          }
+        }
       }
     }
   }
