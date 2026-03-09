@@ -5,28 +5,10 @@
 import { useEffect, useRef, useState } from "react";
 import { logout } from "../../lib/api";
 import { useUserStore } from "../../store/user_store";
-// import { HOME_ROUTE } from "../../router";
+import  type {  MenuSubItem, MenuItem } from "../../router";
+import { MENU } from "../../router";
 import "./SlimHeader.css";
 
-const HOME_ROUTE = "/home";
-type MenuSubItem = { name: string; link: string };
-type MenuItem =
-  | { name: string; link: string }
-  | { name: string; link: string; subMenu: readonly MenuSubItem[] };
-
-const MENU: readonly MenuItem[] = [
-  { name: "Charts", link: HOME_ROUTE || "/" },
-  {
-    name: "Tools",
-    link: "",
-    subMenu: [
-      { name: "Quick Start", link: "/quickstart" },
-      { name: "Generate Data", link: "/generate-data" },
-      { name: "Load Remote Data", link: "/load-data" },
-      { name: "Check GeoJSon File", link: "/geo" },
-    ],
-  },
-];
 
 export default function SlimHeader() {
   const { user, clearUser } = useUserStore();

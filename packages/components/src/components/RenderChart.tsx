@@ -111,7 +111,7 @@ function RenderChart(props: RenderProps) {
                   hFactor={hFactor}
                 />
               )}
-              {props.chart === "map" && (
+              {props.chart === "map"  && (
                 <GeoMapChart
                   id={props.id}
                   data={getMapValues(props)}
@@ -121,7 +121,7 @@ function RenderChart(props: RenderProps) {
                   hFactor={hFactor}
                 />
               )}
-              {props.chart === "cmap" && (
+              {props.chart === "cmap"  && (
                 <ClusterMap
                   data={props}
                   rowHeight={rowHeight}

@@ -112,7 +112,7 @@ export interface RemoteStoreStateType {
 export interface PointData {
   id: number;
   name: string;
-  lon: number;
+  lng: number;
   lat: number;
   region?: string; // Optional region for context
 }

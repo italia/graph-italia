@@ -1,11 +1,11 @@
 import { useEffect } from "react";
+import DataTable from "../../components/DataMngTable";
 import {
   getAvailablePalettes,
   getPalette,
   transposeData,
 } from "../../lib/utils";
 import Layout from "../../components/layout";
-import DataTable from "../../components/OldDataTable";
 import useStoreState from "../../lib/storeState";
 import LoadSource from "../../components/load-data/LoadRemoteCSVSource";
 import { downloadCSV, dataToCSV } from "../../lib/downloadUtils";
@@ -64,8 +64,7 @@ function Home() {
           <div>
             <DataTable
               data={rawData}
-              reset={reset}
-              transpose={transpose}
+              onApplyData={setRawData}
               download={() => {
                 downloadCSV(dataToCSV(rawData), "remote-data-" + Date.now());
               }}

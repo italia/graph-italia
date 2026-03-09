@@ -68,7 +68,7 @@ const ClusterMapComponent = ({
 		if (dataSource) {
 			setPointsData(dataSource as PointData[]);
 			setCenter([
-				(dataSource as PointData[])[0].lon,
+				(dataSource as PointData[])[0].lng,
 				(dataSource as PointData[])[0].lat,
 			]);
 		}
@@ -110,7 +110,7 @@ const ClusterMapComponent = ({
 		const features = pointsData.map(
 			(point) =>
 				new Feature({
-					geometry: new Point(fromLonLat([point.lon, point.lat])),
+					geometry: new Point(fromLonLat([point.lng, point.lat])),
 					name: point.name,
 					id: point.id,
 				}),
@@ -235,7 +235,7 @@ const ClusterMapComponent = ({
 							name: pointFeature.get("name") || "Unknown Point",
 							id: pointFeature.get("id"),
 							mapCoordinates: mapCoords,
-							displayCoordinates: `Lon: ${lonLatCoords[0].toFixed(
+							displayCoordinates: `Long: ${lonLatCoords[0].toFixed(
 								4,
 							)}, Lat: ${lonLatCoords[1].toFixed(4)}`,
 						});
@@ -265,7 +265,7 @@ const ClusterMapComponent = ({
 		});
 		// ----------------------------------------------------
 
-		const extentOfAllPoints = source.getExtent();
+		const extentOfAllPoints = source.getExtent() || createEmpty();
 		if (!isEmpty(extentOfAllPoints)) {
 			mapView.fit(extentOfAllPoints, {
 				padding: [50, 50, 50, 50],

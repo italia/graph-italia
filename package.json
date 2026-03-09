@@ -19,5 +19,8 @@
   "type": "module",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@mobily/ts-belt": "^3.13.1"
+  }
 }

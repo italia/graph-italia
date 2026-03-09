@@ -83,7 +83,7 @@ export const defaultConfig = {
   colors: undefined,
   palette: 'theme',
   direction: 'vertical',
-  h: 350,
+  h: 550,
   labeLine: false,
   legend: true,
   legendPosition: 'top',
