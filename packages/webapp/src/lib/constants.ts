@@ -41,11 +41,11 @@ export const palettes: Record<string, string[]> = {
     '#737373',
   ],
 
-  monocolore_a: generateGradient(hexToHsla('#0066CC'), 15),
-  monocolore_b: generateGradient(hexToHsla('#004080'), 15),
-  monocolore_c: generateGradient(hexToHsla('#2F475E'), 15),
-  monocolore_d: generateGradient(hexToHsla('#20d8b5'), 15),
-  //monocolore: Array(30).fill("#0066CC"),
+  monocolore_a: generateGradient(hexToHsla('#0066CC'), 5),
+  monocolore_b: generateGradient(hexToHsla('#004080'), 5),
+  monocolore_c: generateGradient(hexToHsla('#2F475E'), 5),
+  monocolore_d: generateGradient(hexToHsla('#20d8b5'), 5),
+  // monocolore: Array(20).fill("#0066CC"),
 
   _1_a: ['#0066CC'],
   _1_b: ['#004080'],

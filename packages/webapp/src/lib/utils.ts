@@ -1,5 +1,5 @@
 import { palettes } from "../lib/constants";
-import type { ChartConfigType } from "../types";
+import type { ChartConfigType, } from "../types";
 
 export function isNumeric(s: string) {
   return /^[+-]?\d+(\.\d+)?$/.test(s);
@@ -19,7 +19,7 @@ export function isEqual(a: object, b: object) {
 export function getAvailablePalettes(numSeries: number) {
   const keys = Object.keys(palettes);
   const availabelPalettes = [
-    ...keys.filter((k) => k !== "theme").slice(0, 6),
+    ...keys.filter((k) => k !== "theme").slice(0, 7),
     ...keys.filter((k) => k.indexOf(`_${numSeries}_`) > -1),
   ]
     .sort()
