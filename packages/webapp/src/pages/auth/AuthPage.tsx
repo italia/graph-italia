@@ -1,32 +1,54 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import SignIn from "../../components/auth/SignIn";
 import SignUp from "../../components/auth/SignUp";
 import Layout from "../../components/layout";
-import Home from '../home';
 
 function AuthPage() {
   const [login, setLogin] = useState(true);
   const [welcome, showWelcome] = useState(false);
-
-
+  const { t } = useTranslation();
 
   return (
     <Layout>
-      <div className='flex flex-col  min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8'>
-
+      <div className="flex flex-col  min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
         {welcome && (
           <>
             <div role="alert" className="alert alert-success mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
-              <p className='text-lg'>Your account has been created successfully. </p>
+              <p className="text-lg">
+                {t("pages.auth.header.accountCreated.label")}{" "}
+              </p>
             </div>
             <div role="alert" className="alert alert-info mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
-              <p className='text-lg'>Check your email to activate your account</p>
+              <p className="text-lg">
+                {t("pages.auth.header.checkEmail.label")}
+              </p>
             </div>
           </>
         )}
@@ -34,7 +56,10 @@ function AuthPage() {
           {login ? (
             <SignIn setLogin={setLogin} />
           ) : (
-            <SignUp setLogin={setLogin} handleRegistered={() => showWelcome(true)} />
+            <SignUp
+              setLogin={setLogin}
+              handleRegistered={() => showWelcome(true)}
+            />
           )}
         </>
         {/* <div
@@ -59,7 +84,7 @@ function AuthPage() {
           </div>
         </div> */}
       </div>
-    </Layout >
+    </Layout>
   );
 }
 

@@ -1,3 +1,50 @@
 {
-  "appname": "Dataviz-en"
+  "appname": "Dataviz-en",
+  "pages": {
+    "auth": {
+      "header": {
+        "accountCreated": {
+          "label": "Your account has been created successfully."
+        },
+        "checkEmail": { "label": "Check your email to activate your account" }
+      },
+      "signin": {
+        "header": {
+          "label": "Sign in to your account"
+        },
+        "form": {
+          "fields": {
+            "email": {
+              "label": "Email address",
+              "errors": {
+                "required": "This field is required"
+              }
+            },
+            "password": {
+              "label": "Password",
+              "errors": {
+                "required": "This field is required"
+              }
+            }
+          },
+          "actions": {
+            "submit": {
+              "label": "Sign In"
+            },
+            "recoverPassword": {
+              "label": "Forgot password?"
+            }
+          }
+        },
+        "bottom": {
+          "label": "Don't have an account?",
+          "actions": {
+            "signup": {
+              "label": "Sign Up"
+            }
+          }
+        }
+      }
+    }
+  }
 }
