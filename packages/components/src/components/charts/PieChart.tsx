@@ -70,7 +70,7 @@ function PieChart({
     } catch (error) { }
 
     const showLabels = config.showPieLabels === false ? false : true;
-    // const colorOpt = config.colors?.length ? { color: config.colors } : {};
+    const colorOpt = config.colors?.length ? { color: config.colors } : {};
 
     let options = {
       title: {
@@ -84,7 +84,7 @@ function PieChart({
           fontSize: 16,
         },
       },
-      // ...colorOpt,
+      ...colorOpt,
       series: {
         ...dataSource.series,
         labelLine: {
