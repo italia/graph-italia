@@ -4,39 +4,43 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { z } from "zod";
+import { z as zod } from "zod";
 import * as api from "../../lib/api";
 
-const passwordSchema = z
-  .string()
-  .min(8, { message: "Password must be at least 8 characters long" })
-  // .max(20, { message: maxLengthErrorMessage })
-  .refine((password) => /[A-Z]/.test(password), {
-    message: "Password must have at least one uppercase letter",
-  })
-  .refine((password) => /[a-z]/.test(password), {
-    message: "Password must have at least one lowercase letter",
-  })
-  .refine((password) => /[0-9]/.test(password), {
-    message: "Must contain a number",
-  })
-  .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: "Must contain at least one special character",
-  });
+const getSignupSchema = (z: typeof zod) => {
+  const passwordSchema = z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    // .max(20, { message: maxLengthErrorMessage })
+    .refine((password) => /[A-Z]/.test(password), {
+      message: "Password must have at least one uppercase letter",
+    })
+    .refine((password) => /[a-z]/.test(password), {
+      message: "Password must have at least one lowercase letter",
+    })
+    .refine((password) => /[0-9]/.test(password), {
+      message: "Must contain a number",
+    })
+    .refine((password) => /[!@#$%^&*]/.test(password), {
+      message: "Must contain at least one special character",
+    });
 
-export const signupSchema = z
-  .object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
-    policyAcknologment: z.boolean().refine((val) => val === true, {
-      message: "You must accept the policy agreement",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+  const signupSchema = z
+    .object({
+      email: z.string().email({ message: "Invalid email address" }),
+      password: passwordSchema,
+      confirmPassword: passwordSchema,
+      policyAcknologment: z.boolean().refine((val) => val === true, {
+        message: "You must accept the policy agreement",
+      }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
+
+  return signupSchema;
+};
 
 function SignUp({
   constLogin,
@@ -55,7 +59,7 @@ function SignUp({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({ resolver: zodResolver(signupSchema) });
+  } = useForm({ resolver: zodResolver(getSignupSchema(zod)) });
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");
