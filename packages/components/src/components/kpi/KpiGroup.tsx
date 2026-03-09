@@ -25,9 +25,7 @@ export default function KpiGroup({
     maxWidth: "100%",
     maxHeight: "100%",
   };
-  let divStyle = {
-    backgroundColor: "transparent",
-  };
+  let divStyle = {};
 
   if (rowHeight) {
     divStyle = {
@@ -35,6 +33,7 @@ export default function KpiGroup({
       minHeight: rowHeight * hFactor,
     };
   }
+
   const resolvedTheme = useResolvedTheme();
   // const background = data.config.background || "#F2F7FC";
 
@@ -42,7 +41,7 @@ export default function KpiGroup({
     <div
       id={id}
       className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
-      style={{ ...divStyle, }}
+      style={{ ...divStyle, backgroundColor: "transparent" }}
     >
       {dataSource.map((item: KpiItemType, index: number) => (
         <div className={`${resolvedTheme} dv-kpi-group-item`} key={`${index}-${item.title}`}>
