@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import type { TFunction } from "i18next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
@@ -7,22 +8,36 @@ import { useNavigate } from "react-router-dom";
 import { z as zod } from "zod";
 import * as api from "../../lib/api";
 
-const getSignupSchema = (z: typeof zod) => {
+const getSignupSchema = (
+  z: typeof zod,
+  t: TFunction<"translation", undefined>,
+  TRANSLATION_KEY_PATH: string,
+) => {
   const passwordSchema = z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
+    .min(8, {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.minLength`,
+      ),
+    })
     // .max(20, { message: maxLengthErrorMessage })
     .refine((password) => /[A-Z]/.test(password), {
-      message: "Password must have at least one uppercase letter",
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.uppercase`,
+      ),
     })
     .refine((password) => /[a-z]/.test(password), {
-      message: "Password must have at least one lowercase letter",
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.lowercase`,
+      ),
     })
     .refine((password) => /[0-9]/.test(password), {
-      message: "Must contain a number",
+      message: t(`${TRANSLATION_KEY_PATH}.form.fields.password.errors.number`),
     })
     .refine((password) => /[!@#$%^&*]/.test(password), {
-      message: "Must contain at least one special character",
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.specialChar`,
+      ),
     });
 
   const signupSchema = z
@@ -31,11 +46,13 @@ const getSignupSchema = (z: typeof zod) => {
       password: passwordSchema,
       confirmPassword: passwordSchema,
       policyAcknologment: z.boolean().refine((val) => val === true, {
-        message: "You must accept the policy agreement",
+        message: t(
+          `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.errors.mustAccept`,
+        ),
       }),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords do not match",
+      message: t(`${TRANSLATION_KEY_PATH}.form.errors.passwordDontMatch`),
       path: ["confirmPassword"],
     });
 
@@ -59,7 +76,9 @@ function SignUp({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({ resolver: zodResolver(getSignupSchema(zod)) });
+  } = useForm({
+    resolver: zodResolver(getSignupSchema(zod, t, TRANSLATION_KEY_PATH)),
+  });
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");

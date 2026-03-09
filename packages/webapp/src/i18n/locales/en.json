@@ -60,7 +60,12 @@
             "password": {
               "label": "Password",
               "errors": {
-                "required": "This field is required"
+                "required": "This field is required",
+                "minLength": "Password must be at least 8 characters long",
+                "uppercase": "Password must have at least one uppercase letter",
+                "lowercase": "Password must have at least one lowercase letter",
+                "number": "Must contain a number",
+                "specialChar": "Must contain at least one special character"
               }
             },
             "confirmPassword": {
@@ -73,8 +78,14 @@
               "label": {
                 "main": "I accept the <privacyLink>privacy policy</privacyLink> agreement.",
                 "small": "Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
+              },
+              "errors": {
+                "mustAccept": "You must accept the policy agreement"
               }
             }
+          },
+          "errors": {
+            "passwordDontMatch": "Passwords do not match"
           },
           "actions": {
             "submit": {
