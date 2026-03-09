@@ -159,7 +159,9 @@ export default function ChartTable({
                   <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" >
                     <FaLink fill={actionColor} size={actionSize} title={row.remoteUrl} />
                   </a>
-                  <FaCopy className="cursor-pointer" role="button" fill={actionColor} size={actionSize} title={"copy"} onClick={handleCopy(`${row.remoteUrl || ""}`)} />
+                  <button type="button" aria-label="copy remote URL" className="btn btn-ghost btn-xs btn-square" onClick={handleCopy(`${row.remoteUrl || ""}`)}>
+                    <FaCopy fill={actionColor} size={actionSize} />
+                  </button>
                 </div>
               ) : (
                 "No"
@@ -217,15 +219,20 @@ export default function ChartTable({
             name: "Share",
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
-
-                <FaEye fill={actionColor} size={actionSize} title={"preview"} onClick={() => setData(row)} />
-                <FaCode fill={actionColor} size={actionSize} title={"embed"} onClick={() => setShow(
+                <button type="button" aria-label="preview" className="btn btn-ghost btn-xs btn-square" onClick={() => setData(row)}>
+                  <FaEye fill={actionColor} size={actionSize} />
+                </button>
+                <button type="button" aria-label="embed" className="btn btn-ghost btn-xs btn-square" onClick={() => setShow(
                   `<iframe width="600" height="400" src="${window.location.origin}/charts/${row.id}/embed" frameborder="0" allowfullscreen></iframe>`,
-                )} />
-                <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer">
-                  <FaLink fill={actionColor} size={actionSize} title={"view"} />
+                )}>
+                  <FaCode fill={actionColor} size={actionSize} />
+                </button>
+                <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer" aria-label="view">
+                  <FaLink fill={actionColor} size={actionSize} />
                 </a>
-                <FaCopy className="cursor-pointer" role="button" fill={actionColor} size={actionSize} title={"copy"} onClick={handleCopy(`${window.location.origin}/charts/${row.id}/view`)} />
+                <button type="button" aria-label="copy link" className="btn btn-ghost btn-xs btn-square" onClick={handleCopy(`${window.location.origin}/charts/${row.id}/view`)}>
+                  <FaCopy fill={actionColor} size={actionSize} />
+                </button>
               </div>
             ),
           },
@@ -234,14 +241,16 @@ export default function ChartTable({
             name: "Actions",
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
-                <FaTrashCan fill={actionColor} size={actionSize} title={"delete"} onClick={() => handleDeleteChart(row.id ?? "")} />
+                <button type="button" aria-label="delete" className="btn btn-ghost btn-xs btn-square" onClick={() => handleDeleteChart(row.id ?? "")}>
+                  <FaTrashCan fill={actionColor} size={actionSize} />
+                </button>
                 <a
                   href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
                     }`}
+                  aria-label="edit"
                 >
-                  <FaPenToSquare fill={actionColor} size={actionSize} title={"edit"} />
+                  <FaPenToSquare fill={actionColor} size={actionSize} />
                 </a>
-
               </div>
             ),
           },
