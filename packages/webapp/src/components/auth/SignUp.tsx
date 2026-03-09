@@ -60,7 +60,7 @@ const getSignupSchema = (
 };
 
 function SignUp({
-  constLogin,
+  setLogin,
   handleRegistered,
 }: {
   setLogin: (login: boolean) => void;
@@ -71,13 +71,14 @@ function SignUp({
   const TRANSLATION_KEY_PATH = "pages.auth.signup";
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const signupSchema = getSignupSchema(zod, t, TRANSLATION_KEY_PATH);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm({
-    resolver: zodResolver(getSignupSchema(zod, t, TRANSLATION_KEY_PATH)),
+    resolver: zodResolver(signupSchema),
   });
 
   const onSubmit = async (submittedData: any) => {
