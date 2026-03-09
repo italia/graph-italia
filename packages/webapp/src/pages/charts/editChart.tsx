@@ -1,16 +1,16 @@
 import { useMachine } from "@xstate/react";
-import { DataTable, RenderChart, ColorSchemeProvider, type MatrixType } from "dataviz-components";
+import { RenderChart, ColorSchemeProvider, type MatrixType } from "dataviz-components";
 import type { ChartColorScheme } from "dataviz-components";
 import "dataviz-components/dist/style.css";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ChartOptions from "../../components/ChartOptions";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import SelectChart from "../../components/SelectChart";
-import { getAvailablePalettes, getPalette } from "../../lib/utils";
+// import { getAvailablePalettes, getPalette } from "../../lib/utils";
 
 import ChooseLoader from "../../components/load-data/ChooseLoader";
 import * as api from "../../lib/api";
@@ -399,7 +399,7 @@ function EditChartPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    <ThemeSwitcherComponent currentTheme={previewScheme} handleChange={setPreviewScheme} />
+                    <ThemeSwitcherComponent currentTheme={previewScheme} handleChange={(value: ChartColorScheme) => setPreviewScheme(value)} />
                     <div className="overflow-auto min-h-[380px] relative rounded-lg" style={{ backgroundColor: previewScheme === "dark" ? "#1a1a2e" : "#F5FAFF" }}>
                       <ColorSchemeProvider scheme={previewScheme}>
                         <RenderChart

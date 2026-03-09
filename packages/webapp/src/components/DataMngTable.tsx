@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import DataTableComponent, { type TableColumn } from "react-data-table-component";
 import { transposeData } from "../lib/utils";
+import type { MatrixType } from "dataviz-components";
 
 type RowRecord = Record<string, string | number>;
 
 type DataTableProps = {
-  data: any;
-  onApplyData: (transformedData: any) => void;
+  data: MatrixType;
+  onApplyData?: (transformedData: MatrixType) => void;
   download?: () => void;
   downloadJSON?: () => void;
   buttonVariant?: "default" | "italia";
@@ -23,7 +24,7 @@ export default function DataTable({
   buttonVariant = "default",
 }: DataTableProps) {
   const b = btnClass(buttonVariant);
-  const [workingData, setWorkingData] = useState<any>(data);
+  const [workingData, setWorkingData] = useState<MatrixType>(data);
   const [showRenameForm, setShowRenameForm] = useState(false);
   const [renameValues, setRenameValues] = useState<string[]>([]);
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set());
@@ -136,8 +137,9 @@ export default function DataTable({
         });
       }
     }
-
-    onApplyData([finalHeaders, ...finalRows]);
+    if (onApplyData) {
+      onApplyData([finalHeaders, ...finalRows]);
+    }
   }
 
   function openRenameForm() {
@@ -256,11 +258,10 @@ export default function DataTable({
               {headers.map((colName) => (
                 <label
                   key={colName}
-                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
-                    visibleColumns.has(colName)
-                      ? "bg-primary/10 border-primary/30 text-primary"
-                      : "bg-base-200 border-base-300 text-base-content/40 line-through"
-                  }`}
+                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
+                    ? "bg-primary/10 border-primary/30 text-primary"
+                    : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                    }`}
                 >
                   <input
                     type="checkbox"
