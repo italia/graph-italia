@@ -23,6 +23,9 @@ import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import toast from 'react-hot-toast';
 import TransformData from "../../components/load-data/TransformData";
+import { Helmet } from "react-helmet";
+import EditStepComponent from "../../components/EditStepComponent";
+import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
 
 function EditChartPage() {
   const { id: paramId } = useParams();
@@ -214,7 +217,11 @@ function EditChartPage() {
 
   return (
     <Layout>
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 p-4 rounded-lg">
+      <Helmet>
+        <title>Edit Chart: {`${chartName ? ": " + chartName : ''}`}</title>
+        <meta name="description" content="Creating chart" />
+      </Helmet>
+      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -223,9 +230,9 @@ function EditChartPage() {
           Back to list
         </button>
         <div className="flex gap-4">
-          <span>step: {currentStepIndex}</span>
-          <span>status: {state.value as string}</span>
-          <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span>
+          {/* <span>step: {currentStepIndex}</span>
+          <span>status: {state.value as string}</span> */}
+          {/* <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span> */}
         </div>
         <div className="flex-shrink-0">
           <button
@@ -252,27 +259,74 @@ function EditChartPage() {
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
           <div className="space-y-1 xl:col-span-2">
 
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0" aria-disabled={currentStepIndex === 0 ? true : false} open={currentStepIndex > 0 ? true : false}>
-              <summary className="collapse-title font-semibold">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">
-                      <FaCog />
-                    </span>
-                  </div>
-                  <div>
-                    <h2 className="card-title text-xl">
-                      Configure the chart
-                    </h2>
-                    <p className="text-sm text-base-content/60">
-                      Choose the chart type and customize its appearance
-                    </p>
+            <EditStepComponent
+              title="Setup Info"
+              description="Name, description and visibility of the chart"
+              Icon={FaInfo}
+              isOpen={true}
+              isDisabled={false}
+              index={0}
+            >
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="checkbox"
+                        checked={chartPublish}
+                        onChange={() => {
+                          setHasUnsavedChanges(true);
+                          setChartPublish(!chartPublish);
+                        }}
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <span className="text-sm text-base-content/70">
+                        Chart Visibility:
+                      </span>
+                      <span className="text-sm text-base-content font-bold">
+                        {chartPublish ? "Public" : "Private"}
+                      </span>
+                    </div>
+                    <label htmlFor="chart_title" className="mt-4 text-base-content/70">Chart Title:</label>
+                    <input
+                      id="chart_title"
+                      type="text"
+                      value={chartName}
+                      onChange={(e) => {
+                        setHasUnsavedChanges(true);
+                        setChartName(e.target.value);
+                      }}
+                      placeholder={getDefaultName()}
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                    />
+                    <label htmlFor="chart_description" className="mt-4 text-base-content/70">Chart Description:</label>
+                    <textarea
+                      id="chart_description"
+                      value={chartDescription}
+                      rows={3}
+                      onChange={(e) => {
+                        setHasUnsavedChanges(true);
+                        setChartDescription(e.target.value);
+                      }}
+                      placeholder="Add a description..."
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                    />
+
                   </div>
                 </div>
-              </summary>
-              <div className="collapse-content text-sm">
-                {state.matches("config") ? (
+              </div>
+            </EditStepComponent>
 
+            <EditStepComponent
+              title=" Configure the chart"
+              description="Choose the chart type and customize its appearance"
+              Icon={FaCog}
+              isOpen={currentStepIndex > 0 ? true : false}
+              isDisabled={currentStepIndex === 0 ? true : false}
+              index={2}
+            >
+              <div>
+                {state.matches("config") ? (
                   <div className="card bg-base-100 shadow-sm border border-base-200">
                     <div className="card-body">
 
@@ -289,168 +343,63 @@ function EditChartPage() {
 
                 ) : <div> Please load data and proceed to configuration step to see chart options </div>}
               </div>
-            </details>
+            </EditStepComponent>
 
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-1" open={currentStepIndex === 0 ? true : false}>
-              <summary className="collapse-title font-semibold">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">
-                      <FaDatabase />
-                    </span>
-                  </div>
-                  <div>
-                    <h2 className="card-title text-xl">Load your data</h2>
-                    <p className="text-sm text-base-content/60">
-                      Import data from CSV, JSON files or from a remote source
-                    </p>
-                  </div>
-                </div>
-              </summary>
-              <div className="collapse-content text-sm">
-                {/* Step 1: Data loading */}
-                <div className="card bg-base-100 shadow-sm border border-base-200">
-                  <div className="card-body">
-                    <ChooseLoader
-                      handleUpload={handleUpload}
-                      remoteUrl={remoteUrl}
-                      handleSetRemoteData={handleSetRemoteData}
-                      initialData={data}
-                    />
-                    {haveData && chart && (
-                      <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => handleAssignData()}
-                        >
-                          Use this data
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+            <EditStepComponent
+              title="Load your data"
+              description="Import data from CSV, JSON files or from a remote source"
+              Icon={FaDatabase}
+              isOpen={currentStepIndex === 0 ? true : false}
+              isDisabled={false}
+              index={1}
+            >
 
-              </div>
-            </details>
-
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0">
-              <summary className="collapse-title font-semibold">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">
-                      <FaInfo />
-                    </span>
-                  </div>
-                  <div>
-                    <h2 className="card-title text-xl">Setup Info</h2>
-                    <p className="text-sm text-base-content/60">
-                      Name, description and visibility of the chart
-                    </p>
-                  </div>
-                </div>
-              </summary>
-              <div className="collapse-content text-sm">
-                <div className="card bg-base-100 shadow-sm border border-base-200">
-                  <div className="card-body">
-                    <div className="flex flex-col space-y-2">
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="checkbox"
-                          checked={chartPublish}
-                          onChange={() => {
-                            setHasUnsavedChanges(true);
-                            setChartPublish(!chartPublish);
-                          }}
-                          className="toggle toggle-sm toggle-primary cursor-pointer"
-                        />
-                        <span className="text-sm text-base-content/70">
-                          Chart Visibility:
-                        </span>
-                        <span className="text-sm text-base-content font-bold">
-                          {chartPublish ? "Public" : "Private"}
-                        </span>
-                      </div>
-                      <label htmlFor="chart_title" className="mt-4 text-base-content/70">Chart Title:</label>
-                      <input
-                        id="chart_title"
-                        type="text"
-                        value={chartName}
-                        onChange={(e) => {
-                          setHasUnsavedChanges(true);
-                          setChartName(e.target.value);
-                        }}
-                        placeholder={getDefaultName()}
-                        className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
-                      />
-                      <label htmlFor="chart_description" className="mt-4 text-base-content/70">Chart Description:</label>
-                      <textarea
-                        id="chart_description"
-                        value={chartDescription}
-                        rows={3}
-                        onChange={(e) => {
-                          setHasUnsavedChanges(true);
-                          setChartDescription(e.target.value);
-                        }}
-                        placeholder="Add a description..."
-                        className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
-                      />
-
+              {/* Step 1: Data loading */}
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <ChooseLoader
+                    handleUpload={handleUpload}
+                    remoteUrl={remoteUrl}
+                    handleSetRemoteData={handleSetRemoteData}
+                    initialData={data}
+                  />
+                  {haveData && chart && (
+                    <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => handleAssignData()}
+                      >
+                        Use this data
+                      </button>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
-            </details>
+            </EditStepComponent>
+
 
           </div>
 
           {/* Right column: Preview */}
           <div className="xl:col-span-4 flex flex-col h-full p-10 border border-base-300 rounded-lg" >
-            {/*
-            <div role="tablist" className="tabs tabs-border">
-              <button type="button" role="tab" className={`tab ${currentTab === "chart" ? "tab-active" : ""}`} onClick={() => setCurrentTab("chart")}>Chart</button>
-              <button type="button" role="tab" className={`tab ${currentTab === "data" ? "tab-active" : ""}`} onClick={() => setCurrentTab("data")}>Data</button>
-              <button type="button" role="tab" className={`tab ${currentTab === "info" ? "tab-active" : ""}`} onClick={() => setCurrentTab("info")}>Info</button>
-            </div>
-            */}
-
             <div className="bg-base-100 bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
 
-              {/* {currentTab === "info" && ( */}
-              <div  >
+              <div>
                 <h1 className="text-2xl font-bold">{chartName}</h1>
                 <div className="text-base-content/80">
                   {chartDescription ? (
                     <div dangerouslySetInnerHTML={{ __html: chartDescription.replace(/\n/g, "<br />") }} />
                   ) : (
-                    <p className="italic text-base-content">
-                      -
-                    </p>
+                    <p className="italic text-base-content">{""}</p>
                   )}
                 </div>
               </div>
-              {/* )} */}
 
-              {/* {currentTab === "chart" && ( */}
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    <div className="flex justify-end mb-2">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <input
-                          type="checkbox"
-                          className="toggle toggle-sm"
-                          checked={previewScheme === "dark"}
-                          onChange={(e) => setPreviewScheme(e.target.checked ? "dark" : "light")}
-                        />
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                        </svg>
-                      </label>
-                    </div>
+                    <ThemeSwitcherComponent currentTheme={previewScheme} handleChange={setPreviewScheme} />
                     <div className="overflow-auto min-h-[380px] relative rounded-lg" style={{ backgroundColor: previewScheme === "dark" ? "#1a1a2e" : "#F5FAFF" }}>
                       <ColorSchemeProvider scheme={previewScheme}>
                         <RenderChart
@@ -465,9 +414,6 @@ function EditChartPage() {
                   </>
                 ) : (<p className="italic text-base-content"></p>)}
               </div>
-              {/* )} */}
-
-              {/* {currentTab === "data" && ( */}
               <div >
                 {!haveData ? (
                   <p className="italic text-base-content">
@@ -485,9 +431,6 @@ function EditChartPage() {
                   )}
 
               </div>
-              {/* )} */}
-
-
             </div>
           </div>
         </div>
