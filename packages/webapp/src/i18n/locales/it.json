@@ -36,6 +36,30 @@
           }
         }
       },
+      "recoverPwdForm": {
+        "header": {
+          "label": "Insert your email"
+        },
+        "form": {
+          "fields": {
+            "email": {
+              "label": "Email address",
+              "errors": {
+                "required": "This field is required"
+              }
+            }
+          },
+          "actions": {
+            "submit": {
+              "label": "Recover Password",
+              "messages": {
+                "error": "Error while recovering password",
+                "success": "Check Your Email"
+              }
+            }
+          }
+        }
+      },
       "signin": {
         "header": {
           "label": "Sign in to your account"
