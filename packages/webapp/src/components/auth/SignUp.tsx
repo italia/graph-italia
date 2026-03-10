@@ -68,7 +68,7 @@ function SignUp({
 }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "pages.auth.signup";
+  const TRANSLATION_KEY_PATH = "components.auth.signup";
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const signupSchema = getSignupSchema(zod, t, TRANSLATION_KEY_PATH);

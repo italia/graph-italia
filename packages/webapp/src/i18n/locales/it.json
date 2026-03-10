@@ -1,13 +1,7 @@
 {
   "appname": "Dataviz-it",
-  "pages": {
+  "components": {
     "auth": {
-      "header": {
-        "accountCreated": {
-          "label": "Your account has been created successfully."
-        },
-        "checkEmail": { "label": "Check your email to activate your account" }
-      },
       "signin": {
         "header": {
           "label": "Sign in to your account"
@@ -100,6 +94,18 @@
               "label": "Sign In"
             }
           }
+        }
+      }
+    }
+  },
+  "pages": {
+    "auth": {
+      "header": {
+        "accountCreated": {
+          "label": "Your account has been created successfully."
+        },
+        "checkEmail": {
+          "label": "Check your email to activate your account"
         }
       }
     }
