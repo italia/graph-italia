@@ -2,6 +2,40 @@
   "appname": "Dataviz-it",
   "components": {
     "auth": {
+      "changePasswordForm": {
+        "header": {
+          "label": "Choose a new Password"
+        },
+        "form": {
+          "fields": {
+            "password": {
+              "label": "Password",
+              "errors": {
+                "required": "This field is required",
+                "minLength": "Password must be at least 8 characters long",
+                "uppercase": "Password must have at least one uppercase letter",
+                "lowercase": "Password must have at least one lowercase letter",
+                "number": "Must contain a number",
+                "specialChar": "Must contain at least one special character"
+              }
+            },
+            "confirmPassword": {
+              "label": "Confirm Password",
+              "errors": {
+                "required": "This field is required"
+              }
+            }
+          },
+          "errors": {
+            "passwordDontMatch": "Passwords do not match"
+          },
+          "actions": {
+            "submit": {
+              "label": "Change Password"
+            }
+          }
+        }
+      },
       "signin": {
         "header": {
           "label": "Sign in to your account"
