@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
-import Layout from '../../components/layout';
-import RecoverPasswordForm from '../../components/auth/RecoverPwdForm';
-import ChangePasswordForm from '../../components/auth/ChangePasswordForm';
-import { useUserStore } from '../../store/user_store';
-import { HOME_ROUTE } from '../../router';
+import { useNavigate } from "react-router-dom";
+import ChangePasswordForm from "../../components/auth/ChangePasswordForm";
+import RecoverPasswordForm from "../../components/auth/RecoverPwdForm";
+import Layout from "../../components/layout";
+import { HOME_ROUTE } from "../../router";
+import { useUserStore } from "../../store/user_store";
 
-function AuthPage({ action: _action = 'recover' }: { action?: string }) {
+function AuthPage({ action: _action = "recover" }: { action?: string }) {
   const { user } = useUserStore();
   const navigate = useNavigate();
 
@@ -15,12 +15,12 @@ function AuthPage({ action: _action = 'recover' }: { action?: string }) {
 
   return (
     <Layout>
-      <div className='flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8' >
+      <div className="flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
         <>
           {user /*&& action != 'recover'*/ ? (
             <ChangePasswordForm onDone={() => redirectHome()} />
           ) : (
-            <RecoverPasswordForm onDone={() => console.log('done')} />
+            <RecoverPasswordForm onDone={() => console.log("done")} />
           )}
         </>
       </div>

@@ -1,12 +1,64 @@
 {
   "appname": "Dataviz-it",
-  "pages": {
+  "components": {
     "auth": {
-      "header": {
-        "accountCreated": {
-          "label": "Your account has been created successfully."
+      "changePasswordForm": {
+        "header": {
+          "label": "Choose a new Password"
         },
-        "checkEmail": { "label": "Check your email to activate your account" }
+        "form": {
+          "fields": {
+            "password": {
+              "label": "Password",
+              "errors": {
+                "required": "This field is required",
+                "minLength": "Password must be at least 8 characters long",
+                "uppercase": "Password must have at least one uppercase letter",
+                "lowercase": "Password must have at least one lowercase letter",
+                "number": "Must contain a number",
+                "specialChar": "Must contain at least one special character"
+              }
+            },
+            "confirmPassword": {
+              "label": "Confirm Password",
+              "errors": {
+                "required": "This field is required"
+              }
+            }
+          },
+          "errors": {
+            "passwordDontMatch": "Passwords do not match"
+          },
+          "actions": {
+            "submit": {
+              "label": "Change Password"
+            }
+          }
+        }
+      },
+      "recoverPwdForm": {
+        "header": {
+          "label": "Insert your email"
+        },
+        "form": {
+          "fields": {
+            "email": {
+              "label": "Email address",
+              "errors": {
+                "required": "This field is required"
+              }
+            }
+          },
+          "actions": {
+            "submit": {
+              "label": "Recover Password",
+              "messages": {
+                "error": "Error while recovering password",
+                "success": "Check Your Email"
+              }
+            }
+          }
+        }
       },
       "signin": {
         "header": {
@@ -99,6 +151,54 @@
             "signin": {
               "label": "Sign In"
             }
+          }
+        }
+      },
+      "verifyCode": {
+        "header": {
+          "label": "Verification code",
+          "description": "insert your verification code in the input below"
+        },
+        "bottom": {
+          "label": "Resend code?",
+          "actions": {
+            "sendAnotherCode": {
+              "label": "Send another code"
+            }
+          }
+        }
+      }
+    }
+  },
+  "pages": {
+    "auth": {
+      "header": {
+        "accountCreated": {
+          "label": "Your account has been created successfully."
+        },
+        "checkEmail": {
+          "label": "Check your email to activate your account"
+        }
+      }
+    },
+    "verify": {
+      "body": {
+        "errors": {
+          "invalidParam": {
+            "label": "Invalid params, use the recover password flow to get a new code.",
+            "actions": {
+              "recoverPassword": {
+                "label": "Recover Password"
+              }
+            }
+          }
+        },
+        "messages": {
+          "valid": "The code is valid"
+        },
+        "actions": {
+          "init": {
+            "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
           }
         }
       }

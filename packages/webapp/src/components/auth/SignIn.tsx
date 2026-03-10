@@ -9,7 +9,7 @@ import { useUserStore } from "../../store/user_store";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "pages.auth.signin";
+  const TRANSLATION_KEY_PATH = "components.auth.signin";
   const { setUser } = useUserStore();
   const navigate = useNavigate();
   const {

@@ -1,39 +1,66 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { TFunction } from "i18next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { useTranslation } from "react-i18next";
+import { z as zod } from "zod";
 import * as api from "../../lib/api";
 
-const passwordSchema = z
-  .string()
-  .min(8, { message: "Password must be at least 8 characters long" })
-  // .max(20, { message: maxLengthErrorMessage })
-  .refine((password) => /[A-Z]/.test(password), {
-    message: "Password must have at least one uppercase letter",
-  })
-  .refine((password) => /[a-z]/.test(password), {
-    message: "Password must have at least one lowercase letter",
-  })
-  .refine((password) => /[0-9]/.test(password), {
-    message: "Must contain a number",
-  })
-  .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: "Must contain at least one special character",
-  });
+const getUpdatePasswordSchema = (
+  z: typeof zod,
+  t: TFunction<"translation", undefined>,
+  TRANSLATION_KEY_PATH: string,
+) => {
+  const passwordSchema = z
+    .string()
+    .min(8, {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.minLength`,
+      ),
+    })
+    // .max(20, { message: maxLengthErrorMessage })
+    .refine((password) => /[A-Z]/.test(password), {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.uppercase`,
+      ),
+    })
+    .refine((password) => /[a-z]/.test(password), {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.lowercase`,
+      ),
+    })
+    .refine((password) => /[0-9]/.test(password), {
+      message: t(`${TRANSLATION_KEY_PATH}.form.fields.password.errors.number`),
+    })
+    .refine((password) => /[!@#$%^&*]/.test(password), {
+      message: t(
+        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.specialChar`,
+      ),
+    });
 
-const updatePasswordSchema = z
-  .object({
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+  const updatePasswordSchema = z
+    .object({
+      password: passwordSchema,
+      confirmPassword: passwordSchema,
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t(`${TRANSLATION_KEY_PATH}.form.errors.passwordDontMatch`),
+      path: ["confirmPassword"],
+    });
+
+  return updatePasswordSchema;
+};
 
 function ChangePassword({ onDone }: { onDone: () => void }) {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { t } = useTranslation();
+  const TRANSLATION_KEY_PATH = "components.auth.changePasswordForm";
+  const updatePasswordSchema = getUpdatePasswordSchema(
+    zod,
+    t,
+    TRANSLATION_KEY_PATH,
+  );
   const {
     register,
     handleSubmit,
@@ -68,7 +95,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            Choose a new Password
+            {t(`${TRANSLATION_KEY_PATH}.header.label`)}
           </h2>
         </div>
 
@@ -80,7 +107,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Password
+                  {t(`${TRANSLATION_KEY_PATH}.form.fields.password.label`)}
                 </label>
                 <div className="mt-2">
                   <div className="relative">
@@ -157,7 +184,9 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                   htmlFor="confirm-password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Confirm Password
+                  {t(
+                    `${TRANSLATION_KEY_PATH}.form.fields.confirmPassword.label`,
+                  )}
                 </label>
                 <div className="mt-2">
                   <input
@@ -178,7 +207,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
               {message && <p className="text-error">{message}</p>}
               <div>
                 <button type="submit" className="btn btn-primary w-full">
-                  Change Password
+                  {t(`${TRANSLATION_KEY_PATH}.form.actions.submit.label`)}
                 </button>
               </div>
             </form>
