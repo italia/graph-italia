@@ -153,6 +153,20 @@
             }
           }
         }
+      },
+      "verifyCode": {
+        "header": {
+          "label": "Verification code",
+          "description": "insert your verification code in the input below"
+        },
+        "bottom": {
+          "label": "Resend code?",
+          "actions": {
+            "sendAnotherCode": {
+              "label": "Send another code"
+            }
+          }
+        }
       }
     }
   },
