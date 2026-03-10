@@ -180,6 +180,28 @@
           "label": "Check your email to activate your account"
         }
       }
+    },
+    "verify": {
+      "body": {
+        "errors": {
+          "invalidParam": {
+            "label": "Invalid params, use the recover password flow to get a new code.",
+            "actions": {
+              "recoverPassword": {
+                "label": "Recover Password"
+              }
+            }
+          }
+        },
+        "messages": {
+          "valid": "The code is valid"
+        },
+        "actions": {
+          "init": {
+            "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
+          }
+        }
+      }
     }
   }
 }
