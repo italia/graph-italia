@@ -278,12 +278,22 @@ function Home() {
         {/* Modal to creaqte Chart */}
         {showCreateChartModal && (
           <GenericDialog
-            title="Create new chart"
-            description="Name your chart to start editing it"
+            title={t(`${TRANSLATE_KEY_PATH}.modals.createChart.title`)}
+            description={t(
+              `${TRANSLATE_KEY_PATH}.modals.createChart.description`,
+            )}
             toggle={showCreateChartModal}
             labels={{
-              confirm: isCreatingChart ? "Creating..." : "Create",
-              cancel: "Cancel",
+              confirm: isCreatingChart
+                ? t(
+                    `${TRANSLATE_KEY_PATH}.modals.createChart.labels.confirm.isCreating`,
+                  )
+                : t(
+                    `${TRANSLATE_KEY_PATH}.modals.createChart.labels.confirm.default`,
+                  ),
+              cancel: t(
+                `${TRANSLATE_KEY_PATH}.modals.createChart.labels.cancel`,
+              ),
             }}
             confirmDisabled={!newChart?.name?.trim() || isCreatingChart}
             confirmCb={() => {
@@ -299,14 +309,21 @@ function Home() {
             <div className="space-y-4">
               <div className="form-control">
                 <label className="label" htmlFor="chart-name">
-                  <span className="label-text font-medium">Chart name *</span>
+                  <span className="label-text font-medium">
+                    {t(
+                      `${TRANSLATE_KEY_PATH}.modals.createChart.form.fields.name.label`,
+                    )}
+                    *
+                  </span>
                 </label>
                 <input
                   id="chart-name"
                   className="input input-bordered w-full"
                   type="text"
                   name="name"
-                  placeholder="E.g.: Monthly sales 2024"
+                  placeholder={t(
+                    `${TRANSLATE_KEY_PATH}.modals.createChart.form.fields.name.placeholder`,
+                  )}
                   autoFocus
                   value={newChart?.name || ""}
                   onChange={(e) => {
@@ -322,7 +339,9 @@ function Home() {
                 />
                 <label className="label">
                   <span className="label-text-alt text-base-content/60">
-                    You can change the name later
+                    {t(
+                      `${TRANSLATE_KEY_PATH}.modals.createChart.form.fields.name.content`,
+                    )}
                   </span>
                 </label>
               </div>

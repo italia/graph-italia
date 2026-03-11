@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-en",
+  "appname": "Dataviz-it",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -198,6 +198,29 @@
             }
           }
         }
+      },
+      "modals": {
+        "createChart": {
+          "title": "Create new chart",
+          "description": "Name your chart to start editing it",
+          "labels": {
+            "confirm": {
+              "default": "Create",
+              "isCreating": "Creating..."
+            },
+            "cancel": "Cancel"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "Chart name",
+                "placeholder": "E.g.: Monthly sales 2024",
+                "content": "You can change the name later"
+              }
+            }
+          }
+        },
+        "createKpiGroup": {}
       }
     },
     "verify": {
