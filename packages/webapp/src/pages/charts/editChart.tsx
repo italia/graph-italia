@@ -242,10 +242,10 @@ function EditChartPage() {
             className="btn btn-primary gap-2"
           >
             {isSaving ? (
-              <>
+              <span role="status">
                 <span className="loading loading-spinner loading-sm"></span>
                 Saving...
-              </>
+              </span>
             ) : (
               <>
                 Save
@@ -342,7 +342,7 @@ function EditChartPage() {
                     </div>
                   </div>
 
-                ) : <div> Please load data and proceed to configuration step to see chart options </div>}
+                ) : <div role="status"> Please load data and proceed to configuration step to see chart options </div>}
               </div>
             </EditStepComponent>
 
@@ -417,7 +417,7 @@ function EditChartPage() {
               </div>
               <div >
                 {!haveData ? (
-                  <p className="italic text-base-content">
+                  <p className="italic text-base-content" role="status">
                     Load your data to display the data preview
                   </p>
                 ) :

@@ -64,11 +64,13 @@ function UploadJSON({
         />
       </div>
 
-      {error && (
-        <div className="alert alert-error py-2">
-          <span className="text-sm">{error}</span>
-        </div>
-      )}
+      <div role="alert" aria-atomic="true">
+        {error && (
+          <div className="alert alert-error py-2">
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
+      </div>
 
       {(uploadData || initialData) && (
         <div className="bg-primary">

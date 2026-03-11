@@ -65,11 +65,13 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
             }
           }}
         />
-        {error && (
-          <label className="label">
-            <span className="label-text-alt text-error">{error}</span>
-          </label>
-        )}
+        <div role="alert" aria-atomic="true">
+          {error && (
+            <label className="label">
+              <span className="label-text-alt text-error">{error}</span>
+            </label>
+          )}
+        </div>
       </div>
 
       <button
@@ -78,10 +80,10 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
         disabled={loading || !url.trim()}
       >
         {loading ? (
-          <>
+          <span role="status">
             <span className="loading loading-spinner loading-sm"></span>
             Loading...
-          </>
+          </span>
         ) : (
           <>
             <svg

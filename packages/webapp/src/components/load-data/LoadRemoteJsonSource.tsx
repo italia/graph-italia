@@ -64,11 +64,13 @@ function LoadSource({
             }
           }}
         />
-        {error && (
-          <label className="label">
-            <span className="label-text-alt text-error">{error}</span>
-          </label>
-        )}
+        <div role="alert" aria-atomic="true">
+          {error && (
+            <label className="label">
+              <span className="label-text-alt text-error">{error}</span>
+            </label>
+          )}
+        </div>
       </div>
 
       <button
@@ -77,10 +79,10 @@ function LoadSource({
         disabled={loading || !url.trim()}
       >
         {loading ? (
-          <>
+          <span role="status">
             <span className="loading loading-spinner loading-sm"></span>
             Loading...
-          </>
+          </span>
         ) : (
           <>
             <svg
