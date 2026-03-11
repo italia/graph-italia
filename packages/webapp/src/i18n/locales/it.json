@@ -221,6 +221,23 @@
             "label": "Esci"
           }
         }
+      },
+      "footer": {
+        "brand": {
+          "title": "Dataviz",
+          "tagline": "Share your charts"
+        },
+        "links": {
+          "quickstart": {
+            "label": "Quick Start"
+          },
+          "tos": {
+            "label": "Terms of service"
+          },
+          "privacy": {
+            "label": "Privacy policy"
+          }
+        }
       }
     },
     "chartTable": {
