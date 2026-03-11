@@ -220,10 +220,19 @@ function Home() {
         {/* Modal to create KPI Group */}
         {showCreateKpiGroupModal && (
           <GenericDialog
-            title="Create KPI Group"
-            description="Enter data to create a new KPI indicator group"
+            title={t(`${TRANSLATE_KEY_PATH}.modals.createKpiGroup.title`)}
+            description={t(
+              `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.description`,
+            )}
             toggle={showCreateKpiGroupModal}
-            labels={{ confirm: "Create", cancel: "Cancel" }}
+            labels={{
+              confirm: t(
+                `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.labels.confirm`,
+              ),
+              cancel: t(
+                `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.labels.cancel`,
+              ),
+            }}
             confirmDisabled={!newKpiGroup?.name?.trim()}
             confirmCb={() => {
               if (!newKpiGroup) {
@@ -238,14 +247,21 @@ function Home() {
             <div className="space-y-4">
               <div className="form-control">
                 <label className="label" htmlFor="kpi-name">
-                  <span className="label-text font-medium">Name *</span>
+                  <span className="label-text font-medium">
+                    {t(
+                      `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.name.label`,
+                    )}
+                    *
+                  </span>
                 </label>
                 <input
                   id="kpi-name"
                   className="input input-bordered w-full"
                   type="text"
                   name="name"
-                  placeholder="Enter the KPI group name"
+                  placeholder={t(
+                    `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.name.placeholder`,
+                  )}
                   autoFocus
                   onChange={(e) => {
                     const name = e.target.value;
@@ -256,14 +272,20 @@ function Home() {
               </div>
               <div className="form-control">
                 <label className="label" htmlFor="kpi-description">
-                  <span className="label-text font-medium">Description</span>
+                  <span className="label-text font-medium">
+                    {t(
+                      `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.description.label`,
+                    )}
+                  </span>
                 </label>
                 <input
                   id="kpi-description"
                   className="input input-bordered w-full"
                   type="text"
                   name="description"
-                  placeholder="Enter a description (optional)"
+                  placeholder={t(
+                    `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.description.placeholder`,
+                  )}
                   onChange={(e) => {
                     const description = e.target.value;
                     const oldValue = newKpiGroup ?? ({} as KpiGroupPayload);

@@ -220,7 +220,26 @@
             }
           }
         },
-        "createKpiGroup": {}
+        "createKpiGroup": {
+          "title": "Create KPI Group",
+          "description": "Enter data to create a new KPI indicator group",
+          "labels": {
+            "confirm": "Create",
+            "cancel": "Cancel"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "Name",
+                "placeholder": "Enter the KPI group name"
+              },
+              "description": {
+                "label": "Description",
+                "placeholder": "Enter a description (optional)"
+              }
+            }
+          }
+        }
       }
     },
     "verify": {
