@@ -152,7 +152,7 @@ export default function ChartTable({
               return (
                 <div className="overflow-hidden">
                   <div className="flex items-center gap-2">
-                    <IconComponent fill="#06c" size={24} title={row.chart} />
+                    <IconComponent fill="#06c" size={24} aria-hidden="true" />
                     <span className="capitalize">{row.chart}</span>
                   </div>
                 </div>
@@ -177,11 +177,11 @@ export default function ChartTable({
             cell: (row: FieldDataType) =>
               row.remoteUrl ? (
                 <div className="flex gap-2">
-                  <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" >
-                    <FaLink fill={actionColor} size={actionSize} title={row.remoteUrl} />
+                  <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" aria-label="open remote URL">
+                    <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
                   </a>
                   <button type="button" aria-label="copy remote URL" className="btn btn-ghost btn-xs btn-square" onClick={handleCopy(`${row.remoteUrl || ""}`)}>
-                    <FaCopy fill={actionColor} size={actionSize} />
+                    <FaCopy fill={actionColor} size={actionSize} aria-hidden="true" />
                   </button>
                 </div>
               ) : (
@@ -241,18 +241,18 @@ export default function ChartTable({
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
                 <button type="button" aria-label="preview" className="btn btn-ghost btn-xs btn-square" onClick={() => setData(row)}>
-                  <FaEye fill={actionColor} size={actionSize} />
+                  <FaEye fill={actionColor} size={actionSize} aria-hidden="true" />
                 </button>
                 <button type="button" aria-label="embed" className="btn btn-ghost btn-xs btn-square" onClick={() => setShow(
                   `<iframe width="600" height="400" src="${window.location.origin}/charts/${row.id}/embed" frameborder="0" allowfullscreen></iframe>`,
                 )}>
-                  <FaCode fill={actionColor} size={actionSize} />
+                  <FaCode fill={actionColor} size={actionSize} aria-hidden="true" />
                 </button>
                 <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer" aria-label="view">
-                  <FaLink fill={actionColor} size={actionSize} />
+                  <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
                 </a>
                 <button type="button" aria-label="copy link" className="btn btn-ghost btn-xs btn-square" onClick={handleCopy(`${window.location.origin}/charts/${row.id}/view`)}>
-                  <FaCopy fill={actionColor} size={actionSize} />
+                  <FaCopy fill={actionColor} size={actionSize} aria-hidden="true" />
                 </button>
               </div>
             ),
@@ -263,14 +263,14 @@ export default function ChartTable({
             cell: (row: FieldDataType) => (
               <div className="flex gap-2">
                 <button type="button" aria-label="delete" className="btn btn-ghost btn-xs btn-square" onClick={() => handleDeleteChart(row.id ?? "")}>
-                  <FaTrashCan fill={actionColor} size={actionSize} />
+                  <FaTrashCan fill={actionColor} size={actionSize} aria-hidden="true" />
                 </button>
                 <a
                   href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
                     }`}
                   aria-label="edit"
                 >
-                  <FaPenToSquare fill={actionColor} size={actionSize} />
+                  <FaPenToSquare fill={actionColor} size={actionSize} aria-hidden="true" />
                 </a>
               </div>
             ),

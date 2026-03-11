@@ -15,7 +15,7 @@ export default function Dialog({ title, children, toggle, callback }: any) {
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box max-w-6xl max-h-full">
-        <h3 className="font-bold text-lg ">{title}</h3>
+        <h2 className="font-bold text-lg ">{title}</h2>
         <div className="mx-auto">
           {children}
         </div>
