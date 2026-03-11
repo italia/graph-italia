@@ -181,6 +181,25 @@
         }
       }
     },
+    "home": {
+      "header": {
+        "myCharts": "My Charts",
+        "noCharts": "Welcome"
+      },
+      "body": {
+        "actions": {
+          "label": "Create new",
+          "actionItems": {
+            "createChart": {
+              "label": "Create Chart"
+            },
+            "createKPIGroup": {
+              "label": "Create KPI Group"
+            }
+          }
+        }
+      }
+    },
     "verify": {
       "body": {
         "errors": {

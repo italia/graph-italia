@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 
 import Layout from "../components/layout";
 // import RenderChart from "../components/RenderChart";
-import ChartList from "../components/ChartList";
 import Loading from "../components/layout/Loading";
 
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import ChartTable from "../components/ChartTable";
 import GenericDialog from "../components/layout/GenericDialog";
 import * as api from "../lib/api";
 import useChartsStoreState from "../lib/chartListStore";
 import stepMachine from "../lib/stepMachine";
 import useStoreState from "../lib/storeState";
-import ChartTable from "../components/ChartTable";
 
 type GenericChartPayload = {
   name: string;
@@ -28,6 +28,8 @@ async function createKpiGroup(payload: KpiGroupPayload) {
 }
 
 function Home() {
+  const { t } = useTranslation();
+  const TRANSLATE_KEY_PATH = "pages.home";
   const [state, send] = useMachine(stepMachine);
   const {
     config,
@@ -161,22 +163,46 @@ function Home() {
           ) : (
             <>
               <h1 className="text-4xl font-bold">
-                {list && list.length ? "My Charts" : "Welcome"}
+                {t(
+                  `${TRANSLATE_KEY_PATH}.header.${list && list.length ? "myCharts" : "noCharts"}`,
+                )}
               </h1>
 
               <div>
                 <div className="flex my-5 gap-4">
                   <details className="dropdown bg-base-100 z-10">
-                    <summary className="btn btn-primary" role="button" aria-haspopup="menu"><span aria-hidden="true">+ </span>Create new</summary>
-                    <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border" role="menu">
+                    <summary
+                      className="btn btn-primary"
+                      role="button"
+                      aria-haspopup="menu"
+                    >
+                      <span aria-hidden="true">+ </span>
+                      {t(`${TRANSLATE_KEY_PATH}.body.actions.label`)}
+                    </summary>
+                    <ul
+                      className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border"
+                      role="menu"
+                    >
                       <li role="none">
-                        <button type="button" role="menuitem" onClick={() => setShowCreateChartModal(true)}>
-                          Create Chart
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => setShowCreateChartModal(true)}
+                        >
+                          {t(
+                            `${TRANSLATE_KEY_PATH}.body.actions.actionItems.createChart.label`,
+                          )}
                         </button>
                       </li>
                       <li role="none">
-                        <button type="button" role="menuitem" onClick={() => setShowCreateKpiGroupModal(true)}>
-                          Create KPI Group
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => setShowCreateKpiGroupModal(true)}
+                        >
+                          {t(
+                            `${TRANSLATE_KEY_PATH}.body.actions.actionItems.createKPIGroup.label`,
+                          )}
                         </button>
                       </li>
                     </ul>
