@@ -172,6 +172,19 @@
     "layout": {
       "sr": {
         "label": "Vai al contenuto principale"
+      },
+      "slimHeader": {
+        "brand": {
+          "title": "Dataviz"
+        },
+        "actions": {
+          "login": {
+            "label": "Accedi"
+          },
+          "logout": {
+            "label": "Esci"
+          }
+        }
       }
     },
     "chartTable": {
