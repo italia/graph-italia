@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DataTableComponent, { type TableColumn } from "react-data-table-component";
 import { transposeData } from "../lib/utils";
 import type { MatrixType } from "dataviz-components";
+import { useAriaSort } from "../hooks/useAriaSort";
 
 type RowRecord = Record<string, string | number>;
 
@@ -32,6 +33,8 @@ export default function DataTable({
     columnKey: string;
     direction: "asc" | "desc";
   } | null>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  useAriaSort(tableRef, sortState);
 
   // Sync workingData and visibleColumns when data prop changes
   useEffect(() => {
@@ -325,7 +328,7 @@ export default function DataTable({
             </div>
           )}
 
-          <div className="mt-4">
+          <div className="mt-4" ref={tableRef}>
             <DataTableComponent
               columns={columns}
               data={rows}

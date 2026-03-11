@@ -1,7 +1,8 @@
 import { type FieldDataType } from "dataviz-components";
 import dayjs from "dayjs";
-import { useState } from "react";
-import DataTable, { createTheme } from "react-data-table-component";
+import { useCallback, useRef, useState } from "react";
+import DataTable, { createTheme, type TableColumn } from "react-data-table-component";
+import { useAriaSort } from "../hooks/useAriaSort";
 import {
   FaChartBar,
   FaChartLine,
@@ -69,6 +70,19 @@ export default function ChartTable({
   const [data, setData] = useState<FieldDataType | null>(null);
 
   const currentTheme = "default";
+  const [sortState, setSortState] = useState<{ columnKey: string; direction: "asc" | "desc" } | null>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  useAriaSort(tableRef, sortState);
+
+  const handleSort = useCallback(
+    (column: TableColumn<FieldDataTypeWithPreview>, direction: "asc" | "desc") => {
+      const key = typeof column.name === "string" ? column.name : "";
+      if (key) {
+        setSortState({ columnKey: key, direction });
+      }
+    },
+    [],
+  );
 
   const [copiedText, copy] = useCopyToClipboard()
   const [copyStatus, setCopyStatus] = useState<string>("");
@@ -100,9 +114,10 @@ export default function ChartTable({
         {copyStatus}
       </div>
 
-      {list && <div>
+      {list && <div ref={tableRef}>
         <DataTable
           onRowClicked={(row) => handleRowClick(row)}
+          onSort={handleSort}
           columns={[{
             name: "Type",
             maxWidth: '80px',
