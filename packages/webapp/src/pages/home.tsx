@@ -160,14 +160,14 @@ function Home() {
             <Loading />
           ) : (
             <>
-              <h4 className="text-4xl font-bold">
+              <h1 className="text-4xl font-bold">
                 {list && list.length ? "My Charts" : "Welcome"}
-              </h4>
+              </h1>
 
               <div>
                 <div className="flex my-5 gap-4">
                   <details className="dropdown bg-base-100 z-10">
-                    <summary className="btn btn-primary" role="button" aria-haspopup="menu"> + Create new</summary>
+                    <summary className="btn btn-primary" role="button" aria-haspopup="menu"><span aria-hidden="true">+ </span>Create new</summary>
                     <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border" role="menu">
                       <li role="none">
                         <button type="button" role="menuitem" onClick={() => setShowCreateChartModal(true)}>
