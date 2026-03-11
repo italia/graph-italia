@@ -177,7 +177,7 @@ export default function ChartTable({
             cell: (row: FieldDataType) =>
               row.remoteUrl ? (
                 <div className="flex gap-2">
-                  <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" aria-label="open remote URL">
+                  <a href={row.remoteUrl} target="_blank" rel="noopener noreferrer" aria-label="open remote URL" className="btn btn-ghost btn-xs btn-square">
                     <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
                   </a>
                   <button type="button" aria-label="copy remote URL" className="btn btn-ghost btn-xs btn-square" onClick={handleCopy(`${row.remoteUrl || ""}`)}>
@@ -248,7 +248,7 @@ export default function ChartTable({
                 )}>
                   <FaCode fill={actionColor} size={actionSize} aria-hidden="true" />
                 </button>
-                <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer" aria-label="view">
+                <a href={`${window.location.origin}/charts/${row.id}/view`} target="_blank" rel="noopener noreferrer" aria-label="view" className="btn btn-ghost btn-xs btn-square">
                   <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
                 </a>
                 <button type="button" aria-label="copy link" className="btn btn-ghost btn-xs btn-square" onClick={handleCopy(`${window.location.origin}/charts/${row.id}/view`)}>
@@ -269,6 +269,7 @@ export default function ChartTable({
                   href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
                     }`}
                   aria-label="edit"
+                  className="btn btn-ghost btn-xs btn-square"
                 >
                   <FaPenToSquare fill={actionColor} size={actionSize} aria-hidden="true" />
                 </a>
