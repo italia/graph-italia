@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-it",
+  "appname": "Dataviz-en",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -196,6 +196,11 @@
             "createKPIGroup": {
               "label": "Create KPI Group"
             }
+          }
+        },
+        "confirms": {
+          "deleteChart": {
+            "label": "Are you sure you want to delete this chart?"
           }
         }
       },

@@ -90,7 +90,9 @@ function Home() {
     if (!id) return;
     console.log("delete chart?", id);
 
-    const sure = confirm("Are you sure you want to delete this chart?");
+    const sure = confirm(
+      t(`${TRANSLATE_KEY_PATH}.body.confirms.deleteChart.label`),
+    );
     if (!sure) return;
 
     return api
