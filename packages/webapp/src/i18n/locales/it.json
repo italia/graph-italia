@@ -168,6 +168,46 @@
           }
         }
       }
+    },
+    "chartTable": {
+      "columns": {
+        "type": {
+          "label": "Type"
+        },
+        "name": {
+          "label": "Name"
+        },
+        "isRemote": {
+          "label": "Is Remote"
+        },
+        "createdAt": {
+          "label": "Created At"
+        },
+        "updatedAt": {
+          "label": "Updated At"
+        },
+        "visibility": {
+          "label": "Visibility",
+          "values": {
+            "private": "Private",
+            "public": "Public"
+          }
+        },
+        "share": {
+          "label": "Share"
+        },
+        "actions": {
+          "label": "Actions"
+        }
+      },
+      "modals": {
+        "embedChart": {
+          "title": "Embed this Chart"
+        },
+        "previewChart": {
+          "title": "Preview Chart"
+        }
+      }
     }
   },
   "pages": {
@@ -178,6 +218,72 @@
         },
         "checkEmail": {
           "label": "Check your email to activate your account"
+        }
+      }
+    },
+    "home": {
+      "header": {
+        "myCharts": "My Charts",
+        "noCharts": "Welcome"
+      },
+      "body": {
+        "actions": {
+          "label": "Create new",
+          "actionItems": {
+            "createChart": {
+              "label": "Create Chart"
+            },
+            "createKPIGroup": {
+              "label": "Create KPI Group"
+            }
+          }
+        },
+        "confirms": {
+          "deleteChart": {
+            "label": "Are you sure you want to delete this chart?"
+          }
+        }
+      },
+      "modals": {
+        "createChart": {
+          "title": "Create new chart",
+          "description": "Name your chart to start editing it",
+          "labels": {
+            "confirm": {
+              "default": "Create",
+              "isCreating": "Creating..."
+            },
+            "cancel": "Cancel"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "Chart name",
+                "placeholder": "E.g.: Monthly sales 2024",
+                "content": "You can change the name later"
+              }
+            }
+          }
+        },
+        "createKpiGroup": {
+          "title": "Create KPI Group",
+          "description": "Enter data to create a new KPI indicator group",
+          "labels": {
+            "confirm": "Create",
+            "cancel": "Cancel"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "Name",
+                "placeholder": "Enter the KPI group name"
+              },
+              "description": {
+                "label": "Description",
+                "placeholder": "Enter a description (optional)"
+              }
+            }
+          }
         }
       }
     },
