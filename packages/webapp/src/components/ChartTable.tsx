@@ -71,15 +71,18 @@ export default function ChartTable({
   const currentTheme = "default";
 
   const [copiedText, copy] = useCopyToClipboard()
+  const [copyStatus, setCopyStatus] = useState<string>("");
 
   const handleCopy = (text: string) => () => {
     copy(text)
       .then(() => {
         toast.success('Copied to clipboard!')
+        setCopyStatus('Copied to clipboard!')
       })
       .catch(error => {
         console.error('Failed to copy!', error)
         toast.error('Failed to copy!')
+        setCopyStatus('Failed to copy!')
       })
   }
 
@@ -93,6 +96,9 @@ export default function ChartTable({
   return (
 
     <div className="flex flex-col gap-2">
+      <div role="status" aria-live="polite" className="sr-only">
+        {copyStatus}
+      </div>
 
       {list && <div>
         <DataTable
