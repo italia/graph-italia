@@ -22,14 +22,19 @@ import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 
+const MENU_ITEMS_TRANSLATION_KEYS = "router.menu.items" as const;
+
 export const HOME_ROUTE = "/home";
-type TMenuItem = { name: string; link: string; translationKey?: string };
+
+type TMenuItem = {
+  name: string;
+  link: string;
+  translationKey?: `${typeof MENU_ITEMS_TRANSLATION_KEYS}.${string}.label`;
+};
 export type MenuSubItem = TMenuItem;
 export type MenuItem =
   | TMenuItem
   | (TMenuItem & { subMenu: readonly MenuSubItem[] });
-
-const MENU_ITEMS_TRANSLATION_KEYS = "router.menu.items";
 
 export const MENU: readonly MenuItem[] = [
   {
