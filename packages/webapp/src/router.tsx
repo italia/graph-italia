@@ -44,27 +44,27 @@ export const MENU: readonly MenuItem[] = [
     subMenu: [
       {
         name: "Quick Start",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.quickStart`,
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.quickStart.label`,
         link: "/quickstart",
       },
       {
         name: "Generate Data",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generateData`,
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generateData.label`,
         link: "/generate-data",
       },
       {
         name: "Generate Pois",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois`,
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
         link: "/generate-poi",
       },
       {
         name: "Load Remote Data",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData`,
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData.label`,
         link: "/load-data",
       },
       {
         name: "Check GeoJSon File",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo`,
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
         link: "/geo",
       },
     ],
