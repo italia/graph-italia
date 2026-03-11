@@ -167,17 +167,17 @@ function Home() {
               <div>
                 <div className="flex my-5 gap-4">
                   <details className="dropdown bg-base-100 z-10">
-                    <summary className="btn btn-primary"> + Create new</summary>
-                    <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border">
-                      <li>
-                        <a onClick={() => setShowCreateChartModal(true)}>
+                    <summary className="btn btn-primary" role="button" aria-haspopup="menu"> + Create new</summary>
+                    <ul className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border" role="menu">
+                      <li role="none">
+                        <button type="button" role="menuitem" onClick={() => setShowCreateChartModal(true)}>
                           Create Chart
-                        </a>
+                        </button>
                       </li>
-                      <li>
-                        <a onClick={() => setShowCreateKpiGroupModal(true)}>
+                      <li role="none">
+                        <button type="button" role="menuitem" onClick={() => setShowCreateKpiGroupModal(true)}>
                           Create KPI Group
-                        </a>
+                        </button>
                       </li>
                     </ul>
                   </details>
