@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-en",
+  "appname": "Dataviz-it",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -166,6 +166,38 @@
               "label": "Send another code"
             }
           }
+        }
+      }
+    },
+    "chartTable": {
+      "columns": {
+        "type": {
+          "label": "Type"
+        },
+        "name": {
+          "label": "Name"
+        },
+        "isRemote": {
+          "label": "Is Remote"
+        },
+        "createdAt": {
+          "label": "Created At"
+        },
+        "updatedAt": {
+          "label": "Updated At"
+        },
+        "visibility": {
+          "label": "Visibility",
+          "values": {
+            "private": "Private",
+            "public": "Public"
+          }
+        },
+        "share": {
+          "label": "Share"
+        },
+        "actions": {
+          "label": "Actions"
         }
       }
     }
