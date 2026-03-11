@@ -169,6 +169,11 @@
         }
       }
     },
+    "layout": {
+      "sr": {
+        "label": "Vai al contenuto principale"
+      }
+    },
     "chartTable": {
       "columns": {
         "type": {

@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-en",
+  "appname": "Dataviz-it",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -167,6 +167,11 @@
             }
           }
         }
+      }
+    },
+    "layout": {
+      "sr": {
+        "label": "Vai al contenuto principale"
       }
     },
     "chartTable": {
