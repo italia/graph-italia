@@ -272,6 +272,7 @@ function EditChartPage() {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-4">
                       <input
+                        id="chart_visibility"
                         type="checkbox"
                         checked={chartPublish}
                         onChange={() => {
@@ -280,9 +281,9 @@ function EditChartPage() {
                         }}
                         className="toggle toggle-sm toggle-primary cursor-pointer"
                       />
-                      <span className="text-sm text-base-content/70">
+                      <label htmlFor="chart_visibility" className="text-sm text-base-content/70 cursor-pointer">
                         Chart Visibility:
-                      </span>
+                      </label>
                       <span className="text-sm text-base-content font-bold">
                         {chartPublish ? "Public" : "Private"}
                       </span>

@@ -46,10 +46,11 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
   return (
     <div className="space-y-4">
       <div className="form-control">
-        <label className="label">
+        <label htmlFor="csv-source-url" className="label">
           <span className="label-text font-medium">CSV data source URL</span>
         </label>
         <input
+          id="csv-source-url"
           placeholder="https://example.com/data.csv"
           className='input w-full'
           type='text'

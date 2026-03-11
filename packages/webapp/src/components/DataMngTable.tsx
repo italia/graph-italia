@@ -287,12 +287,13 @@ export default function DataTable({
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {renameValues.map((val, i) => (
                   <div key={i} className="form-control">
-                    <label className="label py-0.5">
+                    <label htmlFor={`col-rename-${i}`} className="label py-0.5">
                       <span className="label-text text-xs text-base-content/50">
                         Column {i + 1}
                       </span>
                     </label>
                     <input
+                      id={`col-rename-${i}`}
                       type="text"
                       value={val}
                       onChange={(e) => {

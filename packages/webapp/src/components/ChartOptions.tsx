@@ -122,10 +122,11 @@ function ChartOptions({
             }
             return (
               <div key={field.name} className={`form-control ${gridSpan}`}>
-                <label className="label">
+                <label htmlFor={`opt-${field.name}`} className="label">
                   <span className="label-text font-medium">{label}</span>
                 </label>
                 <input
+                  id={`opt-${field.name}`}
                   className="input input-bordered w-full"
                   type={field.type}
                   {...field.otherProps}
@@ -176,12 +177,13 @@ function ChartOptions({
 
             return (
               <div key={field.name} className={`form-control ${gridSpan}`}>
-                <label className="label">
+                <label htmlFor={`opt-${field.name}`} className="label">
                   <span className="label-text font-medium">
                     {translateLabel(field.label)}
                   </span>
                 </label>
                 <select
+                  id={`opt-${field.name}`}
                   className="select select-bordered w-full"
                   {...field.otherProps}
                   {...register(field.name, { required: field.required })}

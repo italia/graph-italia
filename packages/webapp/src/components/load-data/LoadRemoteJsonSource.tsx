@@ -44,10 +44,11 @@ function LoadSource({
   return (
     <div className="space-y-4">
       <div className="form-control">
-        <label className="label">
+        <label htmlFor="json-source-url" className="label">
           <span className="label-text font-medium">JSON data source URL</span>
         </label>
         <input
+          id="json-source-url"
           className={`input input-bordered w-full ${error ? "input-error" : ""
             }`}
           type="url"
