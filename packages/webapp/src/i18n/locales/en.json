@@ -173,6 +173,42 @@
       "sr": {
         "label": "Vai al contenuto principale"
       },
+      "fullHeader": {
+        "slim": {
+          "brand": {
+            "title": "Dipartimento per la trasformazione digitale"
+          },
+          "actions": {
+            "login": {
+              "label": "Login"
+            },
+            "logout": {
+              "label": "Logout"
+            }
+          }
+        },
+        "center": {
+          "brand": {
+            "title": "Dataviz",
+            "tagline": "Share your charts"
+          },
+          "social": {
+            "label": "Source on",
+            "platoforms": {
+              "github": {
+                "ariaLabel": "GitHub (si apre in nuova finestra)"
+              }
+            }
+          }
+        },
+        "nav": {
+          "content": {
+            "hamburger": {
+              "label": "Menu"
+            }
+          }
+        }
+      },
       "slimHeader": {
         "brand": {
           "title": "Dataviz"
