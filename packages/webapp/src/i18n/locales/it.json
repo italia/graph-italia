@@ -169,6 +169,77 @@
         }
       }
     },
+    "layout": {
+      "sr": {
+        "label": "Vai al contenuto principale"
+      },
+      "fullHeader": {
+        "slim": {
+          "brand": {
+            "title": "Dipartimento per la trasformazione digitale"
+          },
+          "actions": {
+            "login": {
+              "label": "Login"
+            },
+            "logout": {
+              "label": "Logout"
+            }
+          }
+        },
+        "center": {
+          "brand": {
+            "title": "Dataviz",
+            "tagline": "Share your charts"
+          },
+          "social": {
+            "label": "Source on",
+            "platoforms": {
+              "github": {
+                "ariaLabel": "GitHub (si apre in nuova finestra)"
+              }
+            }
+          }
+        },
+        "nav": {
+          "content": {
+            "hamburger": {
+              "label": "Menu"
+            }
+          }
+        }
+      },
+      "slimHeader": {
+        "brand": {
+          "title": "Dataviz"
+        },
+        "actions": {
+          "login": {
+            "label": "Accedi"
+          },
+          "logout": {
+            "label": "Esci"
+          }
+        }
+      },
+      "footer": {
+        "brand": {
+          "title": "Dataviz",
+          "tagline": "Share your charts"
+        },
+        "links": {
+          "quickstart": {
+            "label": "Quick Start"
+          },
+          "tos": {
+            "label": "Terms of service"
+          },
+          "privacy": {
+            "label": "Privacy policy"
+          }
+        }
+      }
+    },
     "chartTable": {
       "columns": {
         "type": {
@@ -305,6 +376,35 @@
         "actions": {
           "init": {
             "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
+          }
+        }
+      }
+    }
+  },
+  "router": {
+    "menu": {
+      "items": {
+        "charts": {
+          "label": "Charts"
+        },
+        "tools": {
+          "label": "Tools",
+          "subItems": {
+            "quickStart": {
+              "label": "Quick Start"
+            },
+            "generateData": {
+              "label": "Generate Data"
+            },
+            "generatePois": {
+              "label": "Generate Pois"
+            },
+            "loadRemoteData": {
+              "label": "Load Remote Data"
+            },
+            "geo": {
+              "label": "Check GeoJSon File"
+            }
           }
         }
       }

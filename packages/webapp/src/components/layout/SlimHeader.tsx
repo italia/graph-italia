@@ -3,14 +3,16 @@
  * Brand Dataviz, menu nav, lingua, nome utente / Esci.
  */
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
-import { useUserStore } from "../../store/user_store";
-import  type {  MenuSubItem, MenuItem } from "../../router";
+import type { MenuSubItem } from "../../router";
 import { MENU } from "../../router";
+import { useUserStore } from "../../store/user_store";
 import "./SlimHeader.css";
 
-
 export default function SlimHeader() {
+  const { t } = useTranslation();
+  const TRANSLATION_KEY_PATH = "components.layout.slimHeader";
   const { user, clearUser } = useUserStore();
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
@@ -48,7 +50,7 @@ export default function SlimHeader() {
           <div className="it-slim-only-content">
             <div className="it-slim-only-brand">
               <a href="/" className="it-slim-only-brand-title">
-                Dataviz
+                {t(`${TRANSLATION_KEY_PATH}.brand.title`)}
               </a>
               <button
                 type="button"
@@ -77,11 +79,12 @@ export default function SlimHeader() {
                             className="it-slim-only-nav-link"
                             aria-expanded={dropdownToolsAperto}
                             aria-haspopup="true"
-                            onClick={() =>
-                              setDropdownToolsAperto((v) => !v)
-                            }
+                            onClick={() => setDropdownToolsAperto((v) => !v)}
                           >
-                            {item.name}
+                            {item.translationKey
+                              ? t(item.translationKey)
+                              : item.name}
+
                             <svg
                               className="it-slim-only-icon it-slim-only-icon-expand"
                               aria-hidden="true"
@@ -101,7 +104,9 @@ export default function SlimHeader() {
                                   className="it-slim-only-dropdown-item"
                                   role="menuitem"
                                 >
-                                  {sub.name}
+                                  {sub.translationKey
+                                    ? t(sub.translationKey)
+                                    : sub.name}
                                 </a>
                               </li>
                             ))}
@@ -110,15 +115,11 @@ export default function SlimHeader() {
                       );
                     }
                     return (
-                      <li
-                        key={item.name}
-                        className="it-slim-only-nav-item"
-                      >
-                        <a
-                          href={item.link}
-                          className="it-slim-only-nav-link"
-                        >
-                          {item.name}
+                      <li key={item.name} className="it-slim-only-nav-item">
+                        <a href={item.link} className="it-slim-only-nav-link">
+                          {item.translationKey
+                            ? t(item.translationKey)
+                            : item.name}
                         </a>
                       </li>
                     );
@@ -131,15 +132,13 @@ export default function SlimHeader() {
               <div className="it-slim-only-actions-right">
                 {user ? (
                   <span className="it-slim-only-user">
-                    <span className="it-slim-only-user-name">
-                      {user.name}
-                    </span>
+                    <span className="it-slim-only-user-name">{user.name}</span>
                     <button
                       type="button"
                       className="it-slim-only-btn it-slim-only-btn-outline"
                       onClick={handleLogout}
                     >
-                      Esci
+                      {t(`${TRANSLATION_KEY_PATH}.actions.logout.label`)}
                     </button>
                   </span>
                 ) : (
@@ -148,7 +147,7 @@ export default function SlimHeader() {
                     className="it-slim-only-btn it-slim-only-btn-outline"
                     aria-label="Accedi"
                   >
-                    Accedi
+                    {t(`${TRANSLATION_KEY_PATH}.actions.login.label`)}
                   </a>
                 )}
               </div>
@@ -167,7 +166,7 @@ export default function SlimHeader() {
               return (
                 <li key={item.name}>
                   <span className="it-slim-only-mobile-label">
-                    {item.name}
+                    {item.translationKey ? t(item.translationKey) : item.name}
                   </span>
                   <ul className="it-slim-only-mobile-sublist">
                     {item.subMenu.map((sub: MenuSubItem) => (
@@ -176,7 +175,9 @@ export default function SlimHeader() {
                           href={sub.link}
                           onClick={() => setMenuMobileAperto(false)}
                         >
-                          {sub.name}
+                          {sub.translationKey
+                            ? t(sub.translationKey)
+                            : sub.name}
                         </a>
                       </li>
                     ))}
@@ -187,7 +188,7 @@ export default function SlimHeader() {
             return (
               <li key={item.name}>
                 <a href={item.link} onClick={() => setMenuMobileAperto(false)}>
-                  {item.name}
+                  {item.translationKey ? t(item.translationKey) : item.name}
                 </a>
               </li>
             );
