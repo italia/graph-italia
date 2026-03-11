@@ -378,7 +378,7 @@ export default function ChartTable({
 
       <Dialog
         toggle={data ? true : false}
-        title="Preview Chart"
+        title={t(`${TRANSLATION_KEY_PATH}.modals.previewChart.title`)}
         callback={() => setData(null)}
       >
         <div className="w-full h-full p-4" style={{ minHeight: "400px" }}>
@@ -387,7 +387,7 @@ export default function ChartTable({
       </Dialog>
       <Dialog
         toggle={show ? true : false}
-        title="Embed This Chart"
+        title={t(`${TRANSLATION_KEY_PATH}.modals.embedChart.title`)}
         callback={() => setShow(null)}
       >
         <div className="mockup-code">

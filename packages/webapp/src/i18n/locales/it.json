@@ -199,6 +199,14 @@
         "actions": {
           "label": "Actions"
         }
+      },
+      "modals": {
+        "embedChart": {
+          "title": "Embed this Chart"
+        },
+        "previewChart": {
+          "title": "Preview Chart"
+        }
       }
     }
   },

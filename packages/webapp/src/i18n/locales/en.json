@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-it",
+  "appname": "Dataviz-en",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -198,6 +198,14 @@
         },
         "actions": {
           "label": "Actions"
+        }
+      },
+      "modals": {
+        "embedChart": {
+          "title": "Embed this Chart"
+        },
+        "previewChart": {
+          "title": "Preview Chart"
         }
       }
     }
