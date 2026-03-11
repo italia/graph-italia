@@ -13,8 +13,14 @@ function Layout({ children }: any) {
       className="w-full min-h-screen flex flex-col"
       style={{ overflowX: "clip" }}
     >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-content focus:rounded focus:text-sm focus:font-semibold"
+      >
+        Vai al contenuto principale
+      </a>
       {user ? <SlimHeader /> : <FullHeader />}
-      <div className="flex-grow">{children}</div>
+      <main id="main-content" className="flex-grow">{children}</main>
       <Footer />
       <Toaster />
     </div>

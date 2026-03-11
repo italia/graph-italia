@@ -100,18 +100,18 @@ function SelectChart({
   setChart: Function;
 }) {
   return (
-    <div className="space-y-3">
-      <label className="label">
+    <fieldset className="space-y-3 border-none p-0 m-0">
+      <legend className="label">
         <span className="label-text font-medium">Chart type</span>
-      </label>
+      </legend>
 
-      {/* Chart type selection grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {CHART_TYPES.map((type) => (
           <button
             key={type.value}
             type="button"
             onClick={() => setChart(type.value)}
+            aria-pressed={chart === type.value}
             className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all hover:border-primary/50 ${
               chart === type.value
                 ? "border-primary bg-primary/5 text-primary"
@@ -132,13 +132,12 @@ function SelectChart({
         ))}
       </div>
 
-      {/* Selected type description */}
       {chart && (
         <p className="text-sm text-base-content/60 px-1">
           {CHART_TYPES.find((t) => t.value === chart)?.description}
         </p>
       )}
-    </div>
+    </fieldset>
   );
 }
 

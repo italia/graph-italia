@@ -102,128 +102,142 @@ function ChartOptions({
     );
   }
 
+  const groups: { label: string; fields: typeof filteredFields }[] = [];
+  for (const field of filteredFields) {
+    if (field.type === "label") {
+      groups.push({ label: field.name, fields: [] });
+    } else if (groups.length > 0) {
+      groups[groups.length - 1].fields.push(field);
+    }
+  }
+
+  function renderField(field: (typeof filteredFields)[number]) {
+    if (["text", "email", "number", "color"].includes(field.type)) {
+      const layoutValue = field.layout ? Number(field.layout) : 1;
+      const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
+
+      let label = translateLabel(field.label);
+      if (
+        (field.name === "xLabel" || field.name === "yLabel") &&
+        watchDirection === "horizontal"
+      ) {
+        label =
+          field.name === "xLabel"
+            ? label.replace("X", "Y")
+            : label.replace("Y", "X");
+      }
+      return (
+        <div key={field.name} className={`form-control ${gridSpan}`}>
+          <label htmlFor={`opt-${field.name}`} className="label">
+            <span className="label-text font-medium">{label}</span>
+          </label>
+          <input
+            id={`opt-${field.name}`}
+            className="input input-bordered w-full"
+            type={field.type}
+            {...field.otherProps}
+            {...register(field.name, { required: field.required })}
+          />
+          {errors[field.name] && (
+            <label className="label">
+              <span className="label-text-alt text-error">
+                Required field
+              </span>
+            </label>
+          )}
+        </div>
+      );
+    }
+
+    if (["checkbox"].includes(field.type)) {
+      const layoutValue = field.layout ? Number(field.layout) : 1;
+      const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
+
+      return (
+        <div key={field.name} className={`form-control ${gridSpan}`}>
+          <label className="label cursor-pointer justify-start gap-3">
+            <input
+              className="checkbox checkbox-primary"
+              type="checkbox"
+              {...field.otherProps}
+              {...register(field.name, { required: field.required })}
+            />
+            <span className="label-text font-medium">
+              {translateLabel(field.label)}
+            </span>
+          </label>
+          {errors[field.name] && (
+            <label className="label">
+              <span className="label-text-alt text-error">
+                Required field
+              </span>
+            </label>
+          )}
+        </div>
+      );
+    }
+
+    if (["select"].includes(field.type)) {
+      const layoutValue = field.layout ? Number(field.layout) : 1;
+      const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
+
+      return (
+        <div key={field.name} className={`form-control ${gridSpan}`}>
+          <label htmlFor={`opt-${field.name}`} className="label">
+            <span className="label-text font-medium">
+              {translateLabel(field.label)}
+            </span>
+          </label>
+          <select
+            id={`opt-${field.name}`}
+            className="select select-bordered w-full"
+            {...field.otherProps}
+            {...register(field.name, { required: field.required })}
+          >
+            {(field.options ?? []).map((option: string) => (
+              <option key={option} value={option}>
+                {field.name === "palette" && option === "theme"
+                  ? "Theme Colors"
+                  : option}
+              </option>
+            ))}
+          </select>
+          {errors[field.name] && (
+            <label className="label">
+              <span className="label-text-alt text-error">
+                Required field
+              </span>
+            </label>
+          )}
+          {field.name === "palette" && watchPalette && watchPalette !== "theme" && (
+            <div className="mt-2">
+              <ShowPalette palette={palettes[watchPalette]} />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  }
+
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {filteredFields.map((field) => {
-          if (["text", "email", "number", "color"].includes(field.type)) {
-            const layoutValue = field.layout ? Number(field.layout) : 1;
-            const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
-
-            let label = translateLabel(field.label);
-            if (
-              (field.name === "xLabel" || field.name === "yLabel") &&
-              watchDirection === "horizontal"
-            ) {
-              label =
-                field.name === "xLabel"
-                  ? label.replace("X", "Y")
-                  : label.replace("Y", "X");
-            }
-            return (
-              <div key={field.name} className={`form-control ${gridSpan}`}>
-                <label htmlFor={`opt-${field.name}`} className="label">
-                  <span className="label-text font-medium">{label}</span>
-                </label>
-                <input
-                  id={`opt-${field.name}`}
-                  className="input input-bordered w-full"
-                  type={field.type}
-                  {...field.otherProps}
-                  {...register(field.name, { required: field.required })}
-                />
-                {errors[field.name] && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      Required field
-                    </span>
-                  </label>
-                )}
-              </div>
-            );
-          }
-
-          if (["checkbox"].includes(field.type)) {
-            const layoutValue = field.layout ? Number(field.layout) : 1;
-            const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
-
-            return (
-              <div key={field.name} className={`form-control ${gridSpan}`}>
-                <label className="label cursor-pointer justify-start gap-3">
-                  <input
-                    className="checkbox checkbox-primary"
-                    type="checkbox"
-                    {...field.otherProps}
-                    {...register(field.name, { required: field.required })}
-                  />
-                  <span className="label-text font-medium">
-                    {translateLabel(field.label)}
-                  </span>
-                </label>
-                {errors[field.name] && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      Required field
-                    </span>
-                  </label>
-                )}
-              </div>
-            );
-          }
-
-          if (["select"].includes(field.type)) {
-            const layoutValue = field.layout ? Number(field.layout) : 1;
-            const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
-
-            return (
-              <div key={field.name} className={`form-control ${gridSpan}`}>
-                <label htmlFor={`opt-${field.name}`} className="label">
-                  <span className="label-text font-medium">
-                    {translateLabel(field.label)}
-                  </span>
-                </label>
-                <select
-                  id={`opt-${field.name}`}
-                  className="select select-bordered w-full"
-                  {...field.otherProps}
-                  {...register(field.name, { required: field.required })}
-                >
-                  {(field.options ?? []).map((option: string) => (
-                    <option key={option} value={option}>
-                      {field.name === "palette" && option === "theme"
-                        ? "Theme Colors"
-                        : option}
-                    </option>
-                  ))}
-                </select>
-                {errors[field.name] && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      Required field
-                    </span>
-                  </label>
-                )}
-                {field.name === "palette" && watchPalette && watchPalette !== "theme" && (
-                  <div className="mt-2">
-                    <ShowPalette palette={palettes[watchPalette]} />
-                  </div>
-                )}
-              </div>
-            );
-          }
-
-          return (
-            <div key={field.name} className="col-span-full mt-4 first:mt-0">
-              <div className="flex items-center gap-2">
-                <span className="badge badge-neutral">
-                  {translateSection(field.name)}
-                </span>
-                <div className="flex-1 h-px bg-base-200"></div>
-              </div>
+      {groups.map((group) => (
+        <fieldset key={group.label} className="border-none p-0 m-0 mt-4 first:mt-0">
+          <legend className="w-full pb-2">
+            <div className="flex items-center gap-2">
+              <span className="badge badge-neutral">
+                {translateSection(group.label)}
+              </span>
+              <div className="flex-1 h-px bg-base-200"></div>
             </div>
-          );
-        })}
-      </div>
+          </legend>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {group.fields.map(renderField)}
+          </div>
+        </fieldset>
+      ))}
     </div>
   );
 }
