@@ -11,33 +11,62 @@ import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
+import PrivateAreePage from "./pages/home";
 import QuickStartPage from "./pages/QuickStartPage";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import DashboardViewPage from "./pages/show/ShowDashboardPage";
 import RootRoute from "./pages/Splash";
 import TermsPage from "./pages/terms";
 import GenerateDataPage from "./pages/utility/GenerateDataPage";
+import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
-import PrivateAreePage from "./pages/home";
-import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
 
 export const HOME_ROUTE = "/home";
-export type MenuSubItem = { name: string; link: string };
+type TMenuItem = { name: string; link: string; translationKey?: string };
+export type MenuSubItem = TMenuItem;
 export type MenuItem =
-  | { name: string; link: string }
-  | { name: string; link: string; subMenu: readonly MenuSubItem[] };
+  | TMenuItem
+  | (TMenuItem & { subMenu: readonly MenuSubItem[] });
+
+const MENU_ITEMS_TRANSLATION_KEYS = "router.menu.items";
+
 export const MENU: readonly MenuItem[] = [
-  { name: "Charts", link: HOME_ROUTE || "/" },
+  {
+    name: "Charts",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
+    link: HOME_ROUTE || "/",
+  },
   {
     name: "Tools",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.label`,
     link: "",
     subMenu: [
-      { name: "Quick Start", link: "/quickstart" },
-      { name: "Generate Data", link: "/generate-data" },
-      { name: "Generate Pois", link: "/generate-poi" },
-      { name: "Load Remote Data", link: "/load-data" },
-      { name: "Check GeoJSon File", link: "/geo" },
+      {
+        name: "Quick Start",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.quickStart`,
+        link: "/quickstart",
+      },
+      {
+        name: "Generate Data",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generateData`,
+        link: "/generate-data",
+      },
+      {
+        name: "Generate Pois",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois`,
+        link: "/generate-poi",
+      },
+      {
+        name: "Load Remote Data",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData`,
+        link: "/load-data",
+      },
+      {
+        name: "Check GeoJSon File",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo`,
+        link: "/geo",
+      },
     ],
   },
 ];

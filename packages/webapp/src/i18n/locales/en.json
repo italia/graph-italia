@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-it",
+  "appname": "Dataviz-en",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -359,6 +359,35 @@
         "actions": {
           "init": {
             "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
+          }
+        }
+      }
+    }
+  },
+  "router": {
+    "menu": {
+      "items": {
+        "charts": {
+          "label": "Charts"
+        },
+        "tools": {
+          "label": "Tools",
+          "subItems": {
+            "quickStart": {
+              "label": "Quick Start"
+            },
+            "generateData": {
+              "label": "Generate Data"
+            },
+            "generatePois": {
+              "label": "Generate Pois"
+            },
+            "loadRemoteData": {
+              "label": "Load Remote Data"
+            },
+            "geo": {
+              "label": "Check GeoJSon File"
+            }
           }
         }
       }

@@ -212,7 +212,9 @@ export default function HeaderCompleta() {
                           aria-haspopup="true"
                           onClick={() => setDropdownToolsAperto((v) => !v)}
                         >
-                          {item.name}
+                          {item.translationKey
+                            ? t(item.translationKey)
+                            : item.name}
                           <svg
                             className="it-header-icon it-header-icon-expand"
                             aria-hidden="true"
@@ -233,7 +235,9 @@ export default function HeaderCompleta() {
                                 role="menuitem"
                                 onClick={() => setMenuMobileAperto(false)}
                               >
-                                {sub.name}
+                                {sub.translationKey
+                                  ? t(sub.translationKey)
+                                  : sub.name}
                               </a>
                             </li>
                           ))}
@@ -248,7 +252,9 @@ export default function HeaderCompleta() {
                         className="it-header-nav-link"
                         onClick={() => setMenuMobileAperto(false)}
                       >
-                        {item.name}
+                        {item.translationKey
+                          ? t(item.translationKey)
+                          : item.name}
                       </a>
                     </li>
                   );
