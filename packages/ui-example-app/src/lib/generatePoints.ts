@@ -86,7 +86,7 @@ export function generateSamplePoints(totalPoints: number = 1000): PointData[] {
     points.push({
       id: tuscanyPoints + i,
       name: `Italian Point ${i + 1}`,
-      lon: lon,
+      lng: lon,
       lat: lat,
       region: "Other",
     });
