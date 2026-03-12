@@ -318,6 +318,22 @@
       }
     },
     "loadData": {
+      "chooseLoader": {
+        "tabs": {
+          "csv": {
+            "label": "CSV File",
+            "description": "Upload a CSV file from your computer"
+          },
+          "json": {
+            "label": "JSON File",
+            "description": "Upload a JSON file from your computer"
+          },
+          "remoteUrl": {
+            "label": "Remote URL",
+            "description": "Load data from a remote JSON URL"
+          }
+        }
+      },
       "transformData": {
         "header": {
           "label": "Transform Data"
