@@ -169,6 +169,83 @@
         }
       }
     },
+    "charts": {
+      "editChart": {
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+        "save": {
+          "success": {
+            "label": "Chart saved successfully!"
+          },
+          "error": {
+            "label": "Error saving chart!"
+          }
+        },
+        "head": {
+          "title": {
+            "label": "Edit Chart"
+          },
+          "meta": {
+            "description": {
+              "content": "Creating chart"
+            }
+          }
+        },
+        "header": {
+          "actions": {
+            "back": {
+              "label": "Back to list"
+            },
+            "save": {
+              "default": "Save",
+              "isSaving": "Saving"
+            }
+          }
+        },
+        "body": {
+          "options": {
+            "setup": {
+              "title": "Setup Info",
+              "description": "Name, description and visibility of the chart",
+              "form": {
+                "fields": {
+                  "visibility": {
+                    "label": "Chart Visibility",
+                    "values": {
+                      "private": "Private",
+                      "public": "Public"
+                    }
+                  },
+                  "title": {
+                    "label": "Chart Title"
+                  },
+                  "description": {
+                    "label": "Chart Description",
+                    "placeholder": "Add a description"
+                  }
+                }
+              }
+            },
+            "configuration": {
+              "title": "Configure the chart",
+              "description": "Choose the chart type and customize its appearance",
+              "status": "Please load data and proceed to configuration step to see chart options"
+            },
+            "data": {
+              "title": "Load your data",
+              "description": "Import data from CSV, JSON files or from a remote source",
+              "actions": {
+                "useData": {
+                  "label": "Use thi data"
+                }
+              }
+            }
+          },
+          "preview": {
+            "loadDataMessage": "Load your data to display the data preview"
+          }
+        }
+      }
+    },
     "layout": {
       "sr": {
         "label": "Vai al contenuto principale"
@@ -240,6 +317,94 @@
         }
       }
     },
+    "loadData": {
+      "chooseLoader": {
+        "tabs": {
+          "csv": {
+            "label": "CSV File",
+            "description": "Upload a CSV file from your computer"
+          },
+          "json": {
+            "label": "JSON File",
+            "description": "Upload a JSON file from your computer"
+          },
+          "remoteUrl": {
+            "label": "Remote URL",
+            "description": "Load data from a remote JSON URL"
+          }
+        }
+      },
+      "loadRemoteCsvData": {
+        "errors": {
+          "invalidUrl": "Please enter a valid URL",
+          "loadingError": "Unable to load data from the specified URL"
+        },
+        "header": {
+          "label": "CSV data source URL"
+        },
+        "actions": {
+          "load": {
+            "default": "Load remote CSV data",
+            "loading": "Loading..."
+          }
+        }
+      },
+      "loadRemoteJsonData": {
+        "errors": {
+          "invalidUrl": "Please enter a valid URL",
+          "loadingError": "Unable to load data from the specified URL"
+        },
+        "header": {
+          "label": "JSON data source URL"
+        },
+        "actions": {
+          "load": {
+            "default": "Load remote JSON data",
+            "loading": "Loading..."
+          }
+        }
+      },
+      "transformData": {
+        "header": {
+          "label": "Transform Data"
+        },
+        "actions": {
+          "transpose": {
+            "label": "Transpose"
+          },
+          "reset": {
+            "label": "Reset"
+          }
+        },
+        "table": {
+          "actions": {
+            "toggleColumns": {
+              "label": "Toggle columns"
+            },
+            "apply": {
+              "label": "Apply Changes"
+            },
+            "reset": {
+              "label": "Reset"
+            }
+          },
+          "title": "Transform Data",
+          "sorting": {
+            "label": "Sorted by"
+          }
+        }
+      }
+    },
+    "chartOptions": {
+      "errors": {
+        "selectChart": "Select a chart type to configure options"
+      },
+      "form": {
+        "errors": {
+          "required": "Required field"
+        }
+      }
+    },
     "chartTable": {
       "columns": {
         "type": {
@@ -277,6 +442,31 @@
         },
         "previewChart": {
           "title": "Preview Chart"
+        }
+      }
+    },
+    "selectChart": {
+      "chartTypes": {
+        "bar": {
+          "label": "Bar chart",
+          "description": "Compare values across categories"
+        },
+        "line": {
+          "label": "Line",
+          "description": "Show trends over time"
+        },
+        "pie": {
+          "label": "Pie chart",
+          "description": "Display proportions"
+        },
+        "map": {
+          "label": "Geographic map",
+          "description": "Display data on a map"
+        }
+      },
+      "fieldset": {
+        "legend": {
+          "label": "Chart type"
         }
       }
     }

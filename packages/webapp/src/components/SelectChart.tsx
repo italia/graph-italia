@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
+
 // Available chart types with icons and descriptions
 const CHART_TYPES = [
   {
     value: "bar",
-    label: "Bar chart",
-    description: "Compare values across categories",
+    label: "chartTypes.bar.label",
+    description: "chartTypes.bar.description",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,8 +25,8 @@ const CHART_TYPES = [
   },
   {
     value: "line",
-    label: "Line chart",
-    description: "Show trends over time",
+    label: "chartTypes.line.label",
+    description: "chartTypes.line.description",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -44,8 +46,8 @@ const CHART_TYPES = [
   },
   {
     value: "pie",
-    label: "Pie chart",
-    description: "Display proportions",
+    label: "chartTypes.pie.label",
+    description: "chartTypes.pie.description",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -71,8 +73,8 @@ const CHART_TYPES = [
   },
   {
     value: "map",
-    label: "Geographic map",
-    description: "Display data on a map",
+    label: "chartTypes.map.label",
+    description: "chartTypes.map.description",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -99,10 +101,15 @@ function SelectChart({
   chart?: string;
   setChart: Function;
 }) {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.selectChart",
+  });
   return (
     <fieldset className="space-y-3 border-none p-0 m-0">
       <legend className="label">
-        <span className="label-text font-medium">Chart type</span>
+        <span className="label-text font-medium">
+          {t("fieldset.legend.label")}
+        </span>
       </legend>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -126,7 +133,7 @@ function SelectChart({
               {type.icon}
             </div>
             <span className="text-sm font-medium text-center">
-              {type.label}
+              {t(type.label)}
             </span>
           </button>
         ))}
@@ -134,7 +141,7 @@ function SelectChart({
 
       {chart && (
         <p className="text-sm text-base-content/60 px-1">
-          {CHART_TYPES.find((t) => t.value === chart)?.description}
+          {t(CHART_TYPES.find((t) => t.value === chart)?.description)}
         </p>
       )}
     </fieldset>

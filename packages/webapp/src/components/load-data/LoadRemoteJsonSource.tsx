@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { log } from "../../lib/utils";
 
 function LoadSource({
@@ -8,13 +9,16 @@ function LoadSource({
   setData: Function;
   currentValue: string | null;
 }) {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.loadData.loadRemoteJsonData",
+  });
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState(currentValue || "");
   const [error, setError] = useState<string | null>(null);
 
   async function getData() {
     if (!url.trim()) {
-      setError("Please enter a valid URL");
+      setError(t("errors.invalidUrl"));
       return;
     }
 
@@ -24,7 +28,6 @@ function LoadSource({
     try {
       const testUrl = new URL(url);
       if (testUrl) {
-
         const response = await fetch(url);
         console.log("fetch response", response);
         const data = await response.json();
@@ -35,7 +38,7 @@ function LoadSource({
       }
     } catch (err) {
       log(err);
-      setError("Unable to load data from the specified URL");
+      setError(t("errors.loadingError"));
     } finally {
       setLoading(false);
     }
@@ -45,12 +48,13 @@ function LoadSource({
     <div className="space-y-4">
       <div className="form-control">
         <label htmlFor="json-source-url" className="label">
-          <span className="label-text font-medium">JSON data source URL</span>
+          <span className="label-text font-medium">{t("header.label")}</span>
         </label>
         <input
           id="json-source-url"
-          className={`input input-bordered w-full ${error ? "input-error" : ""
-            }`}
+          className={`input input-bordered w-full ${
+            error ? "input-error" : ""
+          }`}
           type="url"
           value={url}
           placeholder="https://example.com/data.json"
@@ -81,7 +85,7 @@ function LoadSource({
         {loading ? (
           <span role="status">
             <span className="loading loading-spinner loading-sm"></span>
-            Loading...
+            {t("actions.load.loading")}
           </span>
         ) : (
           <>
@@ -99,7 +103,7 @@ function LoadSource({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
               />
             </svg>
-            Load remote JSON data
+            {t("actions.load.default")}
           </>
         )}
       </button>

@@ -1,30 +1,28 @@
 import { useCallback, useMemo, useState } from "react";
-import DataTable, { createTheme } from "react-data-table-component";
 import type { TableColumn } from "react-data-table-component";
+import DataTable, { createTheme } from "react-data-table-component";
+import { useTranslation } from "react-i18next";
 import { transposeData } from "../../lib/utils";
-import type { MatrixType } from "../../types";
 import { useSettingsStore } from "../../store/settings_store.ts";
+import type { MatrixType } from "../../types";
 
-createTheme(
-  "dark",
-  {
-    text: {
-      primary: "rgba(255,255,255, 0.54)",
-      secondary: "rgba(255,255,255, 0.54)",
-      disabled: "rgba(255,255,255, 0.38)",
-    },
-    background: {
-      default: "transparent",
-    },
-    divider: {
-      default: "rgba(255,255,255,.075)",
-    },
-    highlightOnHover: {
-      default: "rgba(255,255,255,.03)",
-      text: "#fff",
-    },
+createTheme("dark", {
+  text: {
+    primary: "rgba(255,255,255, 0.54)",
+    secondary: "rgba(255,255,255, 0.54)",
+    disabled: "rgba(255,255,255, 0.38)",
   },
-);
+  background: {
+    default: "transparent",
+  },
+  divider: {
+    default: "rgba(255,255,255,.075)",
+  },
+  highlightOnHover: {
+    default: "rgba(255,255,255,.03)",
+    text: "#fff",
+  },
+});
 
 type TransformDataProps = {
   currentData: MatrixType;
@@ -42,6 +40,8 @@ export default function TransformData({
   currentData,
   handleTransformData,
 }: TransformDataProps) {
+  const { t } = useTranslation();
+  const TRANSLATION_KEY_PATH = "components.loadData.transformData";
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
 
@@ -60,7 +60,9 @@ export default function TransformData({
   );
 
   // State: column ordering (initially matches the original header order)
-  const [columnOrder, setColumnOrder] = useState<string[]>(() => [...allHeaders]);
+  const [columnOrder, setColumnOrder] = useState<string[]>(() => [
+    ...allHeaders,
+  ]);
 
   // State: current sort
   const [sortState, setSortState] = useState<SortState>(null);
@@ -188,16 +190,25 @@ export default function TransformData({
     const originalHeaders = (currentData[0] ?? []).map(String);
     const dataChanged = workingData !== currentData;
     const visibleChanged = visibleColumns.size !== allHeaders.length;
-    const orderChanged = columnOrder.some((key, i) => key !== originalHeaders[i]);
+    const orderChanged = columnOrder.some(
+      (key, i) => key !== originalHeaders[i],
+    );
     return dataChanged || visibleChanged || orderChanged || sortState !== null;
-  }, [visibleColumns, columnOrder, allHeaders, sortState, workingData, currentData]);
+  }, [
+    visibleColumns,
+    columnOrder,
+    allHeaders,
+    sortState,
+    workingData,
+    currentData,
+  ]);
 
   return (
     <div className="mt-10">
       {/* Transpose & Reset controls */}
       <div className="mb-4 flex items-center justify-between">
         <h4 className="text-sm font-semibold text-base-content/70">
-          Transform Data
+          {t(`${TRANSLATION_KEY_PATH}.header.label`)}
         </h4>
         <div className="flex gap-2">
           <button
@@ -205,14 +216,14 @@ export default function TransformData({
             className="btn btn-default btn-outline"
             onClick={transpose}
           >
-            Transpose
+            {t(`${TRANSLATION_KEY_PATH}.actions.transpose.label`)}
           </button>
           <button
             type="button"
             className="btn btn-default btn-outline"
             onClick={resetData}
           >
-            Reset
+            {t(`${TRANSLATION_KEY_PATH}.actions.reset.label`)}
           </button>
         </div>
       </div>
@@ -220,16 +231,17 @@ export default function TransformData({
       {/* Column toggle controls */}
       <div className="mb-4">
         <h4 className="text-sm font-semibold mb-2 text-base-content/70">
-          Toggle columns
+          {t(`${TRANSLATION_KEY_PATH}.table.actions.toggleColumns.label`)}
         </h4>
         <div className="flex flex-wrap gap-2">
           {columnOrder.map((colName) => (
             <label
               key={colName}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
-                ? "bg-primary/10 border-primary/30 text-primary"
-                : "bg-base-200 border-base-300 text-base-content/40 line-through"
-                }`}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
+                visibleColumns.has(colName)
+                  ? "bg-primary/10 border-primary/30 text-primary"
+                  : "bg-base-200 border-base-300 text-base-content/40 line-through"
+              }`}
             >
               <input
                 type="checkbox"
@@ -244,7 +256,7 @@ export default function TransformData({
       </div>
 
       <DataTable
-        title="Transform Data"
+        title={t(`${TRANSLATION_KEY_PATH}.table.title`)}
         columns={columns}
         data={objectData}
         pagination={true}
@@ -261,7 +273,8 @@ export default function TransformData({
 
       {sortState && (
         <div className="mt-2 text-xs text-base-content/50">
-          Sorted by <strong>{sortState.columnKey}</strong> ({sortState.direction})
+          {t(`${TRANSLATION_KEY_PATH}.table.sorting.label`)}{" "}
+          <strong>{sortState.columnKey}</strong> ({sortState.direction})
         </div>
       )}
 
@@ -272,7 +285,7 @@ export default function TransformData({
           onClick={applyChanges}
           disabled={!hasChanges}
         >
-          Apply Changes
+          {t(`${TRANSLATION_KEY_PATH}.table.actions.apply.label`)}
         </button>
         {hasChanges && (
           <button
@@ -284,7 +297,7 @@ export default function TransformData({
               setSortState(null);
             }}
           >
-            Reset
+            {t(`${TRANSLATION_KEY_PATH}.table.actions.reset.label`)}
           </button>
         )}
       </div>
