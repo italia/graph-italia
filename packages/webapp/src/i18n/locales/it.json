@@ -240,7 +240,9 @@
               }
             }
           },
-          "preview": {}
+          "preview": {
+            "loadDataMessage": "Load your data to display the data preview"
+          }
         }
       }
     },

@@ -498,7 +498,7 @@ function EditChartPage() {
               <div>
                 {!haveData ? (
                   <p className="italic text-base-content" role="status">
-                    Load your data to display the data preview
+                    {t(`${TRANSLATION_KEY_PATH}.body.preview.loadDataMessage`)}
                   </p>
                 ) : (
                   <div className="overflow-auto flex-1 min-h-0">
