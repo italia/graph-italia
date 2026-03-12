@@ -317,6 +317,38 @@
         }
       }
     },
+    "loadData": {
+      "transformData": {
+        "header": {
+          "label": "Transform Data"
+        },
+        "actions": {
+          "transpose": {
+            "label": "Transpose"
+          },
+          "reset": {
+            "label": "Reset"
+          }
+        },
+        "table": {
+          "actions": {
+            "toggleColumns": {
+              "label": "Toggle columns"
+            },
+            "apply": {
+              "label": "Apply Changes"
+            },
+            "reset": {
+              "label": "Reset"
+            }
+          },
+          "title": "Transform Data",
+          "sorting": {
+            "label": "Sorted by"
+          }
+        }
+      }
+    },
     "chartTable": {
       "columns": {
         "type": {
