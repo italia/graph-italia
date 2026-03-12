@@ -349,6 +349,16 @@
         }
       }
     },
+    "chartOptions": {
+      "errors": {
+        "selectChart": "Select a chart type to configure options"
+      },
+      "form": {
+        "errors": {
+          "required": "Required field"
+        }
+      }
+    },
     "chartTable": {
       "columns": {
         "type": {

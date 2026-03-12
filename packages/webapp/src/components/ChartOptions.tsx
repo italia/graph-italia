@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { defaultConfig, getFields, palettes } from "../lib/constants";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
 import ShowPalette from "./ShowPalette";
@@ -23,6 +24,9 @@ function ChartOptions({
   chart: string;
   numSeries: number;
 }) {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.chartOptions",
+  });
   const availabelPalettes =
     chart === "map" ? getMapPalettes() : getAvailablePalettes(numSeries);
   const defaultPalette = availabelPalettes[0];
@@ -52,7 +56,13 @@ function ChartOptions({
     const { h, w, palette, ...rest } = formValues;
     if (palette) {
       const colors = palette === "theme" ? [] : palettes[palette];
-      const newConfig = { h: Number(h), w: Number(w), ...rest, colors, palette };
+      const newConfig = {
+        h: Number(h),
+        w: Number(w),
+        ...rest,
+        colors,
+        palette,
+      };
       setConfig(newConfig);
     }
   }, [JSON.stringify(formValues)]);
@@ -73,32 +83,32 @@ function ChartOptions({
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           ></path>
         </svg>
-        <span>Select a chart type to configure options</span>
+        <span>{t(`errors.selectChart`)}</span>
       </div>
     );
   }
 
   let filteredFields = fields.filter((field) =>
-    field.chartType.includes(chart)
+    field.chartType.includes(chart),
   );
   if (!watchToltip) {
     filteredFields = filteredFields.filter(
-      (field) => field.dependsOn !== "tooltip"
+      (field) => field.dependsOn !== "tooltip",
     );
   }
   if (!watchLegend) {
     filteredFields = filteredFields.filter(
-      (field) => field.dependsOn !== "legend"
+      (field) => field.dependsOn !== "legend",
     );
   }
   if (!watchShowPieLabels) {
     filteredFields = filteredFields.filter(
-      (field) => field.dependsOn !== "showPieLabels"
+      (field) => field.dependsOn !== "showPieLabels",
     );
   }
   if (!watchVisualMap) {
     filteredFields = filteredFields.filter(
-      (field) => field.dependsOn !== "visualMap"
+      (field) => field.dependsOn !== "visualMap",
     );
   }
 
@@ -141,7 +151,7 @@ function ChartOptions({
           {errors[field.name] && (
             <label className="label">
               <span className="label-text-alt text-error">
-                Required field
+                {t(`form.error.required`)}
               </span>
             </label>
           )}
@@ -169,7 +179,7 @@ function ChartOptions({
           {errors[field.name] && (
             <label className="label">
               <span className="label-text-alt text-error">
-                Required field
+                {t(`form.error.required`)}
               </span>
             </label>
           )}
@@ -205,15 +215,17 @@ function ChartOptions({
           {errors[field.name] && (
             <label className="label">
               <span className="label-text-alt text-error">
-                Required field
+                {t(`form.error.required`)}
               </span>
             </label>
           )}
-          {field.name === "palette" && watchPalette && watchPalette !== "theme" && (
-            <div className="mt-2">
-              <ShowPalette palette={palettes[watchPalette]} />
-            </div>
-          )}
+          {field.name === "palette" &&
+            watchPalette &&
+            watchPalette !== "theme" && (
+              <div className="mt-2">
+                <ShowPalette palette={palettes[watchPalette]} />
+              </div>
+            )}
         </div>
       );
     }
@@ -224,7 +236,10 @@ function ChartOptions({
   return (
     <div className="space-y-4">
       {groups.map((group) => (
-        <fieldset key={group.label} className="border-none p-0 m-0 mt-4 first:mt-0">
+        <fieldset
+          key={group.label}
+          className="border-none p-0 m-0 mt-4 first:mt-0"
+        >
           <legend className="w-full pb-2">
             <div className="flex items-center gap-2">
               <span className="badge badge-neutral">
