@@ -1,7 +1,7 @@
 {
   "name": "dataviz-components",
   "description": "A simple React component library.",
-  "version": "0.3",
+  "version": "0.3.1",
   "keywords": [
     "react",
     "typescript",

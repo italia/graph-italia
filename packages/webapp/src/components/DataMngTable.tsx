@@ -240,21 +240,21 @@ export default function DataTable({
             </button>
             <button
               type="button"
-              className={`${b} ${!hasChanges ? "btn-disabled" : ""}`}
+              className={`btn btn-outline ${!hasChanges ? "btn-disabled" : ""}`}
               onClick={internalReset}
               disabled={!hasChanges}
             >
               Reset
             </button>
             {download && (
-              <button type="button" className={b} onClick={() => download()}>
+              <button type="button" className="btn btn-outline" onClick={() => download()}>
                 Download CSV
               </button>
             )}
             {downloadJSON && (
               <button
                 type="button"
-                className={b}
+                className="btn btn-outline"
                 onClick={() => downloadJSON()}
               >
                 Download JSON
@@ -262,7 +262,7 @@ export default function DataTable({
             )}
             <button
               type="button"
-              className={b}
+              className="btn btn-outline"
               onClick={() =>
                 showRenameForm ? setShowRenameForm(false) : openRenameForm()
               }

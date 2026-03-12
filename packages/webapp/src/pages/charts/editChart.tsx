@@ -249,7 +249,7 @@ function EditChartPage() {
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
-          className="btn btn-default"
+          className="btn btn-outline"
         >
           {t(`${TRANSLATION_KEY_PATH}.header.actions.back.label`)}
         </button>
@@ -447,8 +447,8 @@ function EditChartPage() {
           </div>
 
           {/* Right column: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 border border-base-300 rounded-lg">
-            <div className="bg-base-100 bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
+          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg">
+            <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>
                 <h1 className="text-2xl font-bold">{chartName}</h1>
                 <div className="text-base-content/80">
