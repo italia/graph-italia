@@ -410,8 +410,10 @@ function EditChartPage() {
             </EditStepComponent>
 
             <EditStepComponent
-              title="Load your data"
-              description="Import data from CSV, JSON files or from a remote source"
+              title={t(`${TRANSLATION_KEY_PATH}.body.options.data.title`)}
+              description={t(
+                `${TRANSLATION_KEY_PATH}.body.options.data.description`,
+              )}
               Icon={FaDatabase}
               isOpen={currentStepIndex === 0 ? true : false}
               isDisabled={false}
@@ -433,7 +435,9 @@ function EditChartPage() {
                         className="btn btn-primary"
                         onClick={() => handleAssignData()}
                       >
-                        Use this data
+                        {t(
+                          `${TRANSLATION_KEY_PATH}.body.options.data.actions.useData.label`,
+                        )}
                       </button>
                     </div>
                   )}

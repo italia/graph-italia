@@ -229,6 +229,15 @@
               "title": "Configure the chart",
               "description": "Choose the chart type and customize its appearance",
               "status": "Please load data and proceed to configuration step to see chart options"
+            },
+            "data": {
+              "title": "Load your data",
+              "description": "Import data from CSV, JSON files or from a remote source",
+              "actions": {
+                "useData": {
+                  "label": "Use thi data"
+                }
+              }
             }
           },
           "preview": {}
