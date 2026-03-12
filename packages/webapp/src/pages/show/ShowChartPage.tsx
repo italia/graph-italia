@@ -1,13 +1,16 @@
-import { RenderChart } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart } from "dataviz-components";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import * as api from "../../lib/api";
+import { useSettingsStore } from "../../store/settings_store";
 
 function ShowChartPage() {
   const { id } = useParams();
   const { data, error, isLoading } = useSWR(`${id}`, api.showChart);
+  const { settings } = useSettingsStore();
+  const scheme = settings?.preferredTheme ?? "light";
   return (
     <Layout>
       <div className="">
@@ -31,9 +34,11 @@ function ShowChartPage() {
           </div>
         )}
         {data && (
-          <RenderChart
-            {...(data as React.ComponentProps<typeof RenderChart>)}
-          />
+          <ColorSchemeProvider scheme={scheme}>
+            <RenderChart
+              {...(data as React.ComponentProps<typeof RenderChart>)}
+            />
+          </ColorSchemeProvider>
         )}
       </div>
     </Layout>

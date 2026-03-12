@@ -1,160 +1,216 @@
-import { logout } from '../../lib/api';
-import { HOME_ROUTE } from '../../router';
-import { useUserStore } from '../../store/user_store';
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { logout } from "../../lib/api";
+import { MENU } from "../../router";
+import { useUserStore } from "../../store/user_store";
+import { useSettingsStore } from "../../store/settings_store.ts";
+import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
+import type { MenuSubItem } from "../../router";
 
-export default function Header() {
+export default function SlimHeader() {
+  const { t } = useTranslation();
+  const TRANSLATION_KEY_PATH = "components.layout.slimHeader";
   const { user, clearUser } = useUserStore();
+  const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
+  const [menuMobileOpen, setMenuMobileOpen] = useState(false);
+  const dropdownToolsRef = useRef<HTMLLIElement>(null);
+
+  const { settings, setTheme } = useSettingsStore();
+  const theme = settings?.preferredTheme;
+
   const handleLogout = async () => {
-    console.log('Logging out user...');
     try {
       await logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       clearUser();
     }
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
-  const menu = [
-    // {
-    //   name: 'Home',
-    //   link: HOME_ROUTE,
-    // },
-    // {
-    //   name: 'Dashboards',
-    //   link: '/dashboards',
-    // },
-    {
-      name: 'Tools',
-      link: '',
-      subMenu: [
-        {
-          name: 'Generate Data',
-          link: '/generate-data',
-        },
-        {
-          name: 'Generate Pois',
-          link: '/generate-poi',
-        },
-        {
-          name: 'Load Remote Data',
-          link: '/load-data',
-        },
-        {
-          name: 'Check GeoJSon File',
-          link: '/geo',
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      if (
+        dropdownToolsRef.current &&
+        !dropdownToolsRef.current.contains(target)
+      ) {
+        setDropdownToolsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div className='navbar bg-primary text-primary-content shadow-xl mb-2'>
-      <div className='navbar-start'>
-        <div className='dropdown'>
-          <div tabIndex={0} role='button' className='btn btn-ghost lg:hidden'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-5 w-5'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M4 6h16M4 12h8m-8 6h16'
-              />
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            className='menu menu-sm dropdown-content bg-base-100 text-primary rounded-box z-[1] mt-3 w-52 p-2 shadow'
+    <header className="relative">
+      {/* ── Main bar ── */}
+      <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12">
+
+        {/* Left: hamburger + brand + separator + desktop nav */}
+        <div className="navbar-start flex items-center gap-4">
+
+          {/* Hamburger – mobile only */}
+          <button
+            type="button"
+            className="btn btn-ghost btn-square text-primary-content lg:hidden flex flex-col justify-center gap-[5px]"
+            aria-label="Menu"
+            aria-expanded={menuMobileOpen}
+            onClick={() => setMenuMobileOpen((v) => !v)}
           >
-            {menu.map((item) => {
-              if (item.subMenu) {
-                return (
-                  <li key={`mobile-${item.name}`}>
-                    <a>{item.name}</a>
-                    <ul className='p-2'>
-                      {item.subMenu.map((subItem) => {
-                        return (
-                          <li key={`mobile-sub-${subItem.name}`}>
-                            <a href={subItem.link}>{subItem.name}</a>
+            <span className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "translate-y-[7px] rotate-45" : ""}`} />
+            <span className={`block w-full h-0.5 bg-current rounded transition-opacity duration-200 ${menuMobileOpen ? "opacity-0" : ""}`} />
+            <span className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+          </button>
+
+          {/* Brand */}
+          <a
+            href="/"
+            className="text-primary-content text-base font-normal no-underline hover:text-primary-content/80 leading-snug"
+          >
+            {t(`${TRANSLATION_KEY_PATH}.brand.title`)}
+          </a>
+
+          {/* Separator – desktop only */}
+          <span
+            className="hidden lg:block w-px h-5 bg-primary-content/20 shrink-0"
+            aria-hidden="true"
+          />
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:block" aria-label="Principale">
+            <ul className="flex items-center gap-1 list-none m-0 p-0">
+              {MENU.map((item) => {
+                if ("subMenu" in item) {
+                  return (
+                    <li key={item.name} className="relative" ref={dropdownToolsRef}>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-primary-content text-sm rounded bg-transparent border-none cursor-pointer hover:bg-primary-content/15"
+                        aria-expanded={dropdownToolsOpen}
+                        aria-haspopup="true"
+                        onClick={() => setDropdownToolsOpen((v) => !v)}
+                      >
+                        {item.translationKey ? t(item.translationKey) : item.name}
+                        <svg
+                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${dropdownToolsOpen ? "rotate-180" : ""}`}
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
+                        </svg>
+                      </button>
+
+                      <ul
+                        className={`absolute top-full left-0 z-[1000] min-w-40 py-2 mt-1 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0 ${dropdownToolsOpen ? "block" : "hidden"}`}
+                      >
+                        {item.subMenu.map((sub: MenuSubItem) => (
+                          <li key={sub.name}>
+                            <a
+                              href={sub.link}
+                              className="block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary"
+                            >
+                              {sub.translationKey ? t(sub.translationKey) : sub.name}
+                            </a>
                           </li>
-                        );
-                      })}
-                    </ul>
-                  </li>
-                );
-              } else {
+                        ))}
+                      </ul>
+                    </li>
+                  );
+                }
                 return (
-                  <li key={`mobile-${item.name}`}>
-                    <a href={item.link}>{item.name}</a>
+                  <li key={item.name}>
+                    <a
+                      href={item.link}
+                      className="inline-flex items-center px-3 py-1.5 text-primary-content text-sm rounded no-underline hover:bg-primary-content/15"
+                    >
+                      {item.translationKey ? t(item.translationKey) : item.name}
+                    </a>
                   </li>
                 );
-              }
-            })}
-          </ul>
+              })}
+            </ul>
+          </nav>
         </div>
-        <a className='btn btn-ghost text-xl' href='/'>
-          Dataviz
-        </a>
+
+        {/* Right: theme switcher + user/login */}
+        <div className="navbar-end flex items-center gap-2">
+          <div className="  rounded px-2">
+            <ThemeSwitcherComponent
+              currentTheme={theme as "light" | "dark"}
+              handleChange={setTheme}
+            />
+          </div>
+
+          {user ? (
+            <span className="flex items-center gap-4">
+              {/* <span className="hidden md:inline text-sm text-primary-content/85">
+                {user.name}
+              </span> */}
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={handleLogout}
+              >
+                {t(`${TRANSLATION_KEY_PATH}.actions.logout.label`)}
+              </button>
+            </span>
+          ) : (
+            <a
+              href="/login"
+              className="btn btn-sm btn-ghost border border-primary-content/40 text-primary-content hover:bg-primary-content/20"
+              aria-label="Accedi"
+            >
+              {t(`${TRANSLATION_KEY_PATH}.actions.login.label`)}
+            </a>
+          )}
+        </div>
       </div>
-      <div className='navbar-center hidden lg:flex'>
-        <ul className='menu menu-horizontal px-1 bg-base text-content'>
-          {menu.map((item) => {
-            if (item.subMenu) {
+
+      {/* ── Mobile slide-down menu ── */}
+      <div
+        className={`lg:hidden absolute top-full left-0 right-0 bg-primary border-b border-primary-content/20 shadow-md overflow-hidden z-[999] transition-all duration-200 ease-in-out ${menuMobileOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}
+        aria-hidden={!menuMobileOpen}
+      >
+        <ul className="list-none m-0 p-4">
+          {MENU.map((item) => {
+            if ("subMenu" in item) {
               return (
-                <li key={`menu-${item.name}`}>
-                  <details>
-                    <summary>{item.name}</summary>
-                    <ul className='min-w-[160px] bg-base-100 text-primary z-10'>
-                      {item.subMenu.map((subItem) => {
-                        return (
-                          <li
-                            key={`menu-sub-${subItem.name}`}
-                            className='bg-base-100 text-primary'
-                          >
-                            <a href={subItem.link}>{subItem.name}</a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </details>
-                </li>
-              );
-            } else {
-              return (
-                <li key={`menu-${item.name}`}>
-                  <a href={item.link}>{item.name}</a>
+                <li key={item.name} className="border-b border-primary-content/20">
+                  <span className="block py-3 text-[0.9375rem] text-primary-content">
+                    {item.translationKey ? t(item.translationKey) : item.name}
+                  </span>
+                  <ul className="list-none m-0 ml-4 pb-2 p-0">
+                    {item.subMenu.map((sub: MenuSubItem) => (
+                      <li key={sub.name}>
+                        <a
+                          href={sub.link}
+                          className="block py-2 text-sm text-primary-content no-underline hover:text-primary-content/80"
+                          onClick={() => setMenuMobileOpen(false)}
+                        >
+                          {sub.translationKey ? t(sub.translationKey) : sub.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               );
             }
+            return (
+              <li key={item.name} className="border-b border-primary-content/20 last:border-b-0">
+                <a
+                  href={item.link}
+                  className="block py-3 text-[0.9375rem] text-primary-content no-underline hover:text-primary-content/80"
+                  onClick={() => setMenuMobileOpen(false)}
+                >
+                  {item.translationKey ? t(item.translationKey) : item.name}
+                </a>
+              </li>
+            );
           })}
         </ul>
       </div>
-      <div className='navbar-end px-4'>
-        {user ? (
-          <div>
-            <span className='px-2'>
-              <button
-                className='btn btn-default btn-sm'
-                onClick={() => handleLogout()}
-              >
-                logout
-              </button>
-              {/* <span className='px-2'>{user.name}</span> */}
-            </span>
-          </div>
-        ) : (
-          <a href='/login' className='btn btn-ghost btn-sm'>
-            Login
-          </a>
-        )}
-      </div>
-    </div>
+    </header>
   );
 }

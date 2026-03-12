@@ -73,7 +73,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     type="email"
                     required
                     autoComplete="email"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     {...register("email", { required: true })}
                   />
                   {errors["email"] && (
@@ -99,7 +99,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     type="password"
                     required
                     autoComplete="current-password"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     {...register("password", { required: true })}
                   />
                   {errors["password"] && (
@@ -123,15 +123,15 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 <div className="flex items-center"></div>
 
                 <div className="text-sm leading-6">
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     onClick={() => handleRecoverFlow()}
                     className="link font-semibold link-primary"
                   >
                     {t(
                       `${TRANSLATION_KEY_PATH}.form.actions.recoverPassword.label`,
                     )}
-                  </a>
+                  </button>
                 </div>
               </div>
             </form>
@@ -143,10 +143,10 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 aria-hidden="true"
                 className="absolute inset-0 flex items-center"
               >
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-base-300" />
               </div>
               <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="bg-white px-6">
+                <span className="bg-base-100 px-6">
                   {t(`${TRANSLATION_KEY_PATH}.bottom.label`)}
                 </span>
               </div>
@@ -155,7 +155,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
             <div className="mt-6 ">
               <button
                 onClick={() => setLogin(false)}
-                className="btn btn-outline btn-primary w-full"
+                className="btn btn-outline w-full"
               >
                 {t(`${TRANSLATION_KEY_PATH}.bottom.actions.signup.label`)}
               </button>

@@ -84,22 +84,18 @@ export default function Landing() {
 
   return (
     <Layout>
-      <div className=''>
-        <div>
-          You may be also interested in our
-          <a href="/gdpr" className='text-blue-600 underline'> Privacy Policy</a>
+      <div className='relative py-14'>
+        <div className='mx-auto max-w-6xl pb-24  lg:pb-32  '>
+          <p className='mb-5'>
+            You may be also interested in our
+            <a href="/gdpr" className='text-blue-600 underline'> Privacy Policy</a>
+          </p>
+          {/* <a href="#" id="terms-of-service" /> */}
+          <p className='prose'>
+            <Markdown remarkPlugins={[remarkGfm]}>{terms}</Markdown>
+          </p>
         </div>
-        <div className='relative py-14'>
-
-          <div className='mx-auto max-w-6xl pb-24  lg:pb-32  '>
-            <a id="terms-of-service" />
-            <p className='prose'>
-              <Markdown remarkPlugins={[remarkGfm]}>{terms}</Markdown>
-            </p>
-          </div>
-        </div>
-
       </div>
-    </Layout >
+    </Layout>
   );
 }

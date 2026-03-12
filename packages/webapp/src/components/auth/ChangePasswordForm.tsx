@@ -115,7 +115,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                       id="hs-toggle-password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter a new password"
-                      className="w-full rounded-md block"
+                      className="input input-bordered w-full"
                       {...register("password")}
                     />
                     <button
@@ -192,7 +192,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                   <input
                     id="confirm-password"
                     type="password"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     placeholder=""
                     {...register("confirmPassword")}
                   />

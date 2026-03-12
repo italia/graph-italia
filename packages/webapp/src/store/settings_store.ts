@@ -2,16 +2,16 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { devtools } from "zustand/middleware";
 
-const initialValues = { preferredTheme: "italia" };
-
 interface Settings {
-  preferredTheme: string;
+  preferredTheme: "dark" | "light";
 }
+
+const initialValues: Settings = { preferredTheme: "light" };
 
 interface SettingsState {
   settings: Settings | null;
   setSettings: (settings: Settings) => void;
-  setTheme: (theme: string) => void;
+  setTheme: (theme: "dark" | "light") => void;
   clearSettings: () => void;
 }
 
@@ -24,16 +24,13 @@ export const useSettingsStore = create<SettingsState>()(
           set({ settings: { ...values } });
         },
         setTheme: (preferredTheme) => {
-          if (!preferredTheme) {
-            preferredTheme = initialValues.preferredTheme;
-          }
           const { settings } = get();
           if (settings) set({ settings: { ...settings, preferredTheme } });
         },
         clearSettings: () => set({ settings: null }),
       }),
       {
-        name: "service3-settings",
+        name: "dataviz-settings",
         storage: createJSONStorage(() => localStorage),
       }
     )

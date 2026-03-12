@@ -135,7 +135,7 @@ function SignUp({
                     type="email"
                     required
                     autoComplete="email"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                   />
                   {errors["email"] && (
                     <p className="text-error">
@@ -160,7 +160,7 @@ function SignUp({
                       id="hs-toggle-password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter a new password"
-                      className="w-full rounded-md block"
+                      className="input input-bordered w-full"
                       {...register("password")}
                     />
                     <button
@@ -237,7 +237,7 @@ function SignUp({
                   <input
                     id="confirm-password"
                     type="password"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     placeholder=""
                     {...register("confirmPassword")}
                   />
@@ -249,36 +249,37 @@ function SignUp({
                 </div>
               </div>
 
-              <div className="flex items-center">
-                <input
-                  id="policy"
-                  type="checkbox"
-                  className="h-4 w-4 rounded"
-                  {...register("policyAcknologment", { required: true })}
-                />
-                <label
-                  htmlFor="policy"
-                  className="ml-3 block text-sm leading-6 "
-                >
-                  <Trans
-                    i18nKey={`${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.main`}
-                    components={{
-                      privacyLink: (
-                        <a
-                          className="link link-primary font-semibold"
-                          target="_blank"
-                          href="/gdpr"
-                        ></a>
-                      ),
-                    }}
+              <div>
+                <div className="flex items-start">
+                  <input
+                    id="policy"
+                    type="checkbox"
+                    className="checkbox checkbox-primary"
+                    {...register("policyAcknologment", { required: true })}
                   />
-                  <hr />
-                  <small>
-                    {t(
-                      `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.small`,
-                    )}
-                  </small>
-                </label>
+                  <label
+                    htmlFor="policy"
+                    className="ml-3 block text-sm leading-6 "
+                  >
+                    <Trans
+                      i18nKey={`${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.main`}
+                      components={{
+                        privacyLink: (
+                          <a className="link link-primary font-semibold"
+                            target="_blank"
+                            href="/gdpr"
+                          />
+                        ),
+                      }}
+                    />
+                    <hr />
+                    <small>
+                      {t(
+                        `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.small`,
+                      )}
+                    </small>
+                  </label>
+                </div>
                 {errors["policyAcknologment"] && (
                   <p className="pl-4 text-error">
                     {errors["policyAcknologment"].message}
@@ -296,6 +297,7 @@ function SignUp({
             <div className="text-sm leading-6 my-4">
               {t(`${TRANSLATION_KEY_PATH}.bottom.label`)} &nbsp;
               <button
+                type="button"
                 onClick={() => setLogin(true)}
                 className="link font-semibold text-primary"
               >

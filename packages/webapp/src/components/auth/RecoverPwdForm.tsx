@@ -67,7 +67,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
                     type="email"
                     required
                     autoComplete="email"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     {...register("email", { required: true })}
                   />
                   {errors["email"] && (

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useUserStore } from "../../store/user_store";
 import Footer from "./Footer";
 import FullHeader from "./FullHeader";
-import SlimHeader from "./SlimHeader";
+import SlimHeader from "./Header";
 import { useSettingsStore } from "../../store/settings_store";
 
 function Layout({ children }: any) {

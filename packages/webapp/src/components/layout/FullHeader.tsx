@@ -9,7 +9,7 @@ import { logout } from "../../lib/api";
 import type { MenuSubItem } from "../../router";
 import { MENU } from "../../router";
 import { useUserStore } from "../../store/user_store";
-import "./HeaderCompleta.css";
+import "./FullHeader.css";
 
 export default function HeaderCompleta() {
   const { t } = useTranslation();
