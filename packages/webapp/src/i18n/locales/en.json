@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-en",
+  "appname": "Dataviz-it",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -164,6 +164,40 @@
           "actions": {
             "sendAnotherCode": {
               "label": "Send another code"
+            }
+          }
+        }
+      }
+    },
+    "charts": {
+      "editChart": {
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+        "save": {
+          "success": {
+            "label": "Chart saved successfully!"
+          },
+          "error": {
+            "label": "Error saving chart!"
+          }
+        },
+        "head": {
+          "title": {
+            "label": "Edit Chart"
+          },
+          "meta": {
+            "description": {
+              "content": "Creating chart"
+            }
+          }
+        },
+        "header": {
+          "actions": {
+            "back": {
+              "label": "Back to list"
+            },
+            "save": {
+              "default": "Save",
+              "isSaving": "Saving"
             }
           }
         }
