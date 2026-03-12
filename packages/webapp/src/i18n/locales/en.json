@@ -334,6 +334,21 @@
           }
         }
       },
+      "loadRemoteJsonData": {
+        "errors": {
+          "invalidUrl": "Please enter a valid URL",
+          "loadingError": "Unable to load data from the specified URL"
+        },
+        "header": {
+          "label": "JSON data source URL"
+        },
+        "actions": {
+          "load": {
+            "default": "Load remote JSON data",
+            "loading": "Loading..."
+          }
+        }
+      },
       "transformData": {
         "header": {
           "label": "Transform Data"
