@@ -25,7 +25,7 @@ function Layout({ children }: any) {
         {t(`components.layout.sr.label`)}
       </a>
       {user ? <SlimHeader /> : <FullHeader />}
-      <main id="main-content" className="flex-grow">
+      <main id="main-content" className="flex-grow bg-base-200">
         {children}
       </main>
       <Footer />
