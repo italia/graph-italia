@@ -21,6 +21,7 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useAriaSort } from "../hooks/useAriaSort";
+import { useSettingsStore } from "../store/settings_store.ts";
 
 import { RenderChart } from "dataviz-components";
 import toast from "react-hot-toast";
@@ -37,7 +38,7 @@ type CharTableProps = {
   handleDeleteChart: (id: string) => void;
 };
 
-createTheme("black", {
+createTheme("dark", {
   text: {
     primary: "rgba(255,255,255, 0.54)",
     secondary: "rgba(255,255,255, 0.54)",
@@ -55,8 +56,6 @@ createTheme("black", {
   },
 });
 
-const actionColor = "";
-const actionSize = 16;
 
 export default function ChartTable({
   list,
@@ -68,7 +67,14 @@ export default function ChartTable({
   const [show, setShow] = useState<string | null>(null);
   const [data, setData] = useState<FieldDataType | null>(null);
 
-  const currentTheme = "default";
+  const { settings } = useSettingsStore();
+  const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
+
+
+  const actionColor = currentTheme === "dark" ? "#fff" : "#111";
+  const actionSize = 16;
+
+
   const [sortState, setSortState] = useState<{
     columnKey: string;
     direction: "asc" | "desc";
@@ -160,7 +166,7 @@ export default function ChartTable({
                     <div className="overflow-hidden">
                       <div className="flex items-center gap-2">
                         <IconComponent
-                          fill="#06c"
+                          fill={currentTheme === "dark" ? "#fff" : "#06c"}
                           size={24}
                           aria-hidden="true"
                         />
@@ -352,9 +358,8 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${
-                        row.id
-                      }`}
+                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
+                        }`}
                       aria-label="edit"
                       className="btn btn-ghost btn-xs btn-square"
                     >

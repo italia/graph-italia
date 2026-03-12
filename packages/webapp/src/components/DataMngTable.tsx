@@ -1,8 +1,27 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import DataTableComponent, { type TableColumn } from "react-data-table-component";
+import DataTableComponent, { createTheme, type TableColumn } from "react-data-table-component";
+import { useSettingsStore } from "../store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import type { MatrixType } from "dataviz-components";
 import { useAriaSort } from "../hooks/useAriaSort";
+
+createTheme("dark", {
+  text: {
+    primary: "rgba(255,255,255, 0.54)",
+    secondary: "rgba(255,255,255, 0.54)",
+    disabled: "rgba(255,255,255, 0.38)",
+  },
+  background: {
+    default: "transparent",
+  },
+  divider: {
+    default: "rgba(255,255,255,.075)",
+  },
+  highlightOnHover: {
+    default: "rgba(255,255,255,.03)",
+    text: "#fff",
+  },
+});
 
 type RowRecord = Record<string, string | number>;
 
@@ -14,17 +33,16 @@ type DataTableProps = {
   buttonVariant?: "default" | "italia";
 };
 
-const btnClass = (variant: "default" | "italia") =>
-  variant === "italia" ? "btn-italia btn-italia-secondary-outline" : "btn";
 
 export default function DataTable({
   data,
   onApplyData,
   download,
   downloadJSON,
-  buttonVariant = "default",
+
 }: DataTableProps) {
-  const b = btnClass(buttonVariant);
+  const { settings } = useSettingsStore();
+  const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
   const [workingData, setWorkingData] = useState<MatrixType>(data);
   const [showRenameForm, setShowRenameForm] = useState(false);
   const [renameValues, setRenameValues] = useState<string[]>([]);
@@ -205,11 +223,11 @@ export default function DataTable({
     <>
       {data && data[0] && (
         <div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-content/60">
             {workingData.length} rows, {workingData[0].length} columns
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <button type="button" className={b} onClick={internalTranspose}>
+            <button type="button" className={"btn btn-outline"} onClick={internalTranspose}>
               Transpose
             </button>
             <button
@@ -332,6 +350,7 @@ export default function DataTable({
             <DataTableComponent
               columns={columns}
               data={rows}
+              theme={currentTheme}
               pagination
               dense
               highlightOnHover

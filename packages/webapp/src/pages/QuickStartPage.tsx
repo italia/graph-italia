@@ -7,7 +7,7 @@ export default function QuickStartPage() {
         {/* Stesso sfondo a quadrati della landing */}
         <svg
           aria-hidden="true"
-          className="absolute inset-0 -z-10 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+          className="absolute inset-0 -z-10 h-full w-full stroke-base-content/20 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
         >
           <defs>
             <pattern
@@ -21,7 +21,7 @@ export default function QuickStartPage() {
               <path d="M100 200V.5M.5 .5H200" fill="none" />
             </pattern>
           </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
+          <svg x="50%" y={-1} className="overflow-visible fill-base-200" aria-hidden="true">
             <path
               d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
               strokeWidth={0}
@@ -42,8 +42,8 @@ export default function QuickStartPage() {
             </a>
           </p>
 
-          <article className="rounded-xl bg-base-100 p-8 shadow-sm ring-1 ring-gray-900/5 prose prose-gray max-w-none">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <article className="rounded-xl bg-base-100 p-8 shadow-sm ring-1 ring-base-content/10 prose max-w-none">
+            <h1 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
               Quick Start Guide: Creating Your First Chart with Dataviz
             </h1>
             <p className="lead">
@@ -51,7 +51,7 @@ export default function QuickStartPage() {
               sample data or upload your own.
             </p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-10">
+            <h2 className="text-xl font-semibold text-base-content mt-10">
               Step 1: Click on &quot;Create New Chart&quot;
             </h2>
             <ul>
@@ -63,7 +63,7 @@ export default function QuickStartPage() {
               </li>
             </ul>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8">
+            <h2 className="text-xl font-semibold text-base-content mt-8">
               Step 2: Upload your data
             </h2>
             <ul>
@@ -89,7 +89,7 @@ export default function QuickStartPage() {
               </li>
             </ul>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8">
+            <h2 className="text-xl font-semibold text-base-content mt-8">
               Step 3: Choose your chart type and configure (optional)
             </h2>
             <ul>
@@ -100,7 +100,7 @@ export default function QuickStartPage() {
               <li>Customize: select columns, X/Y axes, colors, and labels.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8">
+            <h2 className="text-xl font-semibold text-base-content mt-8">
               Step 4: Save your chart
             </h2>
             <ul>

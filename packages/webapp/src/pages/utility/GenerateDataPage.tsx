@@ -46,10 +46,10 @@ function GenerateDataPage() {
     <Layout>
       <div className="generate-data-page mx-auto max-w-4xl px-4">
         <header className="my-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
             Generate data
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-base-content/70">
             Create a random dataset with configurable rows, columns and value
             range. Use it to try charts or export as CSV/JSON.
           </p>
@@ -60,7 +60,7 @@ function GenerateDataPage() {
         </section>
 
         {rawData && (
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm mb-8">
+          <section className="rounded-2xl border border-base-200 bg-base-300 p-6 shadow-sm mb-8">
             <DataTable
               data={rawData}
               onApplyData={setRawData}
@@ -73,7 +73,7 @@ function GenerateDataPage() {
                   "generated-data-" + Date.now(),
                 );
               }}
-              buttonVariant="italia"
+
             />
           </section>
         )}

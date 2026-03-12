@@ -19,6 +19,7 @@ import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
 import { HOME_ROUTE } from "../../router";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
+import { useSettingsStore } from "../../store/settings_store.ts";
 
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import toast from 'react-hot-toast';
@@ -60,7 +61,10 @@ function EditChartPage() {
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>("light");
+  const { settings } = useSettingsStore();
+  const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
+    settings?.preferredTheme === "dark" ? "dark" : "light"
+  );
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   useUnsavedChanges(hasUnsavedChanges, "You have unsaved changes. Are you sure you want to leave?");

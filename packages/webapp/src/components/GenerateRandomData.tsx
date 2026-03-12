@@ -24,13 +24,12 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
     setData(matrix);
   }
 
-  const inputClass =
-    "input input-bordered w-full rounded-md border-gray-300 focus:border-[#0066cc] focus:ring-1 focus:ring-[#0066cc]";
-  const labelClass = "label text-gray-700 font-medium";
+  const inputClass = "input input-bordered w-full rounded-md";
+  const labelClass = "label text-content/70 font-medium";
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Parameters</h2>
+    <div className="rounded-2xl p-6 shadow-sm vorder border-base-200 bg-base-300">
+      <h2 className="text-lg font-semibold text-contet/90 mb-4">Parameters</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <label htmlFor="gen-rows" className={labelClass}>Rows</label>
@@ -101,7 +100,7 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
       <div className="mt-6">
         <button
           type="button"
-          className="btn-italia btn-italia-primary"
+          className="btn btn-primary"
           onClick={generate}
         >
           Generate data

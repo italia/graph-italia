@@ -9,6 +9,8 @@ import type { MenuSubItem } from "../../router";
 import { MENU } from "../../router";
 import { useUserStore } from "../../store/user_store";
 import "./SlimHeader.css";
+import { useSettingsStore } from "../../store/settings_store.ts";
+import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 
 export default function SlimHeader() {
   const { t } = useTranslation();
@@ -17,6 +19,9 @@ export default function SlimHeader() {
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
   const dropdownToolsRef = useRef<HTMLLIElement>(null);
+
+  const { settings, setTheme } = useSettingsStore();
+  const theme = settings?.preferredTheme
 
   const handleLogout = async () => {
     try {
@@ -130,6 +135,7 @@ export default function SlimHeader() {
 
             <div className="it-slim-only-actions">
               <div className="it-slim-only-actions-right">
+                <ThemeSwitcherComponent currentTheme={theme as "light" | "dark"} handleChange={setTheme} />
                 {user ? (
                   <span className="it-slim-only-user">
                     <span className="it-slim-only-user-name">{user.name}</span>

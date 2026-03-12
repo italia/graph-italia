@@ -3,9 +3,10 @@ import DataTable, { createTheme } from "react-data-table-component";
 import type { TableColumn } from "react-data-table-component";
 import { transposeData } from "../../lib/utils";
 import type { MatrixType } from "../../types";
+import { useSettingsStore } from "../../store/settings_store.ts";
 
 createTheme(
-  "black",
+  "dark",
   {
     text: {
       primary: "rgba(255,255,255, 0.54)",
@@ -24,7 +25,6 @@ createTheme(
     },
   },
 );
-const currentTheme = "default";
 
 type TransformDataProps = {
   currentData: MatrixType;
@@ -42,6 +42,9 @@ export default function TransformData({
   currentData,
   handleTransformData,
 }: TransformDataProps) {
+  const { settings } = useSettingsStore();
+  const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
+
   // State: working copy of the data matrix (supports transpose)
   const [workingData, setWorkingData] = useState<MatrixType>(() => currentData);
 
@@ -199,14 +202,14 @@ export default function TransformData({
         <div className="flex gap-2">
           <button
             type="button"
-            className="btn btn-sm btn-default"
+            className="btn btn-default btn-outline"
             onClick={transpose}
           >
             Transpose
           </button>
           <button
             type="button"
-            className="btn btn-sm btn-default"
+            className="btn btn-default btn-outline"
             onClick={resetData}
           >
             Reset
@@ -223,11 +226,10 @@ export default function TransformData({
           {columnOrder.map((colName) => (
             <label
               key={colName}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
-                visibleColumns.has(colName)
-                  ? "bg-primary/10 border-primary/30 text-primary"
-                  : "bg-base-200 border-base-300 text-base-content/40 line-through"
-              }`}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
+                ? "bg-primary/10 border-primary/30 text-primary"
+                : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                }`}
             >
               <input
                 type="checkbox"
@@ -275,7 +277,7 @@ export default function TransformData({
         {hasChanges && (
           <button
             type="button"
-            className="btn btn-ghost btn-sm"
+            className="btn btn-default btn-outline"
             onClick={() => {
               setVisibleColumns(new Set(allHeaders));
               setColumnOrder([...allHeaders]);

@@ -4,13 +4,17 @@ import { useUserStore } from "../../store/user_store";
 import Footer from "./Footer";
 import FullHeader from "./FullHeader";
 import SlimHeader from "./SlimHeader";
+import { useSettingsStore } from "../../store/settings_store";
 
 function Layout({ children }: any) {
   const user = useUserStore((s) => s.user);
   const { t } = useTranslation();
+  const { settings } = useSettingsStore();
+  const currentTheme =
+    settings?.preferredTheme === "dark" ? "scuro" : "italia";
   return (
     <div
-      data-theme="italia"
+      data-theme={currentTheme}
       className="w-full min-h-screen flex flex-col"
       style={{ overflowX: "clip" }}
     >

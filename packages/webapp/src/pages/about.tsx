@@ -45,7 +45,7 @@ export default function Landing() {
   ];
 
   const FeatureIcon = ({ name }: { name: string }) => {
-    const c = "text-[#0066cc]";
+    const c = "text-primary";
     switch (name) {
       case "upload":
         return (
@@ -55,7 +55,7 @@ export default function Landing() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={1.5}
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -72,7 +72,7 @@ export default function Landing() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={1.5}
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -89,7 +89,7 @@ export default function Landing() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={1.5}
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -106,7 +106,7 @@ export default function Landing() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={1.5}
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -123,7 +123,7 @@ export default function Landing() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={1.5}
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -140,7 +140,7 @@ export default function Landing() {
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={1.5}
-            aria-hidden
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -160,7 +160,7 @@ export default function Landing() {
         {/* Sfondo a quadrati – stessa sfumatura di Quick Start (radiale da top-right) */}
         <svg
           aria-hidden="true"
-          className="landing__bg absolute inset-0 z-[-1] h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+          className="landing__bg absolute inset-0 z-[-1] h-full w-full stroke-base-content/20 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
         >
           <defs>
             <pattern
@@ -174,7 +174,7 @@ export default function Landing() {
               <path d="M100 200V.5M.5 .5H200" fill="none" />
             </pattern>
           </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
+          <svg x="50%" y={-1} className="overflow-visible fill-base-200" aria-hidden="true">
             <path
               d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
               strokeWidth={0}
@@ -195,26 +195,26 @@ export default function Landing() {
         >
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 w-full">
             <div className="text-center">
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#0066cc]/20 bg-[#0066cc]/5 px-4 py-1.5 text-sm font-medium text-[#0066cc]">
+              <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
                 <span className="relative flex h-2 w-2" aria-hidden>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0066cc]/40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0066cc]" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                 </span>
                 Data visualization made simple
               </p>
-              <h1 className="mt-8 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
+              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
                 <span className="block">Transform Data Into</span>
-                <span className="mt-1 block py-1 bg-gradient-to-r from-[#0066cc] to-[#004a99] bg-clip-text text-transparent leading-[1.4]">
+                <span className="mt-1 block py-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-[1.4]">
                   Stunning Visuals
                 </span>
                 <span className="block mt-1">
                   with{" "}
-                  <span className="inline-block bg-gradient-to-r from-[#0066cc] to-[#004a99] bg-clip-text py-0.5 font-semibold tracking-wide text-transparent drop-shadow-[0_0_20px_rgba(0,102,204,0.25)]">
+                  <span className="inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text py-0.5 font-semibold tracking-wide text-transparent">
                     Dataviz
                   </span>
                 </span>
               </h1>
-              <p className="mt-8 text-lg leading-8 text-gray-600 max-w-2xl mx-auto sm:text-xl">
+              <p className="mt-8 text-lg leading-8 text-base-content/70 max-w-2xl mx-auto sm:text-xl">
                 Effortlessly convert your CSV data into beautiful, interactive
                 charts with Dataviz. Whether you're a data analyst, business
                 professional, or content creator, Dataviz offers an intuitive
@@ -223,27 +223,28 @@ export default function Landing() {
               <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
                 <a
                   href={user ? HOME_ROUTE : "/login"}
-                  className="btn-italia btn-italia-primary"
+                  className="btn btn-primary"
                 >
                   Get started
                 </a>
                 <a
                   href="/quickstart"
-                  className="btn-italia btn-italia-secondary-outline"
+                  className="btn btn-outline"
                 >
                   Quick start guide
                 </a>
               </div>
               <div
-                className="mt-16 flex items-center justify-center gap-8 text-sm text-gray-500"
+                className="mt-16 flex items-center justify-center gap-8 text-sm text-base-content/60"
                 aria-hidden
               >
                 <span className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 text-[#0066cc]/60"
+                    className="h-5 w-5 text-primary/60"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -256,11 +257,12 @@ export default function Landing() {
                 </span>
                 <span className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 shrink-0 text-[#0066cc]/80"
+                    className="h-5 w-5 shrink-0 text-primary/80"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2}
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -272,10 +274,11 @@ export default function Landing() {
                 </span>
                 <span className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 text-[#0066cc]/60"
+                    className="h-5 w-5 text-primary/60"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -293,7 +296,7 @@ export default function Landing() {
 
         {/* Divisore tra Hero e Features */}
         <div
-          className="landing__divider h-px w-full mx-auto bg-gray-200/80"
+          className="landing__divider h-px w-full mx-auto bg-base-content/20"
           aria-hidden="true"
         />
 
@@ -303,22 +306,22 @@ export default function Landing() {
           aria-labelledby="features-heading"
         >
           <div
-            className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50"
+            className="absolute inset-0 bg-gradient-to-b from-base-200 via-base-100 to-base-200"
             aria-hidden="true"
           />
 
           <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
-              <span className="inline-block text-sm font-medium text-[#0066cc] uppercase tracking-wider mb-3">
+              <span className="inline-block text-sm font-medium text-primary uppercase tracking-wider mb-3">
                 Features
               </span>
               <h2
                 id="features-heading"
-                className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+                className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl"
               >
                 Everything you need
               </h2>
-              <p className="mt-4 text-lg leading-8 text-gray-600">
+              <p className="mt-4 text-lg leading-8 text-base-content/70">
                 Start visualizing your data with Dataviz today. Dataviz makes
                 data visualization quick, simple, and powerful. Try it and see
                 how easily you can create, edit, and publish stunning charts in
@@ -330,19 +333,19 @@ export default function Landing() {
               {features.map((feature) => (
                 <article
                   key={feature.name}
-                  className="landing__feature-card group relative flex flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#0066cc]/10 hover:border-[#0066cc]/30"
+                  className="landing__feature-card group relative flex flex-col rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30"
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#0066cc]/10 text-[#0066cc] transition-colors group-hover:bg-[#0066cc]/15">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
                     <FeatureIcon name={feature.icon} />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-base-content">
                     {feature.name}
                   </h3>
-                  <p className="mt-2 flex-grow text-base leading-relaxed text-gray-600">
+                  <p className="mt-2 flex-grow text-base leading-relaxed text-base-content/70">
                     {feature.description}
                   </p>
                   <div
-                    className="mt-4 h-px w-12 rounded-full bg-[#0066cc]/30 transition-all group-hover:w-full group-hover:bg-[#0066cc]/50"
+                    className="mt-4 h-px w-12 rounded-full bg-primary/30 transition-all group-hover:w-full group-hover:bg-primary/50"
                     aria-hidden="true"
                   />
                 </article>
@@ -353,33 +356,33 @@ export default function Landing() {
 
         {/* Divisore tra Features e CTA */}
         <div
-          className="landing__divider h-px w-full bg-gray-200"
+          className="landing__divider h-px w-full bg-base-200"
           aria-hidden="true"
         />
 
         {/* Sezione Ready to create your first chart */}
         <section
-          className="landing__cta relative bg-white/80 py-16 lg:py-20"
+          className="landing__cta relative bg-base-100/80 py-16 lg:py-20"
           aria-label="Call to action"
         >
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+            <h2 className="text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
               Ready to create your first chart?
             </h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-xl mx-auto">
+            <p className="mt-4 text-lg text-base-content/70 max-w-xl mx-auto">
               Follow the step-by-step quick start guide or log in and get
               started.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <a
                 href="/quickstart"
-                className="btn-italia btn-italia-primary btn-italia-lg"
+                className="btn btn-primary btn-lg"
               >
                 Go to Quick start guide
               </a>
               <a
                 href={user ? HOME_ROUTE : "/login"}
-                className="btn-italia btn-italia-secondary-outline btn-italia-lg"
+                className="btn btn-outline btn-lg"
               >
                 {user ? "Go to my charts" : "Log in"}
               </a>
