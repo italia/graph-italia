@@ -200,6 +200,33 @@
               "isSaving": "Saving"
             }
           }
+        },
+        "body": {
+          "configuration": {
+            "setup": {
+              "title": "Setup Info",
+              "description": "Name, description and visibility of the chart",
+              "form": {
+                "fields": {
+                  "visibility": {
+                    "label": "Chart Visibility",
+                    "values": {
+                      "private": "Private",
+                      "public": "Public"
+                    }
+                  },
+                  "title": {
+                    "label": "Chart Title"
+                  },
+                  "description": {
+                    "label": "Chart Description",
+                    "placeholder": "Add a description"
+                  }
+                }
+              }
+            }
+          },
+          "preview": {}
         }
       }
     },

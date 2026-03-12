@@ -281,8 +281,12 @@ function EditChartPage() {
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
           <div className="space-y-1 xl:col-span-2">
             <EditStepComponent
-              title="Setup Info"
-              description="Name, description and visibility of the chart"
+              title={t(
+                `${TRANSLATION_KEY_PATH}.body.configuration.setup.title`,
+              )}
+              description={t(
+                `${TRANSLATION_KEY_PATH}.body.configuration.setup.description`,
+              )}
               Icon={FaInfo}
               isOpen={true}
               isDisabled={false}
@@ -306,17 +310,23 @@ function EditChartPage() {
                         htmlFor="chart_visibility"
                         className="text-sm text-base-content/70 cursor-pointer"
                       >
-                        Chart Visibility:
+                        {t(
+                          `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.visibility.label`,
+                        )}
                       </label>
                       <span className="text-sm text-base-content font-bold">
-                        {chartPublish ? "Public" : "Private"}
+                        {t(
+                          `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
+                        )}
                       </span>
                     </div>
                     <label
                       htmlFor="chart_title"
                       className="mt-4 text-base-content/70"
                     >
-                      Chart Title:
+                      {t(
+                        `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.title.label`,
+                      )}
                     </label>
                     <input
                       id="chart_title"
@@ -333,7 +343,9 @@ function EditChartPage() {
                       htmlFor="chart_description"
                       className="mt-4 text-base-content/70"
                     >
-                      Chart Description:
+                      {t(
+                        `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.description.label`,
+                      )}
                     </label>
                     <textarea
                       id="chart_description"
@@ -343,7 +355,9 @@ function EditChartPage() {
                         setHasUnsavedChanges(true);
                         setChartDescription(e.target.value);
                       }}
-                      placeholder="Add a description..."
+                      placeholder={t(
+                        `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.description.placeholder`,
+                      )}
                       className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
                     />
                   </div>
