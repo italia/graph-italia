@@ -281,11 +281,9 @@ function EditChartPage() {
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
           <div className="space-y-1 xl:col-span-2">
             <EditStepComponent
-              title={t(
-                `${TRANSLATION_KEY_PATH}.body.configuration.setup.title`,
-              )}
+              title={t(`${TRANSLATION_KEY_PATH}.body.options.setup.title`)}
               description={t(
-                `${TRANSLATION_KEY_PATH}.body.configuration.setup.description`,
+                `${TRANSLATION_KEY_PATH}.body.options.setup.description`,
               )}
               Icon={FaInfo}
               isOpen={true}
@@ -311,12 +309,12 @@ function EditChartPage() {
                         className="text-sm text-base-content/70 cursor-pointer"
                       >
                         {t(
-                          `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.visibility.label`,
+                          `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.visibility.label`,
                         )}
                       </label>
                       <span className="text-sm text-base-content font-bold">
                         {t(
-                          `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
+                          `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
                         )}
                       </span>
                     </div>
@@ -325,7 +323,7 @@ function EditChartPage() {
                       className="mt-4 text-base-content/70"
                     >
                       {t(
-                        `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.title.label`,
+                        `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.title.label`,
                       )}
                     </label>
                     <input
@@ -344,7 +342,7 @@ function EditChartPage() {
                       className="mt-4 text-base-content/70"
                     >
                       {t(
-                        `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.description.label`,
+                        `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.description.label`,
                       )}
                     </label>
                     <textarea
@@ -356,7 +354,7 @@ function EditChartPage() {
                         setChartDescription(e.target.value);
                       }}
                       placeholder={t(
-                        `${TRANSLATION_KEY_PATH}.body.configuration.setup.form.fields.description.placeholder`,
+                        `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.description.placeholder`,
                       )}
                       className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
                     />
@@ -366,8 +364,12 @@ function EditChartPage() {
             </EditStepComponent>
 
             <EditStepComponent
-              title=" Configure the chart"
-              description="Choose the chart type and customize its appearance"
+              title={t(
+                `${TRANSLATION_KEY_PATH}.body.options.configuration.title`,
+              )}
+              description={t(
+                `${TRANSLATION_KEY_PATH}.body.options.configuration.description`,
+              )}
               Icon={FaCog}
               isOpen={currentStepIndex > 0 ? true : false}
               isDisabled={currentStepIndex === 0 ? true : false}
@@ -399,8 +401,9 @@ function EditChartPage() {
                 ) : (
                   <div role="status">
                     {" "}
-                    Please load data and proceed to configuration step to see
-                    chart options{" "}
+                    {t(
+                      `${TRANSLATION_KEY_PATH}.body.options.configuration.status`,
+                    )}{" "}
                   </div>
                 )}
               </div>

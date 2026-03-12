@@ -202,7 +202,7 @@
           }
         },
         "body": {
-          "configuration": {
+          "options": {
             "setup": {
               "title": "Setup Info",
               "description": "Name, description and visibility of the chart",
@@ -224,6 +224,11 @@
                   }
                 }
               }
+            },
+            "configuration": {
+              "title": "Configure the chart",
+              "description": "Choose the chart type and customize its appearance",
+              "status": "Please load data and proceed to configuration step to see chart options"
             }
           },
           "preview": {}
