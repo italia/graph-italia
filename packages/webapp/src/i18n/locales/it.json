@@ -388,6 +388,31 @@
           "title": "Preview Chart"
         }
       }
+    },
+    "selectChart": {
+      "chartTypes": {
+        "bar": {
+          "label": "Bar chart",
+          "description": "Compare values across categories"
+        },
+        "line": {
+          "label": "Line",
+          "description": "Show trends over time"
+        },
+        "pie": {
+          "label": "Pie chart",
+          "description": "Display proportions"
+        },
+        "map": {
+          "label": "Geographic map",
+          "description": "Display data on a map"
+        }
+      },
+      "fieldset": {
+        "legend": {
+          "label": "Chart type"
+        }
+      }
     }
   },
   "pages": {
