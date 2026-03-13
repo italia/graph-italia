@@ -1,5 +1,5 @@
 {
-  "appname": "Dataviz-it",
+  "appname": "Dataviz-en",
   "components": {
     "auth": {
       "changePasswordForm": {
@@ -483,6 +483,67 @@
       },
       "editKpiGroup": {
         "components": {
+          "kpiConfigForm": {
+            "form": {
+              "fields": {
+                "direction": {
+                  "label": "Direction",
+                  "values": {
+                    "horizontal": "Horizontal",
+                    "vertical": "Vertical"
+                  }
+                },
+                "height": {
+                  "label": "Height"
+                },
+                "labelLine": {
+                  "label": "Label Line"
+                },
+                "legend": {
+                  "label": "Legend"
+                },
+                "legendPosition": {
+                  "label": "Legend Position",
+                  "values": {
+                    "noValue": "--Select a value--",
+                    "top": "Top",
+                    "bottom": "Bottom",
+                    "left": "Left",
+                    "right": "Right"
+                  }
+                },
+                "palette": {
+                  "label": "Palette (comma separated)"
+                },
+                "tooltip": {
+                  "label": "Tooltip"
+                },
+                "tooltipFormatter": {
+                  "label": "Tooltip Formatter"
+                },
+                "tooltipTrigger": {
+                  "label": "Tooltip Trigger",
+                  "values": {
+                    "noValue": "--Select a value--",
+                    "item": "Item",
+                    "axis": "Axis"
+                  }
+                },
+                "valueFormatter": {
+                  "label": "Value Formatter"
+                },
+                "totalLabel": {
+                  "label": "Total Label"
+                },
+                "colors": {
+                  "label": "Colors (comma separated)"
+                },
+                "background": {
+                  "label": "Background"
+                }
+              }
+            }
+          },
           "kpiDropdown": {
             "actions": {
               "edit": {

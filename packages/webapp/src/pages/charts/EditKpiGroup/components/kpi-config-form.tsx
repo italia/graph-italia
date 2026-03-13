@@ -1,6 +1,7 @@
 import type { ChartConfigType } from "dataviz-components";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 type KpiGroupConfigType = Pick<
   ChartConfigType,
@@ -46,6 +47,9 @@ const KpiConfigForm = forwardRef<
   KpiConfigFormHandle,
   { config: KpiGroupConfigType }
 >((props, ref) => {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "pages.charts.editKpiGroup.components.kpiConfigForm",
+  });
   const { register, control, reset, getValues, watch, setValue } = useForm({
     defaultValues: {
       ...defaultValues,
@@ -81,21 +85,29 @@ const KpiConfigForm = forwardRef<
           {/* Direction - register */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Direction</span>
+              <span className="label-text font-medium">
+                {t("form.fields.direction.label")}
+              </span>
             </label>
             <select
               {...register("direction")}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="vertical">Vertical</option>
-              <option value="horizontal">Horizontal</option>
+              <option value="vertical">
+                {t("form.fields.direction.values.vertical")}
+              </option>
+              <option value="horizontal">
+                {t("form.fields.direction.values.horizontal")}
+              </option>
             </select>
           </div>
 
           {/* Height - register con valueAsNumber */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Height</span>
+              <span className="label-text font-medium">
+                {t("form.fields.height.label")}
+              </span>
             </label>
             <input
               {...register("h", { valueAsNumber: true })}
@@ -112,7 +124,10 @@ const KpiConfigForm = forwardRef<
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label className="ml-2 text-sm font-medium text-gray-700">
-              <span className="label-text font-medium">Label Line</span>
+              <span className="label-text font-medium">
+                {" "}
+                {t("form.fields.labelLine.label")}
+              </span>
             </label>
           </div>
 
@@ -124,7 +139,10 @@ const KpiConfigForm = forwardRef<
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label className="ml-2 text-sm font-medium text-gray-700">
-              <span className="label-text font-medium">Legend</span>
+              <span className="label-text font-medium">
+                {" "}
+                {t("form.fields.legend.label")}
+              </span>
             </label>
           </div>
 
@@ -132,17 +150,30 @@ const KpiConfigForm = forwardRef<
           {legendValue && (
             <div>
               <label className="label">
-                <span className="label-text font-medium">Legend Position</span>
+                <span className="label-text font-medium">
+                  {" "}
+                  {t("form.fields.legendPosition.label")}
+                </span>
               </label>
               <select
                 {...register("legendPosition")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">--select a value--</option>
-                <option value="top">Top</option>
-                <option value="bottom">Bottom</option>
-                <option value="left">Left</option>
-                <option value="right">Right</option>
+                <option value="">
+                  {t("form.fields.legendPosition.values.noValue")}
+                </option>
+                <option value="top">
+                  {t("form.fields.legendPosition.values.top")}
+                </option>
+                <option value="bottom">
+                  {t("form.fields.legendPosition.values.bottom")}
+                </option>
+                <option value="left">
+                  {t("form.fields.legendPosition.values.left")}
+                </option>
+                <option value="right">
+                  {t("form.fields.legendPosition.values.right")}
+                </option>
               </select>
             </div>
           )}
@@ -151,7 +182,7 @@ const KpiConfigForm = forwardRef<
           <div>
             <label className="label">
               <span className="label-text font-medium">
-                Palette (comma separated)
+                {t("form.fields.palette.label")}
               </span>
             </label>
             <Controller
@@ -181,7 +212,9 @@ const KpiConfigForm = forwardRef<
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label className="label">
-              <span className="label-text font-medium">Tooltip</span>
+              <span className="label-text font-medium">
+                {t("form.fields.tooltip.label")}
+              </span>
             </label>
           </div>
 
@@ -190,7 +223,7 @@ const KpiConfigForm = forwardRef<
             <div>
               <label className="label">
                 <span className="label-text font-medium">
-                  Tooltip Formatter
+                  {t("form.fields.tooltipFormatter.label")}
                 </span>
               </label>
               <input
@@ -206,15 +239,23 @@ const KpiConfigForm = forwardRef<
           {tooltipValue && (
             <div>
               <label className="label">
-                <span className="label-text font-medium">Tooltip Trigger</span>
+                <span className="label-text font-medium">
+                  {t("form.fields.tooltipTrigger.label")}
+                </span>
               </label>
               <select
                 {...register("tooltipTrigger")}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">--select a value--</option>
-                <option value="item">Item</option>
-                <option value="axis">Axis</option>
+                <option value="">
+                  {t("form.fields.tooltipTrigger.values.noValue")}
+                </option>
+                <option value="item">
+                  {t("form.fields.tooltipTrigger.values.item")}
+                </option>
+                <option value="axis">
+                  {t("form.fields.tooltipTrigger.values.axis")}
+                </option>
               </select>
             </div>
           )}
@@ -222,7 +263,9 @@ const KpiConfigForm = forwardRef<
           {/* Value Formatter - register */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Value Formatter</span>
+              <span className="label-text font-medium">
+                {t("form.fields.valueFormatter.label")}
+              </span>
             </label>
             <input
               {...register("valueFormatter")}
@@ -235,7 +278,9 @@ const KpiConfigForm = forwardRef<
           {/* Total Label - register */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Total Label</span>
+              <span className="label-text font-medium">
+                {t("form.fields.totalLabel.label")}
+              </span>
             </label>
             <input
               {...register("totalLabel")}
@@ -249,7 +294,7 @@ const KpiConfigForm = forwardRef<
           <div>
             <label className="label">
               <span className="label-text font-medium">
-                Colors (comma separated)
+                {t("form.fields.colors.label")}
               </span>
             </label>
             <Controller
@@ -274,7 +319,9 @@ const KpiConfigForm = forwardRef<
           {/* Background - Controller per sincronizzare text e color input */}
           <div>
             <label className="label">
-              <span className="label-text font-medium">Background</span>
+              <span className="label-text font-medium">
+                {t("form.fields.background.label")}
+              </span>
             </label>
             <Controller
               name="background"
