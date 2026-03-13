@@ -11,33 +11,24 @@ import * as api from "../../lib/api";
 const getSignupSchema = (
   z: typeof zod,
   t: TFunction<"translation", undefined>,
-  TRANSLATION_KEY_PATH: string,
 ) => {
   const passwordSchema = z
     .string()
     .min(8, {
-      message: t(
-        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.minLength`,
-      ),
+      message: t(`form.fields.password.errors.minLength`),
     })
     // .max(20, { message: maxLengthErrorMessage })
     .refine((password) => /[A-Z]/.test(password), {
-      message: t(
-        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.uppercase`,
-      ),
+      message: t(`form.fields.password.errors.uppercase`),
     })
     .refine((password) => /[a-z]/.test(password), {
-      message: t(
-        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.lowercase`,
-      ),
+      message: t(`form.fields.password.errors.lowercase`),
     })
     .refine((password) => /[0-9]/.test(password), {
-      message: t(`${TRANSLATION_KEY_PATH}.form.fields.password.errors.number`),
+      message: t(`form.fields.password.errors.number`),
     })
     .refine((password) => /[!@#$%^&*]/.test(password), {
-      message: t(
-        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.specialChar`,
-      ),
+      message: t(`form.fields.password.errors.specialChar`),
     });
 
   const signupSchema = z
@@ -46,13 +37,11 @@ const getSignupSchema = (
       password: passwordSchema,
       confirmPassword: passwordSchema,
       policyAcknologment: z.boolean().refine((val) => val === true, {
-        message: t(
-          `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.errors.mustAccept`,
-        ),
+        message: t(`form.fields.policyAcknologment.errors.mustAccept`),
       }),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: t(`${TRANSLATION_KEY_PATH}.form.errors.passwordDontMatch`),
+      message: t(`form.errors.passwordDontMatch`),
       path: ["confirmPassword"],
     });
 
@@ -67,11 +56,12 @@ function SignUp({
   handleRegistered: () => void;
 }) {
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.auth.signup";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.auth.signup",
+  });
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const signupSchema = getSignupSchema(zod, t, TRANSLATION_KEY_PATH);
+  const signupSchema = getSignupSchema(zod, t);
   const {
     register,
     handleSubmit,
@@ -114,7 +104,7 @@ function SignUp({
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            {t(`${TRANSLATION_KEY_PATH}.header.label`)}
+            {t(`header.label`)}
           </h2>
         </div>
 
@@ -126,7 +116,7 @@ function SignUp({
                   htmlFor="email"
                   className="block text-sm font-medium leading-6"
                 >
-                  {t(`${TRANSLATION_KEY_PATH}.form.fields.email.label`)}
+                  {t(`form.fields.email.label`)}
                 </label>
                 <div className="mt-2 form-control">
                   <input
@@ -139,9 +129,7 @@ function SignUp({
                   />
                   {errors["email"] && (
                     <p className="text-error">
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.form.fields.email.errors.required`,
-                      )}
+                      {t(`form.fields.email.errors.required`)}
                     </p>
                   )}
                 </div>
@@ -152,7 +140,7 @@ function SignUp({
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  {t(`${TRANSLATION_KEY_PATH}.form.fields.password.label`)}
+                  {t(`form.fields.password.label`)}
                 </label>
                 <div className="mt-2">
                   <div className="relative">
@@ -229,9 +217,7 @@ function SignUp({
                   htmlFor="confirm-password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  {t(
-                    `${TRANSLATION_KEY_PATH}.form.fields.confirmPassword.label`,
-                  )}
+                  {t(`form.fields.confirmPassword.label`)}
                 </label>
                 <div className="mt-2">
                   <input
@@ -262,10 +248,12 @@ function SignUp({
                     className="ml-3 block text-sm leading-6 "
                   >
                     <Trans
-                      i18nKey={`${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.main`}
+                      t={t}
+                      i18nKey={`form.fields.policyAcknologment.label.main`}
                       components={{
                         privacyLink: (
-                          <a className="link link-primary font-semibold"
+                          <a
+                            className="link link-primary font-semibold"
                             target="_blank"
                             href="/gdpr"
                           />
@@ -274,9 +262,7 @@ function SignUp({
                     />
                     <hr />
                     <small>
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.form.fields.policyAcknologment.label.small`,
-                      )}
+                      {t(`form.fields.policyAcknologment.label.small`)}
                     </small>
                   </label>
                 </div>
@@ -290,18 +276,18 @@ function SignUp({
               {message && <p className="text-error">{message}</p>}
               <div>
                 <button type="submit" className="btn btn-primary w-full">
-                  {t(`${TRANSLATION_KEY_PATH}.form.actions.submit.label`)}
+                  {t(`form.actions.submit.label`)}
                 </button>
               </div>
             </form>
             <div className="text-sm leading-6 my-4">
-              {t(`${TRANSLATION_KEY_PATH}.bottom.label`)} &nbsp;
+              {t(`bottom.label`)} &nbsp;
               <button
                 type="button"
                 onClick={() => setLogin(true)}
                 className="link font-semibold text-primary"
               >
-                {t(`${TRANSLATION_KEY_PATH}.bottom.actions.signin.label`)}
+                {t(`bottom.actions.signin.label`)}
               </button>
             </div>
           </div>
