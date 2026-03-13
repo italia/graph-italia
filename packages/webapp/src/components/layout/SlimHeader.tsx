@@ -16,7 +16,8 @@ export default function SlimHeader() {
   const { t } = useTranslation(undefined, {
     keyPrefix: "components.layout.slimHeader",
   });
-  const { t: translateMenu } = useTranslation();
+  const { t: translateMenu } = useTranslation("menu");
+
   const { user, clearUser } = useUserStore();
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
