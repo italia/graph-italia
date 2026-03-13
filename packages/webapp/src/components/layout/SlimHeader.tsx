@@ -7,21 +7,23 @@ import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import type { MenuSubItem } from "../../router";
 import { MENU } from "../../router";
-import { useUserStore } from "../../store/user_store";
-import "./SlimHeader.css";
 import { useSettingsStore } from "../../store/settings_store.ts";
+import { useUserStore } from "../../store/user_store";
 import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
+import "./SlimHeader.css";
 
 export default function SlimHeader() {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.layout.slimHeader";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.layout.slimHeader",
+  });
+  const { t: translateMenu } = useTranslation();
   const { user, clearUser } = useUserStore();
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
   const dropdownToolsRef = useRef<HTMLLIElement>(null);
 
   const { settings, setTheme } = useSettingsStore();
-  const theme = settings?.preferredTheme
+  const theme = settings?.preferredTheme;
 
   const handleLogout = async () => {
     try {
@@ -55,7 +57,7 @@ export default function SlimHeader() {
           <div className="it-slim-only-content">
             <div className="it-slim-only-brand">
               <a href="/" className="it-slim-only-brand-title">
-                {t(`${TRANSLATION_KEY_PATH}.brand.title`)}
+                {t(`brand.title`)}
               </a>
               <button
                 type="button"
@@ -87,7 +89,7 @@ export default function SlimHeader() {
                             onClick={() => setDropdownToolsAperto((v) => !v)}
                           >
                             {item.translationKey
-                              ? t(item.translationKey)
+                              ? translateMenu(item.translationKey)
                               : item.name}
 
                             <svg
@@ -110,7 +112,7 @@ export default function SlimHeader() {
                                   role="menuitem"
                                 >
                                   {sub.translationKey
-                                    ? t(sub.translationKey)
+                                    ? translateMenu(sub.translationKey)
                                     : sub.name}
                                 </a>
                               </li>
@@ -123,7 +125,7 @@ export default function SlimHeader() {
                       <li key={item.name} className="it-slim-only-nav-item">
                         <a href={item.link} className="it-slim-only-nav-link">
                           {item.translationKey
-                            ? t(item.translationKey)
+                            ? translateMenu(item.translationKey)
                             : item.name}
                         </a>
                       </li>
@@ -135,7 +137,10 @@ export default function SlimHeader() {
 
             <div className="it-slim-only-actions">
               <div className="it-slim-only-actions-right">
-                <ThemeSwitcherComponent currentTheme={theme as "light" | "dark"} handleChange={setTheme} />
+                <ThemeSwitcherComponent
+                  currentTheme={theme as "light" | "dark"}
+                  handleChange={setTheme}
+                />
                 {user ? (
                   <span className="it-slim-only-user">
                     <span className="it-slim-only-user-name">{user.name}</span>
@@ -144,7 +149,7 @@ export default function SlimHeader() {
                       className="it-slim-only-btn it-slim-only-btn-outline"
                       onClick={handleLogout}
                     >
-                      {t(`${TRANSLATION_KEY_PATH}.actions.logout.label`)}
+                      {t(`actions.logout.label`)}
                     </button>
                   </span>
                 ) : (
@@ -153,7 +158,7 @@ export default function SlimHeader() {
                     className="it-slim-only-btn it-slim-only-btn-outline"
                     aria-label="Accedi"
                   >
-                    {t(`${TRANSLATION_KEY_PATH}.actions.login.label`)}
+                    {t(`actions.login.label`)}
                   </a>
                 )}
               </div>
@@ -172,7 +177,9 @@ export default function SlimHeader() {
               return (
                 <li key={item.name}>
                   <span className="it-slim-only-mobile-label">
-                    {item.translationKey ? t(item.translationKey) : item.name}
+                    {item.translationKey
+                      ? translateMenu(item.translationKey)
+                      : item.name}
                   </span>
                   <ul className="it-slim-only-mobile-sublist">
                     {item.subMenu.map((sub: MenuSubItem) => (
@@ -182,7 +189,7 @@ export default function SlimHeader() {
                           onClick={() => setMenuMobileAperto(false)}
                         >
                           {sub.translationKey
-                            ? t(sub.translationKey)
+                            ? translateMenu(sub.translationKey)
                             : sub.name}
                         </a>
                       </li>
@@ -194,7 +201,9 @@ export default function SlimHeader() {
             return (
               <li key={item.name}>
                 <a href={item.link} onClick={() => setMenuMobileAperto(false)}>
-                  {item.translationKey ? t(item.translationKey) : item.name}
+                  {item.translationKey
+                    ? translateMenu(item.translationKey)
+                    : item.name}
                 </a>
               </li>
             );
