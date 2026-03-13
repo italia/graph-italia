@@ -15,7 +15,7 @@ export default function HeaderCompleta() {
   const { t } = useTranslation(undefined, {
     keyPrefix: "components.layout.fullHeader",
   });
-  const { t: translateMenu } = useTranslation();
+  const { t: translateMenu } = useTranslation("router");
   const { user, clearUser } = useUserStore();
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
