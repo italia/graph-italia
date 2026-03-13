@@ -169,83 +169,6 @@
         }
       }
     },
-    "charts": {
-      "editChart": {
-        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
-        "save": {
-          "success": {
-            "label": "Chart saved successfully!"
-          },
-          "error": {
-            "label": "Error saving chart!"
-          }
-        },
-        "head": {
-          "title": {
-            "label": "Edit Chart"
-          },
-          "meta": {
-            "description": {
-              "content": "Creating chart"
-            }
-          }
-        },
-        "header": {
-          "actions": {
-            "back": {
-              "label": "Back to list"
-            },
-            "save": {
-              "default": "Save",
-              "isSaving": "Saving"
-            }
-          }
-        },
-        "body": {
-          "options": {
-            "setup": {
-              "title": "Setup Info",
-              "description": "Name, description and visibility of the chart",
-              "form": {
-                "fields": {
-                  "visibility": {
-                    "label": "Chart Visibility",
-                    "values": {
-                      "private": "Private",
-                      "public": "Public"
-                    }
-                  },
-                  "title": {
-                    "label": "Chart Title"
-                  },
-                  "description": {
-                    "label": "Chart Description",
-                    "placeholder": "Add a description"
-                  }
-                }
-              }
-            },
-            "configuration": {
-              "title": "Configure the chart",
-              "description": "Choose the chart type and customize its appearance",
-              "status": "Please load data and proceed to configuration step to see chart options"
-            },
-            "data": {
-              "title": "Load your data",
-              "description": "Import data from CSV, JSON files or from a remote source",
-              "actions": {
-                "useData": {
-                  "label": "Use thi data"
-                }
-              }
-            }
-          },
-          "preview": {
-            "loadDataMessage": "Load your data to display the data preview"
-          }
-        }
-      }
-    },
     "layout": {
       "sr": {
         "label": "Vai al contenuto principale"
@@ -479,6 +402,83 @@
         },
         "checkEmail": {
           "label": "Check your email to activate your account"
+        }
+      }
+    },
+    "charts": {
+      "editChart": {
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+        "save": {
+          "success": {
+            "label": "Chart saved successfully!"
+          },
+          "error": {
+            "label": "Error saving chart!"
+          }
+        },
+        "head": {
+          "title": {
+            "label": "Edit Chart"
+          },
+          "meta": {
+            "description": {
+              "content": "Creating chart"
+            }
+          }
+        },
+        "header": {
+          "actions": {
+            "back": {
+              "label": "Back to list"
+            },
+            "save": {
+              "default": "Save",
+              "isSaving": "Saving"
+            }
+          }
+        },
+        "body": {
+          "options": {
+            "setup": {
+              "title": "Setup Info",
+              "description": "Name, description and visibility of the chart",
+              "form": {
+                "fields": {
+                  "visibility": {
+                    "label": "Chart Visibility",
+                    "values": {
+                      "private": "Private",
+                      "public": "Public"
+                    }
+                  },
+                  "title": {
+                    "label": "Chart Title"
+                  },
+                  "description": {
+                    "label": "Chart Description",
+                    "placeholder": "Add a description"
+                  }
+                }
+              }
+            },
+            "configuration": {
+              "title": "Configure the chart",
+              "description": "Choose the chart type and customize its appearance",
+              "status": "Please load data and proceed to configuration step to see chart options"
+            },
+            "data": {
+              "title": "Load your data",
+              "description": "Import data from CSV, JSON files or from a remote source",
+              "actions": {
+                "useData": {
+                  "label": "Use thi data"
+                }
+              }
+            }
+          },
+          "preview": {
+            "loadDataMessage": "Load your data to display the data preview"
+          }
         }
       }
     },
