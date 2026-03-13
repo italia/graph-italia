@@ -5,8 +5,9 @@ import { useTranslation } from "react-i18next";
 import * as api from "../../lib/api";
 
 function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.auth.recoverPwdForm";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.auth.recoverPwdForm",
+  });
   const {
     register,
     handleSubmit,
@@ -21,14 +22,10 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
       const result = await api.recoverPasssword(email);
       console.log("result", result);
       if (!result) {
-        setMessage(
-          t(`${TRANSLATION_KEY_PATH}.form.actions.submit.messages.error`),
-        );
+        setMessage(t(`form.actions.submit.messages.error`));
         return;
       }
-      setMessage(
-        t(`${TRANSLATION_KEY_PATH}.form.actions.submit.messages.success`),
-      );
+      setMessage(t(`form.actions.submit.messages.success`));
       setTimeout(() => {
         onDone();
       }, 1000);
@@ -47,7 +44,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            {t(`${TRANSLATION_KEY_PATH}.header.label`)}
+            {t(`header.label`)}
           </h2>
         </div>
 
@@ -59,7 +56,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
                   htmlFor="email"
                   className="block text-sm font-medium leading-6"
                 >
-                  {t(`${TRANSLATION_KEY_PATH}.form.fields.email.label`)}
+                  {t(`form.fields.email.label`)}
                 </label>
                 <div className="mt-2 form-control">
                   <input
@@ -72,9 +69,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
                   />
                   {errors["email"] && (
                     <span className="text-error">
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.form.fields.email.errors.required`,
-                      )}
+                      {t(`form.fields.email.errors.required`)}
                     </span>
                   )}
                 </div>
@@ -82,7 +77,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
               {message && <p className="text-error">{message}</p>}
               <div>
                 <button type="submit" className="btn btn-primary w-full">
-                  {t(`${TRANSLATION_KEY_PATH}.form.actions.submit.label`)}
+                  {t(`form.actions.submit.label`)}
                 </button>
               </div>
             </form>
