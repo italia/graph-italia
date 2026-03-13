@@ -480,6 +480,55 @@
             "loadDataMessage": "Load your data to display the data preview"
           }
         }
+      },
+      "editKpiGroup": {
+        "header": {
+          "actions": {
+            "back": {
+              "label": "Back to list"
+            },
+            "save": {
+              "default": "Save",
+              "isSaving": "Saving"
+            },
+            "reset": {
+              "default": "Reset",
+              "isSaving": "Saving"
+            }
+          }
+        },
+        "body": {
+          "actions": {
+            "changeConfiguration": {
+              "label": "Change configuration"
+            },
+            "addKpi": {
+              "label": "Add KPI"
+            }
+          },
+          "messages": {
+            "noKpi": "No KPIs. Add a new KPI."
+          }
+        },
+        "modals": {
+          "addKpiForm": {
+            "title": "New KPI"
+          },
+          "editKpiForm": {
+            "title": "Edit KPI"
+          },
+          "config": {
+            "title": "KPI Group Configuration"
+          },
+          "delete": {
+            "title": "Confirm deletion",
+            "message": "Do you want to delete KPI with title"
+          },
+          "showConfirmNavigation": {
+            "title": "Confirm exit",
+            "message": "Do you want to exit without saving?"
+          }
+        }
       }
     },
     "home": {

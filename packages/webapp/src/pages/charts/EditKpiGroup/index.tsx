@@ -1,18 +1,26 @@
+import { RenderChart } from "dataviz-components";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../../../components/layout";
 import GenericDialog from "../../../components/layout/GenericDialog";
 import Loading from "../../../components/layout/Loading";
 import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
-import { KPI_FORM_ID, KpiForm, type KpiFormValues } from "./components/kpi-form";
-import { KpiDropdown } from "./components/kpi-dropdown";
-import useEditKpiGroupStore from "./store";
 import { HOME_ROUTE } from "../../../router";
 import type { KpiConfigFormHandle } from "./components/kpi-config-form";
-import { RenderChart } from "dataviz-components";
 import KpiConfigForm from "./components/kpi-config-form";
+import { KpiDropdown } from "./components/kpi-dropdown";
+import {
+  KPI_FORM_ID,
+  KpiForm,
+  type KpiFormValues,
+} from "./components/kpi-form";
+import useEditKpiGroupStore from "./store";
 
 function EditKpiGroup() {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "pages.charts.editKpiGroup",
+  });
   const { id } = useParams();
   const kpiConfigFormRef = useRef<KpiConfigFormHandle>(null);
   const {
@@ -96,14 +104,14 @@ function EditKpiGroup() {
         <div className="flex justify-between items-center">
           <Link to={HOME_ROUTE} className="text-blue-500 hover:underline">
             {/* &lt; Torna alla lista */}
-            &lt; Back to the list
+            &lt; {t("header.actions.back.label")}
           </Link>
           <div className="ml-auto flex space-x-2">
             <button onClick={resetHandler} className="btn btn-danger">
-              Reset
+              &lt; {t("header.actions.reset.default")}
             </button>
             <button onClick={saveHandler} className="btn btn-primary">
-              Save
+              &lt; {t("header.actions.save.default")}
             </button>
           </div>
         </div>
@@ -125,10 +133,10 @@ function EditKpiGroup() {
                   className="btn btn-secondary mr-4"
                   onClick={changeConfigHandler}
                 >
-                  Change configuration
+                  {t("body.actions.changeConfiguration.label")}
                 </button>
                 <button className="btn btn-primary" onClick={addKpiHandler}>
-                  Add KPI +
+                  {t("body.actions.addKpi.label")} +
                 </button>
               </div>
             </div>
@@ -154,7 +162,7 @@ function EditKpiGroup() {
               {kpiGroup.dataSource.length === 0 && (
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-500">
                   {/* Nessun KPI presente. Aggiungi un nuovo KPI. */}
-                  No KPIs. Add a new KPI.
+                  {t("body.messages.noKpi")}
                 </div>
               )}
               {kpiGroup.dataSource.length > 0 && (
@@ -170,7 +178,7 @@ function EditKpiGroup() {
         {addKpiFormModalVisible && (
           <GenericDialog
             toggle={addKpiFormModalVisible}
-            title="New KPI"
+            title={t("modals.addKpiForm.title")}
             confirmCb={() => {
               document
                 .getElementById(KPI_FORM_ID)
@@ -188,7 +196,7 @@ function EditKpiGroup() {
         {editKpiGroupFormModalVisible && (
           <GenericDialog
             toggle={editKpiGroupFormModalVisible}
-            title="Edit KPI"
+            title={t("modals.editKpiForm.title")}
             confirmCb={() => {
               document
                 .getElementById(KPI_FORM_ID)
@@ -206,7 +214,7 @@ function EditKpiGroup() {
         {configModalVisible && (
           <GenericDialog
             toggle={configModalVisible}
-            title="KPI Group Configuration"
+            title={t("modals.config.title")}
             confirmCb={() => {
               const formData = kpiConfigFormRef.current?.getFormData();
               console.log("Configurazione KPI Group:", formData);
@@ -222,23 +230,24 @@ function EditKpiGroup() {
         {deleteModalVisible && (
           <GenericDialog
             toggle={deleteModalVisible}
-            title="Confirm deletion"
+            title={t("modals.delete.title")}
             confirmCb={confirmDeleteModal}
             cancelCb={cancelDeleteModal}
           >
-            {/* <p>Sei sicuro di voler cancellare il KPI {selectedKpi?.title}</p> */}
-            <p>Do you want to delete KPI with title {selectedKpi?.title}?</p>
+            <p>
+              {t("modals.delete.message")} {selectedKpi?.title}?
+            </p>
           </GenericDialog>
         )}
         {showConfirmNavigationModal && (
           <GenericDialog
             toggle={showConfirmNavigationModal}
-            title="Confirm exit"
+            title={t("modals.showConfirmNavigation.title")}
             confirmCb={confirmNavigationModal}
             cancelCb={cancelNavigationModal}
           >
             {/* <p>Sei sicuro di voler uscire senza salvare le modifiche?</p> */}
-            <p>Do you want to exit without saving?</p>
+            <p>{t("modals.showConfirmNavigation.message")}</p>
           </GenericDialog>
         )}
       </div>
