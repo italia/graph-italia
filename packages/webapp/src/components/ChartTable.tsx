@@ -56,24 +56,21 @@ createTheme("dark", {
   },
 });
 
-
 export default function ChartTable({
   list,
-  handleLoadChart: _handleLoadChart,
   handleDeleteChart,
 }: CharTableProps) {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.chartTable";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.chartTable",
+  });
   const [show, setShow] = useState<string | null>(null);
   const [data, setData] = useState<FieldDataType | null>(null);
 
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
 
-
   const actionColor = currentTheme === "dark" ? "#fff" : "#111";
   const actionSize = 16;
-
 
   const [sortState, setSortState] = useState<{
     columnKey: string;
@@ -117,7 +114,7 @@ export default function ChartTable({
     navigate(path);
   }
 
-  const COLUMNS_TRANSLATION_KEY_PATH = `${TRANSLATION_KEY_PATH}.columns`;
+  const COLUMNS_TRANSLATION_KEY_PATH = `columns`;
 
   return (
     <div className="flex flex-col gap-2">
@@ -358,8 +355,9 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
-                        }`}
+                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${
+                        row.id
+                      }`}
                       aria-label="edit"
                       className="btn btn-ghost btn-xs btn-square"
                     >
@@ -383,7 +381,7 @@ export default function ChartTable({
 
       <Dialog
         toggle={data ? true : false}
-        title={t(`${TRANSLATION_KEY_PATH}.modals.previewChart.title`)}
+        title={t(`modals.previewChart.title`)}
         callback={() => setData(null)}
       >
         <div className="w-full h-full p-4" style={{ minHeight: "400px" }}>
@@ -392,7 +390,7 @@ export default function ChartTable({
       </Dialog>
       <Dialog
         toggle={show ? true : false}
-        title={t(`${TRANSLATION_KEY_PATH}.modals.embedChart.title`)}
+        title={t(`modals.embedChart.title`)}
         callback={() => setShow(null)}
       >
         <div className="mockup-code">
