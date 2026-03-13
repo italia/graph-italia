@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import * as api from "../../lib/api";
 
 function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.auth.recoverPwdForm",
   });
   const {

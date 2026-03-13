@@ -56,7 +56,7 @@ function SignUp({
   handleRegistered: () => void;
 }) {
   const navigate = useNavigate();
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.auth.signup",
   });
   const [message, setMessage] = useState("");

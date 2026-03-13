@@ -8,7 +8,7 @@ import { HOME_ROUTE } from "../../router";
 import { useUserStore } from "../../store/user_store";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.auth.signin",
   });
   const { setUser } = useUserStore();

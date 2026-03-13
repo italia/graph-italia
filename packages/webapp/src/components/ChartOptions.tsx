@@ -24,7 +24,7 @@ function ChartOptions({
   chart: string;
   numSeries: number;
 }) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.chartOptions",
   });
   const availabelPalettes =
