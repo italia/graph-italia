@@ -7,7 +7,7 @@ import Layout from "../../components/layout";
 function AuthPage() {
   const [login, setLogin] = useState(true);
   const [welcome, showWelcome] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation("pages", { keyPrefix: "auth" });
 
   return (
     <Layout>
@@ -28,9 +28,7 @@ function AuthPage() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-lg">
-                {t("pages.auth.header.accountCreated.label")}{" "}
-              </p>
+              <p className="text-lg">{t("header.accountCreated.label")} </p>
             </div>
             <div role="alert" className="alert alert-info mb-2">
               <svg
@@ -46,9 +44,7 @@ function AuthPage() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-lg">
-                {t("pages.auth.header.checkEmail.label")}
-              </p>
+              <p className="text-lg">{t("header.checkEmail.label")}</p>
             </div>
           </>
         )}

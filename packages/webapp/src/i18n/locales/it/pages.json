@@ -1,0 +1,351 @@
+{
+    "auth": {
+        "header": {
+            "accountCreated": {
+                "label": "Your account has been created successfully."
+            },
+            "checkEmail": {
+                "label": "Check your email to activate your account"
+            }
+        }
+    },
+    "charts": {
+        "editChart": {
+            "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+            "save": {
+                "success": {
+                    "label": "Chart saved successfully!"
+                },
+                "error": {
+                    "label": "Error saving chart!"
+                }
+            },
+            "head": {
+                "title": {
+                    "label": "Edit Chart"
+                },
+                "meta": {
+                    "description": {
+                        "content": "Creating chart"
+                    }
+                }
+            },
+            "header": {
+                "actions": {
+                    "back": {
+                        "label": "Back to list"
+                    },
+                    "save": {
+                        "default": "Save",
+                        "isSaving": "Saving"
+                    }
+                }
+            },
+            "body": {
+                "options": {
+                    "setup": {
+                        "title": "Setup Info",
+                        "description": "Name, description and visibility of the chart",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Chart Visibility",
+                                    "values": {
+                                        "private": "Private",
+                                        "public": "Public"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Chart Title"
+                                },
+                                "description": {
+                                    "label": "Chart Description",
+                                    "placeholder": "Add a description"
+                                }
+                            }
+                        }
+                    },
+                    "configuration": {
+                        "title": "Configure the chart",
+                        "description": "Choose the chart type and customize its appearance",
+                        "status": "Please load data and proceed to configuration step to see chart options"
+                    },
+                    "data": {
+                        "title": "Load your data",
+                        "description": "Import data from CSV, JSON files or from a remote source",
+                        "actions": {
+                            "useData": {
+                                "label": "Use thi data"
+                            }
+                        }
+                    }
+                },
+                "preview": {
+                    "loadDataMessage": "Load your data to display the data preview"
+                }
+            }
+        },
+        "editKpiGroup": {
+            "components": {
+                "kpiConfigForm": {
+                    "form": {
+                        "fields": {
+                            "direction": {
+                                "label": "Direction",
+                                "values": {
+                                    "horizontal": "Horizontal",
+                                    "vertical": "Vertical"
+                                }
+                            },
+                            "height": {
+                                "label": "Height"
+                            },
+                            "labelLine": {
+                                "label": "Label Line"
+                            },
+                            "legend": {
+                                "label": "Legend"
+                            },
+                            "legendPosition": {
+                                "label": "Legend Position",
+                                "values": {
+                                    "noValue": "--Select a value--",
+                                    "top": "Top",
+                                    "bottom": "Bottom",
+                                    "left": "Left",
+                                    "right": "Right"
+                                }
+                            },
+                            "palette": {
+                                "label": "Palette (comma separated)"
+                            },
+                            "tooltip": {
+                                "label": "Tooltip"
+                            },
+                            "tooltipFormatter": {
+                                "label": "Tooltip Formatter"
+                            },
+                            "tooltipTrigger": {
+                                "label": "Tooltip Trigger",
+                                "values": {
+                                    "noValue": "--Select a value--",
+                                    "item": "Item",
+                                    "axis": "Axis"
+                                }
+                            },
+                            "valueFormatter": {
+                                "label": "Value Formatter"
+                            },
+                            "totalLabel": {
+                                "label": "Total Label"
+                            },
+                            "colors": {
+                                "label": "Colors (comma separated)"
+                            },
+                            "background": {
+                                "label": "Background"
+                            }
+                        }
+                    }
+                },
+                "kpiDropdown": {
+                    "actions": {
+                        "edit": {
+                            "label": "Edit"
+                        },
+                        "delete": {
+                            "label": "Delete"
+                        }
+                    }
+                },
+                "kpiForm": {
+                    "form": {
+                        "fieldSets": {
+                            "additionalInfos": {
+                                "label": "Additional infos"
+                            }
+                        },
+                        "fields": {
+                            "title": {
+                                "label": "Title"
+                            },
+                            "value": {
+                                "label": "Value"
+                            },
+                            "openDataPath": {
+                                "label": "Open Data Path"
+                            },
+                            "showFlow": {
+                                "label": "Show flow"
+                            },
+                            "flowDirection": {
+                                "label": "Flow direction",
+                                "values": {
+                                    "noValue": "--Select a value--",
+                                    "positive": "Positive",
+                                    "negative": "Negative"
+                                }
+                            },
+                            "flowValue": {
+                                "label": "Flow value"
+                            },
+                            "flowDetail": {
+                                "label": "Flow detail"
+                            },
+                            "backgroundColor": {
+                                "label": "Background color"
+                            },
+                            "valuePrefix": {
+                                "label": "Value prefix"
+                            },
+                            "valueSuffix": {
+                                "label": "Value suffix"
+                            },
+                            "percentage": {
+                                "label": "Percentage"
+                            },
+                            "footerText": {
+                                "label": "Footer text"
+                            }
+                        }
+                    }
+                }
+            },
+            "header": {
+                "actions": {
+                    "back": {
+                        "label": "Back to list"
+                    },
+                    "save": {
+                        "default": "Save",
+                        "isSaving": "Saving"
+                    },
+                    "reset": {
+                        "default": "Reset",
+                        "isSaving": "Saving"
+                    }
+                }
+            },
+            "body": {
+                "actions": {
+                    "changeConfiguration": {
+                        "label": "Change configuration"
+                    },
+                    "addKpi": {
+                        "label": "Add KPI"
+                    }
+                },
+                "messages": {
+                    "noKpi": "No KPIs. Add a new KPI."
+                }
+            },
+            "modals": {
+                "addKpiForm": {
+                    "title": "New KPI"
+                },
+                "editKpiForm": {
+                    "title": "Edit KPI"
+                },
+                "config": {
+                    "title": "KPI Group Configuration"
+                },
+                "delete": {
+                    "title": "Confirm deletion",
+                    "message": "Do you want to delete KPI with title"
+                },
+                "showConfirmNavigation": {
+                    "title": "Confirm exit",
+                    "message": "Do you want to exit without saving?"
+                }
+            }
+        }
+    },
+    "home": {
+        "header": {
+            "myCharts": "My Charts",
+            "noCharts": "Welcome"
+        },
+        "body": {
+            "actions": {
+                "label": "Create new",
+                "actionItems": {
+                    "createChart": {
+                        "label": "Create Chart"
+                    },
+                    "createKPIGroup": {
+                        "label": "Create KPI Group"
+                    }
+                }
+            },
+            "confirms": {
+                "deleteChart": {
+                    "label": "Are you sure you want to delete this chart?"
+                }
+            }
+        },
+        "modals": {
+            "createChart": {
+                "title": "Create new chart",
+                "description": "Name your chart to start editing it",
+                "labels": {
+                    "confirm": {
+                        "default": "Create",
+                        "isCreating": "Creating..."
+                    },
+                    "cancel": "Cancel"
+                },
+                "form": {
+                    "fields": {
+                        "name": {
+                            "label": "Chart name",
+                            "placeholder": "E.g.: Monthly sales 2024",
+                            "content": "You can change the name later"
+                        }
+                    }
+                }
+            },
+            "createKpiGroup": {
+                "title": "Create KPI Group",
+                "description": "Enter data to create a new KPI indicator group",
+                "labels": {
+                    "confirm": "Create",
+                    "cancel": "Cancel"
+                },
+                "form": {
+                    "fields": {
+                        "name": {
+                            "label": "Name",
+                            "placeholder": "Enter the KPI group name"
+                        },
+                        "description": {
+                            "label": "Description",
+                            "placeholder": "Enter a description (optional)"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "verify": {
+        "body": {
+            "errors": {
+                "invalidParam": {
+                    "label": "Invalid params, use the recover password flow to get a new code.",
+                    "actions": {
+                        "recoverPassword": {
+                            "label": "Recover Password"
+                        }
+                    }
+                }
+            },
+            "messages": {
+                "valid": "The code is valid"
+            },
+            "actions": {
+                "init": {
+                    "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
+                }
+            }
+        }
+    }
+}

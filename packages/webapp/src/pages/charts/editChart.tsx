@@ -34,8 +34,8 @@ import TransformData from "../../components/load-data/TransformData";
 import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
 
 function EditChartPage() {
-  const { t } = useTranslation(undefined, {
-    keyPrefix: `pages.charts.editChart`,
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editChart`,
   });
   const { id: paramId } = useParams();
   const navigate = useNavigate();
