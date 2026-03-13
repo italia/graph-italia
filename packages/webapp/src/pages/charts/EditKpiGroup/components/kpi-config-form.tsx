@@ -47,7 +47,7 @@ const KpiConfigForm = forwardRef<
   KpiConfigFormHandle,
   { config: KpiGroupConfigType }
 >((props, ref) => {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("pages", {
     keyPrefix: "pages.charts.editKpiGroup.components.kpiConfigForm",
   });
   const { register, control, reset, getValues, watch, setValue } = useForm({

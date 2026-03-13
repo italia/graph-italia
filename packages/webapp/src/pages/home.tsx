@@ -28,8 +28,7 @@ async function createKpiGroup(payload: KpiGroupPayload) {
 }
 
 function Home() {
-  const { t } = useTranslation();
-  const TRANSLATE_KEY_PATH = "pages.home";
+  const { t } = useTranslation("pages", { keyPrefix: "pages.home" });
   const [state, send] = useMachine(stepMachine);
   const {
     config,
@@ -90,9 +89,7 @@ function Home() {
     if (!id) return;
     console.log("delete chart?", id);
 
-    const sure = confirm(
-      t(`${TRANSLATE_KEY_PATH}.body.confirms.deleteChart.label`),
-    );
+    const sure = confirm(t(`body.confirms.deleteChart.label`));
     if (!sure) return;
 
     return api
@@ -165,9 +162,7 @@ function Home() {
           ) : (
             <>
               <h1 className="text-4xl font-bold">
-                {t(
-                  `${TRANSLATE_KEY_PATH}.header.${list && list.length ? "myCharts" : "noCharts"}`,
-                )}
+                {t(`header.${list && list.length ? "myCharts" : "noCharts"}`)}
               </h1>
 
               <div>
@@ -179,7 +174,7 @@ function Home() {
                       aria-haspopup="menu"
                     >
                       <span aria-hidden="true">+ </span>
-                      {t(`${TRANSLATE_KEY_PATH}.body.actions.label`)}
+                      {t(`body.actions.label`)}
                     </summary>
                     <ul
                       className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border"
@@ -191,9 +186,7 @@ function Home() {
                           role="menuitem"
                           onClick={() => setShowCreateChartModal(true)}
                         >
-                          {t(
-                            `${TRANSLATE_KEY_PATH}.body.actions.actionItems.createChart.label`,
-                          )}
+                          {t(`body.actions.actionItems.createChart.label`)}
                         </button>
                       </li>
                       <li role="none">
@@ -202,9 +195,7 @@ function Home() {
                           role="menuitem"
                           onClick={() => setShowCreateKpiGroupModal(true)}
                         >
-                          {t(
-                            `${TRANSLATE_KEY_PATH}.body.actions.actionItems.createKPIGroup.label`,
-                          )}
+                          {t(`body.actions.actionItems.createKPIGroup.label`)}
                         </button>
                       </li>
                     </ul>
@@ -222,18 +213,12 @@ function Home() {
         {/* Modal to create KPI Group */}
         {showCreateKpiGroupModal && (
           <GenericDialog
-            title={t(`${TRANSLATE_KEY_PATH}.modals.createKpiGroup.title`)}
-            description={t(
-              `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.description`,
-            )}
+            title={t(`modals.createKpiGroup.title`)}
+            description={t(`modals.createKpiGroup.description`)}
             toggle={showCreateKpiGroupModal}
             labels={{
-              confirm: t(
-                `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.labels.confirm`,
-              ),
-              cancel: t(
-                `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.labels.cancel`,
-              ),
+              confirm: t(`modals.createKpiGroup.labels.confirm`),
+              cancel: t(`modals.createKpiGroup.labels.cancel`),
             }}
             confirmDisabled={!newKpiGroup?.name?.trim()}
             confirmCb={() => {
@@ -250,10 +235,7 @@ function Home() {
               <div className="form-control">
                 <label className="label" htmlFor="kpi-name">
                   <span className="label-text font-medium">
-                    {t(
-                      `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.name.label`,
-                    )}
-                    *
+                    {t(`modals.createKpiGroup.form.fields.name.label`)}*
                   </span>
                 </label>
                 <input
@@ -262,7 +244,7 @@ function Home() {
                   type="text"
                   name="name"
                   placeholder={t(
-                    `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.name.placeholder`,
+                    `modals.createKpiGroup.form.fields.name.placeholder`,
                   )}
                   autoFocus
                   onChange={(e) => {
@@ -275,9 +257,7 @@ function Home() {
               <div className="form-control">
                 <label className="label" htmlFor="kpi-description">
                   <span className="label-text font-medium">
-                    {t(
-                      `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.description.label`,
-                    )}
+                    {t(`modals.createKpiGroup.form.fields.description.label`)}
                   </span>
                 </label>
                 <input
@@ -286,7 +266,7 @@ function Home() {
                   type="text"
                   name="description"
                   placeholder={t(
-                    `${TRANSLATE_KEY_PATH}.modals.createKpiGroup.form.fields.description.placeholder`,
+                    `modals.createKpiGroup.form.fields.description.placeholder`,
                   )}
                   onChange={(e) => {
                     const description = e.target.value;
@@ -302,22 +282,14 @@ function Home() {
         {/* Modal to creaqte Chart */}
         {showCreateChartModal && (
           <GenericDialog
-            title={t(`${TRANSLATE_KEY_PATH}.modals.createChart.title`)}
-            description={t(
-              `${TRANSLATE_KEY_PATH}.modals.createChart.description`,
-            )}
+            title={t(`modals.createChart.title`)}
+            description={t(`modals.createChart.description`)}
             toggle={showCreateChartModal}
             labels={{
               confirm: isCreatingChart
-                ? t(
-                    `${TRANSLATE_KEY_PATH}.modals.createChart.labels.confirm.isCreating`,
-                  )
-                : t(
-                    `${TRANSLATE_KEY_PATH}.modals.createChart.labels.confirm.default`,
-                  ),
-              cancel: t(
-                `${TRANSLATE_KEY_PATH}.modals.createChart.labels.cancel`,
-              ),
+                ? t(`modals.createChart.labels.confirm.isCreating`)
+                : t(`modals.createChart.labels.confirm.default`),
+              cancel: t(`modals.createChart.labels.cancel`),
             }}
             confirmDisabled={!newChart?.name?.trim() || isCreatingChart}
             confirmCb={() => {
@@ -334,10 +306,7 @@ function Home() {
               <div className="form-control">
                 <label className="label" htmlFor="chart-name">
                   <span className="label-text font-medium">
-                    {t(
-                      `${TRANSLATE_KEY_PATH}.modals.createChart.form.fields.name.label`,
-                    )}
-                    *
+                    {t(`modals.createChart.form.fields.name.label`)}*
                   </span>
                 </label>
                 <input
@@ -346,7 +315,7 @@ function Home() {
                   type="text"
                   name="name"
                   placeholder={t(
-                    `${TRANSLATE_KEY_PATH}.modals.createChart.form.fields.name.placeholder`,
+                    `modals.createChart.form.fields.name.placeholder`,
                   )}
                   autoFocus
                   value={newChart?.name || ""}
@@ -363,9 +332,7 @@ function Home() {
                 />
                 <label className="label">
                   <span className="label-text-alt text-base-content/60">
-                    {t(
-                      `${TRANSLATE_KEY_PATH}.modals.createChart.form.fields.name.content`,
-                    )}
+                    {t(`modals.createChart.form.fields.name.content`)}
                   </span>
                 </label>
               </div>

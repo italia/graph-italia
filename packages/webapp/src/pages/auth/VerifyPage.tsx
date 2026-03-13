@@ -8,7 +8,7 @@ import { activate } from "../../lib/api";
 import { HOME_ROUTE } from "../../router";
 
 function AuthPage() {
-  const { t } = useTranslation(undefined, { keyPrefix: "pages.verify" });
+  const { t } = useTranslation("pages", { keyPrefix: "pages.verify" });
   const { uid } = useParams();
   const [isValid, setResult] = useState(false);
   const [action, setAction] = useState("");
