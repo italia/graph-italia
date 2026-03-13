@@ -22,7 +22,7 @@ import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 
-const MENU_ITEMS_TRANSLATION_KEYS = "router.menu.items" as const;
+const MENU_ITEMS_TRANSLATION_KEYS = "menu.items" as const;
 
 export const HOME_ROUTE = "/home";
 
