@@ -482,6 +482,18 @@
         }
       },
       "editKpiGroup": {
+        "components": {
+          "kpiDropdown": {
+            "actions": {
+              "edit": {
+                "label": "Edit"
+              },
+              "delete": {
+                "label": "Delete"
+              }
+            }
+          }
+        },
         "header": {
           "actions": {
             "back": {
