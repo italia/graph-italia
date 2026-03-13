@@ -12,8 +12,10 @@ import { useUserStore } from "../../store/user_store";
 import "./FullHeader.css";
 
 export default function HeaderCompleta() {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.layout.fullHeader";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.layout.fullHeader",
+  });
+  const { t: translateMenu } = useTranslation();
   const { user, clearUser } = useUserStore();
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
@@ -56,7 +58,7 @@ export default function HeaderCompleta() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t(`${TRANSLATION_KEY_PATH}.slim.brand.title`)}
+              {t(`slim.brand.title`)}
             </a>
             <div className="it-header-slim-right">
               <div className="it-header-slim-login">
@@ -70,7 +72,7 @@ export default function HeaderCompleta() {
                       className="it-header-slim-btn"
                       onClick={handleLogout}
                     >
-                      {t(`${TRANSLATION_KEY_PATH}.slim.actions.logout.label`)}
+                      {t(`slim.actions.logout.label`)}
                     </button>
                   </span>
                 ) : (
@@ -79,7 +81,7 @@ export default function HeaderCompleta() {
                     className="it-header-slim-btn"
                     aria-label="Login"
                   >
-                    {t(`${TRANSLATION_KEY_PATH}.slim.actions.login.label`)}
+                    {t(`slim.actions.login.label`)}
                   </a>
                 )}
               </div>
@@ -110,10 +112,10 @@ export default function HeaderCompleta() {
                 </svg>
                 <div className="it-header-center-brand-text">
                   <span className="it-header-center-title">
-                    {t(`${TRANSLATION_KEY_PATH}.center.brand.title`)}
+                    {t(`center.brand.title`)}
                   </span>
                   <p className="it-header-center-tagline">
-                    {t(`${TRANSLATION_KEY_PATH}.center.brand.tagline`)}
+                    {t(`center.brand.tagline`)}
                   </p>
                 </div>
               </a>
@@ -121,11 +123,11 @@ export default function HeaderCompleta() {
             <div className="it-header-center-right">
               <div className="it-header-center-social">
                 <span className="it-header-center-social-label">
-                  {t(`${TRANSLATION_KEY_PATH}.center.social.label`)}
+                  {t(`center.social.label`)}
                 </span>
                 <ul
                   className="it-header-center-social-list"
-                  aria-label={t(`${TRANSLATION_KEY_PATH}.center.social.label`)}
+                  aria-label={t(`center.social.label`)}
                 >
                   <li>
                     <a
@@ -133,9 +135,7 @@ export default function HeaderCompleta() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="it-header-center-social-link"
-                      aria-label={t(
-                        `${TRANSLATION_KEY_PATH}.center.social.platforms.github.ariaLabel`,
-                      )}
+                      aria-label={t(`center.social.platforms.github.ariaLabel`)}
                     >
                       <svg
                         className="it-header-center-social-icon"
@@ -188,7 +188,7 @@ export default function HeaderCompleta() {
                 )}
               </svg>
               <span className="it-header-nav-hamburger-label">
-                {t(`${TRANSLATION_KEY_PATH}.nav.content.hamburger.label`)}
+                {t(`nav.content.hamburger.label`)}
               </span>
             </button>
 
@@ -213,7 +213,7 @@ export default function HeaderCompleta() {
                           onClick={() => setDropdownToolsAperto((v) => !v)}
                         >
                           {item.translationKey
-                            ? t(item.translationKey)
+                            ? translateMenu(item.translationKey)
                             : item.name}
                           <svg
                             className="it-header-icon it-header-icon-expand"
@@ -236,7 +236,7 @@ export default function HeaderCompleta() {
                                 onClick={() => setMenuMobileAperto(false)}
                               >
                                 {sub.translationKey
-                                  ? t(sub.translationKey)
+                                  ? translateMenu(sub.translationKey)
                                   : sub.name}
                               </a>
                             </li>
@@ -253,7 +253,7 @@ export default function HeaderCompleta() {
                         onClick={() => setMenuMobileAperto(false)}
                       >
                         {item.translationKey
-                          ? t(item.translationKey)
+                          ? translateMenu(item.translationKey)
                           : item.name}
                       </a>
                     </li>

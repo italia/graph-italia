@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
-import { MENU } from "../../router";
-import { useUserStore } from "../../store/user_store";
-import { useSettingsStore } from "../../store/settings_store.ts";
-import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 import type { MenuSubItem } from "../../router";
+import { MENU } from "../../router";
+import { useSettingsStore } from "../../store/settings_store.ts";
+import { useUserStore } from "../../store/user_store";
+import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 
 export default function SlimHeader() {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.layout.slimHeader";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.layout.slimHeader",
+  });
+  const { t: translateMenu } = useTranslation();
   const { user, clearUser } = useUserStore();
   const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
@@ -47,10 +49,8 @@ export default function SlimHeader() {
     <header className="relative">
       {/* ── Main bar ── */}
       <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12">
-
         {/* Left: hamburger + brand + separator + desktop nav */}
         <div className="navbar-start flex items-center gap-4">
-
           {/* Hamburger – mobile only */}
           <button
             type="button"
@@ -59,9 +59,15 @@ export default function SlimHeader() {
             aria-expanded={menuMobileOpen}
             onClick={() => setMenuMobileOpen((v) => !v)}
           >
-            <span className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "translate-y-[7px] rotate-45" : ""}`} />
-            <span className={`block w-full h-0.5 bg-current rounded transition-opacity duration-200 ${menuMobileOpen ? "opacity-0" : ""}`} />
-            <span className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+            <span
+              className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "translate-y-[7px] rotate-45" : ""}`}
+            />
+            <span
+              className={`block w-full h-0.5 bg-current rounded transition-opacity duration-200 ${menuMobileOpen ? "opacity-0" : ""}`}
+            />
+            <span
+              className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`}
+            />
           </button>
 
           {/* Brand */}
@@ -69,7 +75,7 @@ export default function SlimHeader() {
             href="/"
             className="text-primary-content text-base font-normal no-underline hover:text-primary-content/80 leading-snug"
           >
-            {t(`${TRANSLATION_KEY_PATH}.brand.title`)}
+            {t(`brand.title`)}
           </a>
 
           {/* Separator – desktop only */}
@@ -84,7 +90,11 @@ export default function SlimHeader() {
               {MENU.map((item) => {
                 if ("subMenu" in item) {
                   return (
-                    <li key={item.name} className="relative" ref={dropdownToolsRef}>
+                    <li
+                      key={item.name}
+                      className="relative"
+                      ref={dropdownToolsRef}
+                    >
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-3 py-1.5 text-primary-content text-sm rounded bg-transparent border-none cursor-pointer hover:bg-primary-content/15"
@@ -92,7 +102,9 @@ export default function SlimHeader() {
                         aria-haspopup="true"
                         onClick={() => setDropdownToolsOpen((v) => !v)}
                       >
-                        {item.translationKey ? t(item.translationKey) : item.name}
+                        {item.translationKey
+                          ? translateMenu(item.translationKey)
+                          : item.name}
                         <svg
                           className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${dropdownToolsOpen ? "rotate-180" : ""}`}
                           aria-hidden="true"
@@ -111,7 +123,9 @@ export default function SlimHeader() {
                               href={sub.link}
                               className="block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary"
                             >
-                              {sub.translationKey ? t(sub.translationKey) : sub.name}
+                              {sub.translationKey
+                                ? translateMenu(sub.translationKey)
+                                : sub.name}
                             </a>
                           </li>
                         ))}
@@ -125,7 +139,9 @@ export default function SlimHeader() {
                       href={item.link}
                       className="inline-flex items-center px-3 py-1.5 text-primary-content text-sm rounded no-underline hover:bg-primary-content/15"
                     >
-                      {item.translationKey ? t(item.translationKey) : item.name}
+                      {item.translationKey
+                        ? translateMenu(item.translationKey)
+                        : item.name}
                     </a>
                   </li>
                 );
@@ -153,7 +169,7 @@ export default function SlimHeader() {
                 className="btn btn-outline"
                 onClick={handleLogout}
               >
-                {t(`${TRANSLATION_KEY_PATH}.actions.logout.label`)}
+                {t(`actions.logout.label`)}
               </button>
             </span>
           ) : (
@@ -162,7 +178,7 @@ export default function SlimHeader() {
               className="btn btn-sm btn-ghost border border-primary-content/40 text-primary-content hover:bg-primary-content/20"
               aria-label="Accedi"
             >
-              {t(`${TRANSLATION_KEY_PATH}.actions.login.label`)}
+              {t(`actions.login.label`)}
             </a>
           )}
         </div>
@@ -177,9 +193,14 @@ export default function SlimHeader() {
           {MENU.map((item) => {
             if ("subMenu" in item) {
               return (
-                <li key={item.name} className="border-b border-primary-content/20">
+                <li
+                  key={item.name}
+                  className="border-b border-primary-content/20"
+                >
                   <span className="block py-3 text-[0.9375rem] text-primary-content">
-                    {item.translationKey ? t(item.translationKey) : item.name}
+                    {item.translationKey
+                      ? translateMenu(item.translationKey)
+                      : item.name}
                   </span>
                   <ul className="list-none m-0 ml-4 pb-2 p-0">
                     {item.subMenu.map((sub: MenuSubItem) => (
@@ -189,7 +210,9 @@ export default function SlimHeader() {
                           className="block py-2 text-sm text-primary-content no-underline hover:text-primary-content/80"
                           onClick={() => setMenuMobileOpen(false)}
                         >
-                          {sub.translationKey ? t(sub.translationKey) : sub.name}
+                          {sub.translationKey
+                            ? translateMenu(sub.translationKey)
+                            : sub.name}
                         </a>
                       </li>
                     ))}
@@ -198,7 +221,10 @@ export default function SlimHeader() {
               );
             }
             return (
-              <li key={item.name} className="border-b border-primary-content/20 last:border-b-0">
+              <li
+                key={item.name}
+                className="border-b border-primary-content/20 last:border-b-0"
+              >
                 <a
                   href={item.link}
                   className="block py-3 text-[0.9375rem] text-primary-content no-underline hover:text-primary-content/80"

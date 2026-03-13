@@ -34,8 +34,9 @@ import TransformData from "../../components/load-data/TransformData";
 import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
 
 function EditChartPage() {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = `pages.charts.editChart`;
+  const { t } = useTranslation(undefined, {
+    keyPrefix: `pages.charts.editChart`,
+  });
   const { id: paramId } = useParams();
   const navigate = useNavigate();
   const [state, send] = useMachine(stepMachine);
@@ -73,10 +74,7 @@ function EditChartPage() {
   );
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  useUnsavedChanges(
-    hasUnsavedChanges,
-    t(`${TRANSLATION_KEY_PATH}.unsavedChanges`),
-  );
+  useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
   // Load existing chart when there's a paramId
   useEffect(() => {
@@ -201,11 +199,11 @@ function EditChartPage() {
         setHasUnsavedChanges(false);
         //   handleSaveChart();
         //   navigate(HOME_ROUTE);;
-        toast.success(t(`${TRANSLATION_KEY_PATH}.save.success.label`));
+        toast.success(t(`save.success.label`));
       }
     } catch (error) {
       console.error("Error saving chart:", error);
-      toast.error(t(`${TRANSLATION_KEY_PATH}.save.error.label`));
+      toast.error(t(`save.error.label`));
     } finally {
       setIsSaving(false);
     }
@@ -237,13 +235,9 @@ function EditChartPage() {
     <Layout>
       <Helmet>
         <title>
-          {t(`${TRANSLATION_KEY_PATH}.head.title.label`)}:{" "}
-          {`${chartName ? ": " + chartName : ""}`}
+          {t(`head.title.label`)}: {`${chartName ? ": " + chartName : ""}`}
         </title>
-        <meta
-          name="description"
-          content={t(`${TRANSLATION_KEY_PATH}.head.meta.description.content`)}
-        />
+        <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
       <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
         <button
@@ -251,7 +245,7 @@ function EditChartPage() {
           onClick={() => navigate(HOME_ROUTE)}
           className="btn btn-outline"
         >
-          {t(`${TRANSLATION_KEY_PATH}.header.actions.back.label`)}
+          {t(`header.actions.back.label`)}
         </button>
         <div className="flex gap-4">
           {/* <span>step: {currentStepIndex}</span>
@@ -268,10 +262,10 @@ function EditChartPage() {
             {isSaving ? (
               <span role="status">
                 <span className="loading loading-spinner loading-sm"></span>
-                {t(`${TRANSLATION_KEY_PATH}.header.actions.save.isSaving`)}...
+                {t(`header.actions.save.isSaving`)}...
               </span>
             ) : (
-              <> {t(`${TRANSLATION_KEY_PATH}.header.actions.save.default`)}</>
+              <> {t(`header.actions.save.default`)}</>
             )}
           </button>
         </div>
@@ -281,10 +275,8 @@ function EditChartPage() {
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
           <div className="space-y-1 xl:col-span-2">
             <EditStepComponent
-              title={t(`${TRANSLATION_KEY_PATH}.body.options.setup.title`)}
-              description={t(
-                `${TRANSLATION_KEY_PATH}.body.options.setup.description`,
-              )}
+              title={t(`body.options.setup.title`)}
+              description={t(`body.options.setup.description`)}
               Icon={FaInfo}
               isOpen={true}
               isDisabled={false}
@@ -308,13 +300,11 @@ function EditChartPage() {
                         htmlFor="chart_visibility"
                         className="text-sm text-base-content/70 cursor-pointer"
                       >
-                        {t(
-                          `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.visibility.label`,
-                        )}
+                        {t(`body.options.setup.form.fields.visibility.label`)}
                       </label>
                       <span className="text-sm text-base-content font-bold">
                         {t(
-                          `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
+                          `body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
                         )}
                       </span>
                     </div>
@@ -322,9 +312,7 @@ function EditChartPage() {
                       htmlFor="chart_title"
                       className="mt-4 text-base-content/70"
                     >
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.title.label`,
-                      )}
+                      {t(`body.options.setup.form.fields.title.label`)}
                     </label>
                     <input
                       id="chart_title"
@@ -341,9 +329,7 @@ function EditChartPage() {
                       htmlFor="chart_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.description.label`,
-                      )}
+                      {t(`body.options.setup.form.fields.description.label`)}
                     </label>
                     <textarea
                       id="chart_description"
@@ -354,7 +340,7 @@ function EditChartPage() {
                         setChartDescription(e.target.value);
                       }}
                       placeholder={t(
-                        `${TRANSLATION_KEY_PATH}.body.options.setup.form.fields.description.placeholder`,
+                        `body.options.setup.form.fields.description.placeholder`,
                       )}
                       className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
                     />
@@ -364,12 +350,8 @@ function EditChartPage() {
             </EditStepComponent>
 
             <EditStepComponent
-              title={t(
-                `${TRANSLATION_KEY_PATH}.body.options.configuration.title`,
-              )}
-              description={t(
-                `${TRANSLATION_KEY_PATH}.body.options.configuration.description`,
-              )}
+              title={t(`body.options.configuration.title`)}
+              description={t(`body.options.configuration.description`)}
               Icon={FaCog}
               isOpen={currentStepIndex > 0 ? true : false}
               isDisabled={currentStepIndex === 0 ? true : false}
@@ -401,19 +383,15 @@ function EditChartPage() {
                 ) : (
                   <div role="status">
                     {" "}
-                    {t(
-                      `${TRANSLATION_KEY_PATH}.body.options.configuration.status`,
-                    )}{" "}
+                    {t(`body.options.configuration.status`)}{" "}
                   </div>
                 )}
               </div>
             </EditStepComponent>
 
             <EditStepComponent
-              title={t(`${TRANSLATION_KEY_PATH}.body.options.data.title`)}
-              description={t(
-                `${TRANSLATION_KEY_PATH}.body.options.data.description`,
-              )}
+              title={t(`body.options.data.title`)}
+              description={t(`body.options.data.description`)}
               Icon={FaDatabase}
               isOpen={currentStepIndex === 0 ? true : false}
               isDisabled={false}
@@ -435,9 +413,7 @@ function EditChartPage() {
                         className="btn btn-primary"
                         onClick={() => handleAssignData()}
                       >
-                        {t(
-                          `${TRANSLATION_KEY_PATH}.body.options.data.actions.useData.label`,
-                        )}
+                        {t(`body.options.data.actions.useData.label`)}
                       </button>
                     </div>
                   )}
@@ -498,7 +474,7 @@ function EditChartPage() {
               <div>
                 {!haveData ? (
                   <p className="italic text-base-content" role="status">
-                    {t(`${TRANSLATION_KEY_PATH}.body.preview.loadDataMessage`)}
+                    {t(`body.preview.loadDataMessage`)}
                   </p>
                 ) : (
                   <div className="overflow-auto flex-1 min-h-0">
