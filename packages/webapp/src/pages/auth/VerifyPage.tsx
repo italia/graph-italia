@@ -8,8 +8,7 @@ import { activate } from "../../lib/api";
 import { HOME_ROUTE } from "../../router";
 
 function AuthPage() {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "pages.verify";
+  const { t } = useTranslation(undefined, { keyPrefix: "pages.verify" });
   const { uid } = useParams();
   const [isValid, setResult] = useState(false);
   const [action, setAction] = useState("");
@@ -53,15 +52,13 @@ function AuthPage() {
       <Layout>
         <div className="flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
           <div className="text-sm leading-6">
-            <p>{t(`${TRANSLATION_KEY_PATH}.body.errors.invalidParam.label`)}</p>
+            <p>{t(`body.errors.invalidParam.label`)}</p>
             <a
               href="#"
               onClick={() => handleAskAnotherCode()}
               className="link font-semibold link-primary"
             >
-              {t(
-                `${TRANSLATION_KEY_PATH}.body.errors.invalidParam.actions.recoverPassoword.label`,
-              )}
+              {t(`body.errors.invalidParam.actions.recoverPassoword.label`)}
             </a>
           </div>
         </div>
@@ -96,7 +93,7 @@ function AuthPage() {
                 />
               </svg>
               <span>
-                <p>{t(`${TRANSLATION_KEY_PATH}.body.messages.valid`)}</p>
+                <p>{t(`body.messages.valid`)}</p>
               </span>
             </div>
           )}
@@ -109,7 +106,7 @@ function AuthPage() {
             <div>
               <p>
                 <Trans
-                  i18nKey={`${TRANSLATION_KEY_PATH}.body.actions.init.label`}
+                  i18nKey={`body.actions.init.label`}
                   components={{
                     redirectLink: (
                       <a
