@@ -7,7 +7,7 @@ import Layout from "../../components/layout";
 function AuthPage() {
   const [login, setLogin] = useState(true);
   const [welcome, showWelcome] = useState(false);
-  const { t } = useTranslation("pages", { keyPrefix: "pages.auth" });
+  const { t } = useTranslation("pages", { keyPrefix: "auth" });
 
   return (
     <Layout>

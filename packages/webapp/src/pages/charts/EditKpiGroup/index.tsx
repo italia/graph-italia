@@ -19,7 +19,7 @@ import useEditKpiGroupStore from "./store";
 
 function EditKpiGroup() {
   const { t } = useTranslation("pages", {
-    keyPrefix: "pages.charts.editKpiGroup",
+    keyPrefix: "charts.editKpiGroup",
   });
   const { id } = useParams();
   const kpiConfigFormRef = useRef<KpiConfigFormHandle>(null);

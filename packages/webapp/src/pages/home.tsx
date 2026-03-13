@@ -28,7 +28,7 @@ async function createKpiGroup(payload: KpiGroupPayload) {
 }
 
 function Home() {
-  const { t } = useTranslation("pages", { keyPrefix: "pages.home" });
+  const { t } = useTranslation("pages", { keyPrefix: "home" });
   const [state, send] = useMachine(stepMachine);
   const {
     config,

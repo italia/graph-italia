@@ -10,7 +10,7 @@ interface KpiDropdownProps {
 
 function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
   const { t } = useTranslation("pages", {
-    keyPrefix: "pages.charts.editKpiGroup.components.kpiDropdown",
+    keyPrefix: "charts.editKpiGroup.components.kpiDropdown",
   });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);

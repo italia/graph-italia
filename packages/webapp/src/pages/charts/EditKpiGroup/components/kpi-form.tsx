@@ -31,7 +31,7 @@ export function KpiForm({
   onSubmit?: (data: KpiFormValues) => void;
 }) {
   const { t } = useTranslation("pages", {
-    keyPrefix: "pages.charts.editKpiGroup.components.kpiForm",
+    keyPrefix: "charts.editKpiGroup.components.kpiForm",
   });
   const { register, handleSubmit, watch } = useForm<KpiFormValues>({
     defaultValues: {

@@ -35,7 +35,7 @@ import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
 
 function EditChartPage() {
   const { t } = useTranslation("pages", {
-    keyPrefix: `pages.charts.editChart`,
+    keyPrefix: `charts.editChart`,
   });
   const { id: paramId } = useParams();
   const navigate = useNavigate();
