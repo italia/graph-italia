@@ -8,8 +8,9 @@ import { HOME_ROUTE } from "../../router";
 import { useUserStore } from "../../store/user_store";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.auth.signin";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.auth.signin",
+  });
   const { setUser } = useUserStore();
   const navigate = useNavigate();
   const {
@@ -53,7 +54,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            {t(`${TRANSLATION_KEY_PATH}.header.label`)}
+            {t(`header.label`)}
           </h2>
         </div>
 
@@ -65,7 +66,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   htmlFor="email"
                   className="block text-sm font-medium leading-6"
                 >
-                  {t(`${TRANSLATION_KEY_PATH}.form.fields.email.label`)}
+                  {t(`form.fields.email.label`)}
                 </label>
                 <div className="mt-2 form-control">
                   <input
@@ -78,9 +79,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   />
                   {errors["email"] && (
                     <span className="text-error">
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.form.fields.email.errors.required`,
-                      )}
+                      {t(`form.fields.email.errors.required`)}
                     </span>
                   )}
                 </div>
@@ -91,7 +90,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  {t(`${TRANSLATION_KEY_PATH}.form.fields.password.label`)}
+                  {t(`form.fields.password.label`)}
                 </label>
                 <div className="mt-2">
                   <input
@@ -105,9 +104,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   {errors["password"] && (
                     <span className="text-danger">
                       {" "}
-                      {t(
-                        `${TRANSLATION_KEY_PATH}.form.fields.password.errors.required`,
-                      )}
+                      {t(`form.fields.password.errors.required`)}
                     </span>
                   )}
                 </div>
@@ -116,7 +113,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
               {message && <p className="text-error">{message}</p>}
               <div>
                 <button type="submit" className="btn btn-primary w-full">
-                  {t(`${TRANSLATION_KEY_PATH}.form.actions.submit.label`)}
+                  {t(`form.actions.submit.label`)}
                 </button>
               </div>
               <div className="flex items-center justify-between">
@@ -128,9 +125,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     onClick={() => handleRecoverFlow()}
                     className="link font-semibold link-primary"
                   >
-                    {t(
-                      `${TRANSLATION_KEY_PATH}.form.actions.recoverPassword.label`,
-                    )}
+                    {t(`form.actions.recoverPassword.label`)}
                   </button>
                 </div>
               </div>
@@ -146,9 +141,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 <div className="w-full border-t border-base-300" />
               </div>
               <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="bg-base-100 px-6">
-                  {t(`${TRANSLATION_KEY_PATH}.bottom.label`)}
-                </span>
+                <span className="bg-base-100 px-6">{t(`bottom.label`)}</span>
               </div>
             </div>
 
@@ -157,7 +150,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 onClick={() => setLogin(false)}
                 className="btn btn-outline w-full"
               >
-                {t(`${TRANSLATION_KEY_PATH}.bottom.actions.signup.label`)}
+                {t(`bottom.actions.signup.label`)}
               </button>
             </div>
           </div>
