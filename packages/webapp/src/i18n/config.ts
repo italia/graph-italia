@@ -2,14 +2,12 @@ import i18next from 'i18next';
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from 'react-i18next';
 
-import routerEn from './locales/en/router.json';
-import translationEn from './locales/en/translation.json';
-import routerIt from './locales/it/router.json';
-import translationIt from './locales/it/translation.json';
+import en from './locales/en';
+import it from './locales/it';
 
 const resources = {
-    en: { router: routerEn, translation: translationEn },
-    it: { router: routerIt, translation: translationIt },
+    en,
+    it
 };
 
 i18next
