@@ -40,8 +40,9 @@ export default function TransformData({
   currentData,
   handleTransformData,
 }: TransformDataProps) {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.loadData.transformData";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.loadData.transformData",
+  });
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
 
@@ -208,7 +209,7 @@ export default function TransformData({
       {/* Transpose & Reset controls */}
       <div className="mb-4 flex items-center justify-between">
         <h4 className="text-sm font-semibold text-base-content/70">
-          {t(`${TRANSLATION_KEY_PATH}.header.label`)}
+          {t(`header.label`)}
         </h4>
         <div className="flex gap-2">
           <button
@@ -216,14 +217,14 @@ export default function TransformData({
             className="btn btn-default btn-outline"
             onClick={transpose}
           >
-            {t(`${TRANSLATION_KEY_PATH}.actions.transpose.label`)}
+            {t(`actions.transpose.label`)}
           </button>
           <button
             type="button"
             className="btn btn-default btn-outline"
             onClick={resetData}
           >
-            {t(`${TRANSLATION_KEY_PATH}.actions.reset.label`)}
+            {t(`actions.reset.label`)}
           </button>
         </div>
       </div>
@@ -231,7 +232,7 @@ export default function TransformData({
       {/* Column toggle controls */}
       <div className="mb-4">
         <h4 className="text-sm font-semibold mb-2 text-base-content/70">
-          {t(`${TRANSLATION_KEY_PATH}.table.actions.toggleColumns.label`)}
+          {t(`table.actions.toggleColumns.label`)}
         </h4>
         <div className="flex flex-wrap gap-2">
           {columnOrder.map((colName) => (
@@ -256,7 +257,7 @@ export default function TransformData({
       </div>
 
       <DataTable
-        title={t(`${TRANSLATION_KEY_PATH}.table.title`)}
+        title={t(`table.title`)}
         columns={columns}
         data={objectData}
         pagination={true}
@@ -273,8 +274,8 @@ export default function TransformData({
 
       {sortState && (
         <div className="mt-2 text-xs text-base-content/50">
-          {t(`${TRANSLATION_KEY_PATH}.table.sorting.label`)}{" "}
-          <strong>{sortState.columnKey}</strong> ({sortState.direction})
+          {t(`table.sorting.label`)} <strong>{sortState.columnKey}</strong> (
+          {sortState.direction})
         </div>
       )}
 
@@ -285,7 +286,7 @@ export default function TransformData({
           onClick={applyChanges}
           disabled={!hasChanges}
         >
-          {t(`${TRANSLATION_KEY_PATH}.table.actions.apply.label`)}
+          {t(`table.actions.apply.label`)}
         </button>
         {hasChanges && (
           <button
@@ -297,7 +298,7 @@ export default function TransformData({
               setSortState(null);
             }}
           >
-            {t(`${TRANSLATION_KEY_PATH}.table.actions.reset.label`)}
+            {t(`table.actions.reset.label`)}
           </button>
         )}
       </div>
