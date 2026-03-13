@@ -17,8 +17,9 @@ export default function VerifyCodeComponent({
   onAskAnotherCode: () => void;
   code?: string;
 }) {
-  const { t } = useTranslation();
-  const TRANSLATION_KEY_PATH = "components.auth.verifyCode";
+  const { t } = useTranslation(undefined, {
+    keyPrefix: "components.auth.verifyCode",
+  });
 
   useEffect(() => {
     if (code && code.length === 6) {
@@ -69,9 +70,9 @@ export default function VerifyCodeComponent({
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            {t(`${TRANSLATION_KEY_PATH}.header.label`)}
+            {t(`header.label`)}
           </h2>
-          <p> {t(`${TRANSLATION_KEY_PATH}.header.description`)}</p>
+          <p> {t(`header.description`)}</p>
         </div>
 
         <div className="mt-10">
@@ -85,16 +86,14 @@ export default function VerifyCodeComponent({
               <div className="text-error mt-2 text-md">{message}</div>
             )}
             <div className="text-sm leading-6 my-4">
-              {t(`${TRANSLATION_KEY_PATH}.bottom.label`)}
+              {t(`bottom.label`)}
               &nbsp;
               <button
                 type="button"
                 onClick={() => onAskAnotherCode()}
                 className="link font-semibold text-primary"
               >
-                {t(
-                  `${TRANSLATION_KEY_PATH}.bottom.actions.sendAnotherCode.label`,
-                )}
+                {t(`bottom.actions.sendAnotherCode.label`)}
               </button>
             </div>
           </div>
