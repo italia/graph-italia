@@ -40,7 +40,7 @@ export default function TransformData({
   currentData,
   handleTransformData,
 }: TransformDataProps) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.loadData.transformData",
   });
   const { settings } = useSettingsStore();

@@ -17,7 +17,7 @@ export default function VerifyCodeComponent({
   onAskAnotherCode: () => void;
   code?: string;
 }) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.auth.verifyCode",
   });
 

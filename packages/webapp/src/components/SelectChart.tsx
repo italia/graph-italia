@@ -101,7 +101,7 @@ function SelectChart({
   chart?: string;
   setChart: Function;
 }) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.selectChart",
   });
   return (

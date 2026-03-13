@@ -12,7 +12,7 @@ import { useUserStore } from "../../store/user_store";
 import "./FullHeader.css";
 
 export default function HeaderCompleta() {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.layout.fullHeader",
   });
   const { t: translateMenu } = useTranslation("menu");

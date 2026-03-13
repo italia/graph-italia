@@ -8,7 +8,7 @@ import { useUserStore } from "../../store/user_store";
 import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 
 export default function SlimHeader() {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.layout.slimHeader",
   });
   const { t: translateMenu } = useTranslation("menu");

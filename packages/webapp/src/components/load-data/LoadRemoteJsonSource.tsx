@@ -9,7 +9,7 @@ function LoadSource({
   setData: Function;
   currentValue: string | null;
 }) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.loadData.loadRemoteJsonData",
   });
   const [loading, setLoading] = useState(false);

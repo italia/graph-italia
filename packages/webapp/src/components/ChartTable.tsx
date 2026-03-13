@@ -60,7 +60,7 @@ export default function ChartTable({
   list,
   handleDeleteChart,
 }: CharTableProps) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.chartTable",
   });
   const [show, setShow] = useState<string | null>(null);

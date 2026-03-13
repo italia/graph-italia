@@ -45,7 +45,7 @@ const getUpdatePasswordSchema = (
 function ChangePassword({ onDone }: { onDone: () => void }) {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.auth.changePasswordForm",
   });
   const updatePasswordSchema = getUpdatePasswordSchema(zod, t);

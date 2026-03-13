@@ -85,7 +85,7 @@ export default function ChooseLoader({
   remoteUrl,
   initialData,
 }: ChooseLoaderProps) {
-  const { t } = useTranslation(undefined, {
+  const { t } = useTranslation("components", {
     keyPrefix: "components.loadData.chooseLoader",
   });
   const [currentTab, setCurrentTab] = useState<number>(0);
