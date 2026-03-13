@@ -492,6 +492,58 @@
                 "label": "Delete"
               }
             }
+          },
+          "kpiForm": {
+            "form": {
+              "fieldSets": {
+                "additionalInfos": {
+                  "label": "Additional infos"
+                }
+              },
+              "fields": {
+                "title": {
+                  "label": "Title"
+                },
+                "value": {
+                  "label": "Value"
+                },
+                "openDataPath": {
+                  "label": "Open Data Path"
+                },
+                "showFlow": {
+                  "label": "Show flow"
+                },
+                "flowDirection": {
+                  "label": "Flow direction",
+                  "values": {
+                    "noValue": "--Select a value--",
+                    "positive": "Positive",
+                    "negative": "Negative"
+                  }
+                },
+                "flowValue": {
+                  "label": "Flow value"
+                },
+                "flowDetail": {
+                  "label": "Flow detail"
+                },
+                "backgroundColor": {
+                  "label": "Background color"
+                },
+                "valuePrefix": {
+                  "label": "Value prefix"
+                },
+                "valueSuffix": {
+                  "label": "Value suffix"
+                },
+                "percentage": {
+                  "label": "Percentage"
+                },
+                "footerText": {
+                  "label": "Footer text"
+                }
+              }
+            }
           }
         },
         "header": {
