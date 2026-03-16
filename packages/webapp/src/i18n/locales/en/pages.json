@@ -272,6 +272,11 @@
                 "title": "Generate POI data",
                 "description": "Create a random POI dataset. Use it to try charts or export as CSV/JSON."
             }
+        },
+        "loadRemoteDataPage": {
+            "title": "Load remote data",
+            "description": "Here some Open Data sources of real data you can use here",
+            "link": "Dati Italia, Governo e servizi pubblici"
         }
     },
     "home": {
