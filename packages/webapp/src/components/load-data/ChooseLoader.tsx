@@ -9,7 +9,6 @@ type ChooseLoaderProps = {
   handleUpload: (d: any) => void;
   handleSetRemoteData: (d: any) => void;
   remoteUrl: string | null;
-  initialData?: any;
 };
 
 // Tab definitions with icons and descriptions
@@ -83,7 +82,6 @@ export default function ChooseLoader({
   handleUpload,
   handleSetRemoteData,
   remoteUrl,
-  initialData,
 }: ChooseLoaderProps) {
   const { t } = useTranslation("components", {
     keyPrefix: "components.loadData.chooseLoader",
@@ -100,11 +98,10 @@ export default function ChooseLoader({
             type="button"
             key={tab.id}
             role="tab"
-            className={`tab gap-2 transition-all ${
-              currentTab === tab.id
-                ? "tab-active bg-base-100 shadow-sm"
-                : "hover:bg-base-100/50"
-            }`}
+            className={`tab gap-2 transition-all ${currentTab === tab.id
+              ? "tab-active bg-base-100 shadow-sm"
+              : "hover:bg-base-100/50"
+              }`}
             onClick={() => setCurrentTab(tab.id)}
             aria-selected={currentTab === tab.id}
           >
@@ -123,22 +120,20 @@ export default function ChooseLoader({
       <div className="bg-base-100 rounded-lg">
         {currentTab === 0 && (
           <CSVUpload
-            setData={(d: any) => handleUpload(d)}
-            initialData={initialData}
+            setData={(d) => handleUpload(d)}
           />
         )}
         {currentTab === 1 && (
           <JsonUpload
-            setData={(d: any) => handleUpload(d)}
-            initialData={initialData}
+            setData={(d) => handleUpload(d)}
           />
         )}
         {currentTab === 2 && (
           <div className="p-4 space-y-4">
-            {/* <b>TODO: ADD RADIO BUTTONS TO CHOOSE JSON OR CSV</b> */}
             <div>
-              <label className="cursor-pointer label mr-4">
+              <label className="cursor-pointer label mr-4" htmlFor="csv_value">
                 <input
+                  id="csv_value"
                   type="radio"
                   name="remoteType"
                   className="radio"
@@ -148,8 +143,9 @@ export default function ChooseLoader({
                 />
                 <span className="label-text ml-2">CSV</span>
               </label>
-              <label className="cursor-pointer label ">
+              <label className="cursor-pointer label " htmlFor="json_val">
                 <input
+                  id="json_value"
                   type="radio"
                   name="remoteType"
                   className="radio"
@@ -164,12 +160,12 @@ export default function ChooseLoader({
             {remoteType === "json" ? (
               <LoadRemoteJsonSource
                 currentValue={remoteUrl}
-                setData={(d: any) => handleSetRemoteData(d)}
+                setData={(d) => handleSetRemoteData(d)}
               />
             ) : (
               <LoadRemoteCSVSource
                 currentValue={remoteUrl}
-                setData={(d: any) => handleSetRemoteData(d)}
+                setData={(d) => handleSetRemoteData(d)}
               />
             )}
           </div>

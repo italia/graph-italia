@@ -1,27 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DataTableComponent, { createTheme, type TableColumn } from "react-data-table-component";
+import { useTranslation } from "react-i18next";
+import type { MatrixType } from "dataviz-components";
+
 import { useSettingsStore } from "../store/settings_store.ts";
 import { transposeData } from "../lib/utils";
-import type { MatrixType } from "dataviz-components";
 import { useAriaSort } from "../hooks/useAriaSort";
+import registerDarkTheme from "./layout/DataTableDarkTheme";
 
-createTheme("dark", {
-  text: {
-    primary: "rgba(255,255,255, 0.54)",
-    secondary: "rgba(255,255,255, 0.54)",
-    disabled: "rgba(255,255,255, 0.38)",
-  },
-  background: {
-    default: "transparent",
-  },
-  divider: {
-    default: "rgba(255,255,255,.075)",
-  },
-  highlightOnHover: {
-    default: "rgba(255,255,255,.03)",
-    text: "#fff",
-  },
-});
+registerDarkTheme();
 
 type RowRecord = Record<string, string | number>;
 
@@ -32,7 +19,6 @@ type DataTableProps = {
   downloadJSON?: () => void;
   buttonVariant?: "default" | "italia";
 };
-
 
 export default function DataTable({
   data,

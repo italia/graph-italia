@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import DataTable from "../../components/DataMngTable";
+import DataMngTable from "../../components/DataMngTable";
 import GenerateRandomData from "../../components/GenerateRandomData";
 import Layout from "../../components/layout";
 import { dataToCSV, downloadCSV, downloadJSON } from "../../lib/downloadUtils";
@@ -61,7 +61,7 @@ function GenerateDataPage() {
 
         {rawData && (
           <section className="rounded-2xl border border-base-200 bg-base-300 p-6 shadow-sm mb-8">
-            <DataTable
+            <DataMngTable
               data={rawData}
               onApplyData={setRawData}
               download={() => {

@@ -1,32 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
-import type { TableColumn } from "react-data-table-component";
 import DataTable, { createTheme } from "react-data-table-component";
+import type { TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
-import { transposeData } from "../../lib/utils";
+import { transposeData } from "../../lib/utils.ts";
 import { useSettingsStore } from "../../store/settings_store.ts";
-import type { MatrixType } from "../../types";
+import type { MatrixType } from "../../types.ts";
+import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
 
-createTheme("dark", {
-  text: {
-    primary: "rgba(255,255,255, 0.54)",
-    secondary: "rgba(255,255,255, 0.54)",
-    disabled: "rgba(255,255,255, 0.38)",
-  },
-  background: {
-    default: "transparent",
-  },
-  divider: {
-    default: "rgba(255,255,255,.075)",
-  },
-  highlightOnHover: {
-    default: "rgba(255,255,255,.03)",
-    text: "#fff",
-  },
-});
+registerDarkTheme();
 
 type TransformDataProps = {
   currentData: MatrixType;
-  handleTransformData: (d: MatrixType) => void;
+  handleTransformData: (transformedData: MatrixType) => void;
+  downloadCSV?: () => void;
+  downloadJSON?: () => void;
 };
 
 type SortState = {
@@ -39,7 +26,10 @@ type RowRecord = Record<string, string | number>;
 export default function TransformData({
   currentData,
   handleTransformData,
+  downloadCSV,
+  downloadJSON,
 }: TransformDataProps) {
+
   const { t } = useTranslation("components", {
     keyPrefix: "components.loadData.transformData",
   });
@@ -60,13 +50,53 @@ export default function TransformData({
     () => new Set(allHeaders),
   );
 
+
   // State: column ordering (initially matches the original header order)
   const [columnOrder, setColumnOrder] = useState<string[]>(() => [
     ...allHeaders,
   ]);
 
+  const [showRenameForm, setShowRenameForm] = useState(false);
+  const [renameValues, setRenameValues] = useState<string[]>([]);
+
+
   // State: current sort
   const [sortState, setSortState] = useState<SortState>(null);
+
+  function openRenameForm() {
+    if (!workingData?.[0]) return;
+    setRenameValues(workingData[0].map(String));
+    setShowRenameForm(true);
+  }
+  function applyRenames() {
+    const newData = workingData.map((row: (string | number)[], rowIndex: number) => {
+      if (rowIndex === 0) return renameValues;
+      return row;
+    });
+
+    // Update visibility set with new names
+    setVisibleColumns((prev) => {
+      const next = new Set<string>();
+      renameValues.forEach((newName, i) => {
+        const oldName = allHeaders[i];
+        if (prev.has(oldName)) {
+          next.add(newName);
+        }
+      });
+      return next;
+    });
+
+    // Update column order to reflect renamed headers
+    setColumnOrder((prev) =>
+      prev.map((name) => {
+        const idx = allHeaders.indexOf(name);
+        return idx >= 0 ? renameValues[idx] : name;
+      }),
+    );
+
+    setWorkingData(newData);
+    setShowRenameForm(false);
+  }
 
   // Transpose the data matrix
   const transpose = useCallback(() => {
@@ -214,23 +244,87 @@ export default function TransformData({
         <div className="flex gap-2">
           <button
             type="button"
-            className="btn btn-default btn-outline"
+            className="btn btn-outline"
+            onClick={() =>
+              showRenameForm ? setShowRenameForm(false) : openRenameForm()
+            }
+          >
+            {showRenameForm ? "Cancel Rename" : "Rename Headers"}
+          </button>
+          <button
+            type="button" className="btn btn-outline"
             onClick={transpose}
           >
             {t(`actions.transpose.label`)}
           </button>
           <button
-            type="button"
-            className="btn btn-default btn-outline"
+            type="button" className="btn btn-outline"
             onClick={resetData}
           >
             {t(`actions.reset.label`)}
           </button>
+
+          {downloadCSV && (
+            <button type="button" className="btn btn-outline" onClick={() => downloadCSV()}>
+              Download CSV
+            </button>
+          )}
+          {downloadJSON && (
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => downloadJSON()}
+            >
+              Download JSON
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Column toggle controls */}
-      <div className="mb-4">
+      {showRenameForm && (
+        <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
+          <h4 className="text-sm font-semibold mb-3">Rename column headers</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {renameValues.map((val, i) => (
+              <div key={i} className="form-control">
+                <label htmlFor={`col-rename-${i}`} className="label py-0.5">
+                  <span className="label-text text-xs text-base-content/50">
+                    Column {i + 1}
+                  </span>
+                </label>
+                <input
+                  id={`col-rename-${i}`}
+                  type="text"
+                  value={val}
+                  onChange={(e) => {
+                    const updated = [...renameValues];
+                    updated[i] = e.target.value;
+                    setRenameValues(updated);
+                  }}
+                  className="input input-sm input-bordered w-full"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={applyRenames}
+            >
+              Apply
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setShowRenameForm(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="my-4">
         <h4 className="text-sm font-semibold mb-2 text-base-content/70">
           {t(`table.actions.toggleColumns.label`)}
         </h4>
@@ -238,11 +332,10 @@ export default function TransformData({
           {columnOrder.map((colName) => (
             <label
               key={colName}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
-                visibleColumns.has(colName)
-                  ? "bg-primary/10 border-primary/30 text-primary"
-                  : "bg-base-200 border-base-300 text-base-content/40 line-through"
-              }`}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
+                ? "bg-primary/10 border-primary/30 text-primary"
+                : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                }`}
             >
               <input
                 type="checkbox"
@@ -260,16 +353,16 @@ export default function TransformData({
         title={t(`table.title`)}
         columns={columns}
         data={objectData}
-        pagination={true}
-        highlightOnHover={true}
-        dense={true}
-        fixedHeader={true}
-        fixedHeaderScrollHeight={"400px"}
-        responsive={true}
+        theme={currentTheme}
+        pagination
+        dense
+        highlightOnHover
+        fixedHeader
+        fixedHeaderScrollHeight="360px"
+        responsive
         onColumnOrderChange={handleColumnOrderChange}
         onSort={handleSort}
         sortServer={false}
-        theme={currentTheme}
       />
 
       {sortState && (
@@ -298,10 +391,11 @@ export default function TransformData({
               setSortState(null);
             }}
           >
-            {t(`table.actions.reset.label`)}
+            {"cancel"}
           </button>
         )}
+
       </div>
-    </div>
+    </div >
   );
 }
