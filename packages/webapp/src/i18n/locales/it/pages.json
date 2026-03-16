@@ -260,6 +260,14 @@
             }
         }
     },
+    "utility": {
+        "generateDataPage": {
+            "header": {
+                "title": "Generate data",
+                "description": "Create a random dataset with configurable rows, columns and value range. Use it to try charts or export as CSV/JSON."
+            }
+        }
+    },
     "home": {
         "header": {
             "myCharts": "My Charts",
