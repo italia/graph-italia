@@ -367,6 +367,26 @@
                 }
             }
         },
+        "checkGeo": {
+            "form": {
+                "fields": {
+                    "geoJsonUrl": {
+                        "label": "GeoJson URL",
+                        "errors": {
+                            "required": "This field is required"
+                        }
+                    }
+                },
+                "actions": {
+                    "load": {
+                        "label": "Load Geo Json"
+                    }
+                }
+            },
+            "columns": {
+                "title": "Data Matching Column"
+            }
+        },
         "dataMngTable": {
             "header": {
                 "rows": "rows",
