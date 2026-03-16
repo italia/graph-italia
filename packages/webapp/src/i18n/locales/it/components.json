@@ -440,6 +440,33 @@
                 }
             }
         },
+        "generateRandomPoi": {
+            "title": "Parameters",
+            "form": {
+                "fieldset": {
+                    "numberOfPoi": {
+                        "label": "Number of POIs"
+                    },
+                    "minLatitude": {
+                        "label": "Min latitude"
+                    },
+                    "maxLatitude": {
+                        "label": "Max latitude"
+                    },
+                    "minLongitude": {
+                        "label": "Min longitude"
+                    },
+                    "maxLongitude": {
+                        "label": "Max longitude"
+                    }
+                },
+                "actions": {
+                    "generate": {
+                        "label": "Generate Pois"
+                    }
+                }
+            }
+        },
         "selectChart": {
             "chartTypes": {
                 "bar": {

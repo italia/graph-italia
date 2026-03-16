@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { fillArray, generateItems } from "../lib/utils";
 import type { PointData } from "dataviz-components";
-
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const ITALY_BOUNDS = {
   minLon: 8.6,
@@ -13,21 +12,21 @@ const ITALY_BOUNDS = {
 function getRandomInRange(
   min: number,
   max: number,
-  decimals: number = 4
+  decimals: number = 4,
 ): number {
   const str = (Math.random() * (max - min) + min).toFixed(decimals);
   return parseFloat(str);
 }
 
-
 function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.generateRandomPoi",
+  });
   const [items, setItems] = useState(10);
   const [minLat, setMinLat] = useState(ITALY_BOUNDS.minLat);
   const [maxLat, setMaxLat] = useState(ITALY_BOUNDS.maxLat);
   const [minLon, setMinLon] = useState(ITALY_BOUNDS.minLon);
   const [maxLon, setMaxLon] = useState(ITALY_BOUNDS.maxLon);
-
-
 
   function generate() {
     const poiData: PointData[] = [];
@@ -47,10 +46,12 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
 
   return (
     <div className="rounded-2xl border border-base-200 bg-base-300 p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Parameters</h2>
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("title")}</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div>
-          <label htmlFor="items" className={labelClass}>Number of POIs</label>
+          <label htmlFor="items" className={labelClass}>
+            {t("form.fieldset.numberOfPoi.label")}
+          </label>
           <input
             id="items"
             className={inputClass}
@@ -61,7 +62,9 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
           />
         </div>
         <div>
-          <label htmlFor="minLat" className={labelClass}>Min latitude</label>
+          <label htmlFor="minLat" className={labelClass}>
+            {t("form.fieldset.minLatitude.label")}
+          </label>
           <input
             id="minLat"
             className={inputClass}
@@ -71,7 +74,9 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
           />
         </div>
         <div>
-          <label htmlFor="maxLat" className={labelClass}>Max latitude</label>
+          <label htmlFor="maxLat" className={labelClass}>
+            {t("form.fieldset.maxLatitude.label")}
+          </label>
           <input
             id="maxLat"
             className={inputClass}
@@ -81,7 +86,9 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
           />
         </div>
         <div>
-          <label htmlFor="minLon" className={labelClass}>Min longitude</label>
+          <label htmlFor="minLon" className={labelClass}>
+            {t("form.fieldset.minLongitude.label")}
+          </label>
           <input
             id="minLon"
             className={inputClass}
@@ -91,7 +98,9 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
           />
         </div>
         <div>
-          <label htmlFor="maxLon" className={labelClass}>Max longitude</label>
+          <label htmlFor="maxLon" className={labelClass}>
+            {t("form.fieldset.maxLongitude.label")}
+          </label>
           <input
             id="maxLon"
             className={inputClass}
@@ -100,15 +109,10 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
             onChange={(e) => setMaxLon(Number.parseInt(e.target.value) || 100)}
           />
         </div>
-
       </div>
       <div className="mt-6">
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={generate}
-        >
-          Generate Pois
+        <button type="button" className="btn btn-primary" onClick={generate}>
+          {t("form.actions.generate.label")}
         </button>
       </div>
     </div>
