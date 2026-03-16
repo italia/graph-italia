@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import DataTableComponent, { createTheme, type TableColumn } from "react-data-table-component";
-import { useSettingsStore } from "../store/settings_store.ts";
-import { transposeData } from "../lib/utils";
 import type { MatrixType } from "dataviz-components";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import DataTableComponent, {
+  createTheme,
+  type TableColumn,
+} from "react-data-table-component";
+import { useTranslation } from "react-i18next";
 import { useAriaSort } from "../hooks/useAriaSort";
+import { transposeData } from "../lib/utils";
+import { useSettingsStore } from "../store/settings_store.ts";
 
 createTheme("dark", {
   text: {
@@ -33,14 +37,15 @@ type DataTableProps = {
   buttonVariant?: "default" | "italia";
 };
 
-
 export default function DataTable({
   data,
   onApplyData,
   download,
   downloadJSON,
-
 }: DataTableProps) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.dataMngTable",
+  });
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
   const [workingData, setWorkingData] = useState<MatrixType>(data);
@@ -139,9 +144,9 @@ export default function DataTable({
     const headerRow = workingData[0];
     const indexMap = finalHeaders.map((h) => headers.indexOf(h));
 
-    let finalRows = workingData.slice(1).map((row: any[]) =>
-      indexMap.map((i) => row[i])
-    );
+    let finalRows = workingData
+      .slice(1)
+      .map((row: any[]) => indexMap.map((i) => row[i]));
 
     // Apply Sort if active
     if (sortState) {
@@ -170,10 +175,12 @@ export default function DataTable({
   }
 
   function applyRenames() {
-    const newData = workingData.map((row: (string | number)[], rowIndex: number) => {
-      if (rowIndex === 0) return renameValues;
-      return row;
-    });
+    const newData = workingData.map(
+      (row: (string | number)[], rowIndex: number) => {
+        if (rowIndex === 0) return renameValues;
+        return row;
+      },
+    );
 
     // Update visibility set with new names
     setVisibleColumns((prev) => {
@@ -224,11 +231,16 @@ export default function DataTable({
       {data && data[0] && (
         <div>
           <p className="text-sm text-content/60">
-            {workingData.length} rows, {workingData[0].length} columns
+            {workingData.length} {t("header.rows")}, {workingData[0].length}{" "}
+            {t("header.columns")}
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <button type="button" className={"btn btn-outline"} onClick={internalTranspose}>
-              Transpose
+            <button
+              type="button"
+              className={"btn btn-outline"}
+              onClick={internalTranspose}
+            >
+              {t("actions.transpose.label")}
             </button>
             <button
               type="button"
@@ -236,7 +248,7 @@ export default function DataTable({
               onClick={internalApply}
               disabled={!hasChanges}
             >
-              Apply Changes
+              {t("actions.applyChanges.label")}
             </button>
             <button
               type="button"
@@ -244,11 +256,15 @@ export default function DataTable({
               onClick={internalReset}
               disabled={!hasChanges}
             >
-              Reset
+              {t("actions.reset.label")}
             </button>
             {download && (
-              <button type="button" className="btn btn-outline" onClick={() => download()}>
-                Download CSV
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => download()}
+              >
+                {t("actions.downloadCsv.label")}
               </button>
             )}
             {downloadJSON && (
@@ -257,7 +273,7 @@ export default function DataTable({
                 className="btn btn-outline"
                 onClick={() => downloadJSON()}
               >
-                Download JSON
+                {t("actions.downloadJson.label")}
               </button>
             )}
             <button
@@ -267,22 +283,25 @@ export default function DataTable({
                 showRenameForm ? setShowRenameForm(false) : openRenameForm()
               }
             >
-              {showRenameForm ? "Cancel Rename" : "Rename Headers"}
+              {showRenameForm
+                ? t("actions.rename.fallback")
+                : t("actions.rename.label")}
             </button>
           </div>
 
           <div className="mt-6 mb-4">
             <h4 className="text-sm font-semibold mb-2 text-base-content/70">
-              Toggle columns
+              {t("toggle.title")}
             </h4>
             <div className="flex flex-wrap gap-2">
               {headers.map((colName) => (
                 <label
                   key={colName}
-                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
-                    ? "bg-primary/10 border-primary/30 text-primary"
-                    : "bg-base-200 border-base-300 text-base-content/40 line-through"
-                    }`}
+                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
+                    visibleColumns.has(colName)
+                      ? "bg-primary/10 border-primary/30 text-primary"
+                      : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                  }`}
                 >
                   <input
                     type="checkbox"
@@ -298,19 +317,22 @@ export default function DataTable({
 
           {sortState && (
             <div className="mt-2 text-xs text-base-content/50 italic">
-              Sorted by <strong>{sortState.columnKey}</strong> ({sortState.direction})
+              {t("sorting.sortedBy")} <strong>{sortState.columnKey}</strong> (
+              {sortState.direction})
             </div>
           )}
 
           {showRenameForm && (
             <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-              <h4 className="text-sm font-semibold mb-3">Rename column headers</h4>
+              <h4 className="text-sm font-semibold mb-3">
+                {t("renameForm.title")}
+              </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {renameValues.map((val, i) => (
                   <div key={i} className="form-control">
                     <label htmlFor={`col-rename-${i}`} className="label py-0.5">
                       <span className="label-text text-xs text-base-content/50">
-                        Column {i + 1}
+                        {t("renameForm.column")} {i + 1}
                       </span>
                     </label>
                     <input
@@ -333,14 +355,14 @@ export default function DataTable({
                   className="btn btn-primary btn-sm"
                   onClick={applyRenames}
                 >
-                  Apply
+                  {t("renameForm.actions.apply.label")}
                 </button>
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
                   onClick={() => setShowRenameForm(false)}
                 >
-                  Cancel
+                  {t("renameForm.actions.cancel.label")}
                 </button>
               </div>
             </div>
