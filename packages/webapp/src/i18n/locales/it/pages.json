@@ -266,6 +266,12 @@
                 "title": "Generate data",
                 "description": "Create a random dataset with configurable rows, columns and value range. Use it to try charts or export as CSV/JSON."
             }
+        },
+        "generatePoiPage": {
+            "header": {
+                "title": "Generate POI data",
+                "description": "Create a random POI dataset. Use it to try charts or export as CSV/JSON."
+            }
         }
     },
     "home": {
