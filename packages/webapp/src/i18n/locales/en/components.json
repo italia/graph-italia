@@ -367,6 +367,34 @@
                 }
             }
         },
+        "generateRandomData": {
+            "title": "Parameters",
+            "columns": {
+                "rows": {
+                    "label": "Rows"
+                },
+                "columns": {
+                    "label": "Columns"
+                },
+                "rangeMin": {
+                    "label": "Range min"
+                },
+                "rangeMax": {
+                    "label": "Range max"
+                },
+                "offset": {
+                    "label": "Offset"
+                },
+                "multiplier": {
+                    "label": "Offset"
+                }
+            },
+            "actions": {
+                "generate": {
+                    "label": "Generate data"
+                }
+            }
+        },
         "selectChart": {
             "chartTypes": {
                 "bar": {
