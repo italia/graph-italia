@@ -1,0 +1,49 @@
+{
+    "back": "Back to home",
+    "title": "Quick Start Guide: Creating Your First Chart with Dataviz",
+    "description": "Follow this guide to visualize your data in minutes. You can use sample data or upload your own.",
+    "steps": {
+        "step1": {
+            "title": "Step 1: Click on \"Create New Chart\"",
+            "listItems": {
+                "item1": "Log in to your Dataviz account.",
+                "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
+            }
+        },
+        "step2": {
+            "title": "Step 2: Upload your data",
+            "listItems": {
+                "item1": {
+                    "text": "If you don't have data yet, you can",
+                    "items": {
+                        "item1": "<strong>Sample data</strong>: use the datasets provided by Dataviz (option \"Use Sample Data\").",
+                        "item2": "<strong>Generate data</strong>: from the Tools section → <a>Generate Data</a> to create a CSV automatically.",
+                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Dataviz will parse it and display the data in a table."
+                    }
+                }
+            }
+        },
+        "step3": {
+            "title": "Step 3: Choose your chart type and configure (optional)",
+            "listItems": {
+                "item1": "After uploading your data, choose the chart type: Bar, Line, Pie, or Geomap.",
+                "item2": "Customize: select columns, X/Y axes, colors, and labels."
+            }
+        },
+        "step4": {
+            "title": "Step 4: Save your chart",
+            "listItems": {
+                "item1": "Click <strong>\"Save\"</strong> to save your chart to your dashboard.",
+                "item2": "You can reopen it, edit it, publish it, and get the embed code to add it to your website."
+            }
+        }
+    },
+    "footer": {
+        "text": "That's it! Keep experimenting with datasets, chart types, and settings to get the most out of your visualizations."
+    },
+    "actions": {
+        "getStarted": {
+            "label": "Login and get started"
+        }
+    }
+}
