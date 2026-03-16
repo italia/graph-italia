@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import DataTable from "../../components/DataMngTable";
 import GenerateRandomData from "../../components/GenerateRandomData";
 import Layout from "../../components/layout";
@@ -11,6 +12,9 @@ import {
 } from "../../lib/utils";
 
 function GenerateDataPage() {
+  const { t } = useTranslation("pages", {
+    keyPrefix: "utility.generateDataPage",
+  });
   const { config, setConfig, rawData, setRawData, resetItem, setData } =
     useStoreState((state) => state);
 
@@ -47,12 +51,9 @@ function GenerateDataPage() {
       <div className="generate-data-page mx-auto max-w-4xl px-4">
         <header className="my-8">
           <h1 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
-            Generate data
+            {t("header.title")}
           </h1>
-          <p className="mt-2 text-base-content/70">
-            Create a random dataset with configurable rows, columns and value
-            range. Use it to try charts or export as CSV/JSON.
-          </p>
+          <p className="mt-2 text-base-content/70">{t("header.description")}</p>
         </header>
 
         <section className="mb-10">
@@ -73,7 +74,6 @@ function GenerateDataPage() {
                   "generated-data-" + Date.now(),
                 );
               }}
-
             />
           </section>
         )}

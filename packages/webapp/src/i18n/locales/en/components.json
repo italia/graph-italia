@@ -367,6 +367,126 @@
                 }
             }
         },
+        "checkGeo": {
+            "form": {
+                "fields": {
+                    "geoJsonUrl": {
+                        "label": "GeoJson URL",
+                        "errors": {
+                            "required": "This field is required"
+                        }
+                    }
+                },
+                "actions": {
+                    "load": {
+                        "label": "Load Geo Json"
+                    }
+                }
+            },
+            "columns": {
+                "title": "Data Matching Column"
+            }
+        },
+        "dataMngTable": {
+            "header": {
+                "rows": "rows",
+                "columns": "columns"
+            },
+            "actions": {
+                "transpose": {
+                    "label": "Transpose"
+                },
+                "applyChanges": {
+                    "label": "Apply Changes"
+                },
+                "reset": {
+                    "label": "Reset"
+                },
+                "downloadCsv": {
+                    "label": "Download CSV"
+                },
+                "downloadJson": {
+                    "label": "Download JSON"
+                },
+                "rename": {
+                    "label": "Rename Headers",
+                    "fallback": "Cancel Rename"
+                }
+            },
+            "toggle": {
+                "title": "Toggle columns"
+            },
+            "sorting": {
+                "sortedBy": "Sorted by"
+            },
+            "renameForm": {
+                "title": "Rename column headers",
+                "column": "Column",
+                "actions": {
+                    "apply": {
+                        "label": "Apply"
+                    },
+                    "cancel": {
+                        "label": "Cancel"
+                    }
+                }
+            }
+        },
+        "generateRandomData": {
+            "title": "Parameters",
+            "columns": {
+                "rows": {
+                    "label": "Rows"
+                },
+                "columns": {
+                    "label": "Columns"
+                },
+                "rangeMin": {
+                    "label": "Range min"
+                },
+                "rangeMax": {
+                    "label": "Range max"
+                },
+                "offset": {
+                    "label": "Offset"
+                },
+                "multiplier": {
+                    "label": "Offset"
+                }
+            },
+            "actions": {
+                "generate": {
+                    "label": "Generate data"
+                }
+            }
+        },
+        "generateRandomPoi": {
+            "title": "Parameters",
+            "form": {
+                "fieldset": {
+                    "numberOfPoi": {
+                        "label": "Number of POIs"
+                    },
+                    "minLatitude": {
+                        "label": "Min latitude"
+                    },
+                    "maxLatitude": {
+                        "label": "Max latitude"
+                    },
+                    "minLongitude": {
+                        "label": "Min longitude"
+                    },
+                    "maxLongitude": {
+                        "label": "Max longitude"
+                    }
+                },
+                "actions": {
+                    "generate": {
+                        "label": "Generate Pois"
+                    }
+                }
+            }
+        },
         "selectChart": {
             "chartTypes": {
                 "bar": {
