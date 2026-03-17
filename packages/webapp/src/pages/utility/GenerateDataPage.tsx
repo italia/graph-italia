@@ -9,6 +9,7 @@ import {
   getPalette,
   transposeData,
 } from "../../lib/utils";
+import { useTranslation } from "react-i18next";
 
 function GenerateDataPage() {
   const { t } = useTranslation("pages", {
