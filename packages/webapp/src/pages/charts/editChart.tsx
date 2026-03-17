@@ -7,30 +7,30 @@ import {
 } from "dataviz-components";
 import "dataviz-components/dist/style.css";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
+import { startTransition, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { HOME_ROUTE } from "../../router";
 import { useSettingsStore } from "../../store/settings_store.ts";
 import ChartOptions from "../../components/ChartOptions";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import SelectChart from "../../components/SelectChart";
 import ChooseLoader from "../../components/load-data/ChooseLoader";
+import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
 import EditStepComponent from "../../components/EditStepComponent";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
-import TransformData from "../../components/load-data/TransformDataTable";
+import TransformDataTable from "../../components/load-data/TransformDataTable";
 import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
-import * as api from "../../lib/api";
 import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
+import * as api from "../../lib/api";
 import useStoreState from "../../lib/storeState";
-import { HOME_ROUTE } from "../../router";
 
-import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
-import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
-import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
 
 function EditChartPage() {
   const { t } = useTranslation("pages", {
@@ -454,11 +454,14 @@ function EditChartPage() {
                   </p>
                 ) : (
                   <div className="overflow-auto flex-1 min-h-0">
-                    <TransformData
+                    <TransformDataTable
                       currentData={(data)}
                       handleTransformData={(d) => {
-                        setData(d);
-                        setHasUnsavedChanges(true);
+                        startTransition(() => {
+                          setData(d);
+                          setHasUnsavedChanges(true);
+                          setCurrentData(d);
+                        });
                       }}
                     />
                   </div>
