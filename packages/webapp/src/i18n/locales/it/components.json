@@ -297,6 +297,7 @@
                     "reset": {
                         "label": "Reset"
                     }
+                    
                 },
                 "table": {
                     "actions": {

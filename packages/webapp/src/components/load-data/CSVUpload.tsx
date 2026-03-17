@@ -1,21 +1,17 @@
 import Papa from "papaparse";
 import { useState } from "react";
 import type { MatrixType } from "../../types";
-import SeriesSelector from "./SeriesSelector";
 
 function UploadCSV({
   setData,
-  initialData,
 }: {
-  setData: (d: any) => void;
-  initialData?: any;
+  setData: (d: MatrixType) => void;
 }) {
-  const [uploadData, setUploadData] = useState<MatrixType>();
   const [error, setError] = useState<string | null>(null);
 
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setUploadData(undefined);
+    setData(undefined);
     setError(null);
     const file = e?.target?.files?.[0] || null;
     if (!file) {
@@ -33,7 +29,7 @@ function UploadCSV({
       complete: (results: any) => {
         const { data } = results;
         if (data) {
-          setUploadData(data);
+          setData(data);
         }
       },
       error: (err) => {
@@ -67,10 +63,7 @@ function UploadCSV({
         )}
       </div>
 
-      {(uploadData || initialData) && (
-        <div className="bg-primary">
-          <SeriesSelector initialData={initialData} uploadData={uploadData} setData={setData} />
-        </div>)}
+
     </div>
   );
 }

@@ -10,28 +10,27 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { useSettingsStore } from "../../store/settings_store.ts";
 import ChartOptions from "../../components/ChartOptions";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import SelectChart from "../../components/SelectChart";
-// import { getAvailablePalettes, getPalette } from "../../lib/utils";
-
 import ChooseLoader from "../../components/load-data/ChooseLoader";
+import EditStepComponent from "../../components/EditStepComponent";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
+import TransformData from "../../components/load-data/TransformDataTable";
+import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
 import * as api from "../../lib/api";
 import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
 import useStoreState from "../../lib/storeState";
 import { HOME_ROUTE } from "../../router";
-import { useSettingsStore } from "../../store/settings_store.ts";
 
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
-import EditStepComponent from "../../components/EditStepComponent";
-import TransformData from "../../components/load-data/TransformData";
-import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
+import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
 
 function EditChartPage() {
   const { t } = useTranslation("pages", {
@@ -119,36 +118,11 @@ function EditChartPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramId]);
 
-  // function handleChangeData(d: any) {
-  //   if (!config.palette) {
-  //     const numSeries = d.length - 1;
-  //     let palette = getAvailablePalettes(numSeries)[0];
-  //     config.palette = palette;
-  //     config.colors = getPalette(palette);
-  //     setConfig(config);
-  //   }
-  //   // setChart("");
-  //   setData(d);
-  //   setHasUnsavedChanges(true);
-  //   // Don't transition automatically - user must click "Proceed to configuration"
-  // }
-
-  const haveData =
-    currentData && currentData[0].length > 0
-      ? true
-      : data && data[0].length > 0
-        ? true
-        : dataSource
-          ? true
-          : false;
+  const haveData = data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
     setHasUnsavedChanges(true);
     setCurrentData(d);
-    // Don't transition automatically - user must click "Proceed to configuration"
-    if (state.matches("idle")) {
-      send({ type: "NEXT" }); // Only from idle to input
-    }
   }
 
   function handleSetRemoteData(d: any) {
@@ -156,20 +130,8 @@ function EditChartPage() {
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
     setCurrentData(d.data);
-
-    // Don't transition automatically - user must click "Proceed to configuration"
-    if (state.matches("idle")) {
-      send({ type: "NEXT" }); // Only from idle to input
-    }
   }
 
-  function handleAssignData() {
-    if (currentData) {
-      setData(currentData);
-      setCurrentData(null); // Clear temp data
-      send({ type: "CONFIG" }); // Move to config step after data is assigned
-    }
-  }
 
   // Generate default name based on chart type and date
   const getDefaultName = () => {
@@ -404,9 +366,8 @@ function EditChartPage() {
                     handleUpload={handleUpload}
                     remoteUrl={remoteUrl}
                     handleSetRemoteData={handleSetRemoteData}
-                    initialData={data}
                   />
-                  {haveData && chart && (
+                  {/* {haveData && chart && (
                     <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
                       <button
                         type="button"
@@ -416,7 +377,22 @@ function EditChartPage() {
                         {t(`body.options.data.actions.useData.label`)}
                       </button>
                     </div>
+                  )} */}
+                  {currentData && (
+                    <>
+                      <h4>serie selector</h4>
+                      <SeriesSelector
+                        initialData={currentData || data}
+                        setData={(d) => {
+                          setData(d);
+                          setHasUnsavedChanges(true);
+                          send({ type: "CONFIG" });
+                        }}
+                      />
+                      <hr />
+                    </>
                   )}
+
                 </div>
               </div>
             </EditStepComponent>
@@ -472,17 +448,16 @@ function EditChartPage() {
                 )}
               </div>
               <div>
-                {!haveData ? (
+                {!(haveData && data) ? (
                   <p className="italic text-base-content" role="status">
                     {t(`body.preview.loadDataMessage`)}
                   </p>
                 ) : (
                   <div className="overflow-auto flex-1 min-h-0">
-                    {/* <DataTable data={(currentData || data) as any} /> */}
                     <TransformData
-                      currentData={(currentData || data) as any}
+                      currentData={(data)}
                       handleTransformData={(d) => {
-                        setCurrentData(d);
+                        setData(d);
                         setHasUnsavedChanges(true);
                       }}
                     />

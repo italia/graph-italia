@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { startTransition, useCallback, useEffect, useState } from "react";
 import { moveDataColumn, transposeData } from "../../lib/utils";
 import type { MatrixType } from "../../types";
 
@@ -27,19 +27,14 @@ function cleanupData(matrix: MatrixType) {
   });
 }
 
-export default function SeriesSelector({ setData, initialData, uploadData }: {
+export default function SeriesSelector({ setData, initialData }: {
   setData: (data: MatrixType) => void;
   initialData?: MatrixType;
-  uploadData?: MatrixType;
 }) {
   const [rawData, setRawData] = useState<MatrixType | null>(null);
   const [category, setCategory] = useState<selectOptionType | null>(null);
   const [series, setSeries] = useState<selectOptionType[]>([]);
   const [initialized, setInitialized] = useState(false);
-  const setDataRef = useRef(setData);
-  useEffect(() => {
-    setDataRef.current = setData;
-  }, [setData]);
 
   function isSameObject(a: object, b: object) {
     return JSON.stringify(a) === JSON.stringify(b);
@@ -109,50 +104,34 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
     setSeries(newSeries);
   }
 
-  const updateState = useCallback((data: MatrixType) => {
-    const c = getFirstOfMatrix(data);
-    const newCategory = { value: c, label: c };
-    const cols = getCols(data[0]);
-    const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
-    // startTransition(() => {
-    setRawData(data);
-    setCategory(newCategory);
-    setSeries(newSeries);
-  }, []);
-
   // Initialize with existing data (once only to prevent update loop)
   useEffect(() => {
     if (initialData && initialData.length > 0 && !initialized) {
-      queueMicrotask(() => {
-        updateState(initialData);
+      const c = getFirstOfMatrix(initialData);
+      const newCategory = { value: c, label: c };
+      const cols = getCols(initialData[0]);
+      const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
+      startTransition(() => {
+        setRawData(initialData);
+        setCategory(newCategory);
+        setSeries(newSeries);
         setInitialized(true);
       });
     }
-  }, [initialData, initialized, updateState]);
-
-  useEffect(() => {
-    if (uploadData) {
-      queueMicrotask(() => {
-        updateState(uploadData);
-        setInitialized(true);
-      });
-    }
-  }, [uploadData, updateState]);
+  }, [initialData, initialized]);
 
 
-
-  // Automatically update data when category or series change
-  // setData not in deps: parent recreates it each render, would cause infinite loop
-  useEffect(() => {
+  function handleComplete() {
+    console.log("rawData:", rawData);
     if (rawData && category && series.length > 0) {
       const filtered = filterData(rawData, category, series);
       if (filtered) {
-        setDataRef.current(cleanupData(filtered));
+        const newData = (cleanupData(filtered));
+        console.log("Cleaned data:", newData);
+        setData(newData);
       }
     }
-  }, [rawData, category, series]);
-
-
+  }
 
   return (
     <div className="space-y-4">
@@ -179,7 +158,7 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="form-control">
               <label htmlFor="category" className="label">
                 <span className="label-text">Category column (X axis)</span>
@@ -232,6 +211,14 @@ export default function SeriesSelector({ setData, initialData, uploadData }: {
             )}
           </div>
 
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => handleComplete()}
+            disabled={!category || series.length === 0}
+          >
+            Load data
+          </button>
         </div>
       )}
     </div>

@@ -1,24 +1,20 @@
 import { useState } from "react";
 import { validateStructure } from "../../lib/validate";
 import type { MatrixType } from "../../types";
-import SeriesSelector from "./SeriesSelector";
 
 
 function UploadJSON({
   setData,
-  initialData,
 }: {
-  setData: (d: any) => void;
-  initialData?: any;
+  setData: (d: MatrixType) => void;
 }) {
 
-  const [uploadData, setUploadData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
   let fileReader: FileReader | undefined;
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setUploadData(null);
+    setData(null);
     setError(null);
     if (fileReader) {
       fileReader.abort();
@@ -44,7 +40,7 @@ function UploadJSON({
         return;
       }
       if (data) {
-        setUploadData(data);
+        setData(data);
       }
     };
   }
@@ -72,10 +68,6 @@ function UploadJSON({
         )}
       </div>
 
-      {(uploadData || initialData) && (
-        <div className="bg-primary">
-          <SeriesSelector initialData={initialData} uploadData={uploadData} setData={setData} />
-        </div>)}
     </div>
   );
 }

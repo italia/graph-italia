@@ -1,31 +1,14 @@
-import type { MatrixType } from "dataviz-components";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import DataTableComponent, {
-  createTheme,
-  type TableColumn,
-} from "react-data-table-component";
+import DataTableComponent, { type TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
-import { useAriaSort } from "../hooks/useAriaSort";
-import { transposeData } from "../lib/utils";
-import { useSettingsStore } from "../store/settings_store.ts";
+import type { MatrixType } from "dataviz-components";
 
-createTheme("dark", {
-  text: {
-    primary: "rgba(255,255,255, 0.54)",
-    secondary: "rgba(255,255,255, 0.54)",
-    disabled: "rgba(255,255,255, 0.38)",
-  },
-  background: {
-    default: "transparent",
-  },
-  divider: {
-    default: "rgba(255,255,255,.075)",
-  },
-  highlightOnHover: {
-    default: "rgba(255,255,255,.03)",
-    text: "#fff",
-  },
-});
+import { useSettingsStore } from "../store/settings_store.ts";
+import { transposeData } from "../lib/utils";
+import { useAriaSort } from "../hooks/useAriaSort";
+import registerDarkTheme from "./layout/DataTableDarkTheme";
+
+registerDarkTheme();
 
 type RowRecord = Record<string, string | number>;
 
@@ -297,11 +280,10 @@ export default function DataTable({
               {headers.map((colName) => (
                 <label
                   key={colName}
-                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${
-                    visibleColumns.has(colName)
+                  className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
                       ? "bg-primary/10 border-primary/30 text-primary"
                       : "bg-base-200 border-base-300 text-base-content/40 line-through"
-                  }`}
+                    }`}
                 >
                   <input
                     type="checkbox"
