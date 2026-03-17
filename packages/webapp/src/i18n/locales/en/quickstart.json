@@ -5,6 +5,7 @@
     "steps": {
         "step1": {
             "title": "Step 1: Click on \"Create New Chart\"",
+            "text": "",
             "listItems": {
                 "item1": "Log in to your Dataviz account.",
                 "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
@@ -12,6 +13,7 @@
         },
         "step2": {
             "title": "Step 2: Upload your data",
+            "text": "",
             "listItems": {
                 "item1": {
                     "text": "If you don't have data yet, you can",
@@ -25,6 +27,7 @@
         },
         "step3": {
             "title": "Step 3: Choose your chart type and configure (optional)",
+            "text": "",
             "listItems": {
                 "item1": "After uploading your data, choose the chart type: Bar, Line, Pie, or Geomap.",
                 "item2": "Customize: select columns, X/Y axes, colors, and labels."
@@ -32,6 +35,7 @@
         },
         "step4": {
             "title": "Step 4: Save your chart",
+            "text": "",
             "listItems": {
                 "item1": "Click <strong>\"Save\"</strong> to save your chart to your dashboard.",
                 "item2": "You can reopen it, edit it, publish it, and get the embed code to add it to your website."

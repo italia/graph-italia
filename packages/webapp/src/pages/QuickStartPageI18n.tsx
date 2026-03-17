@@ -58,78 +58,110 @@ export default function QuickStartPage() {
             <h2 className="text-xl font-semibold text-base-content mt-10">
               <Trans t={t} i18nKey="steps.step1.title" />
             </h2>
-            <ul>
-              <li>{t("steps.step1.listItems.item1")}</li>
-              <li>
-                <Trans
-                  t={t}
-                  i18nKey="steps.step1.listItems.item2"
-                  components={{ strong: <strong /> }}
-                />
-              </li>
-            </ul>
+            {t("steps.step1.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step1.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>{t("steps.step1.listItems.item1")}</li>
+                <li>
+                  <Trans
+                    t={t}
+                    i18nKey="steps.step1.listItems.item2"
+                    components={{ strong: <strong /> }}
+                  />
+                </li>
+              </ul>
+            )}
 
             <h2 className="text-xl font-semibold text-base-content mt-8">
               {t("steps.step2.title")}
             </h2>
-            <ul>
-              <li>
-                {t("steps.step2.listItems.item1.text")}:
-                <ul>
-                  <li>
-                    <Trans
-                      t={t}
-                      i18nKey="steps.step2.listItems.item1.items.item1"
-                      components={{ strong: <strong /> }}
-                    />
-                  </li>
-                  <li>
-                    <Trans
-                      t={t}
-                      i18nKey="steps.step2.listItems.item1.items.item2"
-                      components={{
-                        strong: <strong />,
-                        a: (
-                          <a
-                            href="/generate-data"
-                            className="link link-primary"
-                          />
-                        ),
-                      }}
-                    />
-                  </li>
-                  <li>
-                    <Trans
-                      t={t}
-                      i18nKey="steps.step2.listItems.item1.items.item3"
-                      components={{ strong: <strong /> }}
-                    />
-                  </li>
-                </ul>
-              </li>
-            </ul>
+            {t("steps.step2.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step2.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>
+                  {t("steps.step2.listItems.item1.text")}:
+                  <ul>
+                    <li>
+                      <Trans
+                        t={t}
+                        i18nKey="steps.step2.listItems.item1.items.item1"
+                        components={{ strong: <strong /> }}
+                      />
+                    </li>
+                    <li>
+                      <Trans
+                        t={t}
+                        i18nKey="steps.step2.listItems.item1.items.item2"
+                        components={{
+                          strong: <strong />,
+                          a: (
+                            <a
+                              href="/generate-data"
+                              className="link link-primary"
+                            />
+                          ),
+                        }}
+                      />
+                    </li>
+                    <li>
+                      <Trans
+                        t={t}
+                        i18nKey="steps.step2.listItems.item1.items.item3"
+                        components={{ strong: <strong /> }}
+                      />
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            )}
 
             <h2 className="text-xl font-semibold text-base-content mt-8">
               {t("steps.step3.title")}
             </h2>
-            <ul>
-              <li>{t("steps.step3.listItems.item1")}</li>
-              <li>{t("steps.step3.listItems.item2")}</li>
-            </ul>
+            {t("steps.step3.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step3.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>{t("steps.step3.listItems.item1")}</li>
+                <li>{t("steps.step3.listItems.item2")}</li>
+              </ul>
+            )}
 
             <h2 className="text-xl font-semibold text-base-content mt-8">
               {t("steps.step4.title")}
             </h2>
-            <ul>
-              <li>
-                <Trans
-                  t={t}
-                  i18nKey="steps.step4.listItems.item1"
-                  components={{ strong: <strong /> }}
-                />
-              </li>
-              <li>{t("steps.step4.listItems.item2")}</li>
-            </ul>
+            {t("steps.step4.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step4.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>
+                  <Trans
+                    t={t}
+                    i18nKey="steps.step4.listItems.item1"
+                    components={{ strong: <strong /> }}
+                  />
+                </li>
+                <li>{t("steps.step4.listItems.item2")}</li>
+              </ul>
+            )}
 
             <hr className="my-8" />
 
