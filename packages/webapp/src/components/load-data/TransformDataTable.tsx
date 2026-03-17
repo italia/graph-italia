@@ -6,12 +6,17 @@ import { transposeData } from "../../lib/utils.ts";
 import { useSettingsStore } from "../../store/settings_store.ts";
 import type { MatrixType } from "../../types.ts";
 import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
+import GenericDialog from "../layout/GenericDialog.tsx";
+import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
+import ToggleTableColumns from "./ToggleTableColumns.tsx";
+import SortTableColumns from "./SortTableColumns.tsx";
 
 registerDarkTheme();
 
 type TransformDataProps = {
   currentData: MatrixType;
   handleTransformData: (transformedData: MatrixType) => void;
+  onReset?: () => void;
   downloadCSV?: () => void;
   downloadJSON?: () => void;
 };
@@ -26,6 +31,7 @@ type RowRecord = Record<string, string | number>;
 export default function TransformData({
   currentData,
   handleTransformData,
+  onReset,
   downloadCSV,
   downloadJSON,
 }: TransformDataProps) {
@@ -50,34 +56,43 @@ export default function TransformData({
     () => new Set(allHeaders),
   );
 
-
   // State: column ordering (initially matches the original header order)
   const [columnOrder, setColumnOrder] = useState<string[]>(() => [
     ...allHeaders,
   ]);
 
   const [showRenameForm, setShowRenameForm] = useState(false);
-  const [renameValues, setRenameValues] = useState<string[]>([]);
+  const [showFilterColumns, setShowFilterColumns] = useState(false);
+  const [showSortColumns, setShowSortColumns] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
 
   // State: current sort
   const [sortState, setSortState] = useState<SortState>(null);
 
+  // Snapshot of the last applied (or initial) state — used to compute hasChanges
+  const [appliedSnapshot, setAppliedSnapshot] = useState(() => ({
+    workingData: currentData,
+    visibleKeys: (currentData[0] ?? []).map(String).join(","),
+    columnOrder: (currentData[0] ?? []).map(String).join(","),
+    sortState: null as SortState,
+  }));
+
   function openRenameForm() {
     if (!workingData?.[0]) return;
-    setRenameValues(workingData[0].map(String));
     setShowRenameForm(true);
   }
-  function applyRenames() {
+
+  function applyRenames(values: string[]) {
     const newData = workingData.map((row: (string | number)[], rowIndex: number) => {
-      if (rowIndex === 0) return renameValues;
+      if (rowIndex === 0) return values;
       return row;
     });
 
     // Update visibility set with new names
     setVisibleColumns((prev) => {
       const next = new Set<string>();
-      renameValues.forEach((newName, i) => {
+      values.forEach((newName: string, i: number) => {
         const oldName = allHeaders[i];
         if (prev.has(oldName)) {
           next.add(newName);
@@ -90,7 +105,7 @@ export default function TransformData({
     setColumnOrder((prev) =>
       prev.map((name) => {
         const idx = allHeaders.indexOf(name);
-        return idx >= 0 ? renameValues[idx] : name;
+        return idx >= 0 ? values[idx] : name;
       }),
     );
 
@@ -214,25 +229,25 @@ export default function TransformData({
     // 4. Reconstruct MatrixType: header row + data rows
     const newMatrix: MatrixType = [finalColumns, ...rows];
     handleTransformData(newMatrix);
-  }, [columnOrder, visibleColumns, objectData, sortState, handleTransformData]);
 
-  // Check if any changes have been made
+    // Update snapshot so hasChanges resets to false
+    setAppliedSnapshot({
+      workingData,
+      visibleKeys: [...visibleColumns].sort().join(","),
+      columnOrder: [...columnOrder].join(","),
+      sortState,
+    });
+  }, [columnOrder, visibleColumns, objectData, sortState, handleTransformData, workingData]);
+
+  // Check if current state differs from the last applied snapshot
   const hasChanges = useMemo(() => {
-    const originalHeaders = (currentData[0] ?? []).map(String);
-    const dataChanged = workingData !== currentData;
-    const visibleChanged = visibleColumns.size !== allHeaders.length;
-    const orderChanged = columnOrder.some(
-      (key, i) => key !== originalHeaders[i],
-    );
-    return dataChanged || visibleChanged || orderChanged || sortState !== null;
-  }, [
-    visibleColumns,
-    columnOrder,
-    allHeaders,
-    sortState,
-    workingData,
-    currentData,
-  ]);
+    if (workingData !== appliedSnapshot.workingData) return true;
+    if ([...visibleColumns].sort().join(",") !== appliedSnapshot.visibleKeys) return true;
+    if (columnOrder.join(",") !== appliedSnapshot.columnOrder) return true;
+    if (sortState?.columnKey !== appliedSnapshot.sortState?.columnKey) return true;
+    if (sortState?.direction !== appliedSnapshot.sortState?.direction) return true;
+    return false;
+  }, [workingData, visibleColumns, columnOrder, sortState, appliedSnapshot]);
 
   return (
     <div className="mt-10">
@@ -242,6 +257,20 @@ export default function TransformData({
           {t(`header.label`)}
         </h4>
         <div className="flex gap-2">
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => setShowFilterColumns((v) => !v)}
+          >
+            {showFilterColumns ? "Hide Columns Filter" : "Filter Columns"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => setShowSortColumns((v) => !v)}
+          >
+            {showSortColumns ? "Hide Column Order" : "Reorder Columns"}
+          </button>
           <button
             type="button"
             className="btn btn-outline"
@@ -259,7 +288,7 @@ export default function TransformData({
           </button>
           <button
             type="button" className="btn btn-outline"
-            onClick={resetData}
+            onClick={() => setShowResetDialog(true)}
           >
             {t(`actions.reset.label`)}
           </button>
@@ -282,72 +311,25 @@ export default function TransformData({
       </div>
 
       {showRenameForm && (
-        <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-          <h4 className="text-sm font-semibold mb-3">Rename column headers</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {renameValues.map((val, i) => (
-              <div key={i} className="form-control">
-                <label htmlFor={`col-rename-${i}`} className="label py-0.5">
-                  <span className="label-text text-xs text-base-content/50">
-                    Column {i + 1}
-                  </span>
-                </label>
-                <input
-                  id={`col-rename-${i}`}
-                  type="text"
-                  value={val}
-                  onChange={(e) => {
-                    const updated = [...renameValues];
-                    updated[i] = e.target.value;
-                    setRenameValues(updated);
-                  }}
-                  className="input input-sm input-bordered w-full"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={applyRenames}
-            >
-              Apply
-            </button>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              onClick={() => setShowRenameForm(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <RenameTableHeadersForm
+          initialValues={workingData[0].map(String)}
+          onApply={applyRenames}
+          onCancel={() => setShowRenameForm(false)}
+        />
       )}
-      <div className="my-4">
-        <h4 className="text-sm font-semibold mb-2 text-base-content/70">
-          {t(`table.actions.toggleColumns.label`)}
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {columnOrder.map((colName) => (
-            <label
-              key={colName}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
-                ? "bg-primary/10 border-primary/30 text-primary"
-                : "bg-base-200 border-base-300 text-base-content/40 line-through"
-                }`}
-            >
-              <input
-                type="checkbox"
-                checked={visibleColumns.has(colName)}
-                onChange={() => toggleColumn(colName)}
-                className="checkbox checkbox-xs checkbox-primary"
-              />
-              {colName}
-            </label>
-          ))}
-        </div>
-      </div>
+      {showFilterColumns && (
+        <ToggleTableColumns
+          columnOrder={columnOrder}
+          visibleColumns={visibleColumns}
+          onToggle={toggleColumn}
+        />
+      )}
+      {showSortColumns && (
+        <SortTableColumns
+          columnOrder={columnOrder}
+          onReorder={setColumnOrder}
+        />
+      )}
 
       <DataTable
         title={t(`table.title`)}
@@ -372,16 +354,8 @@ export default function TransformData({
         </div>
       )}
 
-      <div className="my-4 flex gap-2">
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={applyChanges}
-          disabled={!hasChanges}
-        >
-          {t(`table.actions.apply.label`)}
-        </button>
-        {hasChanges && (
+      {hasChanges && (
+        <div className="w-full my-4 flex gap-2 align-center justify-end">
           <button
             type="button"
             className="btn btn-default btn-outline"
@@ -393,9 +367,31 @@ export default function TransformData({
           >
             {"cancel"}
           </button>
-        )}
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={applyChanges}
+            disabled={!hasChanges}
+          >
+            {t(`table.actions.apply.label`)}
+          </button>
+        </div>
+      )}
 
-      </div>
+      <GenericDialog
+        toggle={showResetDialog}
+        title="Reset data"
+        description="This will permanently clear all loaded data and transformations. You will be taken back to the load data step."
+        labels={{ cancel: "Cancel", confirm: "Reset" }}
+        confirmCb={() => {
+          setShowResetDialog(false);
+          if (onReset) onReset();
+          else resetData();
+        }}
+        cancelCb={() => setShowResetDialog(false)}
+      >
+        <p className="text-sm text-warning font-medium">This action cannot be undone.</p>
+      </GenericDialog>
     </div >
   );
 }
