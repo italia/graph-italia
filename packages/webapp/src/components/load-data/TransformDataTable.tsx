@@ -6,6 +6,7 @@ import { transposeData } from "../../lib/utils.ts";
 import { useSettingsStore } from "../../store/settings_store.ts";
 import type { MatrixType } from "../../types.ts";
 import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
+import GenericDialog from "../layout/GenericDialog.tsx";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
 import ToggleTableColumns from "./ToggleTableColumns.tsx";
 import SortTableColumns from "./SortTableColumns.tsx";
@@ -15,6 +16,7 @@ registerDarkTheme();
 type TransformDataProps = {
   currentData: MatrixType;
   handleTransformData: (transformedData: MatrixType) => void;
+  onReset?: () => void;
   downloadCSV?: () => void;
   downloadJSON?: () => void;
 };
@@ -29,6 +31,7 @@ type RowRecord = Record<string, string | number>;
 export default function TransformData({
   currentData,
   handleTransformData,
+  onReset,
   downloadCSV,
   downloadJSON,
 }: TransformDataProps) {
@@ -61,6 +64,7 @@ export default function TransformData({
   const [showRenameForm, setShowRenameForm] = useState(false);
   const [showFilterColumns, setShowFilterColumns] = useState(false);
   const [showSortColumns, setShowSortColumns] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
 
   // State: current sort
@@ -284,7 +288,7 @@ export default function TransformData({
           </button>
           <button
             type="button" className="btn btn-outline"
-            onClick={resetData}
+            onClick={() => setShowResetDialog(true)}
           >
             {t(`actions.reset.label`)}
           </button>
@@ -373,6 +377,21 @@ export default function TransformData({
           </button>
         </div>
       )}
+
+      <GenericDialog
+        toggle={showResetDialog}
+        title="Reset data"
+        description="This will permanently clear all loaded data and transformations. You will be taken back to the load data step."
+        labels={{ cancel: "Cancel", confirm: "Reset" }}
+        confirmCb={() => {
+          setShowResetDialog(false);
+          if (onReset) onReset();
+          else resetData();
+        }}
+        cancelCb={() => setShowResetDialog(false)}
+      >
+        <p className="text-sm text-warning font-medium">This action cannot be undone.</p>
+      </GenericDialog>
     </div >
   );
 }

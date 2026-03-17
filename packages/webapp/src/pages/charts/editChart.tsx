@@ -159,8 +159,6 @@ function EditChartPage() {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
         setHasUnsavedChanges(false);
-        //   handleSaveChart();
-        //   navigate(HOME_ROUTE);;
         toast.success(t(`save.success.label`));
       }
     } catch (error) {
@@ -462,6 +460,11 @@ function EditChartPage() {
                           setHasUnsavedChanges(true);
                           setCurrentData(d);
                         });
+                      }}
+                      onReset={() => {
+                        setData(null);
+                        setCurrentData(null);
+                        send({ type: "INPUT" });
                       }}
                     />
                   </div>
