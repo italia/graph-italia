@@ -11,18 +11,70 @@ import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
+import PrivateAreePage from "./pages/home";
 import QuickStartPage from "./pages/QuickStartPage";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import DashboardViewPage from "./pages/show/ShowDashboardPage";
 import RootRoute from "./pages/Splash";
 import TermsPage from "./pages/terms";
 import GenerateDataPage from "./pages/utility/GenerateDataPage";
+import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
 import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
 import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
-import PrivateAreePage from "./pages/home";
+
+const MENU_ITEMS_TRANSLATION_KEYS = "menu.items" as const;
 
 export const HOME_ROUTE = "/home";
 
+type TMenuItem = {
+  name: string;
+  link: string;
+  translationKey?: `${typeof MENU_ITEMS_TRANSLATION_KEYS}.${string}.label`;
+};
+export type MenuSubItem = TMenuItem;
+export type MenuItem =
+  | TMenuItem
+  | (TMenuItem & { subMenu: readonly MenuSubItem[] });
+
+export const MENU: readonly MenuItem[] = [
+  {
+    name: "Charts",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
+    link: HOME_ROUTE || "/",
+  },
+  {
+    name: "Tools",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.label`,
+    link: "",
+    subMenu: [
+      {
+        name: "Quick Start",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.quickStart.label`,
+        link: "/quickstart",
+      },
+      {
+        name: "Generate Data",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generateData.label`,
+        link: "/generate-data",
+      },
+      {
+        name: "Generate Pois",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
+        link: "/generate-poi",
+      },
+      {
+        name: "Load Remote Data",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData.label`,
+        link: "/load-data",
+      },
+      {
+        name: "Check GeoJSon File",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
+        link: "/geo",
+      },
+    ],
+  },
+];
 // Assertion necessaria per compatibilità React 19 / react-router-dom (element: ReactElement vs ReactNode)
 const routes = [
   // Root: landing se non loggato, home Charts se loggato
@@ -124,6 +176,10 @@ const routes = [
   {
     path: "/generate-data",
     element: <GenerateDataPage />,
+  },
+  {
+    path: "/generate-poi",
+    element: <GeneratePoiPage />,
   },
   {
     path: "/geo",

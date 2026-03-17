@@ -20,18 +20,13 @@ const DEFAULT_USERS: SeedUser[] = [
     verifyed: true,
     role: "USER"
   },
-  {
-    email: "lorezz.me@gmail.com",
-    password: "lorezz.me@gmail.com",
-    verifyed: true,
-    role: "USER"
-  },
+
 ];
 
 /**
  * Get users to seed from environment variable or use defaults
  * SEED_USERS should be a JSON array of {id?, email, password, verifyed?, role?} objects
- * 
+ *
  * Examples:
  * - Create new user: {"email": "user@example.com", "password": "secret", "role": "USER"}
  * - Create admin: {"email": "admin@example.com", "password": "secret", "role": "ADMIN"}
@@ -39,7 +34,7 @@ const DEFAULT_USERS: SeedUser[] = [
  */
 function getUsersToSeed(): SeedUser[] {
   const seedUsersEnv = process.env.SEED_USERS;
-  
+
   if (seedUsersEnv) {
     try {
       const parsed = JSON.parse(seedUsersEnv);
@@ -57,7 +52,7 @@ function getUsersToSeed(): SeedUser[] {
       console.warn("⚠️ Failed to parse SEED_USERS env var, using defaults:", e);
     }
   }
-  
+
   console.log("📋 Using default seed users");
   return DEFAULT_USERS;
 }
@@ -71,13 +66,13 @@ function getUsersToSeed(): SeedUser[] {
 async function upsertUsers(users: SeedUser[]) {
   for (const item of users) {
     const hashedPassword = await hash(item.password, 10);
-    
+
     // If id is provided, update existing user
     if (item.id) {
       const existingUser = await prisma.user.findUnique({
         where: { id: item.id }
       });
-      
+
       if (existingUser) {
         console.log(`🔄 Updating user ${item.id} -> ${item.email}`);
         const updateData: any = {
@@ -86,7 +81,7 @@ async function upsertUsers(users: SeedUser[]) {
           verifyed: item.verifyed ?? true,
         };
         if (item.role) updateData.role = item.role;
-        
+
         try {
           await prisma.user.update({ where: { id: item.id }, data: updateData });
         } catch (error: any) {
@@ -102,32 +97,32 @@ async function upsertUsers(users: SeedUser[]) {
         console.log(`⚠️ User with id ${item.id} not found, will create new`);
       }
     }
-    
+
     // Check if user already exists by email
     const existingByEmail = await prisma.user.findUnique({
       where: { email: item.email }
     });
-    
+
     if (existingByEmail) {
       console.log(`⏭️ User ${item.email} already exists (id: ${existingByEmail.id}), skipping...`);
       continue;
     }
-    
+
     // Create new user
     console.log(`➕ Creating user: ${item.email} (role: ${item.role ?? "USER"})`);
-    
+
     // Build data object - only include role if schema supports it
     const createData: any = {
       email: item.email,
       password: hashedPassword,
       verifyed: item.verifyed ?? true,
     };
-    
+
     // Add role only if the field exists in the schema (backward compatible)
     if (item.role) {
       createData.role = item.role;
     }
-    
+
     try {
       await prisma.user.create({ data: createData });
     } catch (error: any) {
@@ -145,17 +140,17 @@ async function upsertUsers(users: SeedUser[]) {
 
 export default async function main() {
   console.log("🌱 Starting user seeding process...");
-  
+
   const usersToSeed = getUsersToSeed();
-  
+
   // Upsert users (idempotent - safe to run multiple times)
   if (usersToSeed.length > 0) {
     await upsertUsers(usersToSeed);
   }
-  
+
   // Get final user list
   const users = await db.getUsers();
-  
+
   // Ensure all users are verified
   for (const user of users) {
     if (!user.verifyed) {
@@ -163,7 +158,7 @@ export default async function main() {
       await db.setVerifyed(user.id);
     }
   }
-  
+
   console.log(`🎉 Seeding complete! Total users: ${users.length}`);
   console.log("📊 Users:", users.map(u => `${u.email} (${(u as any).role ?? 'USER'})`).join(", "));
   return users;

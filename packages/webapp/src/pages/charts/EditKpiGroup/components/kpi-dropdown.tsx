@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
 
 interface KpiDropdownProps {
@@ -8,6 +9,9 @@ interface KpiDropdownProps {
 }
 
 function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: "charts.editKpiGroup.components.kpiDropdown",
+  });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -54,13 +58,13 @@ function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
           <li>
             <span className="text-sm" onClick={handleEdit}>
               <BsPencilFill />
-              Edit
+              {t("actions.edit.label")}
             </span>
           </li>
           <li>
             <span className="text-sm" onClick={handleDelete}>
               <BsFillTrashFill />
-              Delete
+              {t("actions.delete.label")}
             </span>
           </li>
         </ul>

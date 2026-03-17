@@ -1,8 +1,9 @@
-import type { FieldDataType } from '../types';
-// import type { ChartConfigType } from '../types';
+import type { ChartConfigType, FieldDataType } from '../types';
 import { generateGradient, hexToHsla } from './utils';
 
-export const palettes: any = {
+
+export const palettes: Record<string, string[]> = {
+  theme: [],
   divergente: [
     '#003366',
     '#004D99',
@@ -19,7 +20,7 @@ export const palettes: any = {
     '#003366',
     '#004D99',
     '#0066CC',
-    '#207AD5',
+    '#080809',
     '#4392E0',
     '#D48D22',
     '#CC7A00',
@@ -39,23 +40,12 @@ export const palettes: any = {
     '#B32D43',
     '#737373',
   ],
-  default: [
-    '#5470c6',
-    '#91cc75',
-    '#fac858',
-    '#ee6666',
-    '#73c0de',
-    '#3ba272',
-    '#fc8452',
-    '#9a60b4',
-    '#ea7ccc',
-  ],
 
-  monocolore_a: generateGradient(hexToHsla('#0066CC'), 15),
-  monocolore_b: generateGradient(hexToHsla('#004080'), 15),
-  monocolore_c: generateGradient(hexToHsla('#2F475E'), 15),
-  monocolore_d: generateGradient(hexToHsla('#20d8b5'), 15),
-  //monocolore: Array(30).fill("#0066CC"),
+  monocolore_a: generateGradient(hexToHsla('#0066CC'), 5),
+  monocolore_b: generateGradient(hexToHsla('#004080'), 5),
+  monocolore_c: generateGradient(hexToHsla('#2F475E'), 5),
+  monocolore_d: generateGradient(hexToHsla('#20d8b5'), 5),
+  // monocolore: Array(20).fill("#0066CC"),
 
   _1_a: ['#0066CC'],
   _1_b: ['#004080'],
@@ -76,7 +66,7 @@ export const palettes: any = {
   _4_c: ['#2F475E', '#09AFA9', '#4392E0', '#B32D43'],
 
   _5_a: ['#0066CC', '#4392E0', '#CC7A00', '#B32D43', '#737373'],
-  _5_b: ['#05615E', '#09AFA9', '4392E0', '#CC7A00', '#B32D43'],
+  _5_b: ['#05615E', '#09AFA9', '#4392E0', '#CC7A00', '#B32D43'],
 };
 
 export const fixedSettings = {
@@ -91,10 +81,10 @@ export const fixedSettings = {
 };
 
 export const defaultConfig = {
-  colors: [...palettes.divergente],
-  palette: 'divergente',
+  colors: undefined,
+  palette: 'theme',
   direction: 'vertical',
-  h: 350,
+  h: 550,
   labeLine: false,
   legend: true,
   legendPosition: 'top',
@@ -107,13 +97,13 @@ export const defaultConfig = {
 };
 
 export const sampleData: FieldDataType = {
-  config: defaultConfig as any,
+  config: defaultConfig as unknown as ChartConfigType,
   data: null,
   chart: 'bar',
   isRemote: false,
 };
 
-export const getFields = (availabelPalettes: any, defaultPalette: string) => [
+export const getFields = (availabelPalettes: string[], defaultPalette: string) => [
   {
     label: 'Line Chart',
     name: 'Line Chart',

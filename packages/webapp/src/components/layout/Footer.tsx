@@ -1,21 +1,26 @@
+import { useTranslation } from "react-i18next";
+
 export default function Footer() {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.layout.footer",
+  });
   return (
     <footer className="footer bg-secondary text-secondary-content p-4">
       <aside>
         <p>
-          <span className="text-lg font-bold">Dataviz</span>:{" "}
-          <em>share your charts</em>
+          <span className="text-lg font-bold">{t(`brand.title`)}</span>:{" "}
+          <em> {t(`brand.tagline`)}</em>
         </p>
       </aside>
       <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
         <a href="/quickstart" className="underline">
-          Quick start
+          {t(`links.quickstart.label`)}
         </a>
         <a href="/terms-of-service" className="underline">
-          Terms of Service
+          {t(`links.tos.label`)}
         </a>
         <a href="/gdpr" className="underline">
-          Privacy Policy
+          {t(`links.privacy.label`)}
         </a>
       </nav>
     </footer>

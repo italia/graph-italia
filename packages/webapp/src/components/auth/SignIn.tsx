@@ -1,12 +1,16 @@
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
 import { HOME_ROUTE } from "../../router";
 import { useUserStore } from "../../store/user_store";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.auth.signin",
+  });
   const { setUser } = useUserStore();
   const navigate = useNavigate();
   const {
@@ -50,7 +54,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            Sign in to your account
+            {t(`header.label`)}
           </h2>
         </div>
 
@@ -62,7 +66,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   htmlFor="email"
                   className="block text-sm font-medium leading-6"
                 >
-                  Email address
+                  {t(`form.fields.email.label`)}
                 </label>
                 <div className="mt-2 form-control">
                   <input
@@ -70,11 +74,13 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     type="email"
                     required
                     autoComplete="email"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     {...register("email", { required: true })}
                   />
                   {errors["email"] && (
-                    <span className="text-error">This field is required</span>
+                    <span className="text-error">
+                      {t(`form.fields.email.errors.required`)}
+                    </span>
                   )}
                 </div>
               </div>
@@ -84,7 +90,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Password
+                  {t(`form.fields.password.label`)}
                 </label>
                 <div className="mt-2">
                   <input
@@ -92,11 +98,14 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                     type="password"
                     required
                     autoComplete="current-password"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     {...register("password", { required: true })}
                   />
                   {errors["password"] && (
-                    <span className="text-danger">This field is required</span>
+                    <span className="text-danger">
+                      {" "}
+                      {t(`form.fields.password.errors.required`)}
+                    </span>
                   )}
                 </div>
               </div>
@@ -104,46 +113,48 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
               {message && <p className="text-error">{message}</p>}
               <div>
                 <button type="submit" className="btn btn-primary w-full">
-                  Sign in
+                  {t(`form.actions.submit.label`)}
                 </button>
               </div>
               <div>
-                <button
-                  type="button"
-                  className="btn btn-link w-full"
-                  onClick={async () => {
-                    window.location.href = api.redirectToLoginOidc();
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-link w-full"
+                    onClick={async () => {
+                      window.location.href = api.redirectToLoginOidc();
 
-                    // const r = await fetch(
-                    //   "http://localhost:3003/api/auth/oidc/login",
-                    //   {
-                    //     credentials: "include",
-                    //   },
-                    // );
+                      // const r = await fetch(
+                      //   "http://localhost:3003/api/auth/oidc/login",
+                      //   {
+                      //     credentials: "include",
+                      //   },
+                      // );
 
-                    // if (r.ok) {
-                    //   console.log("ok");
-                    //   const user = await r.json();
-                    //   console.log(user);
-                    //   return;
-                    // }
-                    // console.log("ko");
-                  }}
-                >
-                  OIDC {api.redirectToLoginOidc()}
-                </button>
+                      // if (r.ok) {
+                      //   console.log("ok");
+                      //   const user = await r.json();
+                      //   console.log(user);
+                      //   return;
+                      // }
+                      // console.log("ko");
+                    }}
+                  >
+                    OIDC {api.redirectToLoginOidc()}
+                  </button>
+                </div>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center"></div>
 
                 <div className="text-sm leading-6">
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     onClick={() => handleRecoverFlow()}
                     className="link font-semibold link-primary"
                   >
-                    Forgot password?
-                  </a>
+                    {t(`form.actions.recoverPassword.label`)}
+                  </button>
                 </div>
               </div>
             </form>
@@ -155,19 +166,19 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 aria-hidden="true"
                 className="absolute inset-0 flex items-center"
               >
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-base-300" />
               </div>
               <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="bg-white px-6">Don't have an account?</span>
+                <span className="bg-base-100 px-6">{t(`bottom.label`)}</span>
               </div>
             </div>
 
             <div className="mt-6 ">
               <button
                 onClick={() => setLogin(false)}
-                className="btn btn-outline btn-primary w-full"
+                className="btn btn-outline w-full"
               >
-                Sign Up
+                {t(`bottom.actions.signup.label`)}
               </button>
             </div>
           </div>

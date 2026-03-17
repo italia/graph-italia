@@ -1,0 +1,516 @@
+{
+    "components": {
+        "auth": {
+            "changePasswordForm": {
+                "header": {
+                    "label": "Choose a new Password"
+                },
+                "form": {
+                    "fields": {
+                        "password": {
+                            "label": "Password",
+                            "errors": {
+                                "required": "This field is required",
+                                "minLength": "Password must be at least 8 characters long",
+                                "uppercase": "Password must have at least one uppercase letter",
+                                "lowercase": "Password must have at least one lowercase letter",
+                                "number": "Must contain a number",
+                                "specialChar": "Must contain at least one special character"
+                            }
+                        },
+                        "confirmPassword": {
+                            "label": "Confirm Password",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        }
+                    },
+                    "errors": {
+                        "passwordDontMatch": "Passwords do not match"
+                    },
+                    "actions": {
+                        "submit": {
+                            "label": "Change Password"
+                        }
+                    }
+                }
+            },
+            "recoverPwdForm": {
+                "header": {
+                    "label": "Insert your email"
+                },
+                "form": {
+                    "fields": {
+                        "email": {
+                            "label": "Email address",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        }
+                    },
+                    "actions": {
+                        "submit": {
+                            "label": "Recover Password",
+                            "messages": {
+                                "error": "Error while recovering password",
+                                "success": "Check Your Email"
+                            }
+                        }
+                    }
+                }
+            },
+            "signin": {
+                "header": {
+                    "label": "Sign in to your account"
+                },
+                "form": {
+                    "fields": {
+                        "email": {
+                            "label": "Email address",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        },
+                        "password": {
+                            "label": "Password",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        }
+                    },
+                    "actions": {
+                        "submit": {
+                            "label": "Sign In"
+                        },
+                        "recoverPassword": {
+                            "label": "Forgot password?"
+                        }
+                    }
+                },
+                "bottom": {
+                    "label": "Don't have an account?",
+                    "actions": {
+                        "signup": {
+                            "label": "Sign Up"
+                        }
+                    }
+                }
+            },
+            "signup": {
+                "header": {
+                    "label": "Sign in to your account"
+                },
+                "form": {
+                    "fields": {
+                        "email": {
+                            "label": "Email address",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        },
+                        "password": {
+                            "label": "Password",
+                            "errors": {
+                                "required": "This field is required",
+                                "minLength": "Password must be at least 8 characters long",
+                                "uppercase": "Password must have at least one uppercase letter",
+                                "lowercase": "Password must have at least one lowercase letter",
+                                "number": "Must contain a number",
+                                "specialChar": "Must contain at least one special character"
+                            }
+                        },
+                        "confirmPassword": {
+                            "label": "Confirm Password",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        },
+                        "policyAcknologment": {
+                            "label": {
+                                "main": "I accept the <privacyLink>privacy policy</privacyLink> agreement.",
+                                "small": "Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
+                            },
+                            "errors": {
+                                "mustAccept": "You must accept the policy agreement"
+                            }
+                        }
+                    },
+                    "errors": {
+                        "passwordDontMatch": "Passwords do not match"
+                    },
+                    "actions": {
+                        "submit": {
+                            "label": "Sign Up"
+                        }
+                    }
+                },
+                "bottom": {
+                    "label": "Already have account?",
+                    "actions": {
+                        "signin": {
+                            "label": "Sign In"
+                        }
+                    }
+                }
+            },
+            "verifyCode": {
+                "header": {
+                    "label": "Verification code",
+                    "description": "insert your verification code in the input below"
+                },
+                "bottom": {
+                    "label": "Resend code?",
+                    "actions": {
+                        "sendAnotherCode": {
+                            "label": "Send another code"
+                        }
+                    }
+                }
+            }
+        },
+        "layout": {
+            "sr": {
+                "label": "Vai al contenuto principale"
+            },
+            "fullHeader": {
+                "slim": {
+                    "brand": {
+                        "title": "Dipartimento per la trasformazione digitale"
+                    },
+                    "actions": {
+                        "login": {
+                            "label": "Login"
+                        },
+                        "logout": {
+                            "label": "Logout"
+                        }
+                    }
+                },
+                "center": {
+                    "brand": {
+                        "title": "Dataviz",
+                        "tagline": "Share your charts"
+                    },
+                    "social": {
+                        "label": "Source on",
+                        "platoforms": {
+                            "github": {
+                                "ariaLabel": "GitHub (si apre in nuova finestra)"
+                            }
+                        }
+                    }
+                },
+                "nav": {
+                    "content": {
+                        "hamburger": {
+                            "label": "Menu"
+                        }
+                    }
+                }
+            },
+            "slimHeader": {
+                "brand": {
+                    "title": "Dataviz"
+                },
+                "actions": {
+                    "login": {
+                        "label": "Accedi"
+                    },
+                    "logout": {
+                        "label": "Esci"
+                    }
+                }
+            },
+            "footer": {
+                "brand": {
+                    "title": "Dataviz",
+                    "tagline": "Share your charts"
+                },
+                "links": {
+                    "quickstart": {
+                        "label": "Quick Start"
+                    },
+                    "tos": {
+                        "label": "Terms of service"
+                    },
+                    "privacy": {
+                        "label": "Privacy policy"
+                    }
+                }
+            }
+        },
+        "loadData": {
+            "chooseLoader": {
+                "tabs": {
+                    "csv": {
+                        "label": "CSV File",
+                        "description": "Upload a CSV file from your computer"
+                    },
+                    "json": {
+                        "label": "JSON File",
+                        "description": "Upload a JSON file from your computer"
+                    },
+                    "remoteUrl": {
+                        "label": "Remote URL",
+                        "description": "Load data from a remote JSON URL"
+                    }
+                }
+            },
+            "loadRemoteCsvData": {
+                "errors": {
+                    "invalidUrl": "Please enter a valid URL",
+                    "loadingError": "Unable to load data from the specified URL"
+                },
+                "header": {
+                    "label": "CSV data source URL"
+                },
+                "actions": {
+                    "load": {
+                        "default": "Load remote CSV data",
+                        "loading": "Loading..."
+                    }
+                }
+            },
+            "loadRemoteJsonData": {
+                "errors": {
+                    "invalidUrl": "Please enter a valid URL",
+                    "loadingError": "Unable to load data from the specified URL"
+                },
+                "header": {
+                    "label": "JSON data source URL"
+                },
+                "actions": {
+                    "load": {
+                        "default": "Load remote JSON data",
+                        "loading": "Loading..."
+                    }
+                }
+            },
+            "transformData": {
+                "header": {
+                    "label": "Transform Data"
+                },
+                "actions": {
+                    "transpose": {
+                        "label": "Transpose"
+                    },
+                    "reset": {
+                        "label": "Reset"
+                    }
+                },
+                "table": {
+                    "actions": {
+                        "toggleColumns": {
+                            "label": "Toggle columns"
+                        },
+                        "apply": {
+                            "label": "Apply Changes"
+                        },
+                        "reset": {
+                            "label": "Reset"
+                        }
+                    },
+                    "title": "Transform Data",
+                    "sorting": {
+                        "label": "Sorted by"
+                    }
+                }
+            }
+        },
+        "chartOptions": {
+            "errors": {
+                "selectChart": "Select a chart type to configure options"
+            },
+            "form": {
+                "errors": {
+                    "required": "Required field"
+                }
+            }
+        },
+        "chartTable": {
+            "columns": {
+                "type": {
+                    "label": "Type"
+                },
+                "name": {
+                    "label": "Name"
+                },
+                "isRemote": {
+                    "label": "Is Remote"
+                },
+                "createdAt": {
+                    "label": "Created At"
+                },
+                "updatedAt": {
+                    "label": "Updated At"
+                },
+                "visibility": {
+                    "label": "Visibility",
+                    "values": {
+                        "private": "Private",
+                        "public": "Public"
+                    }
+                },
+                "share": {
+                    "label": "Share"
+                },
+                "actions": {
+                    "label": "Actions"
+                }
+            },
+            "modals": {
+                "embedChart": {
+                    "title": "Embed this Chart"
+                },
+                "previewChart": {
+                    "title": "Preview Chart"
+                }
+            }
+        },
+        "checkGeo": {
+            "form": {
+                "fields": {
+                    "geoJsonUrl": {
+                        "label": "GeoJson URL",
+                        "errors": {
+                            "required": "This field is required"
+                        }
+                    }
+                },
+                "actions": {
+                    "load": {
+                        "label": "Load Geo Json"
+                    }
+                }
+            },
+            "columns": {
+                "title": "Data Matching Column"
+            }
+        },
+        "dataMngTable": {
+            "header": {
+                "rows": "rows",
+                "columns": "columns"
+            },
+            "actions": {
+                "transpose": {
+                    "label": "Transpose"
+                },
+                "applyChanges": {
+                    "label": "Apply Changes"
+                },
+                "reset": {
+                    "label": "Reset"
+                },
+                "downloadCsv": {
+                    "label": "Download CSV"
+                },
+                "downloadJson": {
+                    "label": "Download JSON"
+                },
+                "rename": {
+                    "label": "Rename Headers",
+                    "fallback": "Cancel Rename"
+                }
+            },
+            "toggle": {
+                "title": "Toggle columns"
+            },
+            "sorting": {
+                "sortedBy": "Sorted by"
+            },
+            "renameForm": {
+                "title": "Rename column headers",
+                "column": "Column",
+                "actions": {
+                    "apply": {
+                        "label": "Apply"
+                    },
+                    "cancel": {
+                        "label": "Cancel"
+                    }
+                }
+            }
+        },
+        "generateRandomData": {
+            "title": "Parameters",
+            "columns": {
+                "rows": {
+                    "label": "Rows"
+                },
+                "columns": {
+                    "label": "Columns"
+                },
+                "rangeMin": {
+                    "label": "Range min"
+                },
+                "rangeMax": {
+                    "label": "Range max"
+                },
+                "offset": {
+                    "label": "Offset"
+                },
+                "multiplier": {
+                    "label": "Offset"
+                }
+            },
+            "actions": {
+                "generate": {
+                    "label": "Generate data"
+                }
+            }
+        },
+        "generateRandomPoi": {
+            "title": "Parameters",
+            "form": {
+                "fieldset": {
+                    "numberOfPoi": {
+                        "label": "Number of POIs"
+                    },
+                    "minLatitude": {
+                        "label": "Min latitude"
+                    },
+                    "maxLatitude": {
+                        "label": "Max latitude"
+                    },
+                    "minLongitude": {
+                        "label": "Min longitude"
+                    },
+                    "maxLongitude": {
+                        "label": "Max longitude"
+                    }
+                },
+                "actions": {
+                    "generate": {
+                        "label": "Generate Pois"
+                    }
+                }
+            }
+        },
+        "selectChart": {
+            "chartTypes": {
+                "bar": {
+                    "label": "Bar chart",
+                    "description": "Compare values across categories"
+                },
+                "line": {
+                    "label": "Line",
+                    "description": "Show trends over time"
+                },
+                "pie": {
+                    "label": "Pie chart",
+                    "description": "Display proportions"
+                },
+                "map": {
+                    "label": "Geographic map",
+                    "description": "Display data on a map"
+                }
+            },
+            "fieldset": {
+                "legend": {
+                    "label": "Chart type"
+                }
+            }
+        }
+    }
+}

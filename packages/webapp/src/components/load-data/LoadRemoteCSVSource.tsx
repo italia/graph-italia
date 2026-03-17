@@ -1,27 +1,36 @@
-import { useState } from "react";
-import { log } from "../../lib/utils";
 import Papa from "papaparse";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { log } from "../../lib/utils";
 
 // const PLACEHOLDER_URL =
 //   "https://www.datocms-assets.com/38008/1722249098-generated-data-3x51722249031636.csv";
 
-function LoadSource({ setData, currentValue }: { setData: Function, currentValue: string | null; }) {
+function LoadSource({
+  setData,
+  currentValue,
+}: {
+  setData: Function;
+  currentValue: string | null;
+}) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.loadRemoteCsvData",
+  });
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState(currentValue || "");
   const [error, setError] = useState<string | null>(null);
 
   async function getData() {
     if (!url.trim()) {
-      setError("Please enter a valid URL");
+      setError(t("errors.invalidUrl"));
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      let testUrl = new URL(url);
+      const testUrl = new URL(url);
       if (testUrl) {
-
-        const response = await fetch(url)
+        const response = await fetch(url);
         console.log("fetch response", response);
         const data = await response.text();
         console.log("response data", data);
@@ -37,7 +46,7 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
       }
     } catch (error) {
       log(error);
-      setError("Unable to load data from the specified URL");
+      setError(t("errors.loadingError"));
     } finally {
       setLoading(false);
     }
@@ -46,13 +55,14 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
   return (
     <div className="space-y-4">
       <div className="form-control">
-        <label className="label">
-          <span className="label-text font-medium">CSV data source URL</span>
+        <label htmlFor="csv-source-url" className="label">
+          <span className="label-text font-medium">{t("header.label")}</span>
         </label>
         <input
+          id="csv-source-url"
           placeholder="https://example.com/data.csv"
-          className='input w-full'
-          type='text'
+          className="input w-full"
+          type="text"
           value={url}
           onChange={(e) => {
             setUrl(e.target.value);
@@ -64,11 +74,13 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
             }
           }}
         />
-        {error && (
-          <label className="label">
-            <span className="label-text-alt text-error">{error}</span>
-          </label>
-        )}
+        <div role="alert" aria-atomic="true">
+          {error && (
+            <label className="label">
+              <span className="label-text-alt text-error">{error}</span>
+            </label>
+          )}
+        </div>
       </div>
 
       <button
@@ -77,10 +89,10 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
         disabled={loading || !url.trim()}
       >
         {loading ? (
-          <>
+          <span role="status">
             <span className="loading loading-spinner loading-sm"></span>
-            Loading...
-          </>
+            {t("actions.load.loading")}
+          </span>
         ) : (
           <>
             <svg
@@ -97,7 +109,7 @@ function LoadSource({ setData, currentValue }: { setData: Function, currentValue
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
               />
             </svg>
-            Load remote CSV data
+            {t("actions.load.default")}
           </>
         )}
       </button>

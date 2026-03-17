@@ -1,34 +1,36 @@
-import { useState, useEffect } from 'react';
-import { PinInput } from 'react-input-pin-code';
+import { useEffect, useState } from "react";
+import { PinInput } from "react-input-pin-code";
 
-import * as api from '../../lib/api';
-import { useUserStore } from '../../store/user_store';
-import { AxiosError } from 'axios';
+import { AxiosError } from "axios";
+import { useTranslation } from "react-i18next";
+import * as api from "../../lib/api";
+import { useUserStore } from "../../store/user_store";
 
 export default function VerifyCodeComponent({
-  uid = '',
+  uid = "",
   onCheckDone,
   onAskAnotherCode,
-  code = ''
+  code = "",
 }: {
   uid: string;
   onCheckDone: (result: boolean) => void;
   onAskAnotherCode: () => void;
   code?: string;
 }) {
-
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.auth.verifyCode",
+  });
 
   useEffect(() => {
     if (code && code.length === 6) {
       setTimeout(() => {
-        setValues(code.split(''));
+        setValues(code.split(""));
       }, 1000);
     }
   }, [code]);
 
-
-  const [values, setValues] = useState(['', '', '', '', '', '']);
-  const [message, setMessage] = useState('');
+  const [values, setValues] = useState(["", "", "", "", "", ""]);
+  const [message, setMessage] = useState("");
   const { setUser } = useUserStore();
   const [showState, setShowState] = useState<boolean>(false);
 
@@ -36,7 +38,7 @@ export default function VerifyCodeComponent({
     if (!value) {
       return;
     }
-    setMessage('');
+    setMessage("");
     try {
       const result = await api.verify({ uid, code: value });
       setShowState(true);
@@ -45,32 +47,35 @@ export default function VerifyCodeComponent({
       setUser(user);
       return onCheckDone(result);
     } catch (error) {
-      console.log('error', error);
+      console.log("error", error);
       // setMessage('Error code invalid or expired');
-      const errorMessage = ((error as AxiosError).response?.data as any).error?.message || (error as any).message || error;
+      const errorMessage =
+        ((error as AxiosError).response?.data as any).error?.message ||
+        (error as any).message ||
+        error;
       setMessage(errorMessage);
     }
   }
 
   useEffect(() => {
-    if (values.length === 6 && values.every((v) => v !== '')) {
-      const value = values.join('');
-      console.log('value', value);
+    if (values.length === 6 && values.every((v) => v !== "")) {
+      const value = values.join("");
+      console.log("value", value);
       handleCheck(value);
     }
   }, [values]);
 
   return (
-    <div className='flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
-      <div className='mx-auto w-full max-w-sm lg:w-96'>
+    <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
-          <h2 className='mt-8 text-2xl font-bold leading-9 tracking-tight text-content'>
-            Verification code
+          <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
+            {t(`header.label`)}
           </h2>
-          <p>insert your verification code in the input below</p>
+          <p> {t(`header.description`)}</p>
         </div>
 
-        <div className='mt-10'>
+        <div className="mt-10">
           <div>
             <PinInput
               values={values}
@@ -78,16 +83,17 @@ export default function VerifyCodeComponent({
               showState={showState}
             />
             {message && (
-              <div className='text-error mt-2 text-md'>{message}</div>
+              <div className="text-error mt-2 text-md">{message}</div>
             )}
-            <div className='text-sm leading-6 my-4'>
-              Resend code? &nbsp;
+            <div className="text-sm leading-6 my-4">
+              {t(`bottom.label`)}
+              &nbsp;
               <button
-                type='button'
+                type="button"
                 onClick={() => onAskAnotherCode()}
-                className='link font-semibold text-primary'
+                className="link font-semibold text-primary"
               >
-                send another code
+                {t(`bottom.actions.sendAnotherCode.label`)}
               </button>
             </div>
           </div>

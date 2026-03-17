@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 export type KpiFormValues = {
   title: string;
@@ -29,6 +30,9 @@ export function KpiForm({
   initialValues?: Partial<KpiFormValues>;
   onSubmit?: (data: KpiFormValues) => void;
 }) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: "charts.editKpiGroup.components.kpiForm",
+  });
   const { register, handleSubmit, watch } = useForm<KpiFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -57,7 +61,9 @@ export function KpiForm({
             {/* Title */}
             <div>
               <label className="label">
-                <span className="label-text font-medium">Title *</span>
+                <span className="label-text font-medium">
+                  {t("form.fields.title.label")} *
+                </span>
               </label>
               <input
                 type="text"
@@ -69,7 +75,9 @@ export function KpiForm({
 
             <div>
               <label className="label">
-                <span className="label-text font-medium">Value *</span>
+                <span className="label-text font-medium">
+                  {t("form.fields.value.label")} *
+                </span>
               </label>
               <input
                 type="text"
@@ -81,7 +89,9 @@ export function KpiForm({
             {/* Open Data Path */}
             <div>
               <label className="label">
-                <span className="label-text font-medium">Open Data Path</span>
+                <span className="label-text font-medium">
+                  {t("form.fields.openDataPath.label")}
+                </span>
               </label>
               <input
                 type="text"
@@ -93,7 +103,7 @@ export function KpiForm({
             {/* Info aggiuntive */}
             <div className="border-t pt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Additional infos
+                {t("form.fieldSets.additionalInfos.label")}
               </h3>
 
               {/* Mostra andamento */}
@@ -113,7 +123,7 @@ export function KpiForm({
                     </div>
                   </div>
                   <span className="text-sm font-medium text-gray-700">
-                    Show flow
+                    {t("form.fields.showFlow.label")}
                   </span>
                 </label>
               </div>
@@ -121,23 +131,35 @@ export function KpiForm({
               {/* Direzione andamento */}
               <div className="mb-4">
                 <label className="label">
-                  <span className="label-text font-medium">Flow direction</span>
+                  <span className="label-text font-medium">
+                    {t("form.fields.flowDirection.label")}
+                  </span>
                 </label>
                 <select
                   className="input input-bordered w-full"
                   {...register("flow_direction")}
                   disabled={!showFlow}
                 >
-                  <option>--Select a value--</option>
-                  <option value="+">Positive (+)</option>
-                  <option value="-">Negative (-)</option>
+                  <option>
+                    {t("form.fields.flowDirection.values.noValue")}
+                  </option>
+                  <option value="+">
+                    {" "}
+                    {t("form.fields.flowDirection.values.positive")}
+                    (+)
+                  </option>
+                  <option value="-">
+                    {t("form.fields.flowDirection.values.negative")} (-)
+                  </option>
                 </select>
               </div>
 
               {/* Valore andamento */}
               <div className="mb-4">
                 <label className="label">
-                  <span className="label-text font-medium">Flow value</span>
+                  <span className="label-text font-medium">
+                    {t("form.fields.flowValue.label")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -150,7 +172,9 @@ export function KpiForm({
               {/* Dettaglio andamento */}
               <div className="mb-6">
                 <label className="label">
-                  <span className="label-text font-medium">Flow detail</span>
+                  <span className="label-text font-medium">
+                    {t("form.fields.flowDetail.label")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -166,7 +190,7 @@ export function KpiForm({
               <div>
                 <label className="label">
                   <span className="label-text font-medium">
-                    Background color
+                    {t("form.fields.backgroundColor.label")}
                   </span>
                 </label>
                 <input
@@ -178,7 +202,10 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Value prefix</span>
+                  <span className="label-text font-medium">
+                    {" "}
+                    {t("form.fields.valuePrefix.label")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -189,7 +216,10 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Value suffix</span>
+                  <span className="label-text font-medium">
+                    {" "}
+                    {t("form.fields.valueSuffix.label")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -200,7 +230,10 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Percentage</span>
+                  <span className="label-text font-medium">
+                    {" "}
+                    {t("form.fields.percentage.label")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -211,7 +244,10 @@ export function KpiForm({
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Footer text</span>
+                  <span className="label-text font-medium">
+                    {" "}
+                    {t("form.fields.footerText.label")}
+                  </span>
                 </label>
                 <input
                   type="text"

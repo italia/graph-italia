@@ -1,6 +1,7 @@
 import type { EChartsType } from "echarts";
 import React, { useEffect, useRef, useState } from "react";
 import { getBasicValues, getMapValues, getPieValues } from "../lib/utils";
+import "../themes";
 import type { FieldDataType } from "../types";
 import BasicChart from "./charts/BasicChart";
 import GeoMapChart from "./charts/GeoMapChart";
@@ -26,7 +27,7 @@ function RenderChart(props: RenderProps) {
   const { rowHeight, hFactor = 1 } = props;
   const wrapRef = useRef(null);
   const [echartInstance, setEchartInstance] = useState<EChartsType | null>(
-    null
+    null,
   );
   const [width, setWidth] = useState<number>(500);
   const isMobile = width <= 480 ? true : false;
@@ -50,7 +51,7 @@ function RenderChart(props: RenderProps) {
     let w: number = 500;
     try {
       w = element.clientWidth || element.getBoundingClientRect().width;
-    } catch (error) { }
+    } catch (error) {}
     if (w) setWidth(w);
   }
 
@@ -82,8 +83,9 @@ function RenderChart(props: RenderProps) {
   return (
     <div style={baseStyle}>
       <div
-        className={`w-full min-height-[${rowHeight ? rowHeight + "px" : height + "px"
-          }] h-full max-height-full p-4`}
+        className={`w-full min-height-[${
+          rowHeight ? rowHeight + "px" : height + "px"
+        }] h-full max-height-full p-4`}
         style={chartWrapStyle}
       >
         <div ref={wrapRef}>
@@ -109,7 +111,7 @@ function RenderChart(props: RenderProps) {
                   hFactor={hFactor}
                 />
               )}
-              {props.chart === "map" && (
+              {props.chart === "map"  && (
                 <GeoMapChart
                   id={props.id}
                   data={getMapValues(props)}
@@ -119,7 +121,7 @@ function RenderChart(props: RenderProps) {
                   hFactor={hFactor}
                 />
               )}
-              {props.chart === "cmap" && (
+              {props.chart === "cmap"  && (
                 <ClusterMap
                   data={props}
                   rowHeight={rowHeight}

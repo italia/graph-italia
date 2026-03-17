@@ -1,21 +1,21 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import CSVUpload from "./CSVUpload";
 import JsonUpload from "./JsonUpload";
-import LoadRemoteJsonSource from "./LoadRemoteJsonSource";
 import LoadRemoteCSVSource from "./LoadRemoteCSVSource";
+import LoadRemoteJsonSource from "./LoadRemoteJsonSource";
 
 type ChooseLoaderProps = {
   handleUpload: (d: any) => void;
   handleSetRemoteData: (d: any) => void;
   remoteUrl: string | null;
-  initialData?: any;
 };
 
 // Tab definitions with icons and descriptions
 const TABS = [
   {
     id: 0,
-    label: "CSV File",
+    label: "tabs.csv.label",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -32,11 +32,11 @@ const TABS = [
         />
       </svg>
     ),
-    description: "Upload a CSV file from your computer",
+    description: "tabs.csv.description",
   },
   {
     id: 1,
-    label: "JSON File",
+    label: "tabs.json.label",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -53,11 +53,11 @@ const TABS = [
         />
       </svg>
     ),
-    description: "Upload a JSON file from your computer",
+    description: "tabs.json.description",
   },
   {
     id: 2,
-    label: "Remote URL",
+    label: "tabs.remoteUrl.label",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +74,7 @@ const TABS = [
         />
       </svg>
     ),
-    description: "Load data from a remote JSON URL",
+    description: "tabs.remoteUrl.description",
   },
 ];
 
@@ -82,9 +82,12 @@ export default function ChooseLoader({
   handleUpload,
   handleSetRemoteData,
   remoteUrl,
-  initialData,
 }: ChooseLoaderProps) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.chooseLoader",
+  });
   const [currentTab, setCurrentTab] = useState<number>(0);
+  const [remoteType, setRemoteType] = useState<string>("csv"); // "json" or "csv"
 
   return (
     <div className="space-y-4">
@@ -103,45 +106,69 @@ export default function ChooseLoader({
             aria-selected={currentTab === tab.id}
           >
             {tab.icon}
-            <span className="hidden sm:inline">{tab.label}</span>
+            <span className="hidden sm:inline">{t(tab.label)}</span>
           </button>
         ))}
       </div>
 
       {/* Tab Description */}
       <p className="text-sm text-base-content/60 px-1">
-        {TABS[currentTab].description}
+        {t(TABS[currentTab].description)}
       </p>
 
       {/* Tab Content */}
       <div className="bg-base-100 rounded-lg">
         {currentTab === 0 && (
           <CSVUpload
-            setData={(d: any) => handleUpload(d)}
-            initialData={initialData}
+            setData={(d) => handleUpload(d)}
           />
         )}
         {currentTab === 1 && (
           <JsonUpload
-            setData={(d: any) => handleUpload(d)}
-            initialData={initialData}
+            setData={(d) => handleUpload(d)}
           />
         )}
         {currentTab === 2 && (
-          <>
+          <div className="p-4 space-y-4">
+            <div>
+              <label className="cursor-pointer label mr-4" htmlFor="csv_value">
+                <input
+                  id="csv_value"
+                  type="radio"
+                  name="remoteType"
+                  className="radio"
+                  value="csv"
+                  checked={remoteType === "csv"}
+                  onChange={() => setRemoteType("csv")}
+                />
+                <span className="label-text ml-2">CSV</span>
+              </label>
+              <label className="cursor-pointer label " htmlFor="json_val">
+                <input
+                  id="json_value"
+                  type="radio"
+                  name="remoteType"
+                  className="radio"
+                  value="json"
+                  checked={remoteType === "json"}
+                  onChange={() => setRemoteType("json")}
+                />
+                <span className="label-text ml-2">JSON</span>
+              </label>
+            </div>
 
-
-            {/* <b>TODO: ADD RADIO BUTTONS TO CHOOSE JSON OR CSV</b> */}
-
-            <LoadRemoteJsonSource
-              currentValue={remoteUrl}
-              setData={(d: any) => handleSetRemoteData(d)}
-            />
-            <LoadRemoteCSVSource
-              currentValue={remoteUrl}
-              setData={(d: any) => handleSetRemoteData(d)}
-            />
-          </>
+            {remoteType === "json" ? (
+              <LoadRemoteJsonSource
+                currentValue={remoteUrl}
+                setData={(d) => handleSetRemoteData(d)}
+              />
+            ) : (
+              <LoadRemoteCSVSource
+                currentValue={remoteUrl}
+                setData={(d) => handleSetRemoteData(d)}
+              />
+            )}
+          </div>
         )}
       </div>
     </div>

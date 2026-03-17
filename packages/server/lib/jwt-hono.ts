@@ -14,7 +14,7 @@ export { generateTokens, generateAccessToken, verifyAccessToken, hashToken };
 export type { IAccessTokenPayload, IRefreshTokenPayload };
 
 export function setAccessTokenCookie(c: Context, token: string) {
-	const expires = new Date(Date.now() + 60 * 60 * 1000);
+	const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 	const isProduction = process.env.NODE_ENV === "production";
 
 	setCookie(c, "access_token", token, {

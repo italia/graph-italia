@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import * as echarts from "echarts";
 import ReactEcharts from "echarts-for-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import DataTable from "./OldDataTable";
-import { transposeData } from "../lib/utils";
+import { useTranslation } from "react-i18next";
+import DataTable from "./DataMngTable";
 // import UploadCSV from "./CSVUpload";
 
 function PreviewGeoMapChart({ url, series, nameProperty }: any) {
@@ -60,6 +60,9 @@ function PreviewGeoMapChart({ url, series, nameProperty }: any) {
 }
 
 export default function CheckGeo() {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.checkGeo",
+  });
   const {
     register,
     handleSubmit,
@@ -143,7 +146,7 @@ export default function CheckGeo() {
   if (data && geoProps) {
     columnMatches = compareTableObjs(
       matrixToObjects(data),
-      matrixToObjects(geoProps)
+      matrixToObjects(geoProps),
     );
   }
 
@@ -154,7 +157,7 @@ export default function CheckGeo() {
       <div style={{ display: "flex" }}>
         {geoProps && (
           <div>
-            <DataTable data={geoProps} reset={undefined} transpose={() => { }} />
+            <DataTable data={geoProps} onApplyData={setGeoProps} />
           </div>
         )}
         {geoUrl && geoProps && (
@@ -190,19 +193,21 @@ export default function CheckGeo() {
             }}
           >
             <div
-              key='geoJsonUrl'
+              key="geoJsonUrl"
               style={{ fontSize: 14, padding: 4, margin: 4 }}
             >
-              <label>GeoJson URL</label>
+              <label>{t("form.fields.geoJsonUrl.label")}</label>
               <input
                 style={{ minWidth: 250 }}
                 type={"text"}
                 {...register("geoJsonUrl", { required: true })}
               />
-              {errors["geoJsonUrl"] && <span>This field is required</span>}
+              {errors["geoJsonUrl"] && (
+                <span>{t("form.fields.geoJsonUrl.errors.required")}</span>
+              )}
             </div>
-            <div className='ml-5'>
-              <button type='submit'>Load Geo Json</button>
+            <div className="ml-5">
+              <button type="submit">{t("form.actions.load.label")}</button>
             </div>
           </div>
         </form>
@@ -220,24 +225,20 @@ export default function CheckGeo() {
       <div style={{ display: "flex" }}>
         {data && (
           <div>
-            <DataTable
-              data={data}
-              reset={() => setData(null)}
-              transpose={() => setData((d) => transposeData(d))}
-            />
+            <DataTable data={data} onApplyData={setData} />
           </div>
         )}
         <div style={{ padding: 20 }}>
           {columnMatches.length > 0 && (
             <>
-              <h4>Data Matching Column</h4>
+              <h4>{t("columns.title")}</h4>
               {columnMatches.map(({ key, matches }: any) => (
                 <>
                   <h3>{key}</h3>
                   <div key={key + "_matches"}>
                     {matches.map(({ name, numMatches }: any) => (
                       <button
-                        className='btn'
+                        className="btn"
                         key={key + "_" + name}
                         onClick={() => setPropertyName(name)}
                       >

@@ -3,36 +3,28 @@
  * Brand Dataviz, menu nav, lingua, nome utente / Esci.
  */
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
+import type { MenuSubItem } from "../../router";
+import { MENU } from "../../router";
+import { useSettingsStore } from "../../store/settings_store.ts";
 import { useUserStore } from "../../store/user_store";
-// import { HOME_ROUTE } from "../../router";
+import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 import "./SlimHeader.css";
 
-const HOME_ROUTE = "/home";
-type MenuSubItem = { name: string; link: string };
-type MenuItem =
-  | { name: string; link: string }
-  | { name: string; link: string; subMenu: readonly MenuSubItem[] };
-
-const MENU: readonly MenuItem[] = [
-  { name: "Charts", link: HOME_ROUTE || "/" },
-  {
-    name: "Tools",
-    link: "",
-    subMenu: [
-      { name: "Quick Start", link: "/quickstart" },
-      { name: "Generate Data", link: "/generate-data" },
-      { name: "Load Remote Data", link: "/load-data" },
-      { name: "Check GeoJSon File", link: "/geo" },
-    ],
-  },
-];
-
 export default function SlimHeader() {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.layout.slimHeader",
+  });
+  const { t: translateMenu } = useTranslation("menu");
+
   const { user, clearUser } = useUserStore();
   const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
   const dropdownToolsRef = useRef<HTMLLIElement>(null);
+
+  const { settings, setTheme } = useSettingsStore();
+  const theme = settings?.preferredTheme;
 
   const handleLogout = async () => {
     try {
@@ -66,7 +58,7 @@ export default function SlimHeader() {
           <div className="it-slim-only-content">
             <div className="it-slim-only-brand">
               <a href="/" className="it-slim-only-brand-title">
-                Dataviz
+                {t(`brand.title`)}
               </a>
               <button
                 type="button"
@@ -95,11 +87,12 @@ export default function SlimHeader() {
                             className="it-slim-only-nav-link"
                             aria-expanded={dropdownToolsAperto}
                             aria-haspopup="true"
-                            onClick={() =>
-                              setDropdownToolsAperto((v) => !v)
-                            }
+                            onClick={() => setDropdownToolsAperto((v) => !v)}
                           >
-                            {item.name}
+                            {item.translationKey
+                              ? translateMenu(item.translationKey)
+                              : item.name}
+
                             <svg
                               className="it-slim-only-icon it-slim-only-icon-expand"
                               aria-hidden="true"
@@ -119,7 +112,9 @@ export default function SlimHeader() {
                                   className="it-slim-only-dropdown-item"
                                   role="menuitem"
                                 >
-                                  {sub.name}
+                                  {sub.translationKey
+                                    ? translateMenu(sub.translationKey)
+                                    : sub.name}
                                 </a>
                               </li>
                             ))}
@@ -128,15 +123,11 @@ export default function SlimHeader() {
                       );
                     }
                     return (
-                      <li
-                        key={item.name}
-                        className="it-slim-only-nav-item"
-                      >
-                        <a
-                          href={item.link}
-                          className="it-slim-only-nav-link"
-                        >
-                          {item.name}
+                      <li key={item.name} className="it-slim-only-nav-item">
+                        <a href={item.link} className="it-slim-only-nav-link">
+                          {item.translationKey
+                            ? translateMenu(item.translationKey)
+                            : item.name}
                         </a>
                       </li>
                     );
@@ -147,17 +138,19 @@ export default function SlimHeader() {
 
             <div className="it-slim-only-actions">
               <div className="it-slim-only-actions-right">
+                <ThemeSwitcherComponent
+                  currentTheme={theme as "light" | "dark"}
+                  handleChange={setTheme}
+                />
                 {user ? (
                   <span className="it-slim-only-user">
-                    <span className="it-slim-only-user-name">
-                      {user.name}
-                    </span>
+                    <span className="it-slim-only-user-name">{user.name}</span>
                     <button
                       type="button"
                       className="it-slim-only-btn it-slim-only-btn-outline"
                       onClick={handleLogout}
                     >
-                      Esci
+                      {t(`actions.logout.label`)}
                     </button>
                   </span>
                 ) : (
@@ -166,7 +159,7 @@ export default function SlimHeader() {
                     className="it-slim-only-btn it-slim-only-btn-outline"
                     aria-label="Accedi"
                   >
-                    Accedi
+                    {t(`actions.login.label`)}
                   </a>
                 )}
               </div>
@@ -185,7 +178,9 @@ export default function SlimHeader() {
               return (
                 <li key={item.name}>
                   <span className="it-slim-only-mobile-label">
-                    {item.name}
+                    {item.translationKey
+                      ? translateMenu(item.translationKey)
+                      : item.name}
                   </span>
                   <ul className="it-slim-only-mobile-sublist">
                     {item.subMenu.map((sub: MenuSubItem) => (
@@ -194,7 +189,9 @@ export default function SlimHeader() {
                           href={sub.link}
                           onClick={() => setMenuMobileAperto(false)}
                         >
-                          {sub.name}
+                          {sub.translationKey
+                            ? translateMenu(sub.translationKey)
+                            : sub.name}
                         </a>
                       </li>
                     ))}
@@ -205,7 +202,9 @@ export default function SlimHeader() {
             return (
               <li key={item.name}>
                 <a href={item.link} onClick={() => setMenuMobileAperto(false)}>
-                  {item.name}
+                  {item.translationKey
+                    ? translateMenu(item.translationKey)
+                    : item.name}
                 </a>
               </li>
             );

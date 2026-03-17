@@ -1,28 +1,41 @@
 import { useMachine } from "@xstate/react";
-import { DataTable, RenderChart, type MatrixType } from "dataviz-components";
+import type { ChartColorScheme } from "dataviz-components";
+import {
+  ColorSchemeProvider,
+  RenderChart,
+  type MatrixType,
+} from "dataviz-components";
 import "dataviz-components/dist/style.css";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
+import { startTransition, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { HOME_ROUTE } from "../../router";
+import { useSettingsStore } from "../../store/settings_store.ts";
 import ChartOptions from "../../components/ChartOptions";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import SelectChart from "../../components/SelectChart";
-import { getAvailablePalettes, getPalette } from "../../lib/utils";
-
 import ChooseLoader from "../../components/load-data/ChooseLoader";
-import * as api from "../../lib/api";
+import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
+import EditStepComponent from "../../components/EditStepComponent";
+import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
+import TransformDataTable from "../../components/load-data/TransformDataTable";
+import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
 import { defaultConfig } from "../../lib/constants";
 import stepMachine from "../../lib/stepMachine";
+import * as api from "../../lib/api";
 import useStoreState from "../../lib/storeState";
-import { HOME_ROUTE } from "../../router";
-import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 
-import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
-import toast from 'react-hot-toast';
 
 function EditChartPage() {
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editChart`,
+  });
   const { id: paramId } = useParams();
   const navigate = useNavigate();
   const [state, send] = useMachine(stepMachine);
@@ -48,16 +61,19 @@ function EditChartPage() {
     resetItem,
   } = useStoreState((state) => state);
 
-
+  const [currentData, setCurrentData] = useState(null as any);
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState(false);
-
+  const { settings } = useSettingsStore();
+  const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
+    settings?.preferredTheme === "dark" ? "dark" : "light",
+  );
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  useUnsavedChanges(hasUnsavedChanges, "You have unsaved changes. Are you sure you want to leave?");
+  useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
   // Load existing chart when there's a paramId
   useEffect(() => {
@@ -102,42 +118,18 @@ function EditChartPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramId]);
 
-  function handleChangeData(d: any) {
-    if (!config.palette) {
-      const numSeries = d.length - 1;
-      let palette = getAvailablePalettes(numSeries)[0];
-      config.palette = palette;
-      config.colors = getPalette(palette);
-      setConfig(config);
-    }
-    // setChart("");
-    setData(d);
-    setHasUnsavedChanges(true);
-    // Don't transition automatically - user must click "Proceed to configuration"
-  }
-
-  const haveData =
-    data && data[0].length > 0 ? true : dataSource ? true : false;
+  const haveData = data && data[0].length > 0 ? true : dataSource ? true : false;
 
   function handleUpload(d: any) {
     setHasUnsavedChanges(true);
-    setData(d);
-    // Don't transition automatically - user must click "Proceed to configuration"
-    if (state.matches("idle")) {
-      send({ type: "NEXT" }); // Only from idle to input
-    }
+    setCurrentData(d);
   }
 
   function handleSetRemoteData(d: any) {
     setHasUnsavedChanges(true);
     setIsRemote(true);
     setRemoteUrl(d.remoteUrl);
-    setData(d.data);
-
-    // Don't transition automatically - user must click "Proceed to configuration"
-    if (state.matches("idle")) {
-      send({ type: "NEXT" }); // Only from idle to input
-    }
+    setCurrentData(d.data);
   }
 
 
@@ -167,13 +159,11 @@ function EditChartPage() {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
         setHasUnsavedChanges(false);
-        //   handleSaveChart();
-        //   navigate(HOME_ROUTE);;
-        toast.success("Chart saved successfully!");
+        toast.success(t(`save.success.label`));
       }
     } catch (error) {
       console.error("Error saving chart:", error);
-      toast.error('Error saving chart!');
+      toast.error(t(`save.error.label`));
     } finally {
       setIsSaving(false);
     }
@@ -203,18 +193,24 @@ function EditChartPage() {
 
   return (
     <Layout>
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 p-4 rounded-lg">
+      <Helmet>
+        <title>
+          {t(`head.title.label`)}: {`${chartName ? ": " + chartName : ""}`}
+        </title>
+        <meta name="description" content={t(`head.meta.description.content`)} />
+      </Helmet>
+      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
-          className="btn btn-default"
+          className="btn btn-outline"
         >
-          Back to list
+          {t(`header.actions.back.label`)}
         </button>
         <div className="flex gap-4">
-          <span>step: {currentStepIndex}</span>
-          <span>status: {state.value as string}</span>
-          <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span>
+          {/* <span>step: {currentStepIndex}</span>
+          <span>status: {state.value as string}</span> */}
+          {/* <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span> */}
         </div>
         <div className="flex-shrink-0">
           <button
@@ -224,14 +220,12 @@ function EditChartPage() {
             className="btn btn-primary gap-2"
           >
             {isSaving ? (
-              <>
+              <span role="status">
                 <span className="loading loading-spinner loading-sm"></span>
-                Saving...
-              </>
+                {t(`header.actions.save.isSaving`)}...
+              </span>
             ) : (
-              <>
-                Save
-              </>
+              <> {t(`header.actions.save.default`)}</>
             )}
           </button>
         </div>
@@ -240,237 +234,247 @@ function EditChartPage() {
       <div className="mx-auto">
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
           <div className="space-y-1 xl:col-span-2">
-
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0" aria-disabled={currentStepIndex === 0 ? true : false} open={currentStepIndex > 0 ? true : false}>
-              <summary className="collapse-title font-semibold">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">
-                      <FaCog />
-                    </span>
-                  </div>
-                  <div>
-                    <h2 className="card-title text-xl">
-                      Configure the chart
-                    </h2>
-                    <p className="text-sm text-base-content/60">
-                      Choose the chart type and customize its appearance
-                    </p>
+            <EditStepComponent
+              title={t(`body.options.setup.title`)}
+              description={t(`body.options.setup.description`)}
+              Icon={FaInfo}
+              isOpen={true}
+              isDisabled={false}
+              index={0}
+            >
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-4">
+                      <input
+                        id="chart_visibility"
+                        type="checkbox"
+                        checked={chartPublish}
+                        onChange={() => {
+                          setHasUnsavedChanges(true);
+                          setChartPublish(!chartPublish);
+                        }}
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <label
+                        htmlFor="chart_visibility"
+                        className="text-sm text-base-content/70 cursor-pointer"
+                      >
+                        {t(`body.options.setup.form.fields.visibility.label`)}
+                      </label>
+                      <span className="text-sm text-base-content font-bold">
+                        {t(
+                          `body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
+                        )}
+                      </span>
+                    </div>
+                    <label
+                      htmlFor="chart_title"
+                      className="mt-4 text-base-content/70"
+                    >
+                      {t(`body.options.setup.form.fields.title.label`)}
+                    </label>
+                    <input
+                      id="chart_title"
+                      type="text"
+                      value={chartName}
+                      onChange={(e) => {
+                        setHasUnsavedChanges(true);
+                        setChartName(e.target.value);
+                      }}
+                      placeholder={getDefaultName()}
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                    />
+                    <label
+                      htmlFor="chart_description"
+                      className="mt-4 text-base-content/70"
+                    >
+                      {t(`body.options.setup.form.fields.description.label`)}
+                    </label>
+                    <textarea
+                      id="chart_description"
+                      value={chartDescription}
+                      rows={3}
+                      onChange={(e) => {
+                        setHasUnsavedChanges(true);
+                        setChartDescription(e.target.value);
+                      }}
+                      placeholder={t(
+                        `body.options.setup.form.fields.description.placeholder`,
+                      )}
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                    />
                   </div>
                 </div>
-              </summary>
-              <div className="collapse-content text-sm">
-                {state.matches("config") ? (
+              </div>
+            </EditStepComponent>
 
+            <EditStepComponent
+              title={t(`body.options.configuration.title`)}
+              description={t(`body.options.configuration.description`)}
+              Icon={FaCog}
+              isOpen={currentStepIndex > 0 ? true : false}
+              isDisabled={currentStepIndex === 0 ? true : false}
+              index={2}
+            >
+              <div>
+                {state.matches("config") ? (
                   <div className="card bg-base-100 shadow-sm border border-base-200">
                     <div className="card-body">
-
-                      <SelectChart setChart={(value: string) => { setHasUnsavedChanges(true); setChart(value); }} chart={chart} />
+                      <SelectChart
+                        setChart={(value: string) => {
+                          setHasUnsavedChanges(true);
+                          setChart(value);
+                        }}
+                        chart={chart}
+                      />
                       <div className="divider my-2"></div>
                       <ChartOptions
                         config={config}
-                        setConfig={(value) => { setHasUnsavedChanges(true); setConfig(value); }}
+                        setConfig={(value) => {
+                          setHasUnsavedChanges(true);
+                          setConfig(value);
+                        }}
                         chart={chart}
                         numSeries={(data as MatrixType)?.length - 1 || 0}
                       />
                     </div>
                   </div>
-
-                ) : <div> Please load data and proceed to configuration step to see chart options </div>}
+                ) : (
+                  <div role="status">
+                    {" "}
+                    {t(`body.options.configuration.status`)}{" "}
+                  </div>
+                )}
               </div>
-            </details>
+            </EditStepComponent>
 
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-1" open={currentStepIndex === 0 ? true : false}>
-              <summary className="collapse-title font-semibold">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">
-                      <FaDatabase />
-                    </span>
-                  </div>
-                  <div>
-                    <h2 className="card-title text-xl">Load your data</h2>
-                    <p className="text-sm text-base-content/60">
-                      Import data from CSV, JSON files or from a remote source
-                    </p>
-                  </div>
-                </div>
-              </summary>
-              <div className="collapse-content text-sm">
-                {/* Step 1: Data loading */}
-                <div className="card bg-base-100 shadow-sm border border-base-200">
-                  <div className="card-body">
-                    <ChooseLoader
-                      handleUpload={handleUpload}
-                      remoteUrl={remoteUrl}
-                      handleSetRemoteData={handleSetRemoteData}
-                      initialData={data}
-                    />
-                    {haveData && chart && (
-                      <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => send({ type: "CONFIG" })}
-                        >
-                          Use this data
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-              </div>
-            </details>
-
-            <details className="collapse collapse-arrow bg-base-100 border border-base-300" name="my-accordion-det-0">
-              <summary className="collapse-title font-semibold">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-bold">
-                      <FaInfo />
-                    </span>
-                  </div>
-                  <div>
-                    <h2 className="card-title text-xl">Setup Info</h2>
-                    <p className="text-sm text-base-content/60">
-                      Name, description and visibility of the chart
-                    </p>
-                  </div>
-                </div>
-              </summary>
-              <div className="collapse-content text-sm">
-                <div className="card bg-base-100 shadow-sm border border-base-200">
-                  <div className="card-body">
-                    <div className="flex flex-col space-y-2">
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="checkbox"
-                          checked={chartPublish}
-                          onChange={() => {
-                            setHasUnsavedChanges(true);
-                            setChartPublish(!chartPublish);
-                          }}
-                          className="toggle toggle-sm toggle-primary cursor-pointer"
-                        />
-                        <span className="text-sm text-base-content/70">
-                          Chart Visibility:
-                        </span>
-                        <span className="text-sm text-base-content font-bold">
-                          {chartPublish ? "Public" : "Private"}
-                        </span>
-                      </div>
-                      <label htmlFor="chart_title" className="mt-4 text-base-content/70">Chart Title:</label>
-                      <input
-                        id="chart_title"
-                        type="text"
-                        value={chartName}
-                        onChange={(e) => {
-                          setHasUnsavedChanges(true);
-                          setChartName(e.target.value);
-                        }}
-                        placeholder={getDefaultName()}
-                        className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
-                      />
-                      <label htmlFor="chart_description" className="mt-4 text-base-content/70">Chart Description:</label>
-                      <textarea
-                        id="chart_description"
-                        value={chartDescription}
-                        rows={3}
-                        onChange={(e) => {
-                          setHasUnsavedChanges(true);
-                          setChartDescription(e.target.value);
-                        }}
-                        placeholder="Add a description..."
-                        className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
-                      />
-
+            <EditStepComponent
+              title={t(`body.options.data.title`)}
+              description={t(`body.options.data.description`)}
+              Icon={FaDatabase}
+              isOpen={currentStepIndex === 0 ? true : false}
+              isDisabled={false}
+              index={1}
+            >
+              {/* Step 1: Data loading */}
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <ChooseLoader
+                    handleUpload={handleUpload}
+                    remoteUrl={remoteUrl}
+                    handleSetRemoteData={handleSetRemoteData}
+                  />
+                  {/* {haveData && chart && (
+                    <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => handleAssignData()}
+                      >
+                        {t(`body.options.data.actions.useData.label`)}
+                      </button>
                     </div>
-                  </div>
+                  )} */}
+                  {currentData && (
+                    <>
+                      <h4>serie selector</h4>
+                      <SeriesSelector
+                        initialData={currentData || data}
+                        setData={(d) => {
+                          setData(d);
+                          setHasUnsavedChanges(true);
+                          send({ type: "CONFIG" });
+                        }}
+                      />
+                      <hr />
+                    </>
+                  )}
+
                 </div>
               </div>
-            </details>
-
+            </EditStepComponent>
           </div>
 
           {/* Right column: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 border border-base-300 rounded-lg" >
-            {/*
-            <div role="tablist" className="tabs tabs-border">
-              <button type="button" role="tab" className={`tab ${currentTab === "chart" ? "tab-active" : ""}`} onClick={() => setCurrentTab("chart")}>Chart</button>
-              <button type="button" role="tab" className={`tab ${currentTab === "data" ? "tab-active" : ""}`} onClick={() => setCurrentTab("data")}>Data</button>
-              <button type="button" role="tab" className={`tab ${currentTab === "info" ? "tab-active" : ""}`} onClick={() => setCurrentTab("info")}>Info</button>
-            </div>
-            */}
-
-            <div className="bg-base-100 bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
-
-              {/* {currentTab === "info" && ( */}
-              <div  >
+          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg">
+            <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
+              <div>
                 <h1 className="text-2xl font-bold">{chartName}</h1>
                 <div className="text-base-content/80">
                   {chartDescription ? (
-                    <div dangerouslySetInnerHTML={{ __html: chartDescription.replace(/\n/g, "<br />") }} />
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: chartDescription.replace(/\n/g, "<br />"),
+                      }}
+                    />
                   ) : (
-                    <p className="italic text-base-content">
-                      -
-                    </p>
+                    <p className="italic text-base-content">{""}</p>
                   )}
                 </div>
               </div>
-              {/* )} */}
 
-              {/* {currentTab === "chart" && ( */}
-              <div  >
+              <div>
                 {state.matches("config") && chart ? (
-
-                  <div className="overflow-auto min-h-[380px] relative">
-                    {/* {!preview && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
-                        <div className="flex flex-col items-center gap-3">
-                          <span className="loading loading-spinner loading-lg text-primary"></span>
-                          <span className="text-sm text-base-content/60">
-                            Loading chart...
-                          </span>
-                        </div>
-                      </div>
-                    )} */}
-                    <RenderChart
-                      id={id || paramId || "preview-map"}
-                      chart={chart}
-                      data={data}
-                      config={config}
-                      dataSource={null}
-                    // getPicture={(pic: string) => console.log("Chart picture", pic)}
+                  <>
+                    <ThemeSwitcherComponent
+                      currentTheme={previewScheme}
+                      handleChange={(value: ChartColorScheme) =>
+                        setPreviewScheme(value)
+                      }
+                    />
+                    <div
+                      className="overflow-auto min-h-[380px] relative rounded-lg"
+                      style={{
+                        backgroundColor:
+                          previewScheme === "dark" ? "#1a1a2e" : "#F5FAFF",
+                      }}
+                    >
+                      <ColorSchemeProvider scheme={previewScheme}>
+                        <RenderChart
+                          id={id || paramId || "preview-map"}
+                          chart={chart}
+                          data={data}
+                          config={config}
+                          dataSource={null}
+                        />
+                      </ColorSchemeProvider>
+                    </div>
+                  </>
+                ) : (
+                  <p className="italic text-base-content"></p>
+                )}
+              </div>
+              <div>
+                {!(haveData && data) ? (
+                  <p className="italic text-base-content" role="status">
+                    {t(`body.preview.loadDataMessage`)}
+                  </p>
+                ) : (
+                  <div className="overflow-auto flex-1 min-h-0">
+                    <TransformDataTable
+                      currentData={(data)}
+                      handleTransformData={(d) => {
+                        startTransition(() => {
+                          setData(d);
+                          setHasUnsavedChanges(true);
+                          setCurrentData(d);
+                        });
+                      }}
+                      onReset={() => {
+                        setData(null);
+                        setCurrentData(null);
+                        send({ type: "INPUT" });
+                      }}
                     />
                   </div>
-
-                ) : (<p className="italic text-base-content"></p>)}
+                )}
               </div>
-              {/* )} */}
-
-              {/* {currentTab === "data" && ( */}
-              <div >
-                {!haveData ? (
-                  <p className="italic text-base-content">
-                    Load your data to display the data preview
-                  </p>
-                ) :
-                  (
-                    <div className="overflow-auto flex-1 min-h-0">
-                      <DataTable data={data as any} />
-                    </div>
-                  )}
-
-              </div>
-              {/* )} */}
-
-
             </div>
           </div>
         </div>
       </div>
-    </Layout >
+    </Layout>
   );
 }
 
