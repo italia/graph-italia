@@ -1,6 +1,21 @@
 import { useMachine } from "@xstate/react";
 import { type FieldDataType } from "dataviz-components";
 import { useEffect, useState } from "react";
+import {
+  FaChartBar,
+  FaChartLine,
+  FaChartPie,
+  FaCode,
+  FaCopy,
+  FaEye,
+  FaLink,
+  FaList,
+  FaMap,
+  FaMapLocationDot,
+  FaPenToSquare,
+  FaRegSquare,
+  FaTrashCan,
+} from "react-icons/fa6";
 
 import Layout from "../components/layout";
 // import RenderChart from "../components/RenderChart";
@@ -66,6 +81,7 @@ function Home() {
   const [newChart, setNewChart] = useState<ChartPayload>();
   const [isCreatingChart, setIsCreatingChart] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
   async function fetchCharts() {
     setLoading(true);
     try {
@@ -155,6 +171,44 @@ function Home() {
     setNewChart(undefined);
   }
 
+  function renderCreateButton() {
+    return (<div className="flex my-5 gap-4">
+      <details className="dropdown bg-base-100 z-10">
+        <summary
+          className="btn btn-primary"
+          role="button"
+          aria-haspopup="menu"
+        >
+          <span aria-hidden="true">+ </span>
+          {t(`body.actions.label`)}
+        </summary>
+        <ul
+          className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border"
+          role="menu"
+        >
+          <li role="none">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => setShowCreateChartModal(true)}
+            >
+              {t(`body.actions.actionItems.createChart.label`)}
+            </button>
+          </li>
+          <li role="none">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => setShowCreateKpiGroupModal(true)}
+            >
+              {t(`body.actions.actionItems.createKPIGroup.label`)}
+            </button>
+          </li>
+        </ul>
+      </details>
+    </div>)
+  }
+
   return (
     <Layout>
       <div className="p-4">
@@ -167,42 +221,17 @@ function Home() {
                 {t(`header.${list && list.length ? "myCharts" : "noCharts"}`)}
               </h1>
 
+              <div className="flex my-5 gap-4">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setShowCreateNewDialog(true)}
+                >
+                  + Create New
+                </button>
+              </div>
               <div>
-                <div className="flex my-5 gap-4">
-                  <details className="dropdown bg-base-100 z-10">
-                    <summary
-                      className="btn btn-primary"
-                      role="button"
-                      aria-haspopup="menu"
-                    >
-                      <span aria-hidden="true">+ </span>
-                      {t(`body.actions.label`)}
-                    </summary>
-                    <ul
-                      className="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-lg border"
-                      role="menu"
-                    >
-                      <li role="none">
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => setShowCreateChartModal(true)}
-                        >
-                          {t(`body.actions.actionItems.createChart.label`)}
-                        </button>
-                      </li>
-                      <li role="none">
-                        <button
-                          type="button"
-                          role="menuitem"
-                          onClick={() => setShowCreateKpiGroupModal(true)}
-                        >
-                          {t(`body.actions.actionItems.createKPIGroup.label`)}
-                        </button>
-                      </li>
-                    </ul>
-                  </details>
-                </div>
+
                 <ChartTable
                   list={list as FieldDataType[]}
                   handleLoadChart={handleLoadChart}
@@ -248,7 +277,7 @@ function Home() {
                   placeholder={t(
                     `modals.createKpiGroup.form.fields.name.placeholder`,
                   )}
-                  autoFocus
+                  // autoFocus={true}
                   onChange={(e) => {
                     const name = e.target.value;
                     const oldValue = newKpiGroup ?? ({} as KpiGroupPayload);
@@ -342,6 +371,66 @@ function Home() {
           </GenericDialog>
         )}
       </div>
+      {/* Create New dialog */}
+      <GenericDialog
+        toggle={showCreateNewDialog}
+        title="Create New"
+        description="What would you like to create?"
+        labels={{ cancel: "Close", confirm: "Select an option above" }}
+        confirmDisabled={true}
+        confirmCb={() => { }}
+        cancelCb={() => setShowCreateNewDialog(false)}
+      >
+        <div className="grid grid-cols-2 gap-4 py-2">
+          <button
+            type="button"
+            className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors"
+            onClick={() => {
+              setShowCreateNewDialog(false);
+              setShowCreateChartModal(true);
+            }}
+          >
+            <span className="">
+              <FaChartPie size={24} aria-hidden="true" />
+            </span>
+            <span className="font-semibold">Chart</span>
+          </button>
+          <button
+            type="button"
+            className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors"
+            onClick={() => {
+              setShowCreateNewDialog(false);
+              setShowCreateKpiGroupModal(true);
+            }}
+          >
+            <span className="">
+              <FaList size={24} aria-hidden="true" />
+            </span>
+            <span className="font-semibold">KPI Group</span>
+          </button>
+          <button
+            type="button"
+            className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors"
+            onClick={() => setShowCreateNewDialog(false)}
+          >
+            <span className="">
+              <FaMap size={24} aria-hidden="true" />
+            </span>
+            <span className="font-semibold">Map</span>
+          </button>
+          <button
+            type="button"
+            className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors"
+            onClick={() => setShowCreateNewDialog(false)}
+          >
+            <span className="">
+              <FaRegSquare size={24} aria-hidden="true" />
+            </span>
+            <span className="font-semibold">Dashboard</span>
+          </button>
+        </div>
+      </GenericDialog>
+
       <GenericDialog
         toggle={!!pendingDeleteId}
         title={t(`body.confirms.deleteChart.label`)}
