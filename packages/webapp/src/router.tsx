@@ -11,7 +11,7 @@ import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
-import PrivateAreePage from "./pages/home";
+import PrivateAreaPage from "./pages/home";
 import QuickStartPage from "./pages/QuickStartPage";
 import ShowChartPage from "./pages/show/ShowChartPage";
 import DashboardViewPage from "./pages/show/ShowDashboardPage";
@@ -80,7 +80,7 @@ const routes = [
   // Root: landing se non loggato, home Charts se loggato
   {
     path: HOME_ROUTE,
-    element: <PrivateAreePage />,
+    element: <PrivateAreaPage />,
   },
   // Root: landing se non loggato, home Charts se loggato
   {

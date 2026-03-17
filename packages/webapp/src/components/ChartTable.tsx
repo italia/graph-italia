@@ -2,7 +2,6 @@ import { type FieldDataType } from "dataviz-components";
 import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, {
-  createTheme,
   type TableColumn,
 } from "react-data-table-component";
 import {
@@ -29,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import Dialog from "./layout/Dialog";
+import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -38,23 +38,7 @@ type CharTableProps = {
   handleDeleteChart: (id: string) => void;
 };
 
-createTheme("dark", {
-  text: {
-    primary: "rgba(255,255,255, 0.54)",
-    secondary: "rgba(255,255,255, 0.54)",
-    disabled: "rgba(255,255,255, 0.38)",
-  },
-  background: {
-    default: "#trasnparent",
-  },
-  divider: {
-    default: "rgba(255,255,255,.075)",
-  },
-  highlightOnHover: {
-    default: "rgba(255,255,255,.03)",
-    text: "#fff",
-  },
-});
+registerDarkTheme();
 
 export default function ChartTable({
   list,
@@ -255,23 +239,6 @@ export default function ChartTable({
                       </span>
                     )}
 
-                    {/* <span className="ml-2">
-                  {row.publish ? (
-                    <button
-                      className="btn btn-xs "
-                      onClick={() => console.log("Make Private")}
-                    >
-                      Toggle
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-xs "
-                      onClick={() => console.log("Make Public")}
-                    >
-                      Toggle
-                    </button>
-                  )}
-                </span> */}
                   </div>
                 ),
               },
@@ -355,9 +322,8 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${
-                        row.id
-                      }`}
+                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
+                        }`}
                       aria-label="edit"
                       className="btn btn-ghost btn-xs btn-square"
                     >

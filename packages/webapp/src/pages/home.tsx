@@ -65,6 +65,7 @@ function Home() {
   const [newKpiGroup, setNewKpiGroup] = useState<KpiGroupPayload>();
   const [newChart, setNewChart] = useState<ChartPayload>();
   const [isCreatingChart, setIsCreatingChart] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   async function fetchCharts() {
     setLoading(true);
     try {
@@ -87,15 +88,16 @@ function Home() {
 
   function handleDeleteChart(id?: string) {
     if (!id) return;
-    console.log("delete chart?", id);
+    setPendingDeleteId(id);
+  }
 
-    const sure = confirm(t(`body.confirms.deleteChart.label`));
-    if (!sure) return;
-
-    return api
-      .deleteChart(id)
+  function confirmDeleteChart() {
+    if (!pendingDeleteId) return;
+    api
+      .deleteChart(pendingDeleteId)
       .then(() => fetchCharts())
-      .then(() => send({ type: "IDLE" }));
+      .then(() => send({ type: "IDLE" }))
+      .finally(() => setPendingDeleteId(null));
   }
 
   function navigateToKpiGroupEdit(id?: string) {
@@ -340,6 +342,16 @@ function Home() {
           </GenericDialog>
         )}
       </div>
+      <GenericDialog
+        toggle={!!pendingDeleteId}
+        title={t(`body.confirms.deleteChart.label`)}
+        description="This action cannot be undone."
+        labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
+        confirmCb={confirmDeleteChart}
+        cancelCb={() => setPendingDeleteId(null)}
+      >
+        <></>
+      </GenericDialog>
     </Layout>
   );
 }

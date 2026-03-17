@@ -417,6 +417,7 @@ function EditChartPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
+                    {chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/charts/${id}/view`} target="_blank" className="btn btn-outline">view published chart</a></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>
