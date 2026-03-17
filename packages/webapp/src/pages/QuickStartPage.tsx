@@ -1,6 +1,8 @@
+import { Trans, useTranslation } from "react-i18next";
 import Layout from "../components/layout";
 
 export default function QuickStartPage() {
+  const { t } = useTranslation("quickstart");
   return (
     <Layout>
       <div className="quickstart-page relative isolate min-h-[60vh]">
@@ -21,7 +23,12 @@ export default function QuickStartPage() {
               <path d="M100 200V.5M.5 .5H200" fill="none" />
             </pattern>
           </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-base-200" aria-hidden="true">
+          <svg
+            x="50%"
+            y={-1}
+            className="overflow-visible fill-base-200"
+            aria-hidden="true"
+          >
             <path
               d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
               strokeWidth={0}
@@ -38,92 +45,128 @@ export default function QuickStartPage() {
         <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
           <p className="mb-6">
             <a href="/" className="text-primary hover:underline">
-              ← Back to home
+              ← {t("back")}
             </a>
           </p>
 
           <article className="rounded-xl bg-base-100 p-8 shadow-sm ring-1 ring-base-content/10 prose max-w-none">
             <h1 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
-              Quick Start Guide: Creating Your First Chart with Dataviz
+              {t("title")}
             </h1>
-            <p className="lead">
-              Follow this guide to visualize your data in minutes. You can use
-              sample data or upload your own.
-            </p>
-
+            <p className="lead">{t("description")}</p>
             <h2 className="text-xl font-semibold text-base-content mt-10">
-              Step 1: Click on &quot;Create New Chart&quot;
+              <Trans t={t} i18nKey="steps.step1.title" />
             </h2>
-            <ul>
-              <li>Log in to your Dataviz account.</li>
-              <li>
-                On the dashboard, click the{" "}
-                <strong>&quot;Create New Chart&quot;</strong> button to start a
-                new project.
-              </li>
-            </ul>
-
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
+            {t("steps.step1.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step1.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>{t("steps.step1.listItems.item1")}</li>
+                <li>
+                  <Trans
+                    t={t}
+                    i18nKey="steps.step1.listItems.item2"
+                    components={{ strong: <strong /> }}
+                  />
+                </li>
+              </ul>
+            )}
             <h2 className="text-xl font-semibold text-base-content mt-8">
-              Step 2: Upload your data
+              {t("steps.step2.title")}
             </h2>
-            <ul>
-              <li>
-                If you don&apos;t have data yet, you can:
-                <ul>
-                  <li>
-                    <strong>Sample data</strong>: use the datasets provided by
-                    Dataviz (option &quot;Use Sample Data&quot;).
-                  </li>
-                  <li>
-                    <strong>Generate data</strong>: from the Tools section →{" "}
-                    <a href="/generate-data" className="link link-primary">
-                      Generate Data
-                    </a>{" "}
-                    to create a CSV automatically.
-                  </li>
-                  <li>
-                    <strong>Upload a CSV</strong>: upload your CSV file; Dataviz
-                    will parse it and display the data in a table.
-                  </li>
-                </ul>
-              </li>
-            </ul>
-
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
+            {t("steps.step2.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step2.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>
+                  {t("steps.step2.listItems.item1.text")}:
+                  <ul>
+                    <li>
+                      <Trans
+                        t={t}
+                        i18nKey="steps.step2.listItems.item1.items.item1"
+                        components={{ strong: <strong /> }}
+                      />
+                    </li>
+                    <li>
+                      <Trans
+                        t={t}
+                        i18nKey="steps.step2.listItems.item1.items.item2"
+                        components={{
+                          strong: <strong />,
+                          a: (
+                            <a
+                              href="/generate-data"
+                              className="link link-primary"
+                            />
+                          ),
+                        }}
+                      />
+                    </li>
+                    <li>
+                      <Trans
+                        t={t}
+                        i18nKey="steps.step2.listItems.item1.items.item3"
+                        components={{ strong: <strong /> }}
+                      />
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            )}
             <h2 className="text-xl font-semibold text-base-content mt-8">
-              Step 3: Choose your chart type and configure (optional)
+              {t("steps.step3.title")}
             </h2>
-            <ul>
-              <li>
-                After uploading your data, choose the chart type: Bar, Line,
-                Pie, or Geomap.
-              </li>
-              <li>Customize: select columns, X/Y axes, colors, and labels.</li>
-            </ul>
-
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
+            {t("steps.step3.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step3.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>{t("steps.step3.listItems.item1")}</li>
+                <li>{t("steps.step3.listItems.item2")}</li>
+              </ul>
+            )}
             <h2 className="text-xl font-semibold text-base-content mt-8">
-              Step 4: Save your chart
+              {t("steps.step4.title")}
             </h2>
-            <ul>
-              <li>
-                Click <strong>&quot;Save&quot;</strong> to save your chart to
-                your dashboard.
-              </li>
-              <li>
-                You can reopen it, edit it, publish it, and get the embed code
-                to add it to your website.
-              </li>
-            </ul>
-
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
+            {t("steps.step4.text") ? (
+              <Trans
+                t={t}
+                i18nKey="steps.step4.text"
+                components={{ strong: <strong /> }}
+              />
+            ) : (
+              <ul>
+                <li>
+                  <Trans
+                    t={t}
+                    i18nKey="steps.step4.listItems.item1"
+                    components={{ strong: <strong /> }}
+                  />
+                </li>
+                <li>{t("steps.step4.listItems.item2")}</li>
+              </ul>
+            )}
             <hr className="my-8" />
-
-            <p>
-              That&apos;s it! Keep experimenting with datasets, chart types, and
-              settings to get the most out of your visualizations.
-            </p>
-
+            <p>{t("footer.text")}</p>
             <p className="mt-8">
               <a href="/login" className="btn-italia btn-italia-primary">
-                Log in and get started
+                {t("actions.getStarted.label")}
               </a>
             </p>
           </article>
