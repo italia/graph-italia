@@ -8,6 +8,7 @@ import type { MatrixType } from "../../types.ts";
 import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
 import ToggleTableColumns from "./ToggleTableColumns.tsx";
+import SortTableColumns from "./SortTableColumns.tsx";
 
 registerDarkTheme();
 
@@ -58,6 +59,8 @@ export default function TransformData({
   ]);
 
   const [showRenameForm, setShowRenameForm] = useState(false);
+  const [showFilterColumns, setShowFilterColumns] = useState(false);
+  const [showSortColumns, setShowSortColumns] = useState(false);
 
 
   // State: current sort
@@ -253,6 +256,20 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            onClick={() => setShowFilterColumns((v) => !v)}
+          >
+            {showFilterColumns ? "Hide Columns Filter" : "Filter Columns"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => setShowSortColumns((v) => !v)}
+          >
+            {showSortColumns ? "Hide Column Order" : "Reorder Columns"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline"
             onClick={() =>
               showRenameForm ? setShowRenameForm(false) : openRenameForm()
             }
@@ -296,11 +313,19 @@ export default function TransformData({
           onCancel={() => setShowRenameForm(false)}
         />
       )}
-      <ToggleTableColumns
-        columnOrder={columnOrder}
-        visibleColumns={visibleColumns}
-        onToggle={toggleColumn}
-      />
+      {showFilterColumns && (
+        <ToggleTableColumns
+          columnOrder={columnOrder}
+          visibleColumns={visibleColumns}
+          onToggle={toggleColumn}
+        />
+      )}
+      {showSortColumns && (
+        <SortTableColumns
+          columnOrder={columnOrder}
+          onReorder={setColumnOrder}
+        />
+      )}
 
       <DataTable
         title={t(`table.title`)}
