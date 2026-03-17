@@ -13,7 +13,7 @@ function registerDarkTheme() {
       default: "transparent",
     },
     divider: {
-      default: "rgba(255,255,255,.075)",
+      default: "rgba(92, 94, 95, 0.07)",
     },
     highlightOnHover: {
       default: "rgba(255,255,255,.03)",

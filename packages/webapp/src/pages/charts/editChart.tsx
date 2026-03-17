@@ -75,6 +75,15 @@ function EditChartPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
+  // After the initial load completes, reset any dirty flag that child components
+  // may have set during their mount/initialization (e.g. SelectChart, ChartOptions
+  // calling their setter props to apply defaults).
+  useEffect(() => {
+    if (!loading) {
+      setHasUnsavedChanges(false);
+    }
+  }, [loading]);
+
   // Load existing chart when there's a paramId
   useEffect(() => {
     async function loadExistingChart() {
