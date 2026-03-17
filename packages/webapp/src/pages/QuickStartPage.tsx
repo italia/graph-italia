@@ -54,10 +54,10 @@ export default function QuickStartPage() {
               {t("title")}
             </h1>
             <p className="lead">{t("description")}</p>
-
             <h2 className="text-xl font-semibold text-base-content mt-10">
               <Trans t={t} i18nKey="steps.step1.title" />
             </h2>
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
             {t("steps.step1.text") ? (
               <Trans
                 t={t}
@@ -76,10 +76,10 @@ export default function QuickStartPage() {
                 </li>
               </ul>
             )}
-
             <h2 className="text-xl font-semibold text-base-content mt-8">
               {t("steps.step2.title")}
             </h2>
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
             {t("steps.step2.text") ? (
               <Trans
                 t={t}
@@ -124,10 +124,10 @@ export default function QuickStartPage() {
                 </li>
               </ul>
             )}
-
             <h2 className="text-xl font-semibold text-base-content mt-8">
               {t("steps.step3.title")}
             </h2>
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
             {t("steps.step3.text") ? (
               <Trans
                 t={t}
@@ -140,10 +140,10 @@ export default function QuickStartPage() {
                 <li>{t("steps.step3.listItems.item2")}</li>
               </ul>
             )}
-
             <h2 className="text-xl font-semibold text-base-content mt-8">
               {t("steps.step4.title")}
             </h2>
+            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
             {t("steps.step4.text") ? (
               <Trans
                 t={t}
@@ -162,11 +162,8 @@ export default function QuickStartPage() {
                 <li>{t("steps.step4.listItems.item2")}</li>
               </ul>
             )}
-
             <hr className="my-8" />
-
             <p>{t("footer.text")}</p>
-
             <p className="mt-8">
               <a href="/login" className="btn-italia btn-italia-primary">
                 {t("actions.getStarted.label")}
