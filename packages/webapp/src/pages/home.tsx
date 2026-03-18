@@ -80,6 +80,7 @@ function Home() {
   const [newKpiGroup, setNewKpiGroup] = useState<KpiGroupPayload>();
   const [newChart, setNewChart] = useState<ChartPayload>();
   const [isCreatingChart, setIsCreatingChart] = useState(false);
+  const [isCreatingNewChart, setIsCreatingNewChart] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
   async function fetchCharts() {
@@ -169,6 +170,24 @@ function Home() {
   function showCreateChartCancelHandler() {
     setShowCreateChartModal(false);
     setNewChart(undefined);
+  }
+
+  async function handleCreateChartFromDialog() {
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[:.]/g, "-")
+      .slice(0, 19);
+    const name = `chart-${timestamp}`;
+    setIsCreatingNewChart(true);
+    try {
+      const response = await api.createChart({ name });
+      if (!response) return;
+      setShowCreateNewDialog(false);
+      navigateToChartEdit(response.id);
+    } catch (error) {
+      console.error("Error creating chart:", error);
+      setIsCreatingNewChart(false);
+    }
   }
 
   function renderCreateButton() {
@@ -379,21 +398,25 @@ function Home() {
         labels={{ cancel: "Close", confirm: "Select an option above" }}
         confirmDisabled={true}
         confirmCb={() => { }}
-        cancelCb={() => setShowCreateNewDialog(false)}
+        cancelCb={() => { setShowCreateNewDialog(false); setIsCreatingNewChart(false); }}
       >
         <div className="grid grid-cols-2 gap-4 py-2">
           <button
             type="button"
-            className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors"
-            onClick={() => {
-              setShowCreateNewDialog(false);
-              setShowCreateChartModal(true);
-            }}
+            className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isCreatingNewChart}
+            onClick={handleCreateChartFromDialog}
           >
-            <span className="">
-              <FaChartPie size={24} aria-hidden="true" />
+            {isCreatingNewChart ? (
+              <span className="loading loading-spinner loading-md" />
+            ) : (
+              <span className="">
+                <FaChartPie size={24} aria-hidden="true" />
+              </span>
+            )}
+            <span className="font-semibold">
+              {isCreatingNewChart ? "Creating..." : "Chart"}
             </span>
-            <span className="font-semibold">Chart</span>
           </button>
           <button
             type="button"
