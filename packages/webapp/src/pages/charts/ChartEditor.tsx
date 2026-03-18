@@ -14,22 +14,22 @@ import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { startTransition, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { HOME_ROUTE } from "../../router";
+import { HOME_ROUTE } from "../../router.tsx";
 import { useSettingsStore } from "../../store/settings_store.ts";
-import ChartOptions from "../../components/ChartOptions";
-import Layout from "../../components/layout";
-import Loading from "../../components/layout/Loading";
-import SelectChart from "../../components/SelectChart";
-import ChooseLoader from "../../components/load-data/ChooseLoader";
+import ChartOptions from "../../components/ChartOptions.tsx";
+import Layout from "../../components/layout/index.tsx";
+import Loading from "../../components/layout/Loading.tsx";
+import SelectChart from "../../components/SelectChart.tsx";
+import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
 import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
-import EditStepComponent from "../../components/EditStepComponent";
-import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
-import TransformDataTable from "../../components/load-data/TransformDataTable";
-import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent";
-import { defaultConfig } from "../../lib/constants";
-import stepMachine from "../../lib/stepMachine";
-import * as api from "../../lib/api";
-import useStoreState from "../../lib/storeState";
+import EditStepComponent from "../../components/EditStepComponent.tsx";
+import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
+import TransformDataTable from "../../components/load-data/TransformDataTable.tsx";
+import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent.tsx";
+import { defaultConfig } from "../../lib/constants.ts";
+import stepMachine from "../../lib/stepMachine.ts";
+import * as api from "../../lib/api.ts";
+import useStoreState from "../../lib/storeState.ts";
 
 
 function EditChartPage() {

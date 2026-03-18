@@ -9,8 +9,8 @@ interface GenericDialogProps {
     cancel?: string;
     confirm?: string;
   };
-  confirmCb: () => void;
-  cancelCb: () => void;
+  confirmCb?: () => void;
+  cancelCb?: () => void;
   confirmDisabled?: boolean;
 }
 
@@ -110,16 +110,16 @@ export default function GenericDialog({
 
         {/* Action buttons - Positioned at bottom right as per Italian Design guidelines */}
         <div className="modal-action">
-          <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
+          {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
             {labels.cancel}
-          </button>
-          <button type="button"
+          </button>}
+          {confirmCb && <button type="button"
             className="btn btn-primary"
             onClick={() => confirmCb()}
             disabled={confirmDisabled}
           >
             {labels.confirm}
-          </button>
+          </button>}
         </div>
       </div>
     </dialog>
