@@ -5,13 +5,14 @@ import Layout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
 // import RenderChart from "../../components/RenderCellChart";
-import { RenderChart } from "dataviz-components";
+import { ChartWrapper, ColorSchemeProvider, RenderChart, type FieldDataType, type InfosType } from "dataviz-components";
 import * as api from "../../lib/api";
 import useDashboardEditStore, {
   type ChartLookup,
   type TChartRef,
   type TLayoutItem,
 } from "../../store/dashboard-edit.store";
+import { useSettingsStore } from "../../store/settings_store";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
@@ -43,6 +44,9 @@ function ChartSelection(props: ChartSelectionProps) {
   React.useEffect(() => {
     fetchCharts();
   }, []);
+
+
+
 
   return (
     <div>
@@ -138,6 +142,9 @@ function DashboardEditPage() {
     }
   }, [load]);
 
+  const { settings } = useSettingsStore();
+  const scheme = settings?.preferredTheme ?? "light";
+
   return (
     <Layout>
       <div className="p-4">
@@ -146,10 +153,10 @@ function DashboardEditPage() {
             &lt; Back to the list
           </Link>
           <div className="ml-auto flex space-x-2">
-            <button onClick={resetHandler} className="btn btn-primary">
+            <button type="button" onClick={resetHandler} className="btn btn-primary">
               Reset
             </button>
-            <button onClick={saveHandler} className="btn btn-primary">
+            <button type="button" onClick={saveHandler} className="btn btn-primary">
               Save
             </button>
           </div>
@@ -166,6 +173,7 @@ function DashboardEditPage() {
             <h4 className="text-xl">{description}</h4>
             <div className="flex flex-wrap items-center">
               <button
+                type="button"
                 className="m-2 btn btn-xs btn-primary"
                 onClick={addItemHandler}
               >
@@ -173,6 +181,7 @@ function DashboardEditPage() {
               </button>
               {layout.map((l) => (
                 <button
+                  type="button"
                   key={l.i}
                   className="m-2 btn btn-xs btn-error"
                   onClick={() => deleteItemHandler(l.i)}
@@ -192,38 +201,66 @@ function DashboardEditPage() {
                 rowHeight={ROW_HEIGHT + WIDGET_HEIGHT}
                 width={1200}
               >
-                {layout.map((item) => (
-                  <div
-                    className="react-grid-item overflow-hidden"
-                    key={item.i}
-                  >
-                    {charts[item.i] ? (
-                      <>
-                        <div>
-                          <div className="flex justify-between">
-                            <b>{charts[item.i].name}</b>
-                            <span className="text-right rounded-md bg-red-700 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">
-                              {item.i}
-                            </span>
+                {layout.map((item) => {
+                  let currentChart = charts[item.i] as FieldDataType;
+                  const info: InfosType = {
+                    text: currentChart.description || "",
+                    title: currentChart.name || ""
+
+                    // labelSource ?: string;
+                    // sourceTextInfo ?: string;
+                    // labelShare ?: string;
+                    // labelUpdated ?: string;
+                    // sharedUrl ?: string;
+                    // labelTabInfo ?: string;
+                    // labelTabChart ?: string;
+                    // labelTabData ?: string;
+                    // labelDownloadData ?: string;
+                    // labelDownloadImage ?: string;
+                    // chartFooterText ?: string;
+                  }
+                  currentChart.description = "";
+                  // currentChart.showHeading = false
+                  return (
+                    <div
+                      className="react-grid-item overflow-hidden"
+                      key={item.i}
+                    >
+                      {currentChart ? (
+                        <>
+                          <div>
+                            <div className="flex justify-between">
+                              {/* <span className="text-right rounded-md bg-red-700 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">
+                                {item.i}
+                              </span> */}
+                            </div>
                           </div>
-                          <p>{charts[item.i].description}</p>
-                        </div>
-                        <RenderChart
-                          {...(charts[item.i] as any)}
-                          // rowHeight={ROW_HEIGHT}
-                          hFactor={item.h}
-                        />
-                      </>
-                    ) : (
-                      <button
-                        className="m-2 btn btn-xs btn-primary"
-                        onClick={() => addChartHandler(item.i)}
-                      >
-                        Add Chart +
-                      </button>
-                    )}
-                  </div>
-                ))}
+                          <ColorSchemeProvider scheme={scheme}>
+                            <ChartWrapper
+                              id={currentChart.id}
+                              data={currentChart}
+                              info={info}
+                              rowHeight={ROW_HEIGHT}
+                              hFactor={item.h}
+                            // showHeading= false
+                            />
+                            {/* <RenderChart
+                              {...currentChart}
+                            /> */}
+                          </ColorSchemeProvider>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          className="m-2 btn btn-xs btn-primary"
+                          onClick={() => addChartHandler(item.i)}
+                        >
+                          Add Chart +
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
               </ResponsiveReactGridLayout>
             </div>
           </>
