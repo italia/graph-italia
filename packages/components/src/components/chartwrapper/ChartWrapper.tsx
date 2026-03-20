@@ -24,6 +24,7 @@ export type ChartWrapperProps = {
   enableDownloadImage?: boolean;
   enableDownloadData?: boolean;
   shareFunction?: (id: string) => void;
+  showHeading?: boolean
 };
 export default function ChartWrapper(props: ChartWrapperProps) {
 
@@ -36,6 +37,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     enableDownloadData = true,
     enableDownloadImage = true,
     spritePath = "/sprites.svg",
+    showHeading = true
   } = props;
 
   let { id = (Math.random() + 1).toString(36).substring(7) } = props;
@@ -96,8 +98,9 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     //   backgroundColor: data.config.background || "#F2F7FC",
     // }}
     >
-      {title && <h3 className="cw-title">{title}</h3>}
-      {subTitle && (
+
+      {showHeading && title && <h3 className="cw-title">{title}</h3>}
+      {showHeading && subTitle && (
         <p
           className="cw-subtitle"
           dangerouslySetInnerHTML={{ __html: `${subTitle}` }}

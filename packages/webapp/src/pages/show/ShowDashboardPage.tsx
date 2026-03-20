@@ -5,8 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 // import RenderChart from "../../components/RenderCellChart";
-import { RenderChart } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
 import useDashboardViewStore from "../../store/dashboard-view.store";
+import { useSettingsStore } from "../../store/settings_store";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
@@ -24,6 +25,10 @@ function DashboardViewPage() {
       load(id);
     }
   }, [load]);
+
+
+  const { settings } = useSettingsStore();
+  const scheme = settings?.preferredTheme ?? "light";
 
   return (
     <Layout>
@@ -71,26 +76,25 @@ function DashboardViewPage() {
                   rowHeight={ROW_HEIGHT + WIDGET_HEIGHT}
                   width={1200}
                 >
-                  {layout.map((item) => (
-                    <div
-                      className="react-grid-item overflow-hidden"
-                      key={item.i}
-                    >
-                      <div>
-                        <h3>
-                          <b>{charts[item.i].name}</b>
-                        </h3>
-                        <p>{charts[item.i].description}</p>
+                  {layout.map((item) => {
+                    const currentChart = charts[item.i] as FieldDataType;
+                    return (
+                      <div
+                        className="react-grid-item overflow-hidden"
+                        key={item.i}
+                      >
+                        {charts && currentChart && (
+                          <ColorSchemeProvider scheme={scheme}>
+                            <RenderChart
+                              {...currentChart}
+                              rowHeight={ROW_HEIGHT}
+                              hFactor={item.h}
+                            />
+                          </ColorSchemeProvider>
+                        )}
                       </div>
-                      {charts && charts[item.i] && (
-                        <RenderChart
-                          {...(charts[item.i] as any)}
-                          rowHeight={ROW_HEIGHT}
-                          hFactor={item.h}
-                        />
-                      )}
-                    </div>
-                  ))}
+                    )
+                  })}
                 </ResponsiveReactGridLayout>
               </div>
             </div>

@@ -202,25 +202,23 @@ function DashboardEditPage() {
                 width={1200}
               >
                 {layout.map((item) => {
-                  let currentChart = charts[item.i] as FieldDataType;
-                  const info: InfosType = {
-                    text: currentChart.description || "",
-                    title: currentChart.name || ""
+                  const currentChart = charts[item.i] as FieldDataType;
+                  // const info: InfosType = {
+                  //   text: currentChart.description || "",
+                  //   title: currentChart.name || ""
 
-                    // labelSource ?: string;
-                    // sourceTextInfo ?: string;
-                    // labelShare ?: string;
-                    // labelUpdated ?: string;
-                    // sharedUrl ?: string;
-                    // labelTabInfo ?: string;
-                    // labelTabChart ?: string;
-                    // labelTabData ?: string;
-                    // labelDownloadData ?: string;
-                    // labelDownloadImage ?: string;
-                    // chartFooterText ?: string;
-                  }
-                  currentChart.description = "";
-                  // currentChart.showHeading = false
+                  //   // labelSource ?: string;
+                  //   // sourceTextInfo ?: string;
+                  //   // labelShare ?: string;
+                  //   // labelUpdated ?: string;
+                  //   // sharedUrl ?: string;
+                  //   // labelTabInfo ?: string;
+                  //   // labelTabChart ?: string;
+                  //   // labelTabData ?: string;
+                  //   // labelDownloadData ?: string;
+                  //   // labelDownloadImage ?: string;
+                  //   // chartFooterText ?: string;
+                  // }
                   return (
                     <div
                       className="react-grid-item overflow-hidden"
@@ -229,24 +227,24 @@ function DashboardEditPage() {
                       {currentChart ? (
                         <>
                           <div>
-                            <div className="flex justify-between">
-                              {/* <span className="text-right rounded-md bg-red-700 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">
+                            <div className="flex justify-between relative">
+                              <span className="absolute z-10 text-right rounded-md bg-red-700 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">
                                 {item.i}
-                              </span> */}
+                              </span>
                             </div>
                           </div>
                           <ColorSchemeProvider scheme={scheme}>
-                            <ChartWrapper
+                            {/* <ChartWrapper
                               id={currentChart.id}
                               data={currentChart}
                               info={info}
                               rowHeight={ROW_HEIGHT}
                               hFactor={item.h}
-                            // showHeading= false
-                            />
-                            {/* <RenderChart
-                              {...currentChart}
+                              showHeading={false}
                             /> */}
+                            <RenderChart
+                              {...currentChart}
+                            />
                           </ColorSchemeProvider>
                         </>
                       ) : (
