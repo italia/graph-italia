@@ -5,7 +5,7 @@ export default function Footer() {
     keyPrefix: "components.layout.footer",
   });
   return (
-    <footer className="footer bg-secondary text-secondary-content p-4">
+    <footer className="footer bg-accent text-accent-content p-4">
       <aside>
         <p>
           <span className="text-lg font-bold">{t(`brand.title`)}</span>:{" "}

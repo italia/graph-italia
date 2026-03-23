@@ -114,7 +114,11 @@ const routes = [
   // Root: landing se non loggato, home Charts se loggato
   {
     path: HOME_ROUTE,
-    element: <PrivateAreaPage />,
+    element: (
+      <ProtectedRoute>
+        <PrivateAreaPage />
+      </ProtectedRoute>
+    ),
   },
   // Root: landing se non loggato, home Charts se loggato
   {
