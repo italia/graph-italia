@@ -14,7 +14,6 @@ import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { startTransition, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-
 import { HOME_ROUTE } from "../../router.tsx";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import ChartOptions from "../../components/ChartOptions.tsx";

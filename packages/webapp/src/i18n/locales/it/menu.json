@@ -2,25 +2,25 @@
     "menu": {
         "items": {
             "charts": {
-                "label": "Charts"
+                "label": "Grafici"
             },
             "tools": {
-                "label": "Tools",
+                "label": "Strumenti",
                 "subItems": {
                     "quickStart": {
-                        "label": "Quick Start"
+                        "label": "Come Iniziare"
                     },
                     "generateData": {
-                        "label": "Generate Data"
+                        "label": "Genera dati di esempio"
                     },
                     "generatePois": {
-                        "label": "Generate Pois"
+                        "label": "Genera Punti su mappa"
                     },
                     "loadRemoteData": {
-                        "label": "Load Remote Data"
+                        "label": "Carica dati da un url"
                     },
                     "geo": {
-                        "label": "Check GeoJSon File"
+                        "label": "Preview dei file GeoJson"
                     }
                 }
             }

@@ -214,10 +214,16 @@
                 },
                 "actions": {
                     "login": {
-                        "label": "Accedi"
+                        "label": "Login"
                     },
                     "logout": {
-                        "label": "Esci"
+                        "label": "Logout"
+                    },
+                    "askMyData": {
+                        "label": "Ask my data"
+                    },
+                    "requestAccountDeletion": {
+                        "label": "Request account deletion"
                     }
                 }
             },
