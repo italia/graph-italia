@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import * as api from '../api';
-import type { DashboardDetail } from '../api';
+import { findDashboardById, updateSlots, type DashboardDetail } from '../api.ts';
 
 type TChartRef = { id: string };
 type TItem = `item-${number}`;
@@ -132,7 +131,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   },
   load: async (id: string) => {
     try {
-      const data = (await api.findDashboardById(id)) as DashboardDetail;
+      const data = (await findDashboardById(id)) as DashboardDetail;
 
       if (data) {
         const layout = data.slots.map(
@@ -177,7 +176,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
       })),
     };
 
-    return await api.updateSlots(id!, body).then((r) => Boolean(r));
+    return await updateSlots(id!, body).then((r) => Boolean(r));
   },
 }));
 
