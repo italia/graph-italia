@@ -11,9 +11,10 @@ import { useNavigate } from "react-router-dom";
 
 import type { FieldDataType } from "../types";
 import { useAriaSort } from "../hooks/useAriaSort";
-import { useSettingsStore } from "../store/settings_store.ts";
+import { useSettingsStore } from "../lib/store/settings_store.ts";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
 import { useState } from "react";
+import { ROUTES } from "../router.tsx";
 
 registerDarkTheme();
 
@@ -117,7 +118,7 @@ export default function DashboardTable({
             <FaPenToSquare fill={actionColor} size={actionSize} aria-hidden="true" />
           </button>
           <a
-            href={`/display/dashboards/${row.id}`}
+            href={ROUTES.viewDashboard(row.id ?? "")}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="open published dashboard"
@@ -145,7 +146,7 @@ export default function DashboardTable({
         data={list}
         theme={currentTheme}
         onSort={handleSort}
-        onRowClicked={(row) => navigate(`/edit/dashboard/${row.id}`)}
+        onRowClicked={(row) => navigate(ROUTES.editDashboard(row.id ?? ""))}
         pagination
         highlightOnHover
       />

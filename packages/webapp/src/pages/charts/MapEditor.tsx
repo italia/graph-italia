@@ -3,7 +3,6 @@ import type { ChartColorScheme } from "dataviz-components";
 import {
   ColorSchemeProvider,
   RenderChart,
-  type MatrixType,
 } from "dataviz-components";
 import "dataviz-components/dist/style.css";
 import dayjs from "dayjs";
@@ -11,29 +10,26 @@ import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { HOME_ROUTE } from "../../router.tsx";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
 
-import { HOME_ROUTE } from "../../../router.tsx";
-import { useSettingsStore } from "../../../store/settings_store.ts";
-import ChartOptions from "../../../components/ChartOptions.tsx";
-import Layout from "../../../components/layout/index.tsx";
-import Loading from "../../../components/layout/Loading.tsx";
-import SelectChart from "../../../components/SelectChart.tsx";
-import ChooseLoader from "../../../components/load-data/ChooseLoader.tsx";
-import SeriesSelector from "../../../components/load-data/SeriesSelector.tsx";
-import EditStepComponent from "../../../components/EditStepComponent.tsx";
-import { useUnsavedChanges } from "../../../hooks/useUnsavedChanges.tsx";
-import TransformDataTable from "../../../components/load-data/TransformDataTable.tsx";
-import ThemeSwitcherComponent from "../../../components/ThemeSwitcherComponent.tsx";
-import { defaultConfig } from "../../../lib/constants.ts";
-import stepMachine from "../../../lib/stepMachine.ts";
-import * as api from "../../../lib/api.ts";
-import useStoreState from "../../../lib/storeState.ts";
+import Layout from "../../components/layout/index.tsx";
+import Loading from "../../components/layout/Loading.tsx";
+import EditStepComponent from "../../components/EditStepComponent.tsx";
+import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
+import GeoMapUpload from "../../components/load-data/GeoMapUpload.tsx";
+import GeoSearch from "../../components/load-data/GeoSearch.tsx";
+import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent.tsx";
+import { defaultConfig } from "../../lib/constants.ts";
+import stepMachine from "../../lib/stepMachine.ts";
+import * as api from "../../lib/api.ts";
+import useStoreState from "../../lib/storeState.ts";
 
 
-function EditChartPage() {
+export default function EditMapPage() {
   const { t } = useTranslation("pages", {
     keyPrefix: `charts.editChart`,
   });
@@ -53,16 +49,13 @@ function EditChartPage() {
     // publish,
     // preview,
     // setPreview,
-    setConfig,
+    // setConfig,
     setChart,
-    setData,
-    setRemoteUrl,
-    setIsRemote,
+    setDataSource,
     loadItem,
     resetItem,
   } = useStoreState((state) => state);
 
-  const [currentData, setCurrentData] = useState(null as any);
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
@@ -73,12 +66,12 @@ function EditChartPage() {
     settings?.preferredTheme === "dark" ? "dark" : "light",
   );
 
+  const [latField, setLatField] = useState("lat");
+  const [lngField, setLngField] = useState("lng");
+
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
-  // After the initial load completes, reset any dirty flag that child components
-  // may have set during their mount/initialization (e.g. SelectChart, ChartOptions
-  // calling their setter props to apply defaults).
   useEffect(() => {
     if (!loading) {
       setHasUnsavedChanges(false);
@@ -98,6 +91,7 @@ function EditChartPage() {
               id: paramId,
               config: chartData.config || defaultConfig,
             });
+            setChart("cmap");
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
             setChartPublish(chartData.publish ?? true);
@@ -117,7 +111,7 @@ function EditChartPage() {
       } else {
         // Reset for new chart creation - clear any previous data
         resetItem();
-        setChart("");
+        setChart("cmap");
         setChartName("");
         setChartDescription("");
         setChartPublish(true);
@@ -128,19 +122,8 @@ function EditChartPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramId]);
 
-  const haveData = data && data[0].length > 0 ? true : dataSource ? true : false;
+  const haveData = !!(dataSource && dataSource.length > 0);
 
-  function handleUpload(d: any) {
-    setHasUnsavedChanges(true);
-    setCurrentData(d);
-  }
-
-  function handleSetRemoteData(d: any) {
-    setHasUnsavedChanges(true);
-    setIsRemote(true);
-    setRemoteUrl(d.remoteUrl);
-    setCurrentData(d.data);
-  }
 
 
   // Generate default name based on chart type and date
@@ -157,9 +140,10 @@ function EditChartPage() {
       name: finalName,
       description: chartDescription,
       publish: chartPublish,
-      chart: chart || "bar",
+      chart: chart || "cmap",
       config,
       data,
+      dataSource,
       isRemote,
       remoteUrl,
     };
@@ -218,9 +202,7 @@ function EditChartPage() {
           {t(`header.actions.back.label`)}
         </button>
         <div className="flex gap-4">
-          {/* <span>step: {currentStepIndex}</span>
-          <span>status: {state.value as string}</span> */}
-          {/* <span>to save: {hasUnsavedChanges ? "yes" : "no"}</span> */}
+          <h3>Map Editor</h3>
         </div>
         <div className="flex-shrink-0">
           <button
@@ -331,28 +313,21 @@ function EditChartPage() {
                 {state.matches("config") ? (
                   <div className="card bg-base-100 shadow-sm border border-base-200">
                     <div className="card-body">
-                      <SelectChart
-                        setChart={(value: string) => {
-                          setHasUnsavedChanges(true);
-                          setChart(value);
-                        }}
-                        chart={chart}
-                      />
-                      <div className="divider my-2"></div>
-                      <ChartOptions
-                        config={config}
-                        setConfig={(value) => {
-                          setHasUnsavedChanges(true);
-                          setConfig(value);
-                        }}
-                        chart={chart}
-                        numSeries={(data as MatrixType)?.length - 1 || 0}
-                      />
+                      <div className="divider my-2" />
+                      <div>
+                        <ul>
+                          here will be placed the configuration options for the map chart, such as:
+                          <li>- map style  (which layer)</li>
+                          <li> - marker type (circle, choropleth, etc)</li>
+                          <li> - marker options (size, color, etc)</li>
+                          <li>    - tooltip options (which fields to show, formatting, if enabled, etc)</li>
+                          <li>- clustering options (if applicable, for point maps)</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 ) : (
                   <div role="status">
-                    {" "}
                     {t(`body.options.configuration.status`)}{" "}
                   </div>
                 )}
@@ -370,37 +345,15 @@ function EditChartPage() {
               {/* Step 1: Data loading */}
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
-                  <ChooseLoader
-                    handleUpload={handleUpload}
-                    remoteUrl={remoteUrl}
-                    handleSetRemoteData={handleSetRemoteData}
+                  <GeoMapUpload
+                    setData={(d, meta) => {
+                      setDataSource(d);
+                      setLatField(meta.latField);
+                      setLngField(meta.lngField);
+                      setHasUnsavedChanges(true);
+                      send({ type: "CONFIG" });
+                    }}
                   />
-                  {/* {haveData && chart && (
-                    <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => handleAssignData()}
-                      >
-                        {t(`body.options.data.actions.useData.label`)}
-                      </button>
-                    </div>
-                  )} */}
-                  {currentData && (
-                    <>
-                      <h4>serie selector</h4>
-                      <SeriesSelector
-                        initialData={currentData || data}
-                        setData={(d) => {
-                          setData(d);
-                          setHasUnsavedChanges(true);
-                          send({ type: "CONFIG" });
-                        }}
-                      />
-                      <hr />
-                    </>
-                  )}
-
                 </div>
               </div>
             </EditStepComponent>
@@ -427,7 +380,7 @@ function EditChartPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/display/charts/${id}`} target="_blank" className="btn btn-outline">view published chart</a></div>}
+                    {chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/charts/${id}/view`} target="_blank" className="btn btn-outline">view published chart</a></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>
@@ -447,7 +400,7 @@ function EditChartPage() {
                           chart={chart}
                           data={data}
                           config={config}
-                          dataSource={null}
+                          dataSource={dataSource ?? null}
                         />
                       </ColorSchemeProvider>
                     </div>
@@ -456,30 +409,40 @@ function EditChartPage() {
                   <p className="italic text-base-content"></p>
                 )}
               </div>
-              <div>
-                {!(haveData && data) ? (
-                  <p className="italic text-base-content" role="status">
-                    {t(`body.preview.loadDataMessage`)}
-                  </p>
-                ) : (
-                  <div className="overflow-auto flex-1 min-h-0">
-                    <TransformDataTable
-                      currentData={(data)}
-                      handleTransformData={(d) => {
-                        startTransition(() => {
-                          setData(d);
-                          setHasUnsavedChanges(true);
-                          setCurrentData(d);
-                        });
-                      }}
-                      onReset={() => {
-                        setData(null);
-                        setCurrentData(null);
+              <div className="space-y-4">
+                {haveData && (
+                  <div className="flex items-center gap-3 text-sm text-base-content/60">
+                    <span>{(dataSource ?? []).length} points loaded</span>
+                    <button
+                      type="button"
+                      className="btn btn-xs btn-ghost"
+                      onClick={() => {
+                        setDataSource([]);
+                        setLatField("lat");
+                        setLngField("lng");
                         send({ type: "INPUT" });
+                      }}
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+
+                <div className="card bg-base-100 border border-base-200 shadow-sm">
+                  <div className="card-body py-4">
+                    <GeoSearch
+                      dataSource={dataSource ?? []}
+                      latField={latField}
+                      lngField={lngField}
+                      onAddPoints={(points) => {
+                        const next = [...(dataSource ?? []), ...points];
+                        setDataSource(next);
+                        setHasUnsavedChanges(true);
+                        if (!haveData) send({ type: "CONFIG" });
                       }}
                     />
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
@@ -489,4 +452,3 @@ function EditChartPage() {
   );
 }
 
-export default EditChartPage;

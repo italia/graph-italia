@@ -17,20 +17,21 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 
-import Layout from "../../components/layout";
+import Layout from "../../components/layout/index.tsx";
 // import RenderChart from "../components/RenderChart";
-import Loading from "../../components/layout/Loading";
+import Loading from "../../components/layout/Loading.tsx";
 
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import ChartTable from "../../components/ChartTable";
-import DashboardTable from "../../components/DashboardTable";
-import GenericDialog from "../../components/layout/GenericDialog";
-import * as api from "../../lib/api";
-import useChartsStoreState from "../../lib/chartListStore";
-import useDashboardsStoreState from "../../lib/dashboardListStore";
-import stepMachine from "../../lib/stepMachine";
-import useStoreState from "../../lib/storeState";
+import ChartTable from "../../components/ChartTable.tsx";
+import DashboardTable from "../../components/DashboardTable.tsx";
+import { ROUTES } from "../../router.tsx";
+import GenericDialog from "../../components/layout/GenericDialog.tsx";
+import * as api from "../../lib/api.ts";
+import useChartsStoreState from "../../lib/chartListStore.ts";
+import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
+import stepMachine from "../../lib/stepMachine.ts";
+import useStoreState from "../../lib/storeState.ts";
 
 type GenericChartPayload = {
   name: string;
@@ -137,19 +138,13 @@ function Home() {
   type ItemTypeNames = "chart" | "kpi" | "map" | "dash";
 
   function navigateToEdit(key: ItemTypeNames, id: string) {
-    if (!id) {
-      throw new Error("Missing chart ID");
-    }
-    let url = "";
+    if (!id) throw new Error("Missing ID");
     switch (key) {
-      case "dash":
-        url = `/dashboards/${id}/edit`;
-        break;
-      default:
-        url = `/edit/${key}/${id}`;
-        break;
+      case "dash": return navigate(ROUTES.editDashboard(id));
+      case "kpi": return navigate(ROUTES.editKpi(id));
+      case "map": return navigate(ROUTES.editMap(id));
+      default: return navigate(ROUTES.editChart(id));
     }
-    navigate(url);
   }
 
 
@@ -239,8 +234,8 @@ function Home() {
                   <DashboardTable
                     list={dashboardList ?? []}
                     handleDeleteDashboard={(id) => setPendingDeleteDashboardId(id)}
-                    handleEditDashboard={(item) => navigate(`/edit/dashboard/${item.id}`)}
-                    handleViewDashboard={(id) => navigate(`/display/dashboards/${id}`)}
+                    handleEditDashboard={(item) => navigate(ROUTES.editDashboard(item.id ?? ""))}
+                    handleViewDashboard={(id) => navigate(ROUTES.viewDashboard(id))}
                   />
                 )}
               </div>

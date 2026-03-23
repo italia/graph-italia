@@ -1,7 +1,7 @@
 import { Toaster } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useSettingsStore } from "../../store/settings_store";
-import { useUserStore } from "../../store/user_store";
+import { useSettingsStore } from "../../lib/store/settings_store";
+import { useUserStore } from "../../lib/store/user_store";
 import Footer from "./Footer";
 import FullHeader from "./FullHeader";
 import SlimHeader from "./Header";

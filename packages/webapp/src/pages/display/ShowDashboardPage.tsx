@@ -6,8 +6,8 @@ import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 // import RenderChart from "../../components/RenderCellChart";
 import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
-import useDashboardViewStore from "../../store/dashboard-view.store";
-import { useSettingsStore } from "../../store/settings_store";
+import useDashboardViewStore from "../../lib/store/dashboard-view.store";
+import { useSettingsStore } from "../../lib/store/settings_store";
 import { HOME_ROUTE } from "../../router";
 
 const ROW_HEIGHT = 360;

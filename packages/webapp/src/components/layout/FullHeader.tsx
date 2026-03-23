@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import type { MenuSubItem } from "../../router";
 import { MENU } from "../../router";
-import { useUserStore } from "../../store/user_store";
+import { useUserStore } from "../../lib/store/user_store";
 import "./FullHeader.css";
 
 export default function HeaderCompleta() {

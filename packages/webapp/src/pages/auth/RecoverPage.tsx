@@ -3,7 +3,7 @@ import ChangePasswordForm from "../../components/auth/ChangePasswordForm";
 import RecoverPasswordForm from "../../components/auth/RecoverPwdForm";
 import Layout from "../../components/layout";
 import { HOME_ROUTE } from "../../router";
-import { useUserStore } from "../../store/user_store";
+import { useUserStore } from "../../lib/store/user_store";
 
 function AuthPage({ action: _action = "recover" }: { action?: string }) {
   const { user } = useUserStore();

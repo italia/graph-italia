@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Responsive, } from "react-grid-layout";
 import { Link, useParams } from "react-router-dom";
-import Layout from "../../../components/layout";
-import Dialog from "../../../components/layout/Dialog";
-import Loading from "../../../components/layout/Loading";
+import Layout from "../../components/layout";
+import Dialog from "../../components/layout/Dialog";
+import Loading from "../../components/layout/Loading";
 import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
-import * as api from "../../../lib/api";
+import * as api from "../../lib/api";
 import useDashboardEditStore, {
   type ChartLookup,
   type TChartRef,
   type TLayoutItem,
-} from "../../../store/dashboard-edit.store";
-import { useSettingsStore } from "../../../store/settings_store";
-import { HOME_ROUTE } from "../../../router";
+} from "../../lib/store/dashboard-edit.store";
+import { useSettingsStore } from "../../lib/store/settings_store";
+import { HOME_ROUTE } from "../../router";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;

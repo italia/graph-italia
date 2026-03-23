@@ -4,7 +4,7 @@ import { PinInput } from "react-input-pin-code";
 import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import * as api from "../../lib/api";
-import { useUserStore } from "../../store/user_store";
+import { useUserStore } from "../../lib/store/user_store";
 
 export default function VerifyCodeComponent({
   uid = "",

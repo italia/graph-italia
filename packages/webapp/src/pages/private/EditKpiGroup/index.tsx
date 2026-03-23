@@ -2,11 +2,11 @@ import { RenderChart } from "dataviz-components";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import Layout from "../../../../components/layout";
-import GenericDialog from "../../../../components/layout/GenericDialog";
-import Loading from "../../../../components/layout/Loading";
-import { useConfirmNavigation } from "../../../../hooks/use-confirm-navigation";
-import { HOME_ROUTE } from "../../../../router";
+import Layout from "../../../components/layout";
+import GenericDialog from "../../../components/layout/GenericDialog";
+import Loading from "../../../components/layout/Loading";
+import { useConfirmNavigation } from "../../../hooks/use-confirm-navigation";
+import { HOME_ROUTE } from "../../../router";
 import type { KpiConfigFormHandle } from "./components/kpi-config-form";
 import KpiConfigForm from "./components/kpi-config-form";
 import { KpiDropdown } from "./components/kpi-dropdown";
@@ -15,7 +15,7 @@ import {
   KpiForm,
   type KpiFormValues,
 } from "./components/kpi-form";
-import useEditKpiGroupStore from "./store";
+import useEditKpiGroupStore from "./kpi_store";
 
 function EditKpiGroup() {
   const { t } = useTranslation("pages", {

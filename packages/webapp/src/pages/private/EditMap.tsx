@@ -13,20 +13,20 @@ import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { HOME_ROUTE } from "../../../router.tsx";
-import { useSettingsStore } from "../../../store/settings_store.ts";
+import { HOME_ROUTE } from "../../router.tsx";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
 
-import Layout from "../../../components/layout/index.tsx";
-import Loading from "../../../components/layout/Loading.tsx";
-import EditStepComponent from "../../../components/EditStepComponent.tsx";
-import { useUnsavedChanges } from "../../../hooks/useUnsavedChanges.tsx";
-import GeoMapUpload from "../../../components/load-data/GeoMapUpload.tsx";
-import GeoSearch from "../../../components/load-data/GeoSearch.tsx";
-import ThemeSwitcherComponent from "../../../components/ThemeSwitcherComponent.tsx";
-import { defaultConfig } from "../../../lib/constants.ts";
-import stepMachine from "../../../lib/stepMachine.ts";
-import * as api from "../../../lib/api.ts";
-import useStoreState from "../../../lib/storeState.ts";
+import Layout from "../../components/layout/index.tsx";
+import Loading from "../../components/layout/Loading.tsx";
+import EditStepComponent from "../../components/EditStepComponent.tsx";
+import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
+import GeoMapUpload from "../../components/load-data/GeoMapUpload.tsx";
+import GeoSearch from "../../components/load-data/GeoSearch.tsx";
+import ThemeSwitcherComponent from "../../components/ThemeSwitcherComponent.tsx";
+import { defaultConfig } from "../../lib/constants.ts";
+import stepMachine from "../../lib/stepMachine.ts";
+import * as api from "../../lib/api.ts";
+import useStoreState from "../../lib/storeState.ts";
 
 
 export default function EditMapPage() {

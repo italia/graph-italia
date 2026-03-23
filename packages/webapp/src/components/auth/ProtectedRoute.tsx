@@ -1,7 +1,7 @@
 // src/components/auth/ProtectedRoute.tsx
 import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useUserStore } from '../../store/user_store';
+import { useUserStore } from '../../lib/store/user_store';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

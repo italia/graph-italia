@@ -20,7 +20,7 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useAriaSort } from "../hooks/useAriaSort";
-import { useSettingsStore } from "../store/settings_store.ts";
+import { useSettingsStore } from "../lib/store/settings_store.ts";
 
 import { RenderChart } from "dataviz-components";
 import toast from "react-hot-toast";
@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import Dialog from "./layout/Dialog";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import { ROUTES } from "../router.tsx";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -94,7 +95,9 @@ export default function ChartTable({
 
   const navigate = useNavigate();
   function handleRowClick(item: FieldDataType) {
-    const path = `/edit/${item.chart === "kpiGroup" ? "kpi" : "chart"}/${item.id}`;
+    const path = item.chart === "kpiGroup"
+      ? ROUTES.editKpi(item.id)
+      : ROUTES.editChart(item.id);
     navigate(path);
   }
 
@@ -264,7 +267,7 @@ export default function ChartTable({
                       className="btn btn-ghost btn-xs btn-square"
                       onClick={() =>
                         setShow(
-                          `<iframe width="600" height="400" src="${window.location.origin}/embed/charts/${row.id}" frameborder="0" allowfullscreen></iframe>`,
+                          `<iframe width="600" height="400" src="${window.location.origin}${ROUTES.embedChart(row.id ?? "")}" frameborder="0" allowfullscreen></iframe>`,
                         )
                       }
                     >
@@ -275,7 +278,7 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`${window.location.origin}/display/charts/${row.id}`}
+                      href={`${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="view"
@@ -292,7 +295,7 @@ export default function ChartTable({
                       aria-label="copy link"
                       className="btn btn-ghost btn-xs btn-square"
                       onClick={handleCopy(
-                        `${window.location.origin}/display/charts/${row.id}`,
+                        `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
                       )}
                     >
                       <FaCopy
@@ -322,8 +325,7 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${row.id
-                        }`}
+                      href={row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
                       aria-label="edit"
                       className="btn btn-ghost btn-xs btn-square"
                     >

@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import type { MenuSubItem } from "../../router";
-import { MENU } from "../../router";
-import { useSettingsStore } from "../../store/settings_store.ts";
-import { useUserStore } from "../../store/user_store";
+import { MENU, ROUTES } from "../../router";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
+import { useUserStore } from "../../lib/store/user_store.ts";
 import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 
 export default function SlimHeader() {
@@ -72,7 +72,7 @@ export default function SlimHeader() {
 
           {/* Brand */}
           <a
-            href="/"
+            href={ROUTES.root}
             className="text-primary-content text-base font-normal no-underline hover:text-primary-content/80 leading-snug"
           >
             {t(`brand.title`)}
@@ -174,7 +174,7 @@ export default function SlimHeader() {
             </span>
           ) : (
             <a
-              href="/login"
+              href={ROUTES.login}
               className="btn btn-sm btn-ghost border border-primary-content/40 text-primary-content hover:bg-primary-content/20"
               aria-label="Accedi"
             >

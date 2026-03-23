@@ -4,7 +4,7 @@ import useSWR from "swr";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import * as api from "../../lib/api";
-import { useSettingsStore } from "../../store/settings_store";
+import { useSettingsStore } from "../../lib/store/settings_store";
 
 function ShowChartPage() {
   const { id } = useParams();

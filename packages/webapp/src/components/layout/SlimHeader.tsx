@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import type { MenuSubItem } from "../../router";
 import { MENU } from "../../router";
-import { useSettingsStore } from "../../store/settings_store.ts";
-import { useUserStore } from "../../store/user_store";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
+import { useUserStore } from "../../lib/store/user_store.ts";
 import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
 import "./SlimHeader.css";
 
