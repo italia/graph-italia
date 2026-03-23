@@ -24,9 +24,11 @@ import Loading from "../components/layout/Loading";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ChartTable from "../components/ChartTable";
+import DashboardTable from "../components/DashboardTable";
 import GenericDialog from "../components/layout/GenericDialog";
 import * as api from "../lib/api";
 import useChartsStoreState from "../lib/chartListStore";
+import useDashboardsStoreState from "../lib/dashboardListStore";
 import stepMachine from "../lib/stepMachine";
 import useStoreState from "../lib/storeState";
 
@@ -73,11 +75,29 @@ function Home() {
     showCreateChartModal,
     setShowCreateChartModal,
   } = useChartsStoreState((state) => state);
+  const { list: dashboardList, setList: setDashboardList } =
+    useDashboardsStoreState((state) => state);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
   const [isCreatingNewChart, setIsCreatingNewChart] = useState<number>(0);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingDeleteDashboardId, setPendingDeleteDashboardId] = useState<string | null>(null);
   const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
+
+  async function fetchDashboards() {
+    setDashboardLoading(true);
+    try {
+      const data = await api.getDashboards();
+      setDashboardList(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDashboardLoading(false);
+    }
+  }
+
   async function fetchCharts() {
     setLoading(true);
     try {
@@ -91,6 +111,8 @@ function Home() {
 
   useEffect(() => {
     fetchCharts();
+    fetchDashboards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleLoadChart(item: FieldDataType) {
@@ -200,12 +222,27 @@ function Home() {
                 </button>
               </div>
               <div>
-
                 <ChartTable
                   list={list as FieldDataType[]}
                   handleLoadChart={handleLoadChart}
                   handleDeleteChart={handleDeleteChart}
                 />
+              </div>
+
+              <div className="mt-10">
+                <h2 className="text-2xl font-bold mb-4">
+                  {dashboardList?.length ? "My Dashboards" : "No Dashboards yet"}
+                </h2>
+                {dashboardLoading ? (
+                  <Loading />
+                ) : (
+                  <DashboardTable
+                    list={dashboardList ?? []}
+                    handleDeleteDashboard={(id) => setPendingDeleteDashboardId(id)}
+                    handleEditDashboard={(item) => navigate(`/edit/dashboard/${item.id}`)}
+                    handleViewDashboard={(id) => navigate(`/display/dashboards/${id}`)}
+                  />
+                )}
               </div>
             </>
           )}
@@ -252,7 +289,23 @@ function Home() {
         confirmCb={confirmDeleteChart}
         cancelCb={() => setPendingDeleteId(null)}
       >
-        <></>
+        <div></div>
+      </GenericDialog>
+
+      <GenericDialog
+        toggle={!!pendingDeleteDashboardId}
+        title="Delete Dashboard"
+        description="This action cannot be undone."
+        labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
+        confirmCb={() => {
+          if (!pendingDeleteDashboardId) return;
+          api.deleteDashaboard(pendingDeleteDashboardId)
+            .then(() => fetchDashboards())
+            .finally(() => setPendingDeleteDashboardId(null));
+        }}
+        cancelCb={() => setPendingDeleteDashboardId(null)}
+      >
+        <div></div>
       </GenericDialog>
     </Layout>
   );

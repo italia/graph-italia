@@ -8,14 +8,13 @@ import EditChartPage from "./pages/charts/ChartEditor";
 import EditMapPage from "./pages/charts/MapEditor";
 import EditKpiGroupPage from "./pages/charts/EditKpiGroup";
 import DashboardEditPage from "./pages/dashboard/DashboardEditPage";
-import DashboardsPage from "./pages/dashboard/DashboardListPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
 import PrivateAreaPage from "./pages/home";
 import QuickStartPage from "./pages/QuickStartPage";
-import ShowChartPage from "./pages/show/ShowChartPage";
-import DashboardViewPage from "./pages/show/ShowDashboardPage";
+import ShowChartPage from "./pages/display/ShowChartPage";
+import DashboardViewPage from "./pages/display/ShowDashboardPage";
 import RootRoute from "./pages/Splash";
 import TermsPage from "./pages/terms";
 import GenerateDataPage from "./pages/utility/GenerateDataPage";
@@ -26,6 +25,8 @@ import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 const MENU_ITEMS_TRANSLATION_KEYS = "menu.items" as const;
 
 export const HOME_ROUTE = "/home";
+
+
 
 type TMenuItem = {
   name: string;
@@ -124,16 +125,7 @@ const routes = [
     ),
   },
   {
-    path: "/dashboards",
-    element: (
-      <ProtectedRoute>
-        <DashboardsPage />
-      </ProtectedRoute>
-    ),
-  },
-  //edit dashboard page
-  {
-    path: "/dashboards/:id/edit",
+    path: "/edit/dashboard/:id",
     element: (
       <ProtectedRoute>
         <DashboardEditPage />
@@ -186,23 +178,21 @@ const routes = [
     element: <GeoMapUtilsPage />,
   },
 
-  // DISPLAY PART
-  //show chart page
+  // DISPLAY / EMBED PART
   {
-    path: "/charts/:id/view",
+    path: "/display/charts/:id",
     element: <ShowChartPage />,
   },
-  //embed chart page
   {
-    path: "/charts/:id/embed",
+    path: "/embed/charts/:id",
     element: <EmbedChartPage />,
   },
   {
-    path: "/dashboards/:id/view",
+    path: "/display/dashboards/:id",
     element: <DashboardViewPage />,
   },
   {
-    path: "/dashboards/:id/embed",
+    path: "/embed/dashboards/:id",
     element: <EmbedDashboardPage />,
   },
 ] as RouteObject[];

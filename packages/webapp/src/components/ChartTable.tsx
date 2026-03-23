@@ -264,7 +264,7 @@ export default function ChartTable({
                       className="btn btn-ghost btn-xs btn-square"
                       onClick={() =>
                         setShow(
-                          `<iframe width="600" height="400" src="${window.location.origin}/charts/${row.id}/embed" frameborder="0" allowfullscreen></iframe>`,
+                          `<iframe width="600" height="400" src="${window.location.origin}/embed/charts/${row.id}" frameborder="0" allowfullscreen></iframe>`,
                         )
                       }
                     >
@@ -275,7 +275,7 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`${window.location.origin}/charts/${row.id}/view`}
+                      href={`${window.location.origin}/display/charts/${row.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="view"
@@ -292,7 +292,7 @@ export default function ChartTable({
                       aria-label="copy link"
                       className="btn btn-ghost btn-xs btn-square"
                       onClick={handleCopy(
-                        `${window.location.origin}/charts/${row.id}/view`,
+                        `${window.location.origin}/display/charts/${row.id}`,
                       )}
                     >
                       <FaCopy

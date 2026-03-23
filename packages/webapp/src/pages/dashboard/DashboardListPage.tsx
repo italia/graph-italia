@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Panel, Group as PanelGroup } from "react-resizable-panels";
 import { useNavigate } from "react-router-dom";
 
 import type { FieldDataType } from "../../types";
 
-import DashboardList from "../../components/DashboardList";
+import DashboardTable from "../../components/DashboardTable";
 import Layout from "../../components/layout";
 import ConfirmDialog from "../../components/layout/ConfirmDialog";
 import GenericDialog from "../../components/layout/GenericDialog";
@@ -130,99 +129,88 @@ function DashboardsPage() {
 
   return (
     <Layout>
-      <PanelGroup orientation="horizontal" className="w-full">
-        <Panel defaultSize={30} minSize={20} className="bg-base-100">
-          <div className="p-4">
-            <div>
-              {loading ? (
-                <Loading />
-              ) : (
-                <>
-                  <h4 className="text-4xl font-bold">
-                    {list && list.length ? "My Dashboards" : "Welcome"}
-                  </h4>
-                  <div>
-                    <div className="flex my-5 gap-4">
-                      <div
-                        className="btn btn-primary"
-                        onClick={createClickHandler}
-                      >
-                        + Create dashboard
-                      </div>
-                    </div>
-                  </div>
-                  <DashboardList
-                    list={list}
-                    handleDeleteDashboard={deleteClickHandler}
-                    handleEditDashboard={(item) => {
-                      editClickHandler(item.id ?? "");
-                    }}
-                    handleViewDashboard={viewClickHandler}
-                  ></DashboardList>
-                </>
-              )}
-            </div>
-            {showCreateModal && (
-              <GenericDialog
-                toggle={showCreateModal}
-                title="Aggiungi Dashboard"
-                labels={{ confirm: "Aggiungi", cancel: "Annulla" }}
-                confirmCb={() => {
-                  if (!newDashboard) {
-                    return;
-                  }
-                  createModalConfirmHandler(newDashboard);
-                }}
-                cancelCb={() => {
-                  createModalCancelHandler();
-                }}
+      <div className="p-4">
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-5">
+              <h4 className="text-4xl font-bold">
+                {list?.length ? "My Dashboards" : "Welcome"}
+              </h4>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={createClickHandler}
               >
-                <div className="bg-base-200">
-                  <div className="p-4 my-5">
-                    <label className="name">Nome</label>
-                    <input
-                      className="input w-full"
-                      type="text"
-                      name="name"
-                      onChange={(e) => {
-                        const name = e.target.value;
-                        const oldValue =
-                          newDashboard ??
-                          ({} as { name: string; description: string });
-                        setNewDashboard({ ...oldValue, name });
-                      }}
-                    />
-                  </div>
-                  <div className="p-4 my-5">
-                    <label className="name">Descrizione</label>
-                    <input
-                      className="input w-full"
-                      type="text"
-                      name="description"
-                      onChange={(e) => {
-                        const description = e.target.value;
-                        const oldValue =
-                          newDashboard ??
-                          ({} as { name: string; description: string });
-                        setNewDashboard({ ...oldValue, description });
-                      }}
-                    />
-                  </div>
-                </div>
-              </GenericDialog>
-            )}
-            {showDeleteModal && (
-              <ConfirmDialog
-                toggle={showDeleteModal}
-                title="Cancellazione Dashboard"
-                message={`Vuoi cancellare la dashboard ${selectedItem?.name}?`}
-                confirmCb={dialogConfirmModalHandler}
-                cancelCb={dialogCancelModalHandler}
-              ></ConfirmDialog>
-            )}
-          </div>
-        </Panel>
-      </PanelGroup>
+                + Create dashboard
+              </button>
+            </div>
+            <DashboardTable
+              list={list}
+              handleDeleteDashboard={deleteClickHandler}
+              handleEditDashboard={(item) => editClickHandler(item.id ?? "")}
+              handleViewDashboard={viewClickHandler}
+            />
+          </>
+        )}
+        {showCreateModal && (
+          <GenericDialog
+            toggle={showCreateModal}
+            title="Aggiungi Dashboard"
+            labels={{ confirm: "Aggiungi", cancel: "Annulla" }}
+            confirmCb={() => {
+              if (!newDashboard) return;
+              createModalConfirmHandler(newDashboard);
+            }}
+            cancelCb={createModalCancelHandler}
+          >
+            <div className="bg-base-200">
+              <div className="p-4 my-5">
+                <label htmlFor="dashboard_name" className="name">Nome</label>
+                <input
+                  id="dashboard_name"
+                  className="input w-full"
+                  type="text"
+                  name="name"
+                  onChange={(e) => {
+                    const name = e.target.value;
+                    const oldValue =
+                      newDashboard ??
+                      ({} as { name: string; description: string });
+                    setNewDashboard({ ...oldValue, name });
+                  }}
+                />
+              </div>
+              <div className="p-4 my-5">
+                <label htmlFor="dashboard_description" className="name">Descrizione</label>
+                <input
+                  id="dashboard_description"
+                  className="input w-full"
+                  type="text"
+                  name="description"
+                  onChange={(e) => {
+                    const description = e.target.value;
+                    const oldValue =
+                      newDashboard ??
+                      ({} as { name: string; description: string });
+                    setNewDashboard({ ...oldValue, description });
+                  }}
+                />
+              </div>
+            </div>
+          </GenericDialog>
+        )}
+        {showDeleteModal && (
+          <ConfirmDialog
+            toggle={showDeleteModal}
+            title="Cancellazione Dashboard"
+            message={`Vuoi cancellare la dashboard ${selectedItem?.name}?`}
+            confirmCb={dialogConfirmModalHandler}
+            cancelCb={dialogCancelModalHandler}
+          />
+        )}
+      </div>
     </Layout>
   );
 }
