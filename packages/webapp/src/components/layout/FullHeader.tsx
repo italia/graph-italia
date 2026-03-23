@@ -103,10 +103,10 @@ export default function HeaderCompleta() {
               />
             </svg>
             <div>
-              <span className="block text-[1.75rem] font-semibold leading-tight text-primary-content group-hover:text-primary-content/90 transition-colors duration-150">
+              <span className="block text-[1.75rem] font-semibold leading-tight text-primary-content ">
                 {t(`center.brand.title`)}
               </span>
-              <p className="text-sm font-normal text-primary-content/70 m-0 mt-0.5">
+              <p className="text-sm font-normal text-primary-content/80 m-0 mt-0.5">
                 {t(`center.brand.tagline`)}
               </p>
             </div>
