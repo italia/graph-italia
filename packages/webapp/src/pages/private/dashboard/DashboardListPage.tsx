@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import type { FieldDataType } from "../../types";
+import type { FieldDataType } from "../../../types";
 
-import DashboardTable from "../../components/DashboardTable";
-import Layout from "../../components/layout";
-import ConfirmDialog from "../../components/layout/ConfirmDialog";
-import GenericDialog from "../../components/layout/GenericDialog";
-import Loading from "../../components/layout/Loading";
-import * as api from "../../lib/api";
-import useDashboardsStoreState from "../../lib/dashboardListStore";
+import DashboardTable from "../../../components/DashboardTable";
+import Layout from "../../../components/layout";
+import ConfirmDialog from "../../../components/layout/ConfirmDialog";
+import GenericDialog from "../../../components/layout/GenericDialog";
+import Loading from "../../../components/layout/Loading";
+import * as api from "../../../lib/api";
+import useDashboardsStoreState from "../../../lib/dashboardListStore";
 
 function DashboardsPage() {
   const { list, setList } = useDashboardsStoreState((state) => state);

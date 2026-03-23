@@ -1,19 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Responsive, } from "react-grid-layout";
 import { Link, useParams } from "react-router-dom";
-import Layout from "../../components/layout";
-import Dialog from "../../components/layout/Dialog";
-import Loading from "../../components/layout/Loading";
-// import RenderChart from "../../components/RenderCellChart";
-import { ChartWrapper, ColorSchemeProvider, RenderChart, type FieldDataType, type InfosType } from "dataviz-components";
-import * as api from "../../lib/api";
+import Layout from "../../../components/layout";
+import Dialog from "../../../components/layout/Dialog";
+import Loading from "../../../components/layout/Loading";
+import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
+import * as api from "../../../lib/api";
 import useDashboardEditStore, {
   type ChartLookup,
   type TChartRef,
   type TLayoutItem,
-} from "../../store/dashboard-edit.store";
-import { useSettingsStore } from "../../store/settings_store";
-import { HOME_ROUTE } from "../../router";
+} from "../../../store/dashboard-edit.store";
+import { useSettingsStore } from "../../../store/settings_store";
+import { HOME_ROUTE } from "../../../router";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
@@ -24,8 +23,8 @@ interface ChartSelectionProps {
 }
 
 function ChartSelection(props: ChartSelectionProps) {
-  const [charts, setCharts] = React.useState<Array<ChartLookup>>([]);
-  const [chart, setChart] = React.useState<TChartRef>();
+  const [charts, setCharts] = useState<Array<ChartLookup>>([]);
+  const [chart, setChart] = useState<TChartRef>();
 
   const mergeCharts = (charts: Array<ChartLookup>) => {
     const idsToRemove = new Set(Object.values(props.charts).map((m) => m.id));
@@ -38,16 +37,12 @@ function ChartSelection(props: ChartSelectionProps) {
       const data = await api.getCharts();
       mergeCharts(data);
     } catch (error) {
-    } finally {
+      console.error("error fetching charts", error);
     }
   }
-
-  React.useEffect(() => {
+  useEffect(() => {
     fetchCharts();
   }, []);
-
-
-
 
   return (
     <div>
