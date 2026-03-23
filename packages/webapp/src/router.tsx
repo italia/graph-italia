@@ -4,14 +4,14 @@ import AboutPage from "./pages/about";
 import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
-import EditChartPage from "./pages/charts/ChartEditor";
-import EditMapPage from "./pages/charts/MapEditor";
-import EditKpiGroupPage from "./pages/charts/EditKpiGroup";
-import DashboardEditPage from "./pages/dashboard/DashboardEditPage";
+import EditChartPage from "./pages/private/charts/ChartEditor";
+import EditMapPage from "./pages/private/charts/MapEditor";
+import EditKpiGroupPage from "./pages/private/charts/EditKpiGroup";
+import DashboardEditPage from "./pages/private/dashboard/DashboardEditPage";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
-import PrivateAreaPage from "./pages/home";
+import PrivateAreaPage from "./pages/private/home";
 import QuickStartPage from "./pages/QuickStartPage";
 import ShowChartPage from "./pages/display/ShowChartPage";
 import DashboardViewPage from "./pages/display/ShowDashboardPage";
@@ -24,7 +24,7 @@ import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
 
 const MENU_ITEMS_TRANSLATION_KEYS = "menu.items" as const;
 
-export const HOME_ROUTE = "/home";
+export const HOME_ROUTE = "/private/home";
 
 
 

@@ -8,6 +8,7 @@ import Loading from "../../components/layout/Loading";
 import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
 import useDashboardViewStore from "../../store/dashboard-view.store";
 import { useSettingsStore } from "../../store/settings_store";
+import { HOME_ROUTE } from "../../router";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
@@ -35,7 +36,7 @@ function DashboardViewPage() {
       <div className="p-4">
         <div className="flex justify-between items-center">
           <Link
-            to={"/dashboards"}
+            to={HOME_ROUTE}
             className="text-blue-500 hover:underline"
           >
             &lt; Torna alla lista

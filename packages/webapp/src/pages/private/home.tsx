@@ -17,20 +17,20 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 
-import Layout from "../components/layout";
+import Layout from "../../components/layout";
 // import RenderChart from "../components/RenderChart";
-import Loading from "../components/layout/Loading";
+import Loading from "../../components/layout/Loading";
 
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import ChartTable from "../components/ChartTable";
-import DashboardTable from "../components/DashboardTable";
-import GenericDialog from "../components/layout/GenericDialog";
-import * as api from "../lib/api";
-import useChartsStoreState from "../lib/chartListStore";
-import useDashboardsStoreState from "../lib/dashboardListStore";
-import stepMachine from "../lib/stepMachine";
-import useStoreState from "../lib/storeState";
+import ChartTable from "../../components/ChartTable";
+import DashboardTable from "../../components/DashboardTable";
+import GenericDialog from "../../components/layout/GenericDialog";
+import * as api from "../../lib/api";
+import useChartsStoreState from "../../lib/chartListStore";
+import useDashboardsStoreState from "../../lib/dashboardListStore";
+import stepMachine from "../../lib/stepMachine";
+import useStoreState from "../../lib/storeState";
 
 type GenericChartPayload = {
   name: string;

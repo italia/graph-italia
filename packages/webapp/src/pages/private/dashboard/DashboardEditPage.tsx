@@ -13,6 +13,7 @@ import useDashboardEditStore, {
   type TLayoutItem,
 } from "../../store/dashboard-edit.store";
 import { useSettingsStore } from "../../store/settings_store";
+import { HOME_ROUTE } from "../../router";
 
 const ROW_HEIGHT = 360;
 const WIDGET_HEIGHT = 48;
@@ -149,7 +150,7 @@ function DashboardEditPage() {
     <Layout>
       <div className="p-4">
         <div className="flex justify-between items-center">
-          <Link to="/dashboards" className="text-blue-500 hover:underline">
+          <Link to={HOME_ROUTE} className="text-blue-500 hover:underline">
             &lt; Back to the list
           </Link>
           <div className="ml-auto flex space-x-2">

@@ -145,7 +145,7 @@ export default function DashboardTable({
         data={list}
         theme={currentTheme}
         onSort={handleSort}
-        onRowClicked={(row) => navigate(`/eit/dashboard/${row.id}`)}
+        onRowClicked={(row) => navigate(`/edit/dashboard/${row.id}`)}
         pagination
         highlightOnHover
       />
