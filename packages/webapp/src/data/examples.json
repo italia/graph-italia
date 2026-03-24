@@ -1,0 +1,302 @@
+[
+  {
+    "title": "PDND - Aderenti",
+    "description": "Elenco di tutti gli aderenti a PDND Interoperabilità",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/aderenti.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/aderenti.json"
+    }
+  },
+  {
+    "title": "PDND - Catalogo e-service",
+    "description": "Elenco di tutti gli e-service disponibili nel catalogo di PDND Interoperabilità",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_a_catalogo.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_a_catalogo.json"
+    }
+  },
+  {
+    "title": "PDND - E-service più utilizzati, per sessioni di scambio - ultimi 12 mesi",
+    "description": "E-service ordinati per numero di sessioni di scambio negli ultimi 12 mesi",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_con_piu_token_staccati_last_twelve_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_con_piu_token_staccati_last_twelve_months.json"
+    }
+  },
+  {
+    "title": "PDND - E-service più utilizzati, per sessioni di scambio - ultimi 6 mesi",
+    "description": "E-service ordinati per numero di sessioni di scambio negli ultimi 6 mesi",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_con_piu_token_staccati_last_six_month.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_con_piu_token_staccati_last_six_month.json"
+    }
+  },
+  {
+    "title": "PDND - E-service più utilizzati, per sessioni di scambio - inizio del servizio",
+    "description": "E-service ordinati per numero di sessioni di scambio dall'inizio del servizio",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_con_piu_token_staccati_from_the_beginning.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_con_piu_token_staccati_from_the_beginning.json"
+    }
+  },
+  {
+    "title": "PDND - E-service più utilizzati, per enti fruitori attivi - ultimi 12 mesi",
+    "description": "E-service ordinati per numero di enti che hanno attivato almeno una sessione di scambio negli ultimi 12 mesi",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_piu_utilizzati_last_twelve_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_piu_utilizzati_last_twelve_months.json"
+    }
+  },
+  {
+    "title": "PDND - E-service più utilizzati, per enti fruitori attivi - ultimi 6 mesi",
+    "description": "E-service ordinati per numero di enti che hanno attivato almeno una sessione di scambio negli ultimi 6 mesi",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_piu_utilizzati_last_six_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_piu_utilizzati_last_six_months.json"
+    }
+  },
+  {
+    "title": "PDND - E-service più utilizzati, per enti fruitori attivi - inizio del servizio",
+    "description": "E-service ordinati per numero di enti che hanno attivato almeno una sessione di scambio dall'inizio del servizio",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_piu_utilizzati_from_the_beginning.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_piu_utilizzati_from_the_beginning.json"
+    }
+  },
+  {
+    "title": "PDND - Connessioni totali",
+    "description": "Numero di connessioni abilitate ad oggi",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/connessioni_totali.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/connessioni_totali.json"
+    }
+  },
+  {
+    "title": "PDND - Attività della piattaforma - inizio del servizio",
+    "description": "Numero di sessioni di scambio dati mensili",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/attivita_della_piattaforma_from_the_beginning.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/attivita_della_piattaforma_from_the_beginning.json"
+    }
+  },
+  {
+    "title": "PDND - Attività della piattaforma - ultimi 12 mesi",
+    "description": "Numero di sessioni di scambio dati mensili",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/attivita_della_piattaforma_last_twelve_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/attivita_della_piattaforma_last_twelve_months.json"
+    }
+  },
+  {
+    "title": "PDND - Attività della piattaforma - ultimi 6 mesi",
+    "description": "Numero di sessioni di scambio dati ogni 7 giorni",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/attivita_della_piattaforma_last_six_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/attivita_della_piattaforma_last_six_months.json"
+    }
+  },
+  {
+    "title": "PDND - Totale sessioni di scambio",
+    "description": "Numero totale delle sessioni di scambio, con la variazione del mese precedente",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/totale_richieste_di_accesso.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/totale_richieste_di_accesso.json"
+    }
+  },
+  {
+    "title": "PDND - Enti con più connessioni abilitate - inizio del servizio",
+    "description": "Gli enti erogatori che hanno abilitato più enti fruitori",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_con_piu_connessioni_abilitate_from_the_beginning.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_con_piu_connessioni_abilitate_from_the_beginning.json"
+    }
+  },
+  {
+    "title": "PDND - Enti con più connessioni abilitate - ultimi 12 mesi",
+    "description": "Gli enti erogatori che hanno abilitato più enti fruitori",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_con_piu_connessioni_abilitate_last_twelve_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_con_piu_connessioni_abilitate_last_twelve_months.json"
+    }
+  },
+  {
+    "title": "PDND - Enti con più connessioni abilitate - ultimi 6 mesi",
+    "description": "Gli enti erogatori che hanno abilitato più enti fruitori",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_con_piu_connessioni_abilitate_last_six_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_con_piu_connessioni_abilitate_last_six_months.json"
+    }
+  },
+  {
+    "title": "PDND - Enti che pubblicano più e-service - inizio del servizio",
+    "description": "Gli enti erogatori con più e-service pubblicati",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_che_pubblicano_piu_e_service_from_the_beginning.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_che_pubblicano_piu_e_service_from_the_beginning.json"
+    }
+  },
+  {
+    "title": "PDND - Enti che pubblicano più e-service - ultimi 12 mesi",
+    "description": "Gli enti erogatori con più e-service pubblicati",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_che_pubblicano_piu_e_service_last_twelve_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_che_pubblicano_piu_e_service_last_twelve_months.json"
+    }
+  },
+  {
+    "title": "PDND - Enti che pubblicano più e-service - ultimi 6 mesi",
+    "description": "Gli enti erogatori con più e-service pubblicati",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_che_pubblicano_piu_e_service_last_six_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/enti_che_pubblicano_piu_e_service_last_six_months.json"
+    }
+  },
+  {
+    "title": "PDND - Andamento delle adesioni",
+    "description": "Numero progressivo di enti che hanno aderito alla piattaforma nel tempo",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/andamento_delle_adesioni.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/andamento_delle_adesioni.json"
+    }
+  },
+  {
+    "title": "PDND - Distribuzione degli enti per attività",
+    "description": "Numero di enti aderenti suddiviso in funzione dell'attività che attualmente svolgono sulla piattaforma",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/distribuzione_degli_enti_per_attivita.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/distribuzione_degli_enti_per_attivita.json"
+    }
+  },
+  {
+    "title": "PDND - E-service pubblicati",
+    "description": "Numero di e-service pubblicati e variazione nell'ultimo mese",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_pubblicati.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/eservice_pubblicati.json"
+    }
+  },
+  {
+    "title": "PDND - Totale enti e suddivisione per macro-categorie",
+    "description": "Il totale degli enti e delle categorie in evidenza che hanno aderito a PDND Interoperabilità",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/totale_enti.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/totale_enti.json"
+    }
+  },
+  {
+    "title": "PDND - E-service con più enti abilitati - inizio del servizio",
+    "description": "Gli e-service più richiesti, filtrabili per categoria di ente erogatore e di ente fruitore",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_con_piu_enti_abilitati_from_the_beginning.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_con_piu_enti_abilitati_from_the_beginning.json"
+    }
+  },
+  {
+    "title": "PDND - E-service con più enti abilitati - ultimi 12 mesi",
+    "description": "Gli e-service più richiesti, filtrabili per categoria di ente erogatore e di ente fruitore",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_con_piu_enti_abilitati_last_twelve_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_con_piu_enti_abilitati_last_twelve_months.json"
+    }
+  },
+  {
+    "title": "PDND - E-service con più enti abilitati - ultimi 6 mesi",
+    "description": "Gli e-service più richiesti, filtrabili per categoria di ente erogatore e di ente fruitore",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_con_piu_enti_abilitati_last_six_months.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/e_service_con_piu_enti_abilitati_last_six_months.json"
+    }
+  },
+  {
+    "title": "PDND - Distribuzione degli e-service per enti erogatori",
+    "description": "Numero di e-service pubblicati suddivisi per categorie di enti erogatori",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2026-03-20",
+    "tags": ["api", "interoperabilita", "pdnd", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/distribuzione_e_service_per_enti_erogatori.csv",
+      "json": "https://raw.githubusercontent.com/italia/pdnd-opendata/main/data/distribuzione_e_service_per_enti_erogatori.json"
+    }
+  },
+  {
+    "title": "PA Digitale 2026 PNRR - Candidature Finanziate (1.4.1 Esperienza del Cittadino nei servizi pubblici)",
+    "description": "List of all funding requests, related to \"1.4.1 Citizen Experience in Public Services\", which have been confirmed by financing decree on PA digitale 2026.",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2022-07-16",
+    "tags": ["comuni", "finanziamenti", "pa-digitale-2026", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_finanziate_141.csv",
+      "json": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_finanziate_141.json"
+    }
+  },
+  {
+    "title": "PA Digitale 2026 PNRR - Candidature Finanziate (1.2 Abilitazione e facilitazione migrazione al Cloud)",
+    "description": "List of all funding requests, related to \"1.2 Cloud Migration\", which have been confirmed by financing decree on PA digitale 2026.",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2022-07-16",
+    "tags": ["comuni", "finanziamenti", "pa-digitale-2026", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_finanziate_12.csv",
+      "json": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_finanziate_12.json"
+    }
+  },
+  {
+    "title": "PA Digitale 2026 PNRR - Candidature Finanziate (Pubbliche Amministrazioni)",
+    "description": "List of all funding requests which have been confirmed by financing decree on PA digitale 2026.",
+    "pubInfo": "Publisher: PCM - Dipartimento Trasformazione Digitale | Date: 2022-07-16",
+    "tags": ["finanziamenti", "pa-digitale-2026", "pnrr"],
+    "dataUrls": {
+      "csv": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_altrienti_finanziate.csv",
+      "json": "https://raw.githubusercontent.com/teamdigitale/padigitale2026-opendata/main/data/candidature_altrienti_finanziate.json"
+    }
+  }
+]
