@@ -99,6 +99,7 @@ export default function DataTable({
     if (transposed?.[0]) {
       setVisibleColumns(new Set(transposed[0].map(String)));
     }
+    onApplyData?.(transposed);
   }
 
   function internalReset() {
@@ -225,6 +226,7 @@ export default function DataTable({
             >
               {t("actions.transpose.label")}
             </button>
+
             <button
               type="button"
               className={`btn btn-primary ${!hasChanges ? "btn-disabled" : ""}`}

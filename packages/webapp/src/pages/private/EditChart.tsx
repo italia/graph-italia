@@ -14,7 +14,6 @@ import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { startTransition, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-
 import { HOME_ROUTE } from "../../router.tsx";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import ChartOptions from "../../components/ChartOptions.tsx";
@@ -375,31 +374,8 @@ function EditChartPage() {
                     remoteUrl={remoteUrl}
                     handleSetRemoteData={handleSetRemoteData}
                   />
-                  {/* {haveData && chart && (
-                    <div className="card-actions justify-end mt-6 pt-4 border-t border-base-200">
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => handleAssignData()}
-                      >
-                        {t(`body.options.data.actions.useData.label`)}
-                      </button>
-                    </div>
-                  )} */}
-                  {currentData && (
-                    <>
-                      <h4>serie selector</h4>
-                      <SeriesSelector
-                        initialData={currentData || data}
-                        setData={(d) => {
-                          setData(d);
-                          setHasUnsavedChanges(true);
-                          send({ type: "CONFIG" });
-                        }}
-                      />
-                      <hr />
-                    </>
-                  )}
+
+
 
                 </div>
               </div>
@@ -457,10 +433,28 @@ function EditChartPage() {
                 )}
               </div>
               <div>
+
+
                 {!(haveData && data) ? (
-                  <p className="italic text-base-content" role="status">
-                    {t(`body.preview.loadDataMessage`)}
-                  </p>
+                  <div>
+                    <p className="italic text-base-content" role="status">
+                      {t(`body.preview.loadDataMessage`)}
+                    </p>
+                    {currentData && (
+                      <div className="card bg-base-100 shadow-sm border border-base-200">
+                        <div className="card-body">
+                          <h4>serie selector</h4>
+                          <SeriesSelector
+                            initialData={currentData || data}
+                            setData={(d) => {
+                              setData(d);
+                              setHasUnsavedChanges(true);
+                              send({ type: "CONFIG" });
+                            }}
+                          />
+                        </div>
+                      </div>)}
+                  </div>
                 ) : (
                   <div className="overflow-auto flex-1 min-h-0">
                     <TransformDataTable

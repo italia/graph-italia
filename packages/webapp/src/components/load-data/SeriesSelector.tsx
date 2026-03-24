@@ -1,4 +1,5 @@
 import { startTransition, useCallback, useEffect, useState } from "react";
+import DataMngTable from "../DataMngTable";
 import { moveDataColumn, transposeData } from "../../lib/utils";
 import type { MatrixType } from "../../types";
 
@@ -15,6 +16,33 @@ function cleanupValue(v: string | number) {
   } catch {
     return 0;
   }
+}
+
+function canBeNumber(v: string | number): boolean {
+  if (typeof v === "number") return !Number.isNaN(v);
+  const trimmed = v.trim();
+  if (trimmed === "") return false;
+  return !Number.isNaN(Number(trimmed));
+}
+
+function isNumericColumn(matrix: MatrixType, colIndex: number): boolean {
+  for (let i = 1; i < matrix.length; i++) {
+    const cell = matrix[i][colIndex];
+    if (cell !== null && cell !== undefined && cell !== "" && !canBeNumber(cell)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isStringColumn(matrix: MatrixType, colIndex: number): boolean {
+  for (let i = 1; i < matrix.length; i++) {
+    const cell = matrix[i][colIndex];
+    if (cell !== null && cell !== undefined && cell !== "" && canBeNumber(cell)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function cleanupData(matrix: MatrixType) {
@@ -66,6 +94,7 @@ export default function SeriesSelector({ setData, initialData }: {
     });
     return filtered;
   }
+
   function transpose() {
     const transposed = transposeData(rawData);
     setRawData(transposed);
@@ -135,22 +164,26 @@ export default function SeriesSelector({ setData, initialData }: {
 
   return (
     <div className="space-y-4">
-
+      {rawData && (
+        <div className="overflow-x-auto">
+          <DataMngTable data={rawData} onApplyData={setRawData} />
+        </div>
+      )}
       {rawData && (
         <div className="space-y-4 p-4 bg-base-200 rounded-lg">
           <div className="flex items-center justify-between">
             <h4 className="font-medium">Configure columns</h4>
             <div className="flex gap-2">
-              <button
+              {/* <button
                 type="button"
-                className="btn btn-sm btn-default"
+                className="btn btn-outline"
                 onClick={() => transpose()}
               >
                 Transpose
-              </button>
+              </button> */}
               <button
                 type="button"
-                className="btn btn-sm btn-default"
+                className="btn btn-outline"
                 onClick={() => reset()}
               >
                 Reset
@@ -170,11 +203,13 @@ export default function SeriesSelector({ setData, initialData }: {
                 value={category?.value}
                 onChange={(e) => handleChangeCategory(e.target.value)}
               >
-                {getCols(rawData[0]).map((col) => (
-                  <option key={col.value} value={col.value}>
-                    {col.value}
-                  </option>
-                ))}
+                {getCols(rawData[0])
+                  .filter((col, i) => !isNumericColumn(rawData, i))
+                  .map((col) => (
+                    <option key={col.value} value={col.value}>
+                      {col.value}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -200,7 +235,7 @@ export default function SeriesSelector({ setData, initialData }: {
                   }
                 >
                   {getCols(rawData[0])
-                    .filter((i) => !isSameObject(i, category))
+                    .filter((col, i) => isNumericColumn(rawData, i))
                     .map((col) => (
                       <option key={col.value} value={col.value}>
                         {col.value}
@@ -221,6 +256,8 @@ export default function SeriesSelector({ setData, initialData }: {
           </button>
         </div>
       )}
+
+
     </div>
   );
 }
