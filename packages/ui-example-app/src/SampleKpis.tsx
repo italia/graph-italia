@@ -1,6 +1,7 @@
 import {
   KpiItem,
   RenderChart,
+  ColorSchemeProvider,
   type FieldDataType,
   type KpiItemType,
 } from "dataviz-components";
@@ -57,9 +58,13 @@ function App() {
 
   return (
     <div>
-      <RenderChart {...data1} />
+      <ColorSchemeProvider >
+        <RenderChart {...data1} />
+      </ColorSchemeProvider>
       <hr />
-      <RenderChart {...data2} />
+      <ColorSchemeProvider >
+        <RenderChart {...data2} />
+      </ColorSchemeProvider>
       <hr />
       <div className="dv-kpi-container">
         <div className="dv-kpi-row">
@@ -71,7 +76,7 @@ function App() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

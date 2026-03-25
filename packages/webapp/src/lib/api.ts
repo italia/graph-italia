@@ -304,7 +304,7 @@ export async function deleteDashaboard(id: string) {
 
 export async function createDashboard(payload: {
   name: string;
-  description: string;
+  description?: string;
 }) {
   const response = await axios.post(
     `${getServerUrlWithApi()}/dashboards`,
@@ -317,10 +317,11 @@ export async function createDashboard(payload: {
 export async function createChart(payload: {
   name: string;
   description?: string;
+  chart?: string;
 }) {
   const response = await axios.post(`${getServerUrlWithApi()}/charts`, {
     ...payload,
-    chart: "bar", // default chart type, will be changed in edit page
+    chart: payload.chart || "bar", // default chart type, will be changed in edit page
     publish: true, // default to public
   });
   return { id: response.data.id } as { id: string };
@@ -329,6 +330,7 @@ export async function createChart(payload: {
 type CreateKpiGroupPayload = {
   name: string;
   description?: string;
+  chart: "kpi";
 };
 
 export async function createKpiGroup(payload: CreateKpiGroupPayload) {

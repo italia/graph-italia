@@ -65,7 +65,7 @@ model DataSource {
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  SourceLink SourceLink[]
+  sourceLink SourceLink[]
 }
 
 model Chart {
@@ -75,6 +75,7 @@ model Chart {
   chart       String
   config      Json?
   data        Json?
+  dataSource  Json?
   publish     Boolean @default(false)
 
   remoteUrl String?
@@ -85,7 +86,7 @@ model Chart {
   userId String
 
   slot Slot[]
-  SourceLink SourceLink[]
+  sourceLink SourceLink[]
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt

@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import ReactEcharts, { type EChartsOption } from "echarts-for-react";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { formatTooltip } from "../../lib/utils";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import React from "react";
 
 function BasicChart({
@@ -11,6 +12,7 @@ function BasicChart({
   isMobile = false,
   hFactor = 1,
 }: ChartPropsType) {
+  const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
@@ -31,7 +33,13 @@ function BasicChart({
     }
   }, [loaded, refCanvas.current]);
   function getOptions(data: FieldDataType) {
+
+    if (!data || !data.config) {
+      return <div>No config found</div>;
+    }
+
     const config: any = data.config;
+
     const responsive: boolean =
       typeof config.responsive === "undefined" ? true : config.responsive;
     let grid = {
@@ -93,57 +101,57 @@ function BasicChart({
 
     let xName = config.xLabel
       ? {
-          name: config.xLabel,
-          nameLocation: "middle",
-          nameGap: config.nameGap,
-        }
+        name: config.xLabel,
+        nameLocation: "middle",
+        nameGap: config.nameGap,
+      }
       : {};
     let yName = config.yLabel
       ? {
-          name: config.yLabel,
-          nameLocation: "middle",
-          nameGap: config.nameGap,
-        }
+        name: config.yLabel,
+        nameLocation: "middle",
+        nameGap: config.nameGap,
+      }
       : {};
 
     const axis =
       config.direction === "vertical"
         ? {
-            xAxis: {
-              ...xName,
-              type: "category",
-              data: data.dataSource?.categories,
-              axisTick: { show: false },
-              axisLabel: {
-                hideOverlap: true,
-              },
+          xAxis: {
+            ...xName,
+            type: "category",
+            data: data.dataSource?.categories,
+            axisTick: { show: false },
+            axisLabel: {
+              hideOverlap: true,
             },
-            yAxis: {
-              ...yName,
-              nameRotate: 90,
-              type: "value",
-              axisTick: { show: false },
-              axisLabel: { show: responsive ? !isMobile : true },
-            },
-          }
+          },
+          yAxis: {
+            ...yName,
+            nameRotate: 90,
+            type: "value",
+            axisTick: { show: false },
+            axisLabel: { show: responsive ? !isMobile : true },
+          },
+        }
         : {
-            yAxis: {
-              ...xName,
-              nameRotate: 90,
-              type: "category",
-              data: data.dataSource?.categories,
-              axisTick: { show: false },
-              axisLabel: { show: responsive ? !isMobile : true },
+          yAxis: {
+            ...xName,
+            nameRotate: 90,
+            type: "category",
+            data: data.dataSource?.categories,
+            axisTick: { show: false },
+            axisLabel: { show: responsive ? !isMobile : true },
+          },
+          xAxis: {
+            ...yName,
+            type: "value",
+            axisTick: { show: false },
+            axisLabel: {
+              hideOverlap: true,
             },
-            xAxis: {
-              ...yName,
-              type: "value",
-              axisTick: { show: false },
-              axisLabel: {
-                hideOverlap: true,
-              },
-            },
-          };
+          },
+        };
 
     const tooltip = {
       trigger: config.tooltipTrigger || "item",
@@ -163,19 +171,10 @@ function BasicChart({
       show: config.tooltip ?? true,
     };
 
+    const colorOpt = config.colors?.length ? { color: config.colors } : {};
+
     let options = {
-      backgroundColor: config.background ? config.background : "#F2F7FC",
-      color: config.colors || [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc",
-      ],
+      ...colorOpt,
       ...axis,
       grid,
       series: data.dataSource?.series?.map((serie: any) => {
@@ -234,6 +233,7 @@ function BasicChart({
     <div style={{ textAlign: "left" }}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
+        theme={resolvedTheme}
         ref={refCanvas as any}
         style={{
           width: "100%",

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MatrixType, StoreStateType } from "../types";
+import type { MatrixType, StoreStateType } from "../types";
 import { defaultConfig } from "./constants";
 // import { persist } from "zustand/middleware";
 
@@ -29,7 +29,7 @@ const useStoreState = create<StoreStateType>()(
     setRemoteUrl: (value: string | null) => set(() => ({ remoteUrl: value })),
     setIsRemote: (value: boolean) => set(() => ({ isRemote: value })),
     loadItem: (value: any) =>
-      set((state) => ({
+      set(() => ({
         chart: value.chart,
         config: value.config,
         rawData: null,

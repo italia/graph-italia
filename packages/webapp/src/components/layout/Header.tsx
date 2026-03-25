@@ -1,156 +1,289 @@
-import { logout } from '../../lib/api';
-import { HOME_ROUTE } from '../../router';
-import { useUserStore } from '../../store/user_store';
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { logout } from "../../lib/api";
+import type { MenuSubItem } from "../../router";
+import { MENU, ROUTES } from "../../router";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
+import { useUserStore } from "../../lib/store/user_store.ts";
+import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
+import LanguageSwitcher from "./LanguageSwitcher.tsx";
 
-export default function Header() {
+export default function SlimHeader() {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.layout.slimHeader",
+  });
+  const { t: translateMenu } = useTranslation("menu");
   const { user, clearUser } = useUserStore();
+  const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
+  const [dropdownUserOpen, setDropdownUserOpen] = useState(false);
+  const [menuMobileOpen, setMenuMobileOpen] = useState(false);
+  const dropdownToolsRef = useRef<HTMLLIElement>(null);
+  const dropdownUserRef = useRef<HTMLDivElement>(null);
+
+  const { settings, setTheme, setLanguage } = useSettingsStore();
+  const theme = settings?.preferredTheme;
+  const language = settings?.preferredLanguage ?? "it";
+
   const handleLogout = async () => {
-    console.log('Logging out user...');
     try {
       await logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       clearUser();
     }
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
-  const menu = [
-    {
-      name: 'Home',
-      link: HOME_ROUTE,
-    },
-    // {
-    //   name: 'Dashboards',
-    //   link: '/dashboards',
-    // },
-    {
-      name: 'Tools',
-      link: '',
-      subMenu: [
-        {
-          name: 'Generate Data',
-          link: '/generate-data',
-        },
-        {
-          name: 'Load Remote Data',
-          link: '/load-data',
-        },
-        {
-          name: 'Check GeoJSon File',
-          link: '/geo',
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      if (dropdownToolsRef.current && !dropdownToolsRef.current.contains(target)) {
+        setDropdownToolsOpen(false);
+      }
+      if (dropdownUserRef.current && !dropdownUserRef.current.contains(target)) {
+        setDropdownUserOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div className='navbar bg-primary text-primary-content shadow-xl mb-2'>
-      <div className='navbar-start'>
-        <div className='dropdown'>
-          <div tabIndex={0} role='button' className='btn btn-ghost lg:hidden'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-5 w-5'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M4 6h16M4 12h8m-8 6h16'
-              />
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            className='menu menu-sm dropdown-content bg-base-100 text-primary rounded-box z-[1] mt-3 w-52 p-2 shadow'
+    <header className="relative">
+      {/* ── Main bar ── */}
+      <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12">
+        {/* Left: hamburger + brand + separator + desktop nav */}
+        <div className="navbar-start flex items-center gap-4">
+          {/* Hamburger – mobile only */}
+          <button
+            type="button"
+            className="btn btn-ghost btn-square text-primary-content lg:hidden flex flex-col justify-center gap-[5px]"
+            aria-label="Menu"
+            aria-expanded={menuMobileOpen}
+            onClick={() => setMenuMobileOpen((v) => !v)}
           >
-            {menu.map((item, index) => {
-              if (item.subMenu) {
-                return (
-                  <li key={`mobile-${item.name}`}>
-                    <a>{item.name}</a>
-                    <ul className='p-2'>
-                      {item.subMenu.map((subItem, subIndex) => {
-                        return (
-                          <li key={`mobile-sub-${subItem.name}`}>
-                            <a href={subItem.link}>{subItem.name}</a>
+            <span
+              className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "translate-y-[7px] rotate-45" : ""}`}
+            />
+            <span
+              className={`block w-full h-0.5 bg-current rounded transition-opacity duration-200 ${menuMobileOpen ? "opacity-0" : ""}`}
+            />
+            <span
+              className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`}
+            />
+          </button>
+
+          {/* Brand */}
+          <a
+            href={ROUTES.root}
+            className="text-primary-content text-base font-normal no-underline  cursor leading-snug flex items-center   gap-2"
+          >
+            <svg className="w-8 h-8 shrink-0 text-primary-content" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+            <span className="font-semibold text-lg">{t(`brand.title`)}</span>
+          </a>
+
+          {/* Separator – desktop only */}
+          <span
+            className="hidden lg:block w-px h-5 bg-primary-content/20 shrink-0"
+            aria-hidden="true"
+          />
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:block" aria-label="Principale">
+            <ul className="flex items-center gap-1 list-none m-0 p-0">
+              {MENU.map((item) => {
+                if ("subMenu" in item) {
+                  return (
+                    <li
+                      key={item.name}
+                      className="relative"
+                      ref={dropdownToolsRef}
+                    >
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-primary-content text-sm rounded bg-transparent border-none cursor-pointer hover:bg-primary-content/15"
+                        aria-expanded={dropdownToolsOpen}
+                        aria-haspopup="true"
+                        onClick={() => setDropdownToolsOpen((v) => !v)}
+                      >
+                        {item.translationKey
+                          ? translateMenu(item.translationKey)
+                          : item.name}
+                        <svg
+                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${dropdownToolsOpen ? "rotate-180" : ""}`}
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
+                        </svg>
+                      </button>
+
+                      <ul
+                        className={`absolute top-full left-0 z-[1000] min-w-40 py-2 mt-1 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0 ${dropdownToolsOpen ? "block" : "hidden"}`}
+                      >
+                        {item.subMenu.map((sub: MenuSubItem) => (
+                          <li key={sub.name}>
+                            <a
+                              href={sub.link}
+                              className="block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary"
+                            >
+                              {sub.translationKey
+                                ? translateMenu(sub.translationKey)
+                                : sub.name}
+                            </a>
                           </li>
-                        );
-                      })}
-                    </ul>
-                  </li>
-                );
-              } else {
+                        ))}
+                      </ul>
+                    </li>
+                  );
+                }
                 return (
-                  <li key={`mobile-${item.name}`}>
-                    <a href={item.link}>{item.name}</a>
+                  <li key={item.name}>
+                    <a
+                      href={item.link}
+                      className="inline-flex items-center px-3 py-1.5 text-primary-content text-sm rounded no-underline hover:bg-primary-content/15"
+                    >
+                      {item.translationKey
+                        ? translateMenu(item.translationKey)
+                        : item.name}
+                    </a>
                   </li>
                 );
-              }
-            })}
-          </ul>
+              })}
+            </ul>
+          </nav>
         </div>
-        <a className='btn btn-ghost text-xl' href='/'>
-          Dataviz
-        </a>
+
+        {/* Right: language + theme + user/login */}
+        <div className="navbar-end flex items-center gap-4">
+          <div className="rounded px-2">
+            <ThemeSwitcherComponent
+              currentTheme={theme as "light" | "dark"}
+              handleChange={setTheme}
+            />
+          </div>
+          <LanguageSwitcher
+            currentLanguage={language}
+            handleChange={setLanguage}
+          />
+
+
+          {user ? (
+            <div className="relative" ref={dropdownUserRef}>
+              <button
+                type="button"
+                className="flex items-center justify-center w-8 h-8 rounded-full text-primary-content hover:bg-primary-content/15 bg-transparent border-none cursor-pointer transition-colors duration-150"
+                aria-label={user.name}
+                aria-expanded={dropdownUserOpen}
+                aria-haspopup="true"
+                onClick={() => setDropdownUserOpen((v) => !v)}
+              >
+                <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+              </button>
+
+              {dropdownUserOpen && (
+                <ul className="absolute right-0 top-full mt-1 z-[1000] min-w-48 py-2 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0">
+                  <li className="px-4 py-2 text-xs text-base-content/50 border-b border-base-200 select-none">
+                    {user.name}
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className="w-full text-left block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      onClick={() => { setDropdownUserOpen(false); handleLogout(); }}
+                    >
+                      {t(`actions.logout.label`)}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className="w-full text-left block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      onClick={() => setDropdownUserOpen(false)}
+                    >
+                      {t(`actions.askMyData.label`)}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className="w-full text-left block px-4 py-2 text-sm text-error no-underline hover:bg-error/10 bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      onClick={() => setDropdownUserOpen(false)}
+                    >
+                      {t(`actions.requestAccountDeletion.label`)}
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
+          ) : (
+            <a
+              href={ROUTES.login}
+              className="btn btn-sm btn-ghost border border-primary-content/40 text-primary-content hover:bg-primary-content/20"
+              aria-label="Accedi"
+            >
+              {t(`actions.login.label`)}
+            </a>
+          )}
+        </div>
       </div>
-      <div className='navbar-center hidden lg:flex'>
-        <ul className='menu menu-horizontal px-1 bg-base text-content'>
-          {menu.map((item, index) => {
-            if (item.subMenu) {
+
+      {/* ── Mobile slide-down menu ── */}
+      <div
+        className={`lg:hidden absolute top-full left-0 right-0 bg-primary border-b border-primary-content/20 shadow-md overflow-hidden z-[999] transition-all duration-200 ease-in-out ${menuMobileOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}
+        aria-hidden={!menuMobileOpen}
+      >
+        <ul className="list-none m-0 p-4">
+          {MENU.map((item) => {
+            if ("subMenu" in item) {
               return (
-                <li key={`menu-${item.name}`}>
-                  <details>
-                    <summary>{item.name}</summary>
-                    <ul className='min-w-[160px] bg-base-100 text-primary z-10'>
-                      {item.subMenu.map((subItem, subIndex) => {
-                        return (
-                          <li
-                            key={`menu-sub-${subItem.name}`}
-                            className='bg-base-100 text-primary'
-                          >
-                            <a href={subItem.link}>{subItem.name}</a>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </details>
-                </li>
-              );
-            } else {
-              return (
-                <li key={`menu-${item.name}`}>
-                  <a href={item.link}>{item.name}</a>
+                <li
+                  key={item.name}
+                  className="border-b border-primary-content/20"
+                >
+                  <span className="block py-3 text-[0.9375rem] text-primary-content">
+                    {item.translationKey
+                      ? translateMenu(item.translationKey)
+                      : item.name}
+                  </span>
+                  <ul className="list-none m-0 ml-4 pb-2 p-0">
+                    {item.subMenu.map((sub: MenuSubItem) => (
+                      <li key={sub.name}>
+                        <a
+                          href={sub.link}
+                          className="block py-2 text-sm text-primary-content no-underline hover:text-primary-content/80"
+                          onClick={() => setMenuMobileOpen(false)}
+                        >
+                          {sub.translationKey
+                            ? translateMenu(sub.translationKey)
+                            : sub.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               );
             }
+            return (
+              <li
+                key={item.name}
+                className="border-b border-primary-content/20 last:border-b-0"
+              >
+                <a
+                  href={item.link}
+                  className="block py-3 text-[0.9375rem] text-primary-content no-underline hover:text-primary-content/80"
+                  onClick={() => setMenuMobileOpen(false)}
+                >
+                  {item.translationKey ? t(item.translationKey) : item.name}
+                </a>
+              </li>
+            );
           })}
         </ul>
       </div>
-      <div className='navbar-end px-4'>
-        {user ? (
-          <div>
-            <span className='px-2'>
-              <button
-                className='btn btn-default btn-sm'
-                onClick={() => handleLogout()}
-              >
-                logout
-              </button>
-              {/* <span className='px-2'>{user.name}</span> */}
-            </span>
-          </div>
-        ) : (
-          <a href='/login' className='btn btn-ghost btn-sm'>
-            Login
-          </a>
-        )}
-      </div>
-    </div>
+    </header>
   );
 }

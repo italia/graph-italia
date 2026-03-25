@@ -1,18 +1,230 @@
 @import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;700&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/forms';
+
+@theme {
+  --font-sans: "Titillium Web", ui-sans-serif, system-ui, sans-serif;
+  --font-serif:
+    "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+@plugin "daisyui" {
+  themes: italia, scuro;
+}
+
+@plugin "daisyui/theme" {
+  name: "italia";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: oklch(99% 0 0);
+  --color-base-200: oklch(98% 0 0);
+  --color-base-300: oklch(97% 0 0);
+  --color-base-content: #212529;
+  --color-primary: #0066cc;
+  --color-primary-content: #ffffff;
+  --color-secondary: #023466;
+  --color-secondary-content: #fff;
+  --color-accent: #0158b3;
+  --color-accent-content: #fff;
+  --color-neutral: #333333;
+  --color-neutral-content: #ffffff;
+  --color-info: #17a2b8;
+  --color-info-content: #ffffff;
+  --color-success: #28a745;
+  --color-success-content: #ffffff;
+  --color-warning: #ffc107;
+  --color-warning-content: #333333;
+  --color-error: #dc3545;
+  --color-error-content: #ffffff;
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "scuro";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(25.33% 0.016 252.42);
+  --color-base-200: oklch(23.26% 0.014 253.1);
+  --color-base-300: oklch(21.15% 0.012 254.09);
+  --color-base-content: oklch(97.807% 0.029 256.847);
+  --color-primary: oklch(54% 0.245 262.881);
+  --color-primary-content: oklch(96% 0.018 272.314);
+  --color-secondary: oklch(48% 0.243 264.376);
+  --color-secondary-content: oklch(94% 0.028 342.258);
+  --color-accent: oklch(37% 0.044 257.287);
+  --color-accent-content: oklch(92% 0.004 286.32);
+  --color-neutral: oklch(14% 0.005 285.823);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(21% 0.034 264.665);
+  --color-info-content: oklch(98% 0.003 247.858);
+  --color-success: oklch(62% 0.194 149.214);
+  --color-success-content: oklch(92% 0.004 286.32);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(98% 0.003 247.858);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(92% 0.004 286.32);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "bluscuro";
+  default: false;
+  prefersdark: false;
+  color-scheme: "dark";
+  --color-base-100: oklch(37% 0.146 265.522);
+  --color-base-200: oklch(28% 0.091 267.935);
+  --color-base-300: oklch(42% 0.199 265.638);
+  --color-base-content: oklch(97.807% 0.029 256.847);
+  --color-primary: oklch(54% 0.245 262.881);
+  --color-primary-content: oklch(96% 0.018 272.314);
+  --color-secondary: oklch(48% 0.243 264.376);
+  --color-secondary-content: oklch(94% 0.028 342.258);
+  --color-accent: oklch(37% 0.044 257.287);
+  --color-accent-content: oklch(92% 0.004 286.32);
+  --color-neutral: oklch(28% 0.091 267.935);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(21% 0.034 264.665);
+  --color-info-content: oklch(98% 0.003 247.858);
+  --color-success: oklch(62% 0.194 149.214);
+  --color-success-content: oklch(92% 0.004 286.32);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(98% 0.003 247.858);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(92% 0.004 286.32);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* react-data-table-component: the library applies opacity:0.7 on both the
+   sortable header AND its inner spans on hover/focus, compounding to ~0.49
+   effective opacity — well below WCAG 1.4.3 minimum contrast (4.5:1). */
+.rdt_TableCol_Sortable:hover,
+.rdt_TableCol_Sortable:focus {
+  opacity: 1 !important;
+}
+
+.rdt_TableCol_Sortable:hover span,
+.rdt_TableCol_Sortable:focus span {
+  opacity: 1 !important;
+}
+
+.rdt_TableCol_Sortable:focus-visible {
+  outline: 2px solid var(--color-primary, #0066cc);
+  outline-offset: -2px;
+}
 
 /* https://github.com/react-grid-layout/react-grid-layout/issues/1329#issuecomment-1518921042 */
 .react-resizable-hide .react-resizable-handle {
   display: none !important;
 }
 
-@layer base {
-  html {
-    font-family: "Titillium Web", system-ui, sans-serif;
-  }
+html {
+  font-family: "Titillium Web", system-ui, sans-serif;
+}
+
+/* Pulsanti Design System Italia – landing e quickstart (primary, primary outline, secondary outline)
+   @see https://designers.italia.it/design-system/componenti/buttons/
+   @see https://designers.italia.it/examples/bsi/componenti/buttons/varianti-di-colore.html */
+.landing .btn-italia,
+.quickstart-page .btn-italia,
+.generate-data-page .btn-italia {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.5rem;
+  font-family: "Titillium Web", system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+.landing .btn-italia-primary,
+.quickstart-page .btn-italia-primary,
+.generate-data-page .btn-italia-primary {
+  background-color: #0066cc;
+  color: #fff;
+  border-color: #0066cc;
+}
+.landing .btn-italia-primary:hover,
+.quickstart-page .btn-italia-primary:hover,
+.generate-data-page .btn-italia-primary:hover {
+  background-color: #004a99;
+  border-color: #004a99;
+  color: #fff;
+}
+.landing .btn-italia-primary-outline,
+.quickstart-page .btn-italia-primary-outline,
+.generate-data-page .btn-italia-primary-outline {
+  background-color: transparent;
+  color: #0066cc;
+  border-color: #0066cc;
+}
+.landing .btn-italia-primary-outline:hover,
+.quickstart-page .btn-italia-primary-outline:hover,
+.generate-data-page .btn-italia-primary-outline:hover {
+  background-color: rgba(0, 102, 204, 0.08);
+  color: #0066cc;
+  border-color: #0066cc;
+}
+.landing .btn-italia-secondary-outline,
+.quickstart-page .btn-italia-secondary-outline,
+.generate-data-page .btn-italia-secondary-outline {
+  background-color: transparent;
+  color: #17324d;
+  border-color: #5c6f82;
+}
+.landing .btn-italia-secondary-outline:hover,
+.quickstart-page .btn-italia-secondary-outline:hover,
+.generate-data-page .btn-italia-secondary-outline:hover {
+  background-color: rgba(92, 111, 130, 0.08);
+  color: #17324d;
+  border-color: #5c6f82;
+}
+.landing .btn-italia-lg,
+.quickstart-page .btn-italia-lg,
+.generate-data-page .btn-italia-lg {
+  padding: 0.625rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* Sezione Everything you need: scroll fluido, niente ritardi di rendering */
+.landing__features {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 @layer components {

@@ -1,4 +1,4 @@
-import { RenderChart, type FieldDataType } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
 
 function App() {
   const sampleData: FieldDataType = {
@@ -13,11 +13,11 @@ function App() {
       zoom: "none",
       stack: false,
       colors: [
-        "#003366",
-        "#004D99",
-        "#0066CC",
-        "#207AD5",
-        "#4392E0",
+        // "#003366",
+        // "#004D99",
+        // "#0066CC",
+        // "#207AD5",
+        // "#4392E0",
         "#D48D22",
         "#CC7A00",
         "#B36B00",
@@ -85,12 +85,11 @@ function App() {
 
   return (
     <div>
-      <RenderChart
-        {...(sampleData as FieldDataType)}
-        // getPicture={() => console.log("getPicture")}
-        // getInstance={(instance) => console.log("getInstance", instance)}
-      />
-      {/* <DataTable data={sampleData.data as MatrixType} /> */}
+      <ColorSchemeProvider scheme="dark">
+        <RenderChart
+          {...(sampleData as FieldDataType)}
+        />
+      </ColorSchemeProvider>
     </div>
   );
 }

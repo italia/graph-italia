@@ -1,39 +1,54 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { TFunction } from "i18next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useTranslation } from "react-i18next";
+import { z as zod } from "zod";
 import * as api from "../../lib/api";
 
-const passwordSchema = z
-  .string()
-  .min(8, { message: "Password must be at least 8 characters long" })
-  // .max(20, { message: maxLengthErrorMessage })
-  .refine((password) => /[A-Z]/.test(password), {
-    message: "Password must have at least one uppercase letter",
-  })
-  .refine((password) => /[a-z]/.test(password), {
-    message: "Password must have at least one lowercase letter",
-  })
-  .refine((password) => /[0-9]/.test(password), {
-    message: "Must contain a number",
-  })
-  .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: "Must contain at least one special character",
-  });
+const getUpdatePasswordSchema = (
+  z: typeof zod,
+  t: TFunction<"translation", undefined>,
+) => {
+  const passwordSchema = z
+    .string()
+    .min(8, {
+      message: t(`form.fields.password.errors.minLength`),
+    })
+    // .max(20, { message: maxLengthErrorMessage })
+    .refine((password) => /[A-Z]/.test(password), {
+      message: t(`form.fields.password.errors.uppercase`),
+    })
+    .refine((password) => /[a-z]/.test(password), {
+      message: t(`form.fields.password.errors.lowercase`),
+    })
+    .refine((password) => /[0-9]/.test(password), {
+      message: t(`form.fields.password.errors.number`),
+    })
+    .refine((password) => /[!@#$%^&*]/.test(password), {
+      message: t(`form.fields.password.errors.specialChar`),
+    });
 
-export const updatePasswordSchema = z
-  .object({
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+  const updatePasswordSchema = z
+    .object({
+      password: passwordSchema,
+      confirmPassword: passwordSchema,
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t(`form.errors.passwordDontMatch`),
+      path: ["confirmPassword"],
+    });
+
+  return updatePasswordSchema;
+};
 
 function ChangePassword({ onDone }: { onDone: () => void }) {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.auth.changePasswordForm",
+  });
+  const updatePasswordSchema = getUpdatePasswordSchema(zod, t);
   const {
     register,
     handleSubmit,
@@ -68,7 +83,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            Choose a new Password
+            {t(`header.label`)}
           </h2>
         </div>
 
@@ -80,7 +95,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                   htmlFor="password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Password
+                  {t(`form.fields.password.label`)}
                 </label>
                 <div className="mt-2">
                   <div className="relative">
@@ -88,7 +103,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                       id="hs-toggle-password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter a new password"
-                      className="w-full rounded-md block"
+                      className="input input-bordered w-full"
                       {...register("password")}
                     />
                     <button
@@ -157,13 +172,13 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                   htmlFor="confirm-password"
                   className="block text-sm font-medium leading-6 text-content"
                 >
-                  Confirm Password
+                  {t(`form.fields.confirmPassword.label`)}
                 </label>
                 <div className="mt-2">
                   <input
                     id="confirm-password"
                     type="password"
-                    className="w-full rounded-md"
+                    className="input input-bordered w-full"
                     placeholder=""
                     {...register("confirmPassword")}
                   />
@@ -178,7 +193,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
               {message && <p className="text-error">{message}</p>}
               <div>
                 <button type="submit" className="btn btn-primary w-full">
-                  Change Password
+                  {t(`form.actions.submit.label`)}
                 </button>
               </div>
             </form>

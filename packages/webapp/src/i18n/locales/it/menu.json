@@ -1,0 +1,29 @@
+{
+    "menu": {
+        "items": {
+            "charts": {
+                "label": "Grafici"
+            },
+            "tools": {
+                "label": "Strumenti",
+                "subItems": {
+                    "quickStart": {
+                        "label": "Come Iniziare"
+                    },
+                    "generateData": {
+                        "label": "Genera dati di esempio"
+                    },
+                    "generatePois": {
+                        "label": "Genera Punti su mappa"
+                    },
+                    "loadRemoteData": {
+                        "label": "Carica dati da un url"
+                    },
+                    "geo": {
+                        "label": "Preview dei file GeoJson"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import { FieldDataType, RemoteStoreStateType } from "../types";
+import type { FieldDataType, RemoteStoreStateType } from "../types";
 
-const useDashboardsStoreState = create<RemoteStoreStateType>()((set, get) => ({
-  list: [],
+const useDashboardsStoreState = create<RemoteStoreStateType>()((set) => ({
+  list: [] as FieldDataType[],
   addItem: (item: FieldDataType) => {
     set((state) => ({ list: [...state.list, item] }));
   },
   removeItem: (id: string) => {
     set((state) => ({
-      list: state.list.filter((i) => i.id !== id),
+      list: state.list.filter((i: FieldDataType) => i.id !== id),
     }));
   },
   updateItem: (newItem: FieldDataType) =>
@@ -21,7 +21,7 @@ const useDashboardsStoreState = create<RemoteStoreStateType>()((set, get) => ({
       }),
     })),
   setList: (items: FieldDataType[]) => {
-    set((state) => ({ list: [...items] }));
+    set(() => ({ list: [...items] }));
   },
 }));
 export default useDashboardsStoreState;

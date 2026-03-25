@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom/client";
+import "./i18n/config";
 
 import "./style/index.css";
 
@@ -9,10 +10,10 @@ import router from "./router";
 // This allows using the same build image across different environments
 async function loadRuntimeConfig() {
   try {
-    const response = await fetch('/config.json');
+    const response = await fetch("/config.json");
     if (response.ok) {
       const config = await response.json();
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.__ENV__ = config;
       }
       return config;
@@ -20,7 +21,7 @@ async function loadRuntimeConfig() {
   } catch (error) {
     // config.json not available (e.g., in local development)
     // Fall back to build-time environment variables
-    console.debug('Runtime config not available, using environment variables');
+    console.debug("Runtime config not available, using environment variables");
   }
   return null;
 }
@@ -32,6 +33,6 @@ function App() {
 // Load configuration before rendering the app
 loadRuntimeConfig().then(() => {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <App />
+    <App />,
   );
 });

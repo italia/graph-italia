@@ -1,0 +1,53 @@
+{
+    "back": "Back to home",
+    "title": "Come creare grafici con Dataviz",
+    "description": "Creare grafici usando Dataviz è semplice e puoi farlo usando dati che possiedi oppure da una banca dati.",
+    "steps": {
+        "step1": {
+            "title": "1 - Accesso e creazione nuovo grafico",
+            "text": "Accedi al tuo account Dataviz. Nella dashboard, clicca sul pulsante <strong>\"Create New Chart\"</strong> per iniziare un nuovo progetto.",
+            "listItems": {
+                "item1": "Log in to your Dataviz account.",
+                "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
+            }
+        },
+        "step2": {
+            "title": "2 - Carica i tuoi dati",
+            "text": "Se hai già una base dati per creare il grafico, carica il file in versione CSV. Se non hai ancora dei dati, puoi usare: <strong>Dati di esempio</strong>: usa la base dati fornita da Dataviz (opzione <strong>\"Usa sample data”</strong>); oppure, <strong>Generare dati</strong>: vai nella sezione <strong>Tools</strong> e poi su <strong>Generate Data</strong> per creare automaticamente un file CSV da caricare sulla piattaforma. ",
+            "listItems": {
+                "item1": {
+                    "text": "If you don't have data yet, you can",
+                    "items": {
+                        "item1": "<strong>Sample data</strong>: use the datasets provided by Dataviz (option \"Use Sample Data\").",
+                        "item2": "<strong>Generate data</strong>: from the Tools section → <a>Generate Data</a> to create a CSV automatically.",
+                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Dataviz will parse it and display the data in a table."
+                    }
+                }
+            }
+        },
+        "step3": {
+            "title": "3 - Scegli il tipo di grafico e configura",
+            "text": "Dopo aver caricato i dati, scegli la tipologia di grafico che vuoi creare: barre, linee, a torta o mappa (Bar, Line, Pie o Geomap). Puoi ",
+            "listItems": {
+                "item1": "After uploading your data, choose the chart type: Bar, Line, Pie, or Geomap.",
+                "item2": "Customize: select columns, X/Y axes, colors, and labels."
+            }
+        },
+        "step4": {
+            "title": "4 - Salva il tuo grafico",
+            "text": "Clicca su <strong>\"Save”</strong> per salvare il grafico nella tua dashboard.",
+            "listItems": {
+                "item1": "Click <strong>\"Save\"</strong> to save your chart to your dashboard.",
+                "item2": "You can reopen it, edit it, publish it, and get the embed code to add it to your website."
+            }
+        }
+    },
+    "footer": {
+        "text": "Una volta salvato, potrai riaprirlo, modificarlo, pubblicarlo e ottenere la stringa di codice per inserirlo all'interno del tuo sito. "
+    },
+    "actions": {
+        "getStarted": {
+            "label": "Accedi e inizia"
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import type { FieldDataType, KpiItemType } from "../../types";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import Kpi from "./KpiItem";
 import "./kpi.css";
 
@@ -32,14 +33,18 @@ export default function KpiGroup({
       minHeight: rowHeight * hFactor,
     };
   }
+
+  const resolvedTheme = useResolvedTheme();
+  // const background = data.config.background || "#F2F7FC";
+
   return (
     <div
       id={id}
-      className={`dv-kpi-group ${kpiGroupClass}`}
-      style={{ ...divStyle, background: data.config.background || "#F2F7FC" }}
+      className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
+      style={{ ...divStyle, backgroundColor: "transparent" }}
     >
       {dataSource.map((item: KpiItemType, index: number) => (
-        <div className="dv-kpi-group-item" key={`${index}-${item.title}`}>
+        <div className={`${resolvedTheme} dv-kpi-group-item`} key={`${index}-${item.title}`}>
           <Kpi data={item} />
         </div>
       ))}

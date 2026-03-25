@@ -1,15 +1,36 @@
+import { Toaster } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { useSettingsStore } from "../../lib/store/settings_store";
+import { useUserStore } from "../../lib/store/user_store";
 import Footer from "./Footer";
-import Header from "./Header";
+import FullHeader from "./FullHeader";
+import SlimHeader from "./Header";
+
 function Layout({ children }: any) {
+  const user = useUserStore((s) => s.user);
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.layout",
+  });
+  const { settings } = useSettingsStore();
+  const currentTheme = settings?.preferredTheme === "dark" ? "scuro" : "italia";
   return (
     <div
-      data-theme="italia"
+      data-theme={currentTheme}
       className="w-full min-h-screen flex flex-col"
       style={{ overflowX: "clip" }}
     >
-      <Header />
-      <div className="p-5 flex-grow">{children}</div>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-content focus:rounded focus:text-sm focus:font-semibold"
+      >
+        {t(`sr.label`)}
+      </a>
+      {user ? <SlimHeader /> : <FullHeader />}
+      <main id="main-content" className="flex-grow bg-base-200">
+        {children}
+      </main>
       <Footer />
+      <Toaster />
     </div>
   );
 }
