@@ -34,8 +34,43 @@ export function DataTableContent({
   enableColumnReorder = false,
   reorderColumnAriaLabel = "Riordina colonna",
 }: DataTableContentProps) {
+  const handleWrapperKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      el.scrollBy({ left: 80, behavior: "smooth" });
+      return;
+    }
+
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      el.scrollBy({ left: -80, behavior: "smooth" });
+      return;
+    }
+
+    if (e.key === "Home") {
+      e.preventDefault();
+      el.scrollTo({ left: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (e.key === "End") {
+      e.preventDefault();
+      el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+    }
+  };
+
   const renderTable = () => (
-    <div className="mid-table-wrapper" ref={wrapperRef}>
+    <div
+      className="mid-table-wrapper"
+      ref={wrapperRef}
+      tabIndex={0}
+      role="region"
+      aria-label="Tabella dati"
+      onKeyDown={handleWrapperKeyDown}
+    >
       <table className="mid-table">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -64,6 +99,9 @@ export function DataTableContent({
                     | "desc"
                     | false;
                   const sortHandler = header.column.getToggleSortingHandler();
+                  const headerText = String(
+                    header.column.columnDef.header ?? header.id
+                  );
 
                   return (
                     <th
@@ -76,24 +114,22 @@ export function DataTableContent({
                           ? "descending"
                           : "none"
                       }
-                      onClick={(e) => {
-                        sortHandler?.(e);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          sortHandler?.(e as any);
-                        }
-                      }}
                     >
                       {header.isPlaceholder ? null : (
-                        <span style={{ cursor: "pointer" }}>
+                        <button
+                          type="button"
+                          className="mid-table-sort-btn"
+                          onClick={(e) => {
+                            sortHandler?.(e);
+                          }}
+                          aria-label={`Ordina per ${headerText}`}
+                        >
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}{" "}
                           {getSortIndicator(sorted)}
-                        </span>
+                        </button>
                       )}
                     </th>
                   );
