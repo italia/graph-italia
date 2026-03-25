@@ -57,30 +57,33 @@ app.use(
 	}),
 );
 
+
 // CORS (only in dev)
-if (isDev) {
-	app.use(
-		"/*",
-		cors({
-			origin: whitelist,
-			credentials: true,
-			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization"],
-		}),
-	);
-}
+app.use(cors());
+// if (isDev) {
+// 	app.use(
+// 		"/*",
+// 		cors({
+// 			origin: whitelist,
+// 			credentials: true,
+// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+// 			allowHeaders: ["Content-Type", "Authorization"],
+// 		}),
+// 	);
+// }
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Health check endpoint (minimal response for k8s liveness probes)
-app.get("/", (c) => c.json({ 
-	status: "ok", 
-	version: { 
-		sha: BUILD_SHA, 
-		buildTime: BUILD_TIME 
-	} 
+app.get("/", (c) => c.json({
+	status: "ok",
+	version: {
+		sha: BUILD_SHA,
+		buildTime: BUILD_TIME
+	}
 }));
 
 // Deep health check for k8s readiness probes (verifies database connection)
@@ -88,29 +91,29 @@ app.get("/health/ready", async (c) => {
 	try {
 		// Import prisma here to test if the client works
 		const { prisma } = await import("./lib/db/prisma.ts");
-		
+
 		// Execute a simple query to verify database connection
 		await prisma.$queryRaw`SELECT 1`;
-		
-		return c.json({ 
+
+		return c.json({
 			status: "ready",
 			database: "connected",
-			version: { 
-				sha: BUILD_SHA, 
-				buildTime: BUILD_TIME 
+			version: {
+				sha: BUILD_SHA,
+				buildTime: BUILD_TIME
 			}
 		});
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : "Unknown error";
 		logger.error("Health check failed: database connection error", { error: errorMessage });
-		
-		return c.json({ 
+
+		return c.json({
 			status: "not_ready",
 			database: "disconnected",
 			error: errorMessage,
-			version: { 
-				sha: BUILD_SHA, 
-				buildTime: BUILD_TIME 
+			version: {
+				sha: BUILD_SHA,
+				buildTime: BUILD_TIME
 			}
 		}, 503);
 	}
