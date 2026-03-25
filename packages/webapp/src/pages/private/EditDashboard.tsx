@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Responsive, } from "react-grid-layout";
+import React, { useEffect, useMemo, useState } from "react";
+import { WidthProvider, Responsive } from "react-grid-layout/legacy";
 import { Link, useParams } from "react-router-dom";
-import Layout from "../../components/layout";
+import AppLayout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
 import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
@@ -14,264 +14,317 @@ import useDashboardEditStore, {
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { HOME_ROUTE } from "../../router";
 
-const ROW_HEIGHT = 360;
-const WIDGET_HEIGHT = 48;
+// ─── Grid constants ───────────────────────────────────────────────────────────
+// 12 cols everywhere (bootstrap-style). User picks conceptual spans 1–3.
+// lg:  span-1 = 4 units (1/3), span-2 = 8 units (2/3), span-3 = 12 (full)
+// md:  span-1 = 6 units (1/2), span-2 = 12 (full),     span-3 = 12 (full)
+// sm+: always 12 units (full width)
 
+const TOTAL_COLS = 12;
+const ALL_COLS = { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 };
+const BREAKPOINTS = { lg: 1200, md: 768, sm: 480, xs: 320, xxs: 0 };
+const ROW_HEIGHT = 380;
+const TOOLBAR_HEIGHT = 40;
+const MARGIN = 16;
+
+/** Span (1-3) → 12-col grid units per breakpoint */
+const SPAN_UNITS: Record<string, number[]> = {
+  //          span: 1   2   3
+  lg: [4, 8, 12],
+  md: [6, 12, 12],
+  sm: [12, 12, 12],
+  xs: [12, 12, 12],
+  xxs: [12, 12, 12],
+};
+
+function toGridW(span: number, bp: string): number {
+  return (SPAN_UNITS[bp] ?? SPAN_UNITS.sm)[Math.min(span, 3) - 1] ?? TOTAL_COLS;
+}
+
+function fromGridW(gridW: number): number {
+  // 4 → 1, 8 → 2, 12 → 3
+  return Math.max(1, Math.min(3, Math.round(gridW / 4)));
+}
+
+/**
+ * Generate RGL layouts for all breakpoints from the stored lg layout.
+ * lg layout uses stored x/y directly (they're in 12-col units).
+ * Other breakpoints re-pack items by their display order (sort by y,x).
+ */
+function buildLayouts(items: TLayoutItem[]) {
+  // lg: restore 12-col units from conceptual span
+  const lgRgl = items.map((item) => ({
+    i: item.i,
+    x: item.x,
+    y: item.y,
+    w: toGridW(item.w, "lg"),
+    h: item.h,
+  }));
+
+  function packBp(bp: string) {
+    const sorted = [...items].sort((a, b) =>
+      a.y !== b.y ? a.y - b.y : a.x - b.x
+    );
+    let x = 0, y = 0, rowMaxH = 1;
+    return sorted.map((item) => {
+      const w = toGridW(item.w, bp);
+      if (x + w > TOTAL_COLS) {
+        x = 0;
+        y += rowMaxH;
+        rowMaxH = item.h;
+      } else {
+        rowMaxH = Math.max(rowMaxH, item.h);
+      }
+      const out = { i: item.i, x, y, w, h: item.h };
+      x += w;
+      return out;
+    });
+  }
+
+  return {
+    lg: lgRgl,
+    md: packBp("md"),
+    sm: packBp("sm"),
+    xs: packBp("xs"),
+    xxs: packBp("xxs"),
+  };
+}
+
+// ─── WidthProvider wraps Responsive (legacy API, same as example 14) ─────────
+const ResponsiveGrid = WidthProvider(Responsive);
+
+// ─── ChartSelection ───────────────────────────────────────────────────────────
 interface ChartSelectionProps {
   charts: Record<string, TChartRef>;
   onSelect: (chart?: TChartRef) => void;
 }
 
-function ChartSelection(props: ChartSelectionProps) {
-  const [charts, setCharts] = useState<Array<ChartLookup>>([]);
-  const [chart, setChart] = useState<TChartRef>();
+function ChartSelection({ charts: assignedCharts, onSelect }: ChartSelectionProps) {
+  const [available, setAvailable] = useState<ChartLookup[]>([]);
 
-  const mergeCharts = (charts: Array<ChartLookup>) => {
-    const idsToRemove = new Set(Object.values(props.charts).map((m) => m.id));
-    const filteredCharts = charts.filter((c) => !idsToRemove.has(c.id));
-    setCharts(filteredCharts);
-  };
-
-  async function fetchCharts() {
-    try {
-      const data = await api.getCharts();
-      mergeCharts(data);
-    } catch (error) {
-      console.error("error fetching charts", error);
-    }
-  }
   useEffect(() => {
-    fetchCharts();
-  }, []);
+    const usedIds = new Set(Object.values(assignedCharts).map((c) => c.id));
+    api.getCharts().then((list: ChartLookup[]) =>
+      setAvailable(list.filter((c) => !usedIds.has(c.id)))
+    ).catch(console.error);
+  }, [assignedCharts]);
 
   return (
-    <div>
-      {charts && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "start",
-          }}
-        >
-          <label htmlFor="select-chart" style={{ width: "200px" }}>Select a chart type:</label>
-          <select
-            id="select-chart"
-            className="select select-primary my-2 p-2"
-            style={{ width: "100%" }}
-            value={chart?.id}
-            onChange={(e) => {
-              const chartId = e.target.value;
-              setChart({ id: chartId });
-              const chart = charts.find((c) => c.id === chartId);
-              props.onSelect(chart);
-            }}
-          >
-            <option value="">{`-select a chart-`}</option>
-            {charts.map((c, index) => {
-              return (
-                <option key={`${c.id}-${index}`} value={c.id}>
-                  {c.name}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-      )}
+    <div className="flex flex-col gap-2 min-w-[260px]">
+      <label htmlFor="select-chart" className="label-text">Select a chart:</label>
+      <select
+        id="select-chart"
+        className="select select-primary w-full"
+        defaultValue=""
+        onChange={(e) => {
+          const found = available.find((c) => c.id === e.target.value);
+          onSelect(found);
+        }}
+      >
+        <option value="" disabled>— select a chart —</option>
+        {available.map((c) => (
+          <option key={c.id} value={c.id}>{c.name}</option>
+        ))}
+      </select>
     </div>
   );
 }
-// narrow the props if you want stronger typing;
-const ResponsiveReactGridLayout = Responsive;
-const cols = { xl: 3, lg: 3, md: 2, sm: 1, xs: 1, xxs: 1 } as const;
 
+// ─── SlotToolbar ──────────────────────────────────────────────────────────────
+function SlotToolbar({
+  item,
+  onDelete,
+  onAddChart,
+  onSizeChange,
+}: {
+  item: TLayoutItem;
+  onDelete: () => void;
+  onAddChart: () => void;
+  onSizeChange: (colSpan: number, rowSpan: number) => void;
+}) {
+  return (
+    <div
+      className="rgl-drag-handle flex items-center gap-1 px-2 bg-base-200 border-b shrink-0 cursor-move select-none"
+      style={{ height: TOOLBAR_HEIGHT }}
+    >
+      <span className="badge badge-error badge-xs font-mono">{item.i}</span>
+
+      <span className="text-xs opacity-50 ml-1">W</span>
+      {[1, 2, 3].map((span) => (
+        <button
+          key={span}
+          type="button"
+          className={`btn btn-xs ${item.w === span ? "btn-primary" : "btn-ghost"}`}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() => onSizeChange(span, item.h)}
+        >
+          {span}
+        </button>
+      ))}
+
+      <span className="text-xs opacity-50 ml-1">H</span>
+      {[1, 2].map((rows) => (
+        <button
+          key={rows}
+          type="button"
+          className={`btn btn-xs ${item.h === rows ? "btn-primary" : "btn-ghost"}`}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() => onSizeChange(item.w, rows)}
+        >
+          {rows}
+        </button>
+      ))}
+
+      <button
+        type="button"
+        className="btn btn-xs btn-ghost ml-1"
+        title="Assign chart"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={onAddChart}
+      >
+        ✎
+      </button>
+      <button
+        type="button"
+        className="btn btn-xs btn-error ml-auto"
+        title="Remove slot"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={onDelete}
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 function DashboardEditPage() {
   const { id } = useParams();
-
   const {
-    layout,
-    show,
-    charts,
-    name,
-    description,
-    isLoading,
-    error,
-    loaded,
-    setBreakpoint,
-    setSelectedChart,
-    setLayout,
-    addItem,
-    deleteItem,
-    showAddModal,
-    closeAddModal,
-    load,
-    reload,
-    save,
+    layout, show, charts, name, description,
+    isLoading, error, loaded,
+    setBreakpoint, setSelectedChart, setLayout,
+    addItem, deleteItem, updateItemSize,
+    showAddModal, closeAddModal,
+    load, reload, save,
   } = useDashboardEditStore();
 
-  function addChartHandler(item: string) {
-    showAddModal(item);
-  }
-
-  function addItemHandler() {
-    addItem();
-  }
-
-  function deleteItemHandler(id: string) {
-    deleteItem(id);
-  }
-
   async function saveHandler() {
-    const response = await save();
-    if (response) {
-      reload();
-    }
-  }
-
-  function resetHandler() {
-    reload();
+    const ok = await save();
+    if (ok) reload();
   }
 
   React.useEffect(() => {
-    if (id) {
-      load(id);
-    }
-  }, [load]);
+    if (id) load(id);
+  }, [id, load]);
 
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
 
+  // Memoize layouts to avoid rebuilding on every render
+  const layouts = useMemo(() => buildLayouts(layout), [layout]);
+
   return (
-    <Layout>
+    <AppLayout>
       <div className="p-4">
-        <div className="flex justify-between items-center">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4">
           <Link to={HOME_ROUTE} className="text-blue-500 hover:underline">
             &lt; Back to the list
           </Link>
-          <div className="ml-auto flex space-x-2">
-            <button type="button" onClick={resetHandler} className="btn btn-primary">
-              Reset
-            </button>
-            <button type="button" onClick={saveHandler} className="btn btn-primary">
-              Save
-            </button>
+          <div className="flex gap-2">
+            <button type="button" onClick={reload} className="btn btn-outline btn-sm">Reset</button>
+            <button type="button" onClick={saveHandler} className="btn btn-primary btn-sm">Save</button>
           </div>
         </div>
+
         {isLoading && <Loading />}
-        {error && (
-          <div role="alert" className="alert alert-error">
-            {error.message}
-          </div>
-        )}
+        {error && <div role="alert" className="alert alert-error">{error.message}</div>}
+
         {loaded && (
           <>
             <h1 className="text-4xl font-bold">{name}</h1>
-            <h4 className="text-xl">{description}</h4>
-            <div className="flex flex-wrap items-center">
-              <button
-                type="button"
-                className="m-2 btn btn-xs btn-primary"
-                onClick={addItemHandler}
-              >
-                Add +
-              </button>
-              {layout.map((l) => (
-                <button
-                  type="button"
-                  key={l.i}
-                  className="m-2 btn btn-xs btn-error"
-                  onClick={() => deleteItemHandler(l.i)}
-                >
-                  {"X "}{l.i}
-                </button>
-              ))}
-            </div>
-            <div className="relative min-h-[700px] bg-base-100">
-              <ResponsiveReactGridLayout
-                onLayoutChange={(layout) => setLayout([...layout] as TLayoutItem[])}
+            <h4 className="text-xl mb-4">{description}</h4>
+
+            <button type="button" className="btn btn-sm btn-primary mb-4" onClick={addItem}>
+              Add slot +
+            </button>
+
+            {/* Max-width container — ResponsiveGrid measures this element's width */}
+            <div style={{ margin: "0 auto" }} className="bg-blue-100">
+              <ResponsiveGrid
+                layouts={layouts}
+                breakpoints={BREAKPOINTS}
+                cols={ALL_COLS}
+                rowHeight={ROW_HEIGHT}
+                margin={[MARGIN, MARGIN]}
+                draggableHandle=".rgl-drag-handle"
+                onLayoutChange={(_currentLayout, allLayouts) => {
+                  if (!allLayouts.lg) return;
+                  // Convert 12-col grid units back to conceptual spans
+                  const next = allLayouts.lg.map((item) => ({
+                    i: item.i as TLayoutItem["i"],
+                    x: item.x,
+                    y: item.y,
+                    w: fromGridW(item.w),
+                    h: Math.max(1, Math.min(4, item.h)),
+                  }));
+                  setLayout(next);
+                }}
                 onBreakpointChange={setBreakpoint}
-                className="react-grid-layout"
-                layouts={{ lg: layout }}
-                cols={cols}
-                margin={[10, 10]}
-                rowHeight={ROW_HEIGHT + WIDGET_HEIGHT}
-                width={1200}
               >
                 {layout.map((item) => {
                   const currentChart = charts[item.i] as FieldDataType;
-                  // const info: InfosType = {
-                  //   text: currentChart.description || "",
-                  //   title: currentChart.name || ""
+                  // Height of the chart area = total slot height minus toolbar
+                  const chartHeight = ROW_HEIGHT * item.h + MARGIN * (item.h - 1) - TOOLBAR_HEIGHT - 50;
 
-                  //   // labelSource ?: string;
-                  //   // sourceTextInfo ?: string;
-                  //   // labelShare ?: string;
-                  //   // labelUpdated ?: string;
-                  //   // sharedUrl ?: string;
-                  //   // labelTabInfo ?: string;
-                  //   // labelTabChart ?: string;
-                  //   // labelTabData ?: string;
-                  //   // labelDownloadData ?: string;
-                  //   // labelDownloadImage ?: string;
-                  //   // chartFooterText ?: string;
-                  // }
                   return (
                     <div
-                      className="react-grid-item overflow-hidden"
                       key={item.i}
+                      className="flex flex-col overflow-hidden border rounded-lg bg-base-100 shadow-sm"
                     >
-                      {currentChart ? (
-                        <>
-                          <div>
-                            <div className="flex justify-between relative">
-                              <span className="absolute z-10 text-right rounded-md bg-red-700 py-0.5 px-2.5 border border-transparent text-sm text-white transition-all shadow-sm">
-                                {item.i}
-                              </span>
-                            </div>
-                          </div>
+                      <SlotToolbar
+                        item={item}
+                        onDelete={() => deleteItem(item.i)}
+                        onAddChart={() => showAddModal(item.i)}
+                        onSizeChange={(colSpan, rowSpan) => updateItemSize(item.i, colSpan, rowSpan)}
+                      />
+                      <div style={{ height: chartHeight, overflow: "hidden" }}>
+                        {currentChart ? (
                           <ColorSchemeProvider scheme={scheme}>
-                            {/* <ChartWrapper
-                              id={currentChart.id}
-                              data={currentChart}
-                              info={info}
-                              rowHeight={ROW_HEIGHT}
-                              hFactor={item.h}
-                              showHeading={false}
-                            /> */}
                             <RenderChart
                               {...currentChart}
+                              rowHeight={chartHeight}
+                              hFactor={1}
                             />
                           </ColorSchemeProvider>
-                        </>
-                      ) : (
-                        <button
-                          type="button"
-                          className="m-2 btn btn-xs btn-primary"
-                          onClick={() => addChartHandler(item.i)}
-                        >
-                          Add Chart +
-                        </button>
-                      )}
+                        ) : (
+                          <div className="flex items-center justify-center h-full text-base-content/40">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline"
+                              onClick={() => showAddModal(item.i)}
+                            >
+                              Add Chart +
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )
+                  );
                 })}
-              </ResponsiveReactGridLayout>
+              </ResponsiveGrid>
             </div>
           </>
         )}
+
         {show && (
-          <Dialog
-            toggle={show}
-            title="Select a chart"
-            callback={() => {
-              closeAddModal();
-            }}
-          >
+          <Dialog toggle={show} title="Select a chart" callback={closeAddModal}>
             <ChartSelection charts={charts} onSelect={setSelectedChart} />
           </Dialog>
         )}
       </div>
-    </Layout>
+    </AppLayout>
   );
 }
 
