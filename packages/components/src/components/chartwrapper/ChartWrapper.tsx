@@ -24,6 +24,7 @@ export type ChartWrapperProps = {
   enableDownloadImage?: boolean;
   enableDownloadData?: boolean;
   shareFunction?: (id: string) => void;
+  showHeading?: boolean
 };
 export default function ChartWrapper(props: ChartWrapperProps) {
 
@@ -36,6 +37,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     enableDownloadData = true,
     enableDownloadImage = true,
     spritePath = "/sprites.svg",
+    showHeading = true
   } = props;
 
   let { id = (Math.random() + 1).toString(36).substring(7) } = props;
@@ -61,6 +63,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   } = info;
 
   const tabs = [labelTabChart, labelTabData, labelTabInfo];
+  const downloadDataText = `${labelDownloadData || "Download"} CSV`;
   const { config, chart } = data;
   const [echartInstance, setEchartInstance] = useState<EChartsType | null>(
     null
@@ -96,8 +99,9 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     //   backgroundColor: data.config.background || "#F2F7FC",
     // }}
     >
-      {title && <h3 className="cw-title">{title}</h3>}
-      {subTitle && (
+
+      {showHeading && title && <h3 className="cw-title">{title}</h3>}
+      {showHeading && subTitle && (
         <p
           className="cw-subtitle"
           dangerouslySetInnerHTML={{ __html: `${subTitle}` }}
@@ -105,29 +109,28 @@ export default function ChartWrapper(props: ChartWrapperProps) {
       )}
 
       <div className="cw-tabs">
-        <ul className="cw-tablist" role="tablist" aria-label={`tablist-${id}`}>
+        <div className="cw-tablist" role="tablist" aria-label={`tablist-${id}`}>
           {tabs.map((name, i) => {
             const tabId = `tab${i + 1}-${id}`;
             return (
-              <li key={`${id}-tab_${i}`}>
-                <button
-                  id={tabId}
-                  role="tab"
-                  type="button"
-                  className="cw-tab"
-                  aria-controls={`${tabId}-content`}
-                  aria-selected={activeTab === i}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                  }}
-                  onClick={() => setActiveTab(i)}
-                >
-                  {name}
-                </button>
-              </li>
+              <button
+                key={`${id}-tab_${i}`}
+                id={tabId}
+                role="tab"
+                type="button"
+                className="cw-tab"
+                aria-controls={`${tabId}-content`}
+                aria-selected={activeTab === i}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                }}
+                onClick={() => setActiveTab(i)}
+              >
+                {name}
+              </button>
             );
           })}
-        </ul>
+        </div>
 
         {/* Tab panels */}
         <div className="cw-panels" style={{ height: panelHeight }}>
@@ -206,11 +209,11 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             <button
               type="button"
               className="cw-btn cw-btn--primary"
-              title={labelDownloadData || "Download CSV"}
-              aria-label={labelDownloadData || "Download CSV"}
+              title={downloadDataText}
+              aria-label={downloadDataText}
               onClick={() => downloadCSV(csvData, "" + id)}
             >
-              {labelDownloadData || "Download"} CSV
+              {downloadDataText}
               <svg
                 className="cw-icon"
                 focusable="false"

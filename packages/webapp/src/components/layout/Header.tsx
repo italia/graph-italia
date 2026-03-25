@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import type { MenuSubItem } from "../../router";
-import { MENU } from "../../router";
-import { useSettingsStore } from "../../store/settings_store.ts";
-import { useUserStore } from "../../store/user_store";
-import ThemeSwitcherComponent from "../ThemeSwitcherComponent.tsx";
+import { MENU, ROUTES } from "../../router";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
+import { useUserStore } from "../../lib/store/user_store.ts";
+import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
+import LanguageSwitcher from "./LanguageSwitcher.tsx";
 
 export default function SlimHeader() {
   const { t } = useTranslation("components", {
@@ -14,11 +15,14 @@ export default function SlimHeader() {
   const { t: translateMenu } = useTranslation("menu");
   const { user, clearUser } = useUserStore();
   const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
+  const [dropdownUserOpen, setDropdownUserOpen] = useState(false);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
   const dropdownToolsRef = useRef<HTMLLIElement>(null);
+  const dropdownUserRef = useRef<HTMLDivElement>(null);
 
-  const { settings, setTheme } = useSettingsStore();
+  const { settings, setTheme, setLanguage } = useSettingsStore();
   const theme = settings?.preferredTheme;
+  const language = settings?.preferredLanguage ?? "it";
 
   const handleLogout = async () => {
     try {
@@ -34,11 +38,11 @@ export default function SlimHeader() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      if (
-        dropdownToolsRef.current &&
-        !dropdownToolsRef.current.contains(target)
-      ) {
+      if (dropdownToolsRef.current && !dropdownToolsRef.current.contains(target)) {
         setDropdownToolsOpen(false);
+      }
+      if (dropdownUserRef.current && !dropdownUserRef.current.contains(target)) {
+        setDropdownUserOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -72,10 +76,11 @@ export default function SlimHeader() {
 
           {/* Brand */}
           <a
-            href="/"
-            className="text-primary-content text-base font-normal no-underline hover:text-primary-content/80 leading-snug"
+            href={ROUTES.root}
+            className="text-primary-content text-base font-normal no-underline  cursor leading-snug flex items-center   gap-2"
           >
-            {t(`brand.title`)}
+            <svg className="w-8 h-8 shrink-0 text-primary-content" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+            <span className="font-semibold text-lg">{t(`brand.title`)}</span>
           </a>
 
           {/* Separator – desktop only */}
@@ -150,31 +155,73 @@ export default function SlimHeader() {
           </nav>
         </div>
 
-        {/* Right: theme switcher + user/login */}
-        <div className="navbar-end flex items-center gap-2">
-          <div className="  rounded px-2">
+        {/* Right: language + theme + user/login */}
+        <div className="navbar-end flex items-center gap-4">
+          <div className="rounded px-2">
             <ThemeSwitcherComponent
               currentTheme={theme as "light" | "dark"}
               handleChange={setTheme}
             />
           </div>
+          <LanguageSwitcher
+            currentLanguage={language}
+            handleChange={setLanguage}
+          />
+
 
           {user ? (
-            <span className="flex items-center gap-4">
-              {/* <span className="hidden md:inline text-sm text-primary-content/85">
-                {user.name}
-              </span> */}
+            <div className="relative" ref={dropdownUserRef}>
               <button
                 type="button"
-                className="btn btn-outline"
-                onClick={handleLogout}
+                className="flex items-center justify-center w-8 h-8 rounded-full text-primary-content hover:bg-primary-content/15 bg-transparent border-none cursor-pointer transition-colors duration-150"
+                aria-label={user.name}
+                aria-expanded={dropdownUserOpen}
+                aria-haspopup="true"
+                onClick={() => setDropdownUserOpen((v) => !v)}
               >
-                {t(`actions.logout.label`)}
+                <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
               </button>
-            </span>
+
+              {dropdownUserOpen && (
+                <ul className="absolute right-0 top-full mt-1 z-[1000] min-w-48 py-2 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0">
+                  <li className="px-4 py-2 text-xs text-base-content/50 border-b border-base-200 select-none">
+                    {user.name}
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className="w-full text-left block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      onClick={() => { setDropdownUserOpen(false); handleLogout(); }}
+                    >
+                      {t(`actions.logout.label`)}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className="w-full text-left block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      onClick={() => setDropdownUserOpen(false)}
+                    >
+                      {t(`actions.askMyData.label`)}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      className="w-full text-left block px-4 py-2 text-sm text-error no-underline hover:bg-error/10 bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      onClick={() => setDropdownUserOpen(false)}
+                    >
+                      {t(`actions.requestAccountDeletion.label`)}
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
           ) : (
             <a
-              href="/login"
+              href={ROUTES.login}
               className="btn btn-sm btn-ghost border border-primary-content/40 text-primary-content hover:bg-primary-content/20"
               aria-label="Accedi"
             >

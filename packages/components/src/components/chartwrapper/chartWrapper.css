@@ -36,16 +36,12 @@
   border-bottom: 1px solid #e5e7eb; /* gray-200 */
   padding: 0;
   margin: 0;
-  list-style: none;
-}
-
-.cw-tablist > li {
-  flex: 1 1 0;
-  display: flex;
-  min-width: 0;
+  width: 100%;
 }
 
 .cw-tab {
+  flex: 1 1 0;
+  min-width: 0;
   position: relative;
   appearance: none;
   background: transparent;

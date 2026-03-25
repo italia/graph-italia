@@ -3,7 +3,7 @@ import DataTableComponent, { type TableColumn } from "react-data-table-component
 import { useTranslation } from "react-i18next";
 import type { MatrixType } from "dataviz-components";
 
-import { useSettingsStore } from "../store/settings_store.ts";
+import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import { useAriaSort } from "../hooks/useAriaSort";
 import registerDarkTheme from "./layout/DataTableDarkTheme";
@@ -99,6 +99,7 @@ export default function DataTable({
     if (transposed?.[0]) {
       setVisibleColumns(new Set(transposed[0].map(String)));
     }
+    onApplyData?.(transposed);
   }
 
   function internalReset() {
@@ -225,6 +226,7 @@ export default function DataTable({
             >
               {t("actions.transpose.label")}
             </button>
+
             <button
               type="button"
               className={`btn btn-primary ${!hasChanges ? "btn-disabled" : ""}`}
@@ -281,8 +283,8 @@ export default function DataTable({
                 <label
                   key={colName}
                   className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
-                      ? "bg-primary/10 border-primary/30 text-primary"
-                      : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                    ? "bg-primary/10 border-primary/30 text-primary"
+                    : "bg-base-200 border-base-300 text-base-content/40 line-through"
                     }`}
                 >
                   <input

@@ -9,8 +9,8 @@ interface GenericDialogProps {
     cancel?: string;
     confirm?: string;
   };
-  confirmCb: () => void;
-  cancelCb: () => void;
+  confirmCb?: () => void;
+  cancelCb?: () => void;
   confirmDisabled?: boolean;
 }
 
@@ -80,22 +80,15 @@ export default function GenericDialog({
   }, [toggle, cancelCb]);
 
   return (
-    <dialog
-      ref={ref}
-      className="modal modal-bottom sm:modal-middle"
+    <dialog ref={ref} className="modal modal sm:modal"
       onClick={handleBackdropClick}
       aria-labelledby="modal-title"
-      aria-describedby={description ? "modal-description" : undefined}
-    >
+      aria-describedby={description ? "modal-description" : undefined}>
       <div className="modal-box relative" onClick={(e) => e.stopPropagation()}>
         {/* Close button (X) at top right - Italian Design guideline */}
-        <button
-          className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"
+        <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
           onClick={() => cancelCb()}
-          aria-label="Close modal"
-        >
-          ✕
-        </button>
+          aria-label="Close modal">✕</button>
 
         {/* Title with h2 for accessibility - Italian Design guideline */}
         <h2 id="modal-title" className="font-bold text-xl pr-8">
@@ -117,16 +110,16 @@ export default function GenericDialog({
 
         {/* Action buttons - Positioned at bottom right as per Italian Design guidelines */}
         <div className="modal-action">
-          <button className="btn btn-outline" onClick={() => cancelCb()}>
+          {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
             {labels.cancel}
-          </button>
-          <button
+          </button>}
+          {confirmCb && <button type="button"
             className="btn btn-primary"
             onClick={() => confirmCb()}
             disabled={confirmDisabled}
           >
             {labels.confirm}
-          </button>
+          </button>}
         </div>
       </div>
     </dialog>

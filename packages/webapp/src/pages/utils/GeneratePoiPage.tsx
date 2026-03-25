@@ -69,7 +69,7 @@ export default function GeneratePoiPage() {
 
   return (
     <Layout>
-      <div className="generate-data-page mx-auto max-w-4xl px-4">
+      <div className="mx-auto max-w-4xl px-4">
         <header className="my-8">
           <h1 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl">
             {t("header.title")}

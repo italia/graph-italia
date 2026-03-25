@@ -1,31 +1,35 @@
 import i18next from 'i18next';
-import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from 'react-i18next';
 
 import en from './locales/en';
 import it from './locales/it';
 
-const resources = {
-    en,
-    it
-};
+const resources = { en, it };
+
+/** Read the persisted language from the zustand settings store before React mounts. */
+function getStoredLanguage(): string {
+    try {
+        const raw = localStorage.getItem('dataviz-settings');
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            const lang = parsed?.state?.settings?.preferredLanguage;
+            if (lang && Object.keys(resources).includes(lang)) return lang;
+        }
+    } catch {
+        // localStorage unavailable or JSON invalid – fall through to default
+    }
+    return 'it';
+}
 
 i18next
-    .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        //lng: 'en', // if you're using a language detector, do not define the lng option
+        lng: getStoredLanguage(),
         debug: import.meta.env.DEV,
         resources,
         supportedLngs: Object.keys(resources),
-        nonExplicitSupportedLngs: true,
         fallbackLng: 'it',
-        detection: {
-            order: ["querystring", "navigator", "htmlTag", "path", "subdomain"],
-            lookupQuerystring: "lang",
-            lookupCookie: "lang",
-            lookupLocalStorage: "lang",
-            lookupSessionStorage: "lang",
-            caches: [],
-        }
+        interpolation: {
+            escapeValue: false, // React already escapes
+        },
     });

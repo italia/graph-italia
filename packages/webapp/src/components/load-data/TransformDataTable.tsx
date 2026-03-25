@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
-import DataTable, { createTheme } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import type { TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
 import { transposeData } from "../../lib/utils.ts";
-import { useSettingsStore } from "../../store/settings_store.ts";
+import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import type { MatrixType } from "../../types.ts";
 import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
 import GenericDialog from "../layout/GenericDialog.tsx";

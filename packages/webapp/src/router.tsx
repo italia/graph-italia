@@ -4,27 +4,61 @@ import AboutPage from "./pages/about";
 import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
-import EditChartPage from "./pages/charts/editChart";
-import EditKpiGroupPage from "./pages/charts/EditKpiGroup";
-import DashboardEditPage from "./pages/dashboard/DashboardEditPage";
-import DashboardsPage from "./pages/dashboard/DashboardListPage";
+import EditChartPage from "./pages/private/EditChart";
+import EditMapPage from "./pages/private/EditMap";
+import EditKpiGroupPage from "./pages/private/EditKpiGroup";
+import DashboardEditPage from "./pages/private/EditDashboard";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
-import PrivateAreePage from "./pages/home";
+import PrivateAreaPage from "./pages/private";
 import QuickStartPage from "./pages/QuickStartPage";
-import ShowChartPage from "./pages/show/ShowChartPage";
-import DashboardViewPage from "./pages/show/ShowDashboardPage";
+import ShowChartPage from "./pages/display/ShowChartPage";
+import DashboardViewPage from "./pages/display/ShowDashboardPage";
 import RootRoute from "./pages/Splash";
 import TermsPage from "./pages/terms";
-import GenerateDataPage from "./pages/utility/GenerateDataPage";
-import GeneratePoiPage from "./pages/utility/GeneratePoiPage";
-import GeoMapUtilsPage from "./pages/utility/GeoMapUtilsPage";
-import LoadDataPage from "./pages/utility/LoadRemoteDataPage";
+import GenerateDataPage from "./pages/utils/GenerateDataPage";
+import GeneratePoiPage from "./pages/utils/GeneratePoiPage";
+import GeoMapUtilsPage from "./pages/utils/GeoMapUtilsPage";
+import LoadDataPage from "./pages/utils/LoadRemoteDataPage";
 
 const MENU_ITEMS_TRANSLATION_KEYS = "menu.items" as const;
 
-export const HOME_ROUTE = "/home";
+export const HOME_ROUTE = "/private/home";
+
+/** Centralised route map. Use these everywhere instead of hardcoded strings. */
+export const ROUTES = {
+  // Public / misc
+  root: "/",
+  about: "/about",
+  quickStart: "/quickstart",
+  gdpr: "/gdpr",
+  terms: "/terms-of-service",
+  // Auth
+  login: "/login",
+  recoverPassword: "/recover-password",
+  changePassword: "/change-password",
+  verify: (uid: string) => `/verify/${uid}`,
+  // Private – home
+  home: HOME_ROUTE,
+  // Private – editors (id optional → new item)
+  editChart: (id?: string) => `/private/edit/chart${id ? `/${id}` : ""}`,
+  editKpi: (id?: string) => `/private/edit/kpi${id ? `/${id}` : ""}`,
+  editMap: (id?: string) => `/private/edit/map${id ? `/${id}` : ""}`,
+  editDashboard: (id: string) => `/private/edit/dashboard/${id}`,
+  // Display / embed
+  viewChart: (id: string) => `/display/charts/${id}`,
+  embedChart: (id: string) => `/embed/charts/${id}`,
+  viewDashboard: (id: string) => `/display/dashboards/${id}`,
+  embedDashboard: (id: string) => `/embed/dashboards/${id}`,
+  // Tools
+  loadData: "/load-data",
+  generateData: "/generate-data",
+  generatePoi: "/generate-poi",
+  geo: "/geo",
+};
+
+
 
 type TMenuItem = {
   name: string;
@@ -40,7 +74,7 @@ export const MENU: readonly MenuItem[] = [
   {
     name: "Charts",
     translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
-    link: HOME_ROUTE || "/",
+    link: ROUTES.home,
   },
   {
     name: "Tools",
@@ -50,27 +84,27 @@ export const MENU: readonly MenuItem[] = [
       {
         name: "Quick Start",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.quickStart.label`,
-        link: "/quickstart",
+        link: ROUTES.quickStart,
       },
       {
         name: "Generate Data",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generateData.label`,
-        link: "/generate-data",
+        link: ROUTES.generateData,
       },
       {
         name: "Generate Pois",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
-        link: "/generate-poi",
+        link: ROUTES.generatePoi,
       },
       {
         name: "Load Remote Data",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData.label`,
-        link: "/load-data",
+        link: ROUTES.loadData,
       },
       {
         name: "Check GeoJSon File",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
-        link: "/geo",
+        link: ROUTES.geo,
       },
     ],
   },
@@ -80,7 +114,11 @@ const routes = [
   // Root: landing se non loggato, home Charts se loggato
   {
     path: HOME_ROUTE,
-    element: <PrivateAreePage />,
+    element: (
+      <ProtectedRoute>
+        <PrivateAreaPage />
+      </ProtectedRoute>
+    ),
   },
   // Root: landing se non loggato, home Charts se loggato
   {
@@ -99,7 +137,7 @@ const routes = [
   },
   //PRIVATE PART
   {
-    path: "/edit/chart/:id?",
+    path: "/private/edit/chart/:id?",
     element: (
       <ProtectedRoute>
         <EditChartPage />
@@ -107,33 +145,23 @@ const routes = [
     ),
   },
   {
-    path: "edit/kpi/:id?",
+    path: "/private/edit/kpi/:id?",
     element: (
       <ProtectedRoute>
         <EditKpiGroupPage />
       </ProtectedRoute>
     ),
   },
-  // {
-  // 	path: "/edit/map/:id?",
-  // 	element: (
-  // 		<ProtectedRoute>
-  // 			<EditPointMapPage />
-  // 		</ProtectedRoute>
-  // 	),
-  // },
-  //list dashboard page
   {
-    path: "/dashboards",
+    path: "/private/edit/map/:id?",
     element: (
       <ProtectedRoute>
-        <DashboardsPage />
+        <EditMapPage />
       </ProtectedRoute>
     ),
   },
-  //edit dashboard page
   {
-    path: "/dashboards/:id/edit",
+    path: "/private/edit/dashboard/:id",
     element: (
       <ProtectedRoute>
         <DashboardEditPage />
@@ -186,23 +214,21 @@ const routes = [
     element: <GeoMapUtilsPage />,
   },
 
-  // DISPLAY PART
-  //show chart page
+  // DISPLAY / EMBED PART
   {
-    path: "/charts/:id/view",
+    path: "/display/charts/:id",
     element: <ShowChartPage />,
   },
-  //embed chart page
   {
-    path: "/charts/:id/embed",
+    path: "/embed/charts/:id",
     element: <EmbedChartPage />,
   },
   {
-    path: "/dashboards/:id/view",
+    path: "/display/dashboards/:id",
     element: <DashboardViewPage />,
   },
   {
-    path: "/dashboards/:id/embed",
+    path: "/embed/dashboards/:id",
     element: <EmbedDashboardPage />,
   },
 ] as RouteObject[];

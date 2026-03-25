@@ -15,7 +15,7 @@ import {
   KpiForm,
   type KpiFormValues,
 } from "./components/kpi-form";
-import useEditKpiGroupStore from "./store";
+import useEditKpiGroupStore from "./kpi_store";
 
 function EditKpiGroup() {
   const { t } = useTranslation("pages", {

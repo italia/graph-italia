@@ -2,7 +2,6 @@ import { type FieldDataType } from "dataviz-components";
 import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, {
-  createTheme,
   type TableColumn,
 } from "react-data-table-component";
 import {
@@ -21,7 +20,7 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useAriaSort } from "../hooks/useAriaSort";
-import { useSettingsStore } from "../store/settings_store.ts";
+import { useSettingsStore } from "../lib/store/settings_store.ts";
 
 import { RenderChart } from "dataviz-components";
 import toast from "react-hot-toast";
@@ -29,6 +28,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import Dialog from "./layout/Dialog";
+import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import { ROUTES } from "../router.tsx";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -38,23 +39,7 @@ type CharTableProps = {
   handleDeleteChart: (id: string) => void;
 };
 
-createTheme("dark", {
-  text: {
-    primary: "rgba(255,255,255, 0.54)",
-    secondary: "rgba(255,255,255, 0.54)",
-    disabled: "rgba(255,255,255, 0.38)",
-  },
-  background: {
-    default: "#trasnparent",
-  },
-  divider: {
-    default: "rgba(255,255,255,.075)",
-  },
-  highlightOnHover: {
-    default: "rgba(255,255,255,.03)",
-    text: "#fff",
-  },
-});
+registerDarkTheme();
 
 export default function ChartTable({
   list,
@@ -110,7 +95,9 @@ export default function ChartTable({
 
   const navigate = useNavigate();
   function handleRowClick(item: FieldDataType) {
-    const path = `/edit/${item.chart === "kpiGroup" ? "kpi" : "chart"}/${item.id}`;
+    const path = item.chart === "kpiGroup"
+      ? ROUTES.editKpi(item.id)
+      : ROUTES.editChart(item.id);
     navigate(path);
   }
 
@@ -255,23 +242,6 @@ export default function ChartTable({
                       </span>
                     )}
 
-                    {/* <span className="ml-2">
-                  {row.publish ? (
-                    <button
-                      className="btn btn-xs "
-                      onClick={() => console.log("Make Private")}
-                    >
-                      Toggle
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-xs "
-                      onClick={() => console.log("Make Public")}
-                    >
-                      Toggle
-                    </button>
-                  )}
-                </span> */}
                   </div>
                 ),
               },
@@ -297,7 +267,7 @@ export default function ChartTable({
                       className="btn btn-ghost btn-xs btn-square"
                       onClick={() =>
                         setShow(
-                          `<iframe width="600" height="400" src="${window.location.origin}/charts/${row.id}/embed" frameborder="0" allowfullscreen></iframe>`,
+                          `<iframe width="600" height="400" src="${window.location.origin}${ROUTES.embedChart(row.id ?? "")}" frameborder="0" allowfullscreen></iframe>`,
                         )
                       }
                     >
@@ -308,7 +278,7 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`${window.location.origin}/charts/${row.id}/view`}
+                      href={`${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="view"
@@ -325,7 +295,7 @@ export default function ChartTable({
                       aria-label="copy link"
                       className="btn btn-ghost btn-xs btn-square"
                       onClick={handleCopy(
-                        `${window.location.origin}/charts/${row.id}/view`,
+                        `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
                       )}
                     >
                       <FaCopy
@@ -355,9 +325,7 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={`/edit/${row.chart === "kpiGroup" ? "kpi" : "chart"}/${
-                        row.id
-                      }`}
+                      href={row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
                       aria-label="edit"
                       className="btn btn-ghost btn-xs btn-square"
                     >

@@ -1017,6 +1017,7 @@ export const ChartScalarFieldEnum = {
   chart: 'chart',
   config: 'config',
   data: 'data',
+  dataSource: 'dataSource',
   publish: 'publish',
   remoteUrl: 'remoteUrl',
   isRemote: 'isRemote',

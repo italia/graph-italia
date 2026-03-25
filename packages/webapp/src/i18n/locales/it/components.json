@@ -218,23 +218,29 @@
                     },
                     "logout": {
                         "label": "Esci"
+                    },
+                    "askMyData": {
+                        "label": "Richiedi i miei dati"
+                    },
+                    "requestAccountDeletion": {
+                        "label": "Richiedi cancellazione account"
                     }
                 }
             },
             "footer": {
                 "brand": {
                     "title": "Dataviz",
-                    "tagline": "Share your charts"
+                    "tagline": ""
                 },
                 "links": {
                     "quickstart": {
-                        "label": "Quick Start"
+                        "label": "Come iniziare"
                     },
                     "tos": {
-                        "label": "Terms of service"
+                        "label": "Termini del servizio"
                     },
                     "privacy": {
-                        "label": "Privacy policy"
+                        "label": "Informativa sulla Privacy"
                     }
                 }
             }
@@ -243,16 +249,16 @@
             "chooseLoader": {
                 "tabs": {
                     "csv": {
-                        "label": "CSV File",
-                        "description": "Upload a CSV file from your computer"
+                        "label": "CSV",
+                        "description": "Carica un file CSV dal tuo computer"
                     },
                     "json": {
-                        "label": "JSON File",
-                        "description": "Upload a JSON file from your computer"
+                        "label": "JSON",
+                        "description": "Carica un file JSON dal tuo computer"
                     },
                     "remoteUrl": {
                         "label": "Remote URL",
-                        "description": "Load data from a remote JSON URL"
+                        "description": "Carica dati da un URL"
                     }
                 }
             },
@@ -297,7 +303,6 @@
                     "reset": {
                         "label": "Reset"
                     }
-                    
                 },
                 "table": {
                     "actions": {

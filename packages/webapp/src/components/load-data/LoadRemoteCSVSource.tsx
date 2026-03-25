@@ -31,9 +31,7 @@ function LoadSource({
       const testUrl = new URL(url);
       if (testUrl) {
         const response = await fetch(url);
-        console.log("fetch response", response);
         const data = await response.text();
-        console.log("response data", data);
         Papa.parse(data, {
           header: false,
           skipEmptyLines: true,

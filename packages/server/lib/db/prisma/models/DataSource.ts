@@ -231,7 +231,7 @@ export type DataSourceWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  SourceLink?: Prisma.SourceLinkListRelationFilter
+  sourceLink?: Prisma.SourceLinkListRelationFilter
 }
 
 export type DataSourceOrderByWithRelationInput = {
@@ -248,7 +248,7 @@ export type DataSourceOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
-  SourceLink?: Prisma.SourceLinkOrderByRelationAggregateInput
+  sourceLink?: Prisma.SourceLinkOrderByRelationAggregateInput
 }
 
 export type DataSourceWhereUniqueInput = Prisma.AtLeast<{
@@ -268,7 +268,7 @@ export type DataSourceWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  SourceLink?: Prisma.SourceLinkListRelationFilter
+  sourceLink?: Prisma.SourceLinkListRelationFilter
 }, "id">
 
 export type DataSourceOrderByWithAggregationInput = {
@@ -320,7 +320,7 @@ export type DataSourceCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutDataSourceInput
-  SourceLink?: Prisma.SourceLinkCreateNestedManyWithoutDataSourceInput
+  sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutDataSourceInput
 }
 
 export type DataSourceUncheckedCreateInput = {
@@ -336,7 +336,7 @@ export type DataSourceUncheckedCreateInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  SourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutDataSourceInput
+  sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutDataSourceInput
 }
 
 export type DataSourceUpdateInput = {
@@ -352,7 +352,7 @@ export type DataSourceUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutDataSourceNestedInput
-  SourceLink?: Prisma.SourceLinkUpdateManyWithoutDataSourceNestedInput
+  sourceLink?: Prisma.SourceLinkUpdateManyWithoutDataSourceNestedInput
 }
 
 export type DataSourceUncheckedUpdateInput = {
@@ -368,7 +368,7 @@ export type DataSourceUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  SourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutDataSourceNestedInput
+  sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutDataSourceNestedInput
 }
 
 export type DataSourceCreateManyInput = {
@@ -543,7 +543,7 @@ export type DataSourceCreateWithoutUserInput = {
   isRemote?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  SourceLink?: Prisma.SourceLinkCreateNestedManyWithoutDataSourceInput
+  sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutDataSourceInput
 }
 
 export type DataSourceUncheckedCreateWithoutUserInput = {
@@ -558,7 +558,7 @@ export type DataSourceUncheckedCreateWithoutUserInput = {
   isRemote?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  SourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutDataSourceInput
+  sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutDataSourceInput
 }
 
 export type DataSourceCreateOrConnectWithoutUserInput = {
@@ -707,7 +707,7 @@ export type DataSourceUpdateWithoutUserInput = {
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  SourceLink?: Prisma.SourceLinkUpdateManyWithoutDataSourceNestedInput
+  sourceLink?: Prisma.SourceLinkUpdateManyWithoutDataSourceNestedInput
 }
 
 export type DataSourceUncheckedUpdateWithoutUserInput = {
@@ -722,7 +722,7 @@ export type DataSourceUncheckedUpdateWithoutUserInput = {
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  SourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutDataSourceNestedInput
+  sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutDataSourceNestedInput
 }
 
 export type DataSourceUncheckedUpdateManyWithoutUserInput = {
@@ -745,11 +745,11 @@ export type DataSourceUncheckedUpdateManyWithoutUserInput = {
  */
 
 export type DataSourceCountOutputType = {
-  SourceLink: number
+  sourceLink: number
 }
 
 export type DataSourceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  SourceLink?: boolean | DataSourceCountOutputTypeCountSourceLinkArgs
+  sourceLink?: boolean | DataSourceCountOutputTypeCountSourceLinkArgs
 }
 
 /**
@@ -784,7 +784,7 @@ export type DataSourceSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  SourceLink?: boolean | Prisma.DataSource$SourceLinkArgs<ExtArgs>
+  sourceLink?: boolean | Prisma.DataSource$sourceLinkArgs<ExtArgs>
   _count?: boolean | Prisma.DataSourceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dataSource"]>
 
@@ -838,7 +838,7 @@ export type DataSourceSelectScalar = {
 export type DataSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "data" | "rules" | "publish" | "isTrasposed" | "remoteUrl" | "isRemote" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["dataSource"]>
 export type DataSourceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  SourceLink?: boolean | Prisma.DataSource$SourceLinkArgs<ExtArgs>
+  sourceLink?: boolean | Prisma.DataSource$sourceLinkArgs<ExtArgs>
   _count?: boolean | Prisma.DataSourceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DataSourceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -852,7 +852,7 @@ export type $DataSourcePayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "DataSource"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
-    SourceLink: Prisma.$SourceLinkPayload<ExtArgs>[]
+    sourceLink: Prisma.$SourceLinkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1262,7 +1262,7 @@ readonly fields: DataSourceFieldRefs;
 export interface Prisma__DataSourceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  SourceLink<T extends Prisma.DataSource$SourceLinkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DataSource$SourceLinkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sourceLink<T extends Prisma.DataSource$sourceLinkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DataSource$sourceLinkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1700,9 +1700,9 @@ export type DataSourceDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * DataSource.SourceLink
+ * DataSource.sourceLink
  */
-export type DataSource$SourceLinkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type DataSource$sourceLinkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the SourceLink
    */

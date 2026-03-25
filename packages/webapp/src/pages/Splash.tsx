@@ -1,7 +1,7 @@
 import ProtectedRoute from "../components/auth/ProtectedRoute";
-import { useUserStore } from "../store/user_store";
+import { useUserStore } from "../lib/store/user_store";
 import LandingPage from "./about";
-import HomePage from "./home";
+import HomePage from "./private";
 
 /**
  * Su "/" : se non loggato → landing page (con SlimHeader);

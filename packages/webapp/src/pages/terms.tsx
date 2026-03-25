@@ -85,7 +85,7 @@ export default function Landing() {
   return (
     <Layout>
       <div className='relative py-14'>
-        <div className='mx-auto max-w-6xl pb-24  lg:pb-32  '>
+        <div className='mx-auto max-w-6xl pb-24 lg:pb-32'>
           <p className='mb-5'>
             You may be also interested in our
             <a href="/gdpr" className='text-blue-600 underline'> Privacy Policy</a>

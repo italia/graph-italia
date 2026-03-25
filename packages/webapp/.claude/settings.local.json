@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:www.here.com)",
+      "WebFetch(domain:developer.here.com)",
+      "Bash(curl -s \"https://developers.italia.it/dist/main.css?202603231021\")",
+      "Bash(curl -s https://developers.italia.it/dist/main.css?202603231021)",
+      "Bash(grep -oE \"\\\\.\\(it-header|it-nav|it-brand\\)[^{]*\\\\{[^}]{1,400}\\\\}\")",
+      "Bash(grep -oE \"\\\\.nav-link[^{]*\\\\{[^}]{1,300}\\\\}\" /tmp/site_css.txt)",
+      "Bash(tr '}' '\\\\n')",
+      "Bash(curl -s https://developers.italia.it/)",
+      "WebFetch(domain:www.dati.gov.it)"
     ]
   }
 }

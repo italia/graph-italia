@@ -59,6 +59,7 @@ export type ChartCountAggregateOutputType = {
   chart: number
   config: number
   data: number
+  dataSource: number
   publish: number
   remoteUrl: number
   isRemote: number
@@ -105,6 +106,7 @@ export type ChartCountAggregateInputType = {
   chart?: true
   config?: true
   data?: true
+  dataSource?: true
   publish?: true
   remoteUrl?: true
   isRemote?: true
@@ -194,6 +196,7 @@ export type ChartGroupByOutputType = {
   chart: string
   config: runtime.JsonValue | null
   data: runtime.JsonValue | null
+  dataSource: runtime.JsonValue | null
   publish: boolean
   remoteUrl: string | null
   isRemote: boolean
@@ -231,6 +234,7 @@ export type ChartWhereInput = {
   chart?: Prisma.StringFilter<"Chart"> | string
   config?: Prisma.JsonNullableFilter<"Chart">
   data?: Prisma.JsonNullableFilter<"Chart">
+  dataSource?: Prisma.JsonNullableFilter<"Chart">
   publish?: Prisma.BoolFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolFilter<"Chart"> | boolean
@@ -240,7 +244,7 @@ export type ChartWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Chart"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   slot?: Prisma.SlotListRelationFilter
-  SourceLink?: Prisma.SourceLinkListRelationFilter
+  sourceLink?: Prisma.SourceLinkListRelationFilter
 }
 
 export type ChartOrderByWithRelationInput = {
@@ -250,6 +254,7 @@ export type ChartOrderByWithRelationInput = {
   chart?: Prisma.SortOrder
   config?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrderInput | Prisma.SortOrder
+  dataSource?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isRemote?: Prisma.SortOrder
@@ -259,7 +264,7 @@ export type ChartOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   slot?: Prisma.SlotOrderByRelationAggregateInput
-  SourceLink?: Prisma.SourceLinkOrderByRelationAggregateInput
+  sourceLink?: Prisma.SourceLinkOrderByRelationAggregateInput
 }
 
 export type ChartWhereUniqueInput = Prisma.AtLeast<{
@@ -272,6 +277,7 @@ export type ChartWhereUniqueInput = Prisma.AtLeast<{
   chart?: Prisma.StringFilter<"Chart"> | string
   config?: Prisma.JsonNullableFilter<"Chart">
   data?: Prisma.JsonNullableFilter<"Chart">
+  dataSource?: Prisma.JsonNullableFilter<"Chart">
   publish?: Prisma.BoolFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolFilter<"Chart"> | boolean
@@ -281,7 +287,7 @@ export type ChartWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Chart"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   slot?: Prisma.SlotListRelationFilter
-  SourceLink?: Prisma.SourceLinkListRelationFilter
+  sourceLink?: Prisma.SourceLinkListRelationFilter
 }, "id">
 
 export type ChartOrderByWithAggregationInput = {
@@ -291,6 +297,7 @@ export type ChartOrderByWithAggregationInput = {
   chart?: Prisma.SortOrder
   config?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrderInput | Prisma.SortOrder
+  dataSource?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isRemote?: Prisma.SortOrder
@@ -313,6 +320,7 @@ export type ChartScalarWhereWithAggregatesInput = {
   chart?: Prisma.StringWithAggregatesFilter<"Chart"> | string
   config?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
   data?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
+  dataSource?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
   publish?: Prisma.BoolWithAggregatesFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableWithAggregatesFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolWithAggregatesFilter<"Chart"> | boolean
@@ -329,6 +337,7 @@ export type ChartCreateInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -337,7 +346,7 @@ export type ChartCreateInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutChartInput
   slot?: Prisma.SlotCreateNestedManyWithoutChartInput
-  SourceLink?: Prisma.SourceLinkCreateNestedManyWithoutChartInput
+  sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutChartInput
 }
 
 export type ChartUncheckedCreateInput = {
@@ -347,6 +356,7 @@ export type ChartUncheckedCreateInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -355,7 +365,7 @@ export type ChartUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   slot?: Prisma.SlotUncheckedCreateNestedManyWithoutChartInput
-  SourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutChartInput
+  sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutChartInput
 }
 
 export type ChartUpdateInput = {
@@ -365,6 +375,7 @@ export type ChartUpdateInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -373,7 +384,7 @@ export type ChartUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutChartNestedInput
   slot?: Prisma.SlotUpdateManyWithoutChartNestedInput
-  SourceLink?: Prisma.SourceLinkUpdateManyWithoutChartNestedInput
+  sourceLink?: Prisma.SourceLinkUpdateManyWithoutChartNestedInput
 }
 
 export type ChartUncheckedUpdateInput = {
@@ -383,6 +394,7 @@ export type ChartUncheckedUpdateInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -391,7 +403,7 @@ export type ChartUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   slot?: Prisma.SlotUncheckedUpdateManyWithoutChartNestedInput
-  SourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutChartNestedInput
+  sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutChartNestedInput
 }
 
 export type ChartCreateManyInput = {
@@ -401,6 +413,7 @@ export type ChartCreateManyInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -417,6 +430,7 @@ export type ChartUpdateManyMutationInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -432,6 +446,7 @@ export type ChartUncheckedUpdateManyInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -458,6 +473,7 @@ export type ChartCountOrderByAggregateInput = {
   chart?: Prisma.SortOrder
   config?: Prisma.SortOrder
   data?: Prisma.SortOrder
+  dataSource?: Prisma.SortOrder
   publish?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrder
   isRemote?: Prisma.SortOrder
@@ -577,6 +593,7 @@ export type ChartCreateWithoutUserInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -584,7 +601,7 @@ export type ChartCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   slot?: Prisma.SlotCreateNestedManyWithoutChartInput
-  SourceLink?: Prisma.SourceLinkCreateNestedManyWithoutChartInput
+  sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutChartInput
 }
 
 export type ChartUncheckedCreateWithoutUserInput = {
@@ -594,6 +611,7 @@ export type ChartUncheckedCreateWithoutUserInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -601,7 +619,7 @@ export type ChartUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   slot?: Prisma.SlotUncheckedCreateNestedManyWithoutChartInput
-  SourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutChartInput
+  sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutChartInput
 }
 
 export type ChartCreateOrConnectWithoutUserInput = {
@@ -640,6 +658,7 @@ export type ChartScalarWhereInput = {
   chart?: Prisma.StringFilter<"Chart"> | string
   config?: Prisma.JsonNullableFilter<"Chart">
   data?: Prisma.JsonNullableFilter<"Chart">
+  dataSource?: Prisma.JsonNullableFilter<"Chart">
   publish?: Prisma.BoolFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolFilter<"Chart"> | boolean
@@ -656,6 +675,7 @@ export type ChartCreateWithoutSourceLinkInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -673,6 +693,7 @@ export type ChartUncheckedCreateWithoutSourceLinkInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -706,6 +727,7 @@ export type ChartUpdateWithoutSourceLinkInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -723,6 +745,7 @@ export type ChartUncheckedUpdateWithoutSourceLinkInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -740,6 +763,7 @@ export type ChartCreateWithoutSlotInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -747,7 +771,7 @@ export type ChartCreateWithoutSlotInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutChartInput
-  SourceLink?: Prisma.SourceLinkCreateNestedManyWithoutChartInput
+  sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutChartInput
 }
 
 export type ChartUncheckedCreateWithoutSlotInput = {
@@ -757,6 +781,7 @@ export type ChartUncheckedCreateWithoutSlotInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -764,7 +789,7 @@ export type ChartUncheckedCreateWithoutSlotInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  SourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutChartInput
+  sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutChartInput
 }
 
 export type ChartCreateOrConnectWithoutSlotInput = {
@@ -790,6 +815,7 @@ export type ChartUpdateWithoutSlotInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -797,7 +823,7 @@ export type ChartUpdateWithoutSlotInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutChartNestedInput
-  SourceLink?: Prisma.SourceLinkUpdateManyWithoutChartNestedInput
+  sourceLink?: Prisma.SourceLinkUpdateManyWithoutChartNestedInput
 }
 
 export type ChartUncheckedUpdateWithoutSlotInput = {
@@ -807,6 +833,7 @@ export type ChartUncheckedUpdateWithoutSlotInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -814,7 +841,7 @@ export type ChartUncheckedUpdateWithoutSlotInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  SourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutChartNestedInput
+  sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutChartNestedInput
 }
 
 export type ChartCreateManyUserInput = {
@@ -824,6 +851,7 @@ export type ChartCreateManyUserInput = {
   chart: string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -839,6 +867,7 @@ export type ChartUpdateWithoutUserInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -846,7 +875,7 @@ export type ChartUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   slot?: Prisma.SlotUpdateManyWithoutChartNestedInput
-  SourceLink?: Prisma.SourceLinkUpdateManyWithoutChartNestedInput
+  sourceLink?: Prisma.SourceLinkUpdateManyWithoutChartNestedInput
 }
 
 export type ChartUncheckedUpdateWithoutUserInput = {
@@ -856,6 +885,7 @@ export type ChartUncheckedUpdateWithoutUserInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -863,7 +893,7 @@ export type ChartUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   slot?: Prisma.SlotUncheckedUpdateManyWithoutChartNestedInput
-  SourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutChartNestedInput
+  sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutChartNestedInput
 }
 
 export type ChartUncheckedUpdateManyWithoutUserInput = {
@@ -873,6 +903,7 @@ export type ChartUncheckedUpdateManyWithoutUserInput = {
   chart?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -888,12 +919,12 @@ export type ChartUncheckedUpdateManyWithoutUserInput = {
 
 export type ChartCountOutputType = {
   slot: number
-  SourceLink: number
+  sourceLink: number
 }
 
 export type ChartCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   slot?: boolean | ChartCountOutputTypeCountSlotArgs
-  SourceLink?: boolean | ChartCountOutputTypeCountSourceLinkArgs
+  sourceLink?: boolean | ChartCountOutputTypeCountSourceLinkArgs
 }
 
 /**
@@ -928,6 +959,7 @@ export type ChartSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   chart?: boolean
   config?: boolean
   data?: boolean
+  dataSource?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -937,7 +969,7 @@ export type ChartSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   slot?: boolean | Prisma.Chart$slotArgs<ExtArgs>
-  SourceLink?: boolean | Prisma.Chart$SourceLinkArgs<ExtArgs>
+  sourceLink?: boolean | Prisma.Chart$sourceLinkArgs<ExtArgs>
   _count?: boolean | Prisma.ChartCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chart"]>
 
@@ -948,6 +980,7 @@ export type ChartSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   chart?: boolean
   config?: boolean
   data?: boolean
+  dataSource?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -965,6 +998,7 @@ export type ChartSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   chart?: boolean
   config?: boolean
   data?: boolean
+  dataSource?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -982,6 +1016,7 @@ export type ChartSelectScalar = {
   chart?: boolean
   config?: boolean
   data?: boolean
+  dataSource?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -991,11 +1026,11 @@ export type ChartSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ChartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "chart" | "config" | "data" | "publish" | "remoteUrl" | "isRemote" | "preview" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["chart"]>
+export type ChartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "chart" | "config" | "data" | "dataSource" | "publish" | "remoteUrl" | "isRemote" | "preview" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["chart"]>
 export type ChartInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   slot?: boolean | Prisma.Chart$slotArgs<ExtArgs>
-  SourceLink?: boolean | Prisma.Chart$SourceLinkArgs<ExtArgs>
+  sourceLink?: boolean | Prisma.Chart$sourceLinkArgs<ExtArgs>
   _count?: boolean | Prisma.ChartCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ChartIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1010,7 +1045,7 @@ export type $ChartPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     slot: Prisma.$SlotPayload<ExtArgs>[]
-    SourceLink: Prisma.$SourceLinkPayload<ExtArgs>[]
+    sourceLink: Prisma.$SourceLinkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1019,6 +1054,7 @@ export type $ChartPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     chart: string
     config: runtime.JsonValue | null
     data: runtime.JsonValue | null
+    dataSource: runtime.JsonValue | null
     publish: boolean
     remoteUrl: string | null
     isRemote: boolean
@@ -1422,7 +1458,7 @@ export interface Prisma__ChartClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   slot<T extends Prisma.Chart$slotArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chart$slotArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  SourceLink<T extends Prisma.Chart$SourceLinkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chart$SourceLinkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sourceLink<T extends Prisma.Chart$sourceLinkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Chart$sourceLinkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1458,6 +1494,7 @@ export interface ChartFieldRefs {
   readonly chart: Prisma.FieldRef<"Chart", 'String'>
   readonly config: Prisma.FieldRef<"Chart", 'Json'>
   readonly data: Prisma.FieldRef<"Chart", 'Json'>
+  readonly dataSource: Prisma.FieldRef<"Chart", 'Json'>
   readonly publish: Prisma.FieldRef<"Chart", 'Boolean'>
   readonly remoteUrl: Prisma.FieldRef<"Chart", 'String'>
   readonly isRemote: Prisma.FieldRef<"Chart", 'Boolean'>
@@ -1885,9 +1922,9 @@ export type Chart$slotArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 
 /**
- * Chart.SourceLink
+ * Chart.sourceLink
  */
-export type Chart$SourceLinkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Chart$sourceLinkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the SourceLink
    */

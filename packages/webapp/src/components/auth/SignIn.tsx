@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
 import { HOME_ROUTE } from "../../router";
-import { useUserStore } from "../../store/user_store";
+import { useUserStore } from "../../lib/store/user_store";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { t } = useTranslation("components", {

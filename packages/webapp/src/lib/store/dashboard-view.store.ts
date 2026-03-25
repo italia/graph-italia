@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import * as api from '../lib/api';
-import type { DashboardDetail } from '../lib/api';
+import { findDashboardById, type DashboardDetail } from "../api.ts";
 
 type TChartRef = { id: string };
 
@@ -47,7 +46,7 @@ const useDashboardViewStore = create<DashboardViewState>((set) => ({
   charts: {},
   load: async (id: string) => {
     try {
-      const data = (await api.findDashboardById(id)) as DashboardDetail;
+      const data = (await findDashboardById(id)) as DashboardDetail;
 
       if (data) {
         const layout = data.slots.map(
