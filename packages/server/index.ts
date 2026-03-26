@@ -75,8 +75,8 @@ if (isDev) {
 		allowMethods: ["GET", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 	});
-	app.use(`/charts/*`, publicCors);
-	app.use(`/dashboards/*`, publicCors);
+	app.use(`${ROUTES_PREFIX}/charts/*`, publicCors);
+	app.use(`${ROUTES_PREFIX}/dashboards/*`, publicCors);
 }
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
