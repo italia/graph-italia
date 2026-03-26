@@ -68,17 +68,19 @@ app.use(
 // 			allowHeaders: ["Content-Type", "Authorization"],
 // 		}),
 // 	);
-// } else {
+// }
+
 // CORS — only for public chart/dashboard show and embed endpoints
 const publicCors = cors({
 	origin: "*",
 	allowMethods: ["GET", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization"],
 });
-app.use(`/*`, publicCors);
+// app.use(`/*`, publicCors);
+app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
+app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
 // app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
 // app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
-// }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
@@ -106,6 +108,7 @@ app.get("/health/ready", async (c) => {
 		return c.json({
 			status: "ready",
 			isDev: isDev,
+			routes_prefix: ROUTES_PREFIX,
 			database: "connected",
 			version: {
 				sha: BUILD_SHA,
