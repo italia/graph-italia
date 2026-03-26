@@ -58,25 +58,26 @@ app.use(
 );
 
 // CORS (only in dev)
-if (isDev) {
-	app.use(
-		"/*",
-		cors({
-			origin: whitelist,
-			credentials: true,
-			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization"],
-		}),
-	);
-}
+// if (isDev) {
+// 	app.use(
+// 		"/*",
+// 		cors({
+// 			origin: whitelist,
+// 			credentials: true,
+// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+// 			allowHeaders: ["Content-Type", "Authorization"],
+// 		}),
+// 	);
+// }
 // CORS — only for public chart/dashboard show and embed endpoints
 const publicCors = cors({
 	origin: "*",
+	credentials: true,
 	allowMethods: ["GET", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization"],
 });
-app.use(`${ROUTES_PREFIX}/charts/*`, publicCors);
-app.use(`${ROUTES_PREFIX}/dashboards/*`, publicCors);
+app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
+app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES

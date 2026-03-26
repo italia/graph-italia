@@ -155,31 +155,6 @@ router.get(
     }
 );
 
-router.get(
-    '/show/:id',
-    zValidator("param", findByIdSchema),
-    async (c) => {
-        try {
-            const id = c.req.valid("param").id;
-            const result = await db.findKpiGroupById(id);
-            if (!result) {
-                return c.json({ message: 'KPI Group not found' }, 404);
-            }
-            if (result?.publish !== true) {
-                return c.json({ error: { message: "Unauthorized" } }, 401);
-            }
-            const { name, description, config, data: dataSource } = result;
-
-            return c.json<FindByIdResponseBody>({ data: { name, description, config, dataSource } });
-        } catch (err) {
-            logger.error(
-                "KPI Group show error",
-                err instanceof Error ? err : undefined,
-            );
-            return c.json({ error: "Internal error" }, 500);
-        }
-    }
-);
 // #endregion
 
 export default router;

@@ -91,6 +91,32 @@ router.get(
 	},
 );
 
+
+/** Show :ID (public) */
+router.get(
+	"/show/:id",
+	zValidator("param", detailSchema),
+	async (c) => {
+		try {
+			const { id } = c.req.valid("param");
+			const result = await db.findDashboardByIdWithIncludes(id);
+			if (!result) {
+				return c.json({ error: "Not Found" }, 404);
+			}
+			if (result?.publish !== true) {
+				return c.json({ error: { message: "Unauthorized" } }, 401);
+			}
+			return c.json(result);
+		} catch (err) {
+			logger.error(
+				"Dashboard show error",
+				err instanceof Error ? err : undefined,
+			);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
+
 /** Create */
 router.post(
 	"/",
