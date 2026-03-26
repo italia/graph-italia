@@ -72,7 +72,6 @@ app.use(
 // CORS — only for public chart/dashboard show and embed endpoints
 const publicCors = cors({
 	origin: "*",
-	credentials: true,
 	allowMethods: ["GET", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization"],
 });
