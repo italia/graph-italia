@@ -57,18 +57,18 @@ app.use(
 	}),
 );
 
-// CORS (only in dev)
-// if (isDev) {
-// 	app.use(
-// 		"/*",
-// 		cors({
-// 			origin: whitelist,
-// 			credentials: true,
-// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-// 			allowHeaders: ["Content-Type", "Authorization"],
-// 		}),
-// 	);
-// }
+if (isDev) {
+	// CORS CRUD (only in dev)
+	app.use(
+		"/*",
+		cors({
+			origin: whitelist,
+			credentials: true,
+			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			allowHeaders: ["Content-Type", "Authorization"],
+		}),
+	);
+}
 
 // CORS — only for public chart/dashboard show and embed endpoints
 const publicCors = cors({
@@ -76,6 +76,7 @@ const publicCors = cors({
 	allowMethods: ["GET", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization"],
 });
+
 // app.use(`/*`, publicCors);
 app.use(`/charts/show/*`, publicCors);
 app.use(`/dashboards/show/*`, publicCors);
