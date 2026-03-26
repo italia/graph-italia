@@ -59,18 +59,20 @@ app.use(
 
 
 // CORS (only in dev)
-app.use(cors());
+// app.use(cors());
 // if (isDev) {
-// 	app.use(
-// 		"/*",
-// 		cors({
-// 			origin: whitelist,
-// 			credentials: true,
-// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-// 			allowHeaders: ["Content-Type", "Authorization"],
-// 		}),
-// 	);
+app.use(
+	"/*",
+	cors({
+		// origin: whitelist,
+		origin: "*",
+		credentials: true,
+		allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+	}),
+);
 // }
+
 
 
 // ═══════════════════════════════════════════════════════════════════════════════
