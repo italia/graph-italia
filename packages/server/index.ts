@@ -76,8 +76,8 @@ const publicCors = cors({
 	allowMethods: ["GET", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization"],
 });
-app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
-app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
+app.use(`/charts/show/*`, publicCors);
+app.use(`/dashboards/show/*`, publicCors);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
