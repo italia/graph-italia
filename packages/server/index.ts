@@ -75,8 +75,9 @@ if (isDev) {
 		allowMethods: ["GET", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 	});
-	app.use(`${ROUTES_PREFIX}/charts/*`, publicCors);
-	app.use(`${ROUTES_PREFIX}/dashboards/*`, publicCors);
+	app.use(`/*`, publicCors);
+	// app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
+	// app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
 }
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
@@ -103,6 +104,7 @@ app.get("/health/ready", async (c) => {
 
 		return c.json({
 			status: "ready",
+			isDev: isDev,
 			database: "connected",
 			version: {
 				sha: BUILD_SHA,
