@@ -108,7 +108,7 @@ model Dashboard {
   id          String  @id @default(cuid())
   name        String?
   description String? @default("")
-  publish     Boolean @default(false)
+  publish     Boolean @default(true)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String

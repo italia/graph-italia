@@ -60,12 +60,13 @@ export function KpiForm({
           <div className="p-6 space-y-6">
             {/* Title */}
             <div>
-              <label className="label">
+              <label htmlFor="title" className="label">
                 <span className="label-text font-medium">
                   {t("form.fields.title.label")} *
                 </span>
               </label>
               <input
+                id="title"
                 type="text"
                 required
                 className="input input-bordered w-full"
@@ -74,12 +75,13 @@ export function KpiForm({
             </div>
 
             <div>
-              <label className="label">
+              <label htmlFor="value" className="label">
                 <span className="label-text font-medium">
                   {t("form.fields.value.label")} *
                 </span>
               </label>
               <input
+                id="value"
                 type="text"
                 className="input input-bordered w-full"
                 {...register("value", { required: true })}
@@ -88,12 +90,13 @@ export function KpiForm({
 
             {/* Open Data Path */}
             <div>
-              <label className="label">
+              <label htmlFor="path" className="label">
                 <span className="label-text font-medium">
                   {t("form.fields.openDataPath.label")}
                 </span>
               </label>
               <input
+                id="path"
                 type="text"
                 className="input input-bordered w-full"
                 {...register("openDataPath")}
@@ -130,12 +133,13 @@ export function KpiForm({
 
               {/* Direzione andamento */}
               <div className="mb-4">
-                <label className="label">
+                <label htmlFor="direction" className="label">
                   <span className="label-text font-medium">
                     {t("form.fields.flowDirection.label")}
                   </span>
                 </label>
                 <select
+                  id="direction"
                   className="input input-bordered w-full"
                   {...register("flow_direction")}
                   disabled={!showFlow}
@@ -156,12 +160,13 @@ export function KpiForm({
 
               {/* Valore andamento */}
               <div className="mb-4">
-                <label className="label">
+                <label htmlFor="flow_value" className="label">
                   <span className="label-text font-medium">
                     {t("form.fields.flowValue.label")}
                   </span>
                 </label>
                 <input
+                  id="flow_value"
                   type="text"
                   disabled={!showFlow}
                   className="input input-bordered w-full"
@@ -171,12 +176,13 @@ export function KpiForm({
 
               {/* Dettaglio andamento */}
               <div className="mb-6">
-                <label className="label">
+                <label htmlFor="flow_detail" className="label">
                   <span className="label-text font-medium">
                     {t("form.fields.flowDetail.label")}
                   </span>
                 </label>
                 <input
+                  id="flow_detail"
                   type="text"
                   disabled={!showFlow}
                   className="input input-bordered w-full"
@@ -188,12 +194,13 @@ export function KpiForm({
             {/* Altri campi */}
             <div className="space-y-4 border-t pt-6">
               <div>
-                <label className="label">
+                <label htmlFor="bg" className="label">
                   <span className="label-text font-medium">
                     {t("form.fields.backgroundColor.label")}
                   </span>
                 </label>
                 <input
+                  id="bg"
                   type="text"
                   className="input input-bordered w-full"
                   {...register("background_color")}
@@ -201,13 +208,13 @@ export function KpiForm({
               </div>
 
               <div>
-                <label className="label">
+                <label htmlFor="value_prefix" className="label">
                   <span className="label-text font-medium">
-                    {" "}
                     {t("form.fields.valuePrefix.label")}
                   </span>
                 </label>
                 <input
+                  id="value_prefix"
                   type="text"
                   className="input input-bordered w-full"
                   {...register("value_prefix")}
@@ -215,13 +222,13 @@ export function KpiForm({
               </div>
 
               <div>
-                <label className="label">
+                <label htmlFor="value_suffix" className="label">
                   <span className="label-text font-medium">
-                    {" "}
                     {t("form.fields.valueSuffix.label")}
                   </span>
                 </label>
                 <input
+                  id="value_suffix"
                   type="text"
                   className="input input-bordered w-full"
                   {...register("value_suffix")}
@@ -229,13 +236,13 @@ export function KpiForm({
               </div>
 
               <div>
-                <label className="label">
+                <label htmlFor="percentage" className="label">
                   <span className="label-text font-medium">
-                    {" "}
                     {t("form.fields.percentage.label")}
                   </span>
                 </label>
                 <input
+                  id="percentage"
                   type="text"
                   className="input input-bordered w-full"
                   {...register("percentage")}
@@ -243,13 +250,13 @@ export function KpiForm({
               </div>
 
               <div>
-                <label className="label">
+                <label htmlFor="footer_text" className="label">
                   <span className="label-text font-medium">
-                    {" "}
                     {t("form.fields.footerText.label")}
                   </span>
                 </label>
                 <input
+                  id="footer_text"
                   type="text"
                   className="input input-bordered w-full"
                   {...register("footer_text")}

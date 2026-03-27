@@ -3,18 +3,9 @@ import { type FieldDataType } from "dataviz-components";
 import { useEffect, useState } from "react";
 import {
   FaChartBar,
-  FaChartLine,
-  FaChartPie,
-  FaCode,
-  FaCopy,
-  FaEye,
-  FaLink,
   FaList,
   FaMap,
-  FaMapLocationDot,
-  FaPenToSquare,
   FaRegSquare,
-  FaTrashCan,
 } from "react-icons/fa6";
 
 import Layout from "../../components/layout/index.tsx";
@@ -33,48 +24,15 @@ import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import useStoreState from "../../lib/storeState.ts";
 
-type GenericChartPayload = {
-  name: string;
-  description?: string;
-  chart?: string;
-};
-
-type KpiGroupPayload = GenericChartPayload;
-type ChartPayload = GenericChartPayload;
-
 
 function Home() {
   const { t } = useTranslation("pages", { keyPrefix: "home" });
   const [state, send] = useMachine(stepMachine);
-  const {
-    config,
-    chart,
-    data,
-    id,
-    name,
-    description,
-    publish,
-    isRemote,
-    remoteUrl,
-    preview,
-    dataSource,
-    setPreview,
-    setConfig,
-    setChart,
-    setData,
-    setRemoteUrl,
-    setIsRemote,
-    loadItem,
-    resetItem,
-  } = useStoreState((state) => state);
+  const { loadItem } = useStoreState((state) => state);
 
   const {
     list,
     setList,
-    showCreateKpiGroupModal,
-    setShowCreateKpiGroupModal,
-    showCreateChartModal,
-    setShowCreateChartModal,
   } = useChartsStoreState((state) => state);
   const { list: dashboardList, setList: setDashboardList } =
     useDashboardsStoreState((state) => state);
@@ -105,6 +63,7 @@ function Home() {
       const data = await api.getCharts();
       setList(data);
     } catch (error) {
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -147,7 +106,6 @@ function Home() {
     }
   }
 
-
   function generateName(key: string) {
     const timestamp = new Date()
       .toISOString()
@@ -156,15 +114,12 @@ function Home() {
     return `${key}-${timestamp}`;
   }
 
-
-
   const itemTypes = [
     { id: 1, key: "chart", label: "Chart", icon: <FaChartBar size={24} aria-hidden="true" /> },
     { id: 2, key: "kpi", label: "KPI Group", icon: <FaList size={24} aria-hidden="true" /> },
     { id: 3, key: "map", label: "Map", icon: <FaMap size={24} aria-hidden="true" /> },
     { id: 4, key: "dash", label: "Dashboard", icon: <FaRegSquare size={24} aria-hidden="true" /> },
   ]
-
 
   async function handleCreateFromDialog(id: number, key: ItemTypeNames) {
     const name = generateName(key);

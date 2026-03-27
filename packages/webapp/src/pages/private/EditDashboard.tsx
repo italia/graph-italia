@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout/legacy";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
@@ -12,7 +12,11 @@ import useDashboardEditStore, {
   type TLayoutItem,
 } from "../../lib/store/dashboard-edit.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
-import { HOME_ROUTE } from "../../router";
+import { HOME_ROUTE, ROUTES } from "../../router";
+import { Helmet } from 'react-helmet';
+import { useTranslation } from "react-i18next";
+import { FaInfo } from "react-icons/fa";
+import EditStepComponent from "../../components/EditStepComponent";
 
 // ─── Grid constants ───────────────────────────────────────────────────────────
 // 12 cols everywhere (bootstrap-style). User picks conceptual spans 1–3.
@@ -149,7 +153,7 @@ function SlotToolbar({
     >
       <span className="badge badge-error badge-xs font-mono">{item.i}</span>
 
-      <span className="text-xs opacity-50 ml-1">W</span>
+      <span className="text-xs opacity-50 ml-1">Width</span>
       {[1, 2, 3].map((span) => (
         <button
           key={span}
@@ -162,8 +166,8 @@ function SlotToolbar({
         </button>
       ))}
 
-      <span className="text-xs opacity-50 ml-1">H</span>
-      {[1, 2].map((rows) => (
+      <span className="text-xs opacity-50 ml-1">Height</span>
+      {[1, 2, 3, 4].map((rows) => (
         <button
           key={rows}
           type="button"
@@ -177,12 +181,12 @@ function SlotToolbar({
 
       <button
         type="button"
-        className="btn btn-xs btn-ghost ml-1"
+        className="btn btn-xs btn-outline ml-1"
         title="Assign chart"
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onAddChart}
       >
-        ✎
+        Change
       </button>
       <button
         type="button"
@@ -206,12 +210,21 @@ function DashboardEditPage() {
     setBreakpoint, setSelectedChart, setLayout,
     addItem, deleteItem, updateItemSize,
     showAddModal, closeAddModal,
-    load, reload, save,
+    load, reload, save, publish, setName, setDescription, setPublish
   } = useDashboardEditStore();
 
+  const [isSaving, setIsSaving] = useState<boolean>(false)
+
   async function saveHandler() {
-    const ok = await save();
-    if (ok) reload();
+    setIsSaving(true)
+    try {
+      const ok = await save();
+      if (ok) reload();
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   React.useEffect(() => {
@@ -223,35 +236,169 @@ function DashboardEditPage() {
 
   // Memoize layouts to avoid rebuilding on every render
   const layouts = useMemo(() => buildLayouts(layout), [layout]);
+  const navigate = useNavigate();
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editChart`,
+  });
 
   return (
     <AppLayout>
-      <div className="p-4">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <Link to={HOME_ROUTE} className="text-blue-500 hover:underline">
-            &lt; Back to the list
-          </Link>
-          <div className="flex gap-2">
-            <button type="button" onClick={reload} className="btn btn-outline btn-sm">Reset</button>
-            <button type="button" onClick={saveHandler} className="btn btn-primary btn-sm">Save</button>
-          </div>
+      <Helmet>
+        <title>
+          {`Edit Dashboard`}
+        </title>
+        <meta name="description" content={t(`head.meta.description.content`)} />
+      </Helmet>
+      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
+        <button
+          type="button"
+          onClick={() => navigate(HOME_ROUTE)}
+          className="btn btn-outline"
+        >
+          {t(`header.actions.back.label`)}
+        </button>
+        <div className="flex gap-4">
+          <h3>Dashboard Editor</h3>
         </div>
-
+        <div className="flex-shrink-0">
+          <button type="button" onClick={reload} className="btn btn-outline">Reset</button>
+          <button
+            type="button"
+            onClick={saveHandler}
+            disabled={isSaving}
+            className="btn btn-primary gap-2"
+          >
+            {isSaving ? (
+              <span role="status">
+                <span className="loading loading-spinner loading-sm"></span>
+                {t(`header.actions.save.isSaving`)}...
+              </span>
+            ) : (
+              <> {t(`header.actions.save.default`)}</>
+            )}
+          </button>
+        </div>
+      </div>
+      <div className="p-4">
         {isLoading && <Loading />}
         {error && <div role="alert" className="alert alert-error">{error.message}</div>}
-
         {loaded && (
-          <>
-            <h1 className="text-4xl font-bold">{name}</h1>
-            <h4 className="text-xl mb-4">{description}</h4>
+          <div className="w-full">
+            <div className="w-full grid grid-cols-2 xl:grid-cols-6  gap-4">
+              <div className="space-y-1 xl:col-span-2">
+                <EditStepComponent
+                  title={t(`body.options.setup.title`)}
+                  description={t(`body.options.setup.description`)}
+                  Icon={FaInfo}
+                  isOpen={false}
+                  isDisabled={false}
+                  index={0}
+                >
+                  <div className="card bg-base-100 shadow-sm border border-base-200">
+                    <div className="card-body">
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex items-center gap-4">
+                          <input
+                            id="chart_visibility"
+                            type="checkbox"
+                            checked={publish}
+                            onChange={() => {
+                              setPublish(!publish);
+                            }}
+                            className="toggle toggle-sm toggle-primary cursor-pointer"
+                          />
+                          <label
+                            htmlFor="chart_visibility"
+                            className="text-sm text-base-content/70 cursor-pointer"
+                          >
+                            {t(`body.options.setup.form.fields.visibility.label`)}
+                          </label>
+                          <span className="text-sm text-base-content font-bold">
+                            {t(
+                              `body.options.setup.form.fields.visibility.values.${publish ? "public" : "private"}`,
+                            )}
+                          </span>
+                        </div>
+                        <label
+                          htmlFor="chart_title"
+                          className="mt-4 text-base-content/70"
+                        >
+                          {t(`body.options.setup.form.fields.title.label`)}
+                        </label>
+                        <input
+                          id="chart_title"
+                          type="text"
+                          value={name}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                          }}
+                          placeholder={name}
+                          className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                        />
+                        <label
+                          htmlFor="chart_description"
+                          className="mt-4 text-base-content/70"
+                        >
+                          {t(`body.options.setup.form.fields.description.label`)}
+                        </label>
+                        <textarea
+                          id="chart_description"
+                          value={description}
+                          rows={3}
+                          onChange={(e) => {
+                            setDescription(e.target.value);
+                          }}
+                          placeholder={t(
+                            `body.options.setup.form.fields.description.placeholder`,
+                          )}
+                          className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </EditStepComponent>
+              </div>
 
-            <button type="button" className="btn btn-sm btn-primary mb-4" onClick={addItem}>
-              Add slot +
-            </button>
+              {/* Right column: Preview */}
+              <div className="xl:col-span-4 flex flex-col h-full p-4 bg-base-100  border border-base-300 rounded-lg">
+                <div className="bg-base-100 bl-2 flex flex-col gap-4">
+                  <h1 className="text-2xl font-bold">{name}</h1>
+                  <div className="text-base-content/80">
+                    {description ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: description.replace(/\n/g, "<br />"),
+                        }}
+                      />
+                    ) : (
+                      <p className="italic text-base-content">{""}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <EditStepComponent
+              title={`Edit Dashboard slots`}
+              description={`Create Slots and assign charts`}
+              Icon={FaInfo}
+              isOpen={true}
+              isDisabled={false}
+              index={1}
+            >
+              <div className="w-full flex align-center justify-between">
+                <button type="button" className="btn btn-primary mb-4" onClick={addItem}>
+                  Add slot +
+                </button>
+
+                <a href={`${ROUTES.viewDashboard(id)}`} target="_blank" className="btn btn-outline">View Chart</a>
+              </div>
+            </EditStepComponent>
 
             {/* Max-width container — ResponsiveGrid measures this element's width */}
-            <div style={{ margin: "0 auto" }} className="bg-blue-100">
+            <div style={{ margin: "0 auto" }} className="bg-base-300">
               <ResponsiveGrid
                 layouts={layouts}
                 breakpoints={BREAKPOINTS}
@@ -315,7 +462,7 @@ function DashboardEditPage() {
                 })}
               </ResponsiveGrid>
             </div>
-          </>
+          </div>
         )}
 
         {show && (

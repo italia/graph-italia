@@ -44,12 +44,6 @@ export default function EditMapPage() {
     isRemote,
     remoteUrl,
     dataSource,
-    // name,
-    // description,
-    // publish,
-    // preview,
-    // setPreview,
-    // setConfig,
     setChart,
     setDataSource,
     loadItem,
@@ -189,7 +183,7 @@ export default function EditMapPage() {
     <Layout>
       <Helmet>
         <title>
-          {t(`head.title.label`)}: {`${chartName ? ": " + chartName : ""}`}
+          {t(`Edit Map`)}: {`${chartName ? ": " + chartName : ""}`}
         </title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>

@@ -1,10 +1,9 @@
 import type { ChartConfigType, FieldDataType } from "dataviz-components";
-import type { KpiFormValues } from "./components/kpi-form";
+import type { KpiFormValues } from "../../pages/private/EditKpiGroupOld/kpi-form";
 import { create } from "zustand";
-import * as api from "../../../lib/api";
+import * as api from "../api";
 
-type KpiGroupConfigType = Pick<
-    ChartConfigType,
+type KpiGroupConfigType = Pick<ChartConfigType,
     | "direction"
     | "h"
     | "labeLine"
@@ -30,7 +29,7 @@ const defaultKpiGroupData: KpiGroupFieldDataType = {
     chart: "kpi",
     config: {
         direction: "vertical",
-        h: 0,
+        h: 500,
         labeLine: false,
         legend: false,
         legendPosition: "",

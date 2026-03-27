@@ -95,9 +95,7 @@ export default function ChartTable({
 
   const navigate = useNavigate();
   function handleRowClick(item: FieldDataType) {
-    const path = item.chart === "kpiGroup"
-      ? ROUTES.editKpi(item.id)
-      : ROUTES.editChart(item.id);
+    const path = item.chart === "cmap" ? ROUTES.editMap(item.id) : item.chart === "kpiGroup" ? ROUTES.editKpi(item.id) : ROUTES.editChart(item.id);
     navigate(path);
   }
 
@@ -136,11 +134,10 @@ export default function ChartTable({
                     case "kpiGroup":
                       IconComponent = FaList;
                       break;
-                    case "point_map":
+                    case "cmap":
                       IconComponent = FaMapLocationDot;
                       break;
                     case "map":
-                    case "geo":
                       IconComponent = FaMap;
                       break;
                     default:
@@ -325,7 +322,7 @@ export default function ChartTable({
                       />
                     </button>
                     <a
-                      href={row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
+                      href={row.chart === "cmap" ? ROUTES.editMap(row.id) : row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
                       aria-label="edit"
                       className="btn btn-ghost btn-xs btn-square"
                     >

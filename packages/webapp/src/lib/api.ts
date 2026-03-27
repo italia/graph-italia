@@ -239,6 +239,7 @@ export function logout() {
 export interface DashboardDetail {
   name: string;
   description: string;
+  publish: boolean;
   slots: {
     settings: {
       i: `item-${number}`;
@@ -289,6 +290,17 @@ export async function updateSlots(
 ) {
   const response = await axios.put(
     `${getServerUrlWithApi()}/dashboards/${id}/slots`,
+    body
+  );
+  return response.status === 200;
+}
+
+export async function updateDashboard(
+  id: string,
+  body: { name: string, description: string, publish: boolean }
+) {
+  const response = await axios.put(
+    `${getServerUrlWithApi()}/dashboards/${id}`,
     body
   );
   return response.status === 200;

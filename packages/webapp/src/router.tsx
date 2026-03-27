@@ -6,7 +6,7 @@ import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
 import EditChartPage from "./pages/private/EditChart";
 import EditMapPage from "./pages/private/EditMap";
-import EditKpiGroupPage from "./pages/private/EditKpiGroup";
+import EditKpiGroupPage from "./pages/private/EditKpiGroupOld";
 import DashboardEditPage from "./pages/private/EditDashboard";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
