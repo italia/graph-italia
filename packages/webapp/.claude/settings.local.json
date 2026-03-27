@@ -14,7 +14,8 @@
       "WebFetch(domain:www.dati.gov.it)",
       "Bash(node -e \"const rgl = require\\(''''/Users/lorezz/code/_dtd/dataviz/dataviz-monorepo/node_modules/.bun/react-grid-layout@2.2.2+bf16f8eded5e12ee/node_modules/react-grid-layout/dist/core.js''''\\); console.log\\(Object.keys\\(rgl\\)\\)\")",
       "Bash(python3 -c \"import sys,json; p=json.load\\(sys.stdin\\); print\\(p.get\\(''''main'''',''''''''\\), p.get\\(''''exports'''',{}\\)\\)\")",
-      "Bash(curl -s \"https://raw.githubusercontent.com/react-grid-layout/react-grid-layout/master/test/examples/14-responsive-bootstrap-style.jsx\")"
+      "Bash(curl -s \"https://raw.githubusercontent.com/react-grid-layout/react-grid-layout/master/test/examples/14-responsive-bootstrap-style.jsx\")",
+      "Bash(find /Users/lorezz/code/_dtd/dataviz/dataviz-monorepo/packages/webapp/src/pages/private/ -name *.tsx -o -name *.ts)"
     ]
   }
 }

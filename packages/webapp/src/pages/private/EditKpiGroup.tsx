@@ -1,191 +1,510 @@
-import { useMachine } from "@xstate/react";
-import type { ChartColorScheme } from "dataviz-components";
-import {
-  ColorSchemeProvider,
-  RenderChart,
-  type MatrixType,
-} from "dataviz-components";
 import "dataviz-components/dist/style.css";
-import dayjs from "dayjs";
-import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import type { ChartConfigType } from "dataviz-components";
+import { RenderChart } from "dataviz-components";
+import { Controller, useForm } from "react-hook-form";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
-import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
-import { startTransition, useEffect, useState } from "react";
+import { FaCog, FaInfo, FaPlus } from "react-icons/fa";
+import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
+import { Helmet } from "react-helmet";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
-import { HOME_ROUTE, ROUTES } from "../../router.tsx";
-import { useSettingsStore } from "../../lib/store/settings_store.ts";
-import ChartOptions from "../../components/ChartOptions.tsx";
-import Layout from "../../components/layout/index.tsx";
-import Loading from "../../components/layout/Loading.tsx";
-import SelectChart from "../../components/SelectChart.tsx";
-import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
-import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
-import EditStepComponent from "../../components/EditStepComponent.tsx";
-import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
-import TransformDataTable from "../../components/load-data/TransformDataTable.tsx";
-import ThemeSwitcherComponent from "../../components/layout/ThemeSwitcher.tsx";
-import { defaultConfig } from "../../lib/constants.ts";
-import stepMachine from "../../lib/stepMachine.ts";
-import * as api from "../../lib/api.ts";
-import useStoreState from "../../lib/storeState.ts";
+import Layout from "../../components/layout";
+import Loading from "../../components/layout/Loading";
+import EditStepComponent from "../../components/EditStepComponent";
+import GenericDialog from "../../components/layout/GenericDialog";
+import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
+import { HOME_ROUTE } from "../../router";
+import useEditKpiGroupStore from "../../lib/store/kpi_store";
+import {
+  KPI_FORM_ID,
+  KpiForm,
+  type KpiFormValues,
+} from "./EditKpiGroupOld/kpi-form";
 
+// ────────────────────────────────────────────────────────────────────────────
+// KPI Group Config Form
+// ────────────────────────────────────────────────────────────────────────────
+type KpiGroupConfigType = Pick<
+  ChartConfigType,
+  | "direction"
+  | "h"
+  | "labeLine"
+  | "legend"
+  | "legendPosition"
+  | "palette"
+  | "tooltip"
+  | "tooltipFormatter"
+  | "valueFormatter"
+  | "totalLabel"
+  | "tooltipTrigger"
+  | "colors"
+  | "background"
+>;
 
-function EditChartPage() {
+const configDefaultValues: KpiGroupConfigType = {
+  direction: "vertical",
+  h: 0,
+  labeLine: false,
+  legend: false,
+  legendPosition: "",
+  palette: [] as string[],
+  tooltip: false,
+  tooltipFormatter: "",
+  valueFormatter: "",
+  totalLabel: "",
+  tooltipTrigger: "",
+  colors: [],
+  background: "",
+};
+
+export type KpiGroupConfigFormValues = typeof configDefaultValues;
+
+export interface KpiConfigFormHandle {
+  getFormData: () => KpiGroupConfigFormValues;
+  resetForm: () => void;
+}
+
+const KpiConfigForm = forwardRef<
+  KpiConfigFormHandle,
+  { config: KpiGroupConfigType }
+>((props, ref) => {
   const { t } = useTranslation("pages", {
-    keyPrefix: `charts.editChart`,
+    keyPrefix: "charts.editKpiGroup.components.kpiConfigForm",
   });
-  const { id: paramId } = useParams();
-  const navigate = useNavigate();
-  const [state, send] = useMachine(stepMachine);
-  const {
-    id,
-    chart,
-    config,
-    data,
-    isRemote,
-    remoteUrl,
-    dataSource,
-    setConfig,
-    setChart,
-    setData,
-    setRemoteUrl,
-    setIsRemote,
-    loadItem,
-    resetItem,
-  } = useStoreState((state) => state);
+  const { register, control, reset, getValues, watch, setValue } = useForm({
+    defaultValues: {
+      ...configDefaultValues,
+      ...props.config,
+    },
+  });
 
-  const [currentData, setCurrentData] = useState(null as any);
-  const [loading, setLoading] = useState(true);
-  const [chartName, setChartName] = useState<string>("");
-  const [chartDescription, setChartDescription] = useState<string>("");
-  const [chartPublish, setChartPublish] = useState<boolean>(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const { settings } = useSettingsStore();
-  const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
-    settings?.preferredTheme === "dark" ? "dark" : "light",
+  const legendValue = watch("legend");
+  const tooltipValue = watch("tooltip");
+
+  useEffect(() => {
+    if (!legendValue) {
+      setValue("legendPosition", "");
+    }
+  }, [legendValue, setValue]);
+
+  useEffect(() => {
+    if (!tooltipValue) {
+      setValue("tooltipFormatter", "");
+      setValue("tooltipTrigger", "");
+    }
+  }, [tooltipValue, setValue]);
+
+  useImperativeHandle(ref, () => ({
+    getFormData: () => getValues(),
+    resetForm: () => reset(),
+  }));
+
+  return (
+    <div className="w-full space-y-4">
+      <div>
+        <label htmlFor="kpi_direction" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.direction.label")}
+          </span>
+        </label>
+        <select
+          id="kpi_direction"
+          {...register("direction")}
+          className="input input-bordered w-full"
+        >
+          <option value="vertical">
+            {t("form.fields.direction.values.vertical")}
+          </option>
+          <option value="horizontal">
+            {t("form.fields.direction.values.horizontal")}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="kpi_height" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.height.label")}
+          </span>
+        </label>
+        <input
+          id="kpi_height"
+          {...register("h", { valueAsNumber: true })}
+          type="number"
+          className="input input-bordered w-full"
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          id="kpi_labeLine"
+          {...register("labeLine")}
+          type="checkbox"
+          className="checkbox"
+        />
+        <label htmlFor="kpi_labeLine" className="label-text font-medium">
+          {t("form.fields.labelLine.label")}
+        </label>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          id="kpi_legend"
+          {...register("legend")}
+          type="checkbox"
+          className="checkbox"
+        />
+        <label htmlFor="kpi_legend" className="label-text font-medium">
+          {t("form.fields.legend.label")}
+        </label>
+      </div>
+
+      {legendValue && (
+        <div>
+          <label htmlFor="kpi_legendPosition" className="label">
+            <span className="label-text font-medium">
+              {t("form.fields.legendPosition.label")}
+            </span>
+          </label>
+          <select
+            id="kpi_legendPosition"
+            {...register("legendPosition")}
+            className="input input-bordered w-full"
+          >
+            <option value="">
+              {t("form.fields.legendPosition.values.noValue")}
+            </option>
+            <option value="top">
+              {t("form.fields.legendPosition.values.top")}
+            </option>
+            <option value="bottom">
+              {t("form.fields.legendPosition.values.bottom")}
+            </option>
+            <option value="left">
+              {t("form.fields.legendPosition.values.left")}
+            </option>
+            <option value="right">
+              {t("form.fields.legendPosition.values.right")}
+            </option>
+          </select>
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="kpi_palette" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.palette.label")}
+          </span>
+        </label>
+        <Controller
+          name="palette"
+          control={control}
+          render={({ field }) => (
+            <input
+              id="kpi_palette"
+              type="text"
+              value={field.value}
+              onChange={(e) =>
+                field.onChange(e.target.value.split(",").map((s) => s.trim()))
+              }
+              placeholder="es: red, blue, green"
+              className="input input-bordered w-full"
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          id="kpi_tooltip"
+          {...register("tooltip")}
+          type="checkbox"
+          className="checkbox"
+        />
+        <label htmlFor="kpi_tooltip" className="label-text font-medium">
+          {t("form.fields.tooltip.label")}
+        </label>
+      </div>
+
+      {tooltipValue && (
+        <div>
+          <label htmlFor="kpi_tooltipFormatter" className="label">
+            <span className="label-text font-medium">
+              {t("form.fields.tooltipFormatter.label")}
+            </span>
+          </label>
+          <input
+            id="kpi_tooltipFormatter"
+            {...register("tooltipFormatter")}
+            type="text"
+            placeholder="es: {b}: {c}"
+            className="input input-bordered w-full"
+          />
+        </div>
+      )}
+
+      {tooltipValue && (
+        <div>
+          <label htmlFor="kpi_tooltipTrigger" className="label">
+            <span className="label-text font-medium">
+              {t("form.fields.tooltipTrigger.label")}
+            </span>
+          </label>
+          <select
+            id="kpi_tooltipTrigger"
+            {...register("tooltipTrigger")}
+            className="input input-bordered w-full"
+          >
+            <option value="">
+              {t("form.fields.tooltipTrigger.values.noValue")}
+            </option>
+            <option value="item">
+              {t("form.fields.tooltipTrigger.values.item")}
+            </option>
+            <option value="axis">
+              {t("form.fields.tooltipTrigger.values.axis")}
+            </option>
+          </select>
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="kpi_valueFormatter" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.valueFormatter.label")}
+          </span>
+        </label>
+        <input
+          id="kpi_valueFormatter"
+          {...register("valueFormatter")}
+          type="text"
+          placeholder="es: {c}%"
+          className="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="kpi_totalLabel" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.totalLabel.label")}
+          </span>
+        </label>
+        <input
+          id="kpi_totalLabel"
+          {...register("totalLabel")}
+          type="text"
+          placeholder="es: Totale"
+          className="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="kpi_colors" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.colors.label")}
+          </span>
+        </label>
+        <Controller
+          name="colors"
+          control={control}
+          render={({ field }) => (
+            <input
+              id="kpi_colors"
+              type="text"
+              value={field.value.join(",")}
+              onChange={(e) =>
+                field.onChange(e.target.value.split(",").map((s) => s.trim()))
+              }
+              placeholder="es: #ff0000, #00ff00, #0000ff"
+              className="input input-bordered w-full"
+            />
+          )}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="kpi_background" className="label">
+          <span className="label-text font-medium">
+            {t("form.fields.background.label")}
+          </span>
+        </label>
+        <Controller
+          name="background"
+          control={control}
+          render={({ field }) => (
+            <div className="flex gap-2">
+              <input
+                id="kpi_background"
+                type="text"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                className="input input-bordered flex-1"
+              />
+              <input
+                type="color"
+                value={field.value || "#FFFFFF"}
+                onChange={(e) => field.onChange(e.target.value)}
+                className="w-12 h-10 border border-base-300 rounded cursor-pointer"
+              />
+            </div>
+          )}
+        />
+      </div>
+    </div>
   );
+});
 
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
+KpiConfigForm.displayName = "KpiConfigForm";
 
-  // After the initial load completes, reset any dirty flag that child components
-  // may have set during their mount/initialization (e.g. SelectChart, ChartOptions
-  // calling their setter props to apply defaults).
+// ────────────────────────────────────────────────────────────────────────────
+// KPI Dropdown
+// ────────────────────────────────────────────────────────────────────────────
+interface KpiDropdownProps {
+  title: string;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: "charts.editKpiGroup.components.kpiDropdown",
+  });
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (!loading) {
-      setHasUnsavedChanges(false);
-    }
-  }, [loading]);
-
-  // Load existing chart when there's a paramId
-  useEffect(() => {
-    async function loadExistingChart() {
-      if (paramId) {
-        setLoading(true);
-        try {
-          const chartData = await api.getChart(paramId);
-          if (chartData) {
-            loadItem({
-              ...chartData,
-              id: paramId,
-              config: chartData.config || defaultConfig,
-            });
-            setChartName(chartData.name || "");
-            setChartDescription(chartData.description || "");
-            setChartPublish(chartData.publish ?? true);
-
-            // Go to config step only if chart already has data loaded
-            const hasExistingData =
-              chartData.data?.length > 0 || chartData.dataSource;
-            if (hasExistingData) {
-              send({ type: "CONFIG" });
-            }
-          }
-        } catch (error) {
-          console.error("Error loading chart:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        // Reset for new chart creation - clear any previous data
-        resetItem();
-        setChart("");
-        setChartName("");
-        setChartDescription("");
-        setChartPublish(true);
-        setLoading(false);
+    const handleClickOutside = (event: Event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
       }
-    }
-    loadExistingChart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramId]);
-
-  const haveData = data && data[0].length > 0 ? true : dataSource ? true : false;
-
-  function handleUpload(d: any) {
-    setHasUnsavedChanges(true);
-    setCurrentData(d);
-  }
-
-  function handleSetRemoteData(d: any) {
-    setHasUnsavedChanges(true);
-    setIsRemote(true);
-    setRemoteUrl(d.remoteUrl);
-    setCurrentData(d.data);
-  }
-
-
-  // Generate default name based on chart type and date
-  const getDefaultName = () => {
-    return `${chart || "new"}chart-${dayjs(Date.now()).format(
-      "YYYY-MM-DD_HH-mm",
-    )}`;
-  };
-
-  // Save chart function
-  async function saveChart() {
-    const finalName = chartName || getDefaultName();
-    const payload = {
-      name: finalName,
-      description: chartDescription,
-      publish: chartPublish,
-      chart: chart || "bar",
-      config,
-      data,
-      isRemote,
-      remoteUrl,
     };
 
-    setIsSaving(true);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="btn btn-xs btn-primary btn-outline m-1"
+      >
+        {title}
+      </button>
+
+      {isOpen && (
+        <ul className="menu absolute top-full left-0 mt-1 bg-base-300 rounded-box z-10 w-32 p-2 shadow-lg border">
+          <li>
+            <button
+              type="button"
+              className="text-sm"
+              onClick={() => {
+                onEdit();
+                setIsOpen(false);
+              }}
+            >
+              <BsPencilFill />
+              {t("actions.edit.label")}
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              className="text-sm"
+              onClick={() => {
+                onDelete();
+                setIsOpen(false);
+              }}
+            >
+              <BsFillTrashFill />
+              {t("actions.delete.label")}
+            </button>
+          </li>
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Page
+// ────────────────────────────────────────────────────────────────────────────
+function EditKpiGroupPage() {
+  const { t } = useTranslation("pages", { keyPrefix: "charts.editKpiGroup" });
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const kpiConfigFormRef = useRef<KpiConfigFormHandle>(null);
+  const [addFormKey, setAddFormKey] = useState(0);
+
+  const {
+    load,
+    reload,
+    save,
+    showEditKpiFormModal,
+    updateKpi,
+    closeEditKpiFormModal,
+    closeConfigFormModal,
+    cancelDeleteModal,
+    confirmDeleteModal,
+    showDeleteKpiModal,
+    addKpi,
+    deleteModalVisible,
+    editKpiGroupFormModalVisible,
+    selectedKpi,
+    vm,
+    kpiGroup,
+    isLoading,
+    loaded,
+    error,
+    pendingChanges,
+  } = useEditKpiGroupStore();
+
+  useUnsavedChanges(pendingChanges, t("unsavedChanges"));
+
+  useEffect(() => {
+    if (id) load(id);
+  }, [id, load]);
+
+  async function saveHandler() {
     try {
-      const result = await api.upsertChart(payload, paramId || id || "");
-      if (result) {
-        setHasUnsavedChanges(false);
-        toast.success(t(`save.success.label`));
+      const ok = await save();
+      if (ok) {
+        toast.success(t("header.actions.save.success") || "Saved!");
+        reload();
       }
-    } catch (error) {
-      console.error("Error saving chart:", error);
-      toast.error(t(`save.error.label`));
-    } finally {
-      setIsSaving(false);
+    } catch {
+      toast.error(t("header.actions.save.error") || "Error saving");
     }
   }
 
-  // Determine current step for display
-  const getCurrentStepIndex = () => {
-    if (state.matches("idle") || state.matches("input")) return 0;
-    if (state.matches("config")) return 1;
-    return 0;
-  };
+  function handleAddKpi(data: KpiFormValues) {
+    addKpi(data);
+    setAddFormKey((k) => k + 1);
+  }
 
-  // Check if Save button should be enabled
-  const canSave = !!chart;
+  function handleApplyConfig() {
+    const formData = kpiConfigFormRef.current?.getFormData();
+    if (formData) closeConfigFormModal(formData);
+  }
 
-  const currentStepIndex = getCurrentStepIndex();
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Layout>
         <div className="p-6">
@@ -199,46 +518,43 @@ function EditChartPage() {
     <Layout>
       <Helmet>
         <title>
-          {t(`head.title.label`)}: {`${chartName ? ": " + chartName : ""}`}
+          {t("head.title.label")}
+          {vm.name ? `: ${vm.name}` : ""}
         </title>
-        <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
+
+      {/* Top bar */}
       <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
           className="btn btn-outline"
         >
-          {t(`header.actions.back.label`)}
+          {t("header.actions.back.label")}
         </button>
-        <div className="flex gap-4">
-          {`Edit Chart`}
-        </div>
-        <div className="flex-shrink-0">
-          <button
-            type="button"
-            onClick={saveChart}
-            disabled={!hasUnsavedChanges || !canSave || isSaving}
-            className="btn btn-primary gap-2"
-          >
-            {isSaving ? (
-              <span role="status">
-                <span className="loading loading-spinner loading-sm"></span>
-                {t(`header.actions.save.isSaving`)}...
-              </span>
-            ) : (
-              <> {t(`header.actions.save.default`)}</>
-            )}
-          </button>
-        </div>
+        <div className="flex gap-4">{vm.name || "Edit KPI Group"}</div>
+        <button
+          type="button"
+          onClick={saveHandler}
+          disabled={!pendingChanges}
+          className="btn btn-primary"
+        >
+          {t("header.actions.save.default")}
+        </button>
       </div>
 
+      {error && (
+        <div role="alert" className="alert alert-error mb-4">
+          {error.message}
+        </div>
+      )}
+
       <div className="mx-auto">
-        <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
+        <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
+          {/* Left: Info + Config steps */}
           <div className="space-y-1 xl:col-span-2">
             <EditStepComponent
-              title={t(`body.options.setup.title`)}
-              description={t(`body.options.setup.description`)}
+              title={t("body.options.setup.title")}
               Icon={FaInfo}
               isOpen={true}
               isDisabled={false}
@@ -246,234 +562,135 @@ function EditChartPage() {
             >
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
-                  <div className="flex flex-col space-y-2">
-                    <div className="flex items-center gap-4">
-                      <input
-                        id="chart_visibility"
-                        type="checkbox"
-                        checked={chartPublish}
-                        onChange={() => {
-                          setHasUnsavedChanges(true);
-                          setChartPublish(!chartPublish);
-                        }}
-                        className="toggle toggle-sm toggle-primary cursor-pointer"
-                      />
-                      <label
-                        htmlFor="chart_visibility"
-                        className="text-sm text-base-content/70 cursor-pointer"
-                      >
-                        {t(`body.options.setup.form.fields.visibility.label`)}
-                      </label>
-                      <span className="text-sm text-base-content font-bold">
-                        {t(
-                          `body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
-                        )}
-                      </span>
-                    </div>
-                    <label
-                      htmlFor="chart_title"
-                      className="mt-4 text-base-content/70"
-                    >
-                      {t(`body.options.setup.form.fields.title.label`)}
-                    </label>
-                    <input
-                      id="chart_title"
-                      type="text"
-                      value={chartName}
-                      onChange={(e) => {
-                        setHasUnsavedChanges(true);
-                        setChartName(e.target.value);
-                      }}
-                      placeholder={getDefaultName()}
-                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
-                    />
-                    <label
-                      htmlFor="chart_description"
-                      className="mt-4 text-base-content/70"
-                    >
-                      {t(`body.options.setup.form.fields.description.label`)}
-                    </label>
-                    <textarea
-                      id="chart_description"
-                      value={chartDescription}
-                      rows={3}
-                      onChange={(e) => {
-                        setHasUnsavedChanges(true);
-                        setChartDescription(e.target.value);
-                      }}
-                      placeholder={t(
-                        `body.options.setup.form.fields.description.placeholder`,
-                      )}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
-                    />
-                  </div>
-                </div>
-              </div>
-            </EditStepComponent>
-
-            <EditStepComponent
-              title={t(`body.options.configuration.title`)}
-              description={t(`body.options.configuration.description`)}
-              Icon={FaCog}
-              isOpen={currentStepIndex > 0 ? true : false}
-              isDisabled={currentStepIndex === 0 ? true : false}
-              index={2}
-            >
-              <div>
-                {state.matches("config") ? (
-                  <div className="card bg-base-100 shadow-sm border border-base-200">
-                    <div className="card-body">
-                      <SelectChart
-                        setChart={(value: string) => {
-                          setHasUnsavedChanges(true);
-                          setChart(value);
-                        }}
-                        chart={chart}
-                      />
-                      <div className="divider my-2"></div>
-                      <ChartOptions
-                        config={config}
-                        setConfig={(value) => {
-                          setHasUnsavedChanges(true);
-                          setConfig(value);
-                        }}
-                        chart={chart}
-                        numSeries={(data as MatrixType)?.length - 1 || 0}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div role="status">
-                    {" "}
-                    {t(`body.options.configuration.status`)}{" "}
-                  </div>
-                )}
-              </div>
-            </EditStepComponent>
-
-            <EditStepComponent
-              title={t(`body.options.data.title`)}
-              description={t(`body.options.data.description`)}
-              Icon={FaDatabase}
-              isOpen={currentStepIndex === 0 ? true : false}
-              isDisabled={false}
-              index={1}
-            >
-              {/* Step 1: Data loading */}
-              <div className="card bg-base-100 shadow-sm border border-base-200">
-                <div className="card-body">
-                  <ChooseLoader
-                    handleUpload={handleUpload}
-                    remoteUrl={remoteUrl}
-                    handleSetRemoteData={handleSetRemoteData}
-                  />
-
-
-
-                </div>
-              </div>
-            </EditStepComponent>
-          </div>
-
-          {/* Right column: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg">
-            <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
-              <div>
-                <h1 className="text-2xl font-bold">{chartName}</h1>
-                <div className="text-base-content/80">
-                  {chartDescription ? (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: chartDescription.replace(/\n/g, "<br />"),
-                      }}
-                    />
-                  ) : (
-                    <p className="italic text-base-content">{""}</p>
+                  <h1 className="text-2xl font-bold">{vm.name}</h1>
+                  {vm.description && (
+                    <p className="text-base-content/70">{vm.description}</p>
                   )}
                 </div>
               </div>
+            </EditStepComponent>
 
-              <div>
-                {state.matches("config") && chart ? (
-                  <>
-                    {chartPublish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
-                    <ThemeSwitcherComponent
-                      currentTheme={previewScheme}
-                      handleChange={(value: ChartColorScheme) =>
-                        setPreviewScheme(value)
-                      }
+            <EditStepComponent
+              title={t("body.options.configuration.title")}
+              Icon={FaCog}
+              isOpen={loaded}
+              isDisabled={!loaded}
+              index={1}
+            >
+              {loaded && (
+                <div className="card bg-base-100 shadow-sm border border-base-200">
+                  <div className="card-body">
+                    <KpiConfigForm
+                      ref={kpiConfigFormRef}
+                      config={kpiGroup.config}
                     />
-                    <div
-                      className="overflow-auto min-h-[380px] relative rounded-lg"
-                      style={{
-                        backgroundColor:
-                          previewScheme === "dark" ? "#1a1a2e" : "#F5FAFF",
-                      }}
-                    >
-                      <ColorSchemeProvider scheme={previewScheme}>
-                        <RenderChart
-                          id={id || paramId || "preview-map"}
-                          chart={chart}
-                          data={data}
-                          config={config}
-                          dataSource={null}
-                        />
-                      </ColorSchemeProvider>
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={handleApplyConfig}
+                        className="btn btn-primary btn-sm"
+                      >
+                        {t("body.actions.changeConfiguration.label")}
+                      </button>
                     </div>
-                  </>
-                ) : (
-                  <p className="italic text-base-content"></p>
-                )}
-              </div>
-              <div>
-
-
-                {!(haveData && data) ? (
-                  <div>
-                    <p className="italic text-base-content" role="status">
-                      {t(`body.preview.loadDataMessage`)}
-                    </p>
-                    {currentData && (
-                      <div className="card bg-base-100 shadow-sm border border-base-200">
-                        <div className="card-body">
-                          <h4>serie selector</h4>
-                          <SeriesSelector
-                            initialData={currentData || data}
-                            setData={(d) => {
-                              setData(d);
-                              setHasUnsavedChanges(true);
-                              send({ type: "CONFIG" });
-                            }}
-                          />
-                        </div>
-                      </div>)}
                   </div>
-                ) : (
-                  <div className="overflow-auto flex-1 min-h-0">
-                    <TransformDataTable
-                      currentData={(data)}
-                      handleTransformData={(d) => {
-                        startTransition(() => {
-                          setData(d);
-                          setHasUnsavedChanges(true);
-                          setCurrentData(d);
-                        });
-                      }}
-                      onReset={() => {
-                        setData(null);
-                        setCurrentData(null);
-                        send({ type: "INPUT" });
-                      }}
-                    />
-                  </div>
-                )}
+                </div>
+              )}
+            </EditStepComponent>
+          </div>
+
+          {/* Right: Preview */}
+          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg min-h-[500px]">
+            {kpiGroup.dataSource.length > 0 ? (
+              <RenderChart {...kpiGroup} />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="italic text-base-content/60">
+                  {t("body.messages.noKpi")}
+                </p>
               </div>
-            </div>
+            )}
           </div>
         </div>
+
+        {/* Full-width: KPI management step */}
+        <div className="mt-4">
+          <EditStepComponent
+            title={t("body.actions.addKpi.label")}
+            Icon={FaPlus}
+            isOpen={loaded}
+            isDisabled={!loaded}
+            index={2}
+          >
+            {kpiGroup.dataSource.length > 0 && (
+              <div className="flex flex-wrap gap-2 pb-6 mb-6 border-b border-base-200">
+                {kpiGroup.dataSource.map(
+                  (ds: { title: string }, index: number) => (
+                    <KpiDropdown
+                      key={`${ds.title}-${index}`}
+                      title={ds.title}
+                      onEdit={() => showEditKpiFormModal(index)}
+                      onDelete={() => showDeleteKpiModal(index)}
+                    />
+                  ),
+                )}
+              </div>
+            )}
+
+            {/* Hidden when edit modal is open to avoid form id conflict */}
+            {!editKpiGroupFormModalVisible && (
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <KpiForm key={addFormKey} onSubmit={handleAddKpi} />
+                  <div className="mt-4">
+                    <button
+                      type="submit"
+                      form={KPI_FORM_ID}
+                      className="btn btn-primary"
+                    >
+                      {t("body.actions.addKpi.label")} +
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </EditStepComponent>
+        </div>
       </div>
+
+      {/* Edit KPI Modal */}
+      {editKpiGroupFormModalVisible && (
+        <GenericDialog
+          toggle={editKpiGroupFormModalVisible}
+          title={t("modals.editKpiForm.title")}
+          confirmCb={() => {
+            document
+              .getElementById(KPI_FORM_ID)
+              ?.dispatchEvent(
+                new Event("submit", { cancelable: true, bubbles: true }),
+              );
+          }}
+          cancelCb={closeEditKpiFormModal}
+        >
+          <KpiForm onSubmit={updateKpi} initialValues={selectedKpi} />
+        </GenericDialog>
+      )}
+
+      {/* Delete KPI Modal */}
+      {deleteModalVisible && (
+        <GenericDialog
+          toggle={deleteModalVisible}
+          title={t("modals.delete.title")}
+          confirmCb={confirmDeleteModal}
+          cancelCb={cancelDeleteModal}
+        >
+          <p>
+            {t("modals.delete.message")} {selectedKpi?.title}?
+          </p>
+        </GenericDialog>
+      )}
     </Layout>
   );
 }
 
-export default EditChartPage;
+export default EditKpiGroupPage;
