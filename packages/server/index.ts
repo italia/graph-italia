@@ -57,21 +57,31 @@ app.use(
 	}),
 );
 
+if (isDev) {
+	// CORS CRUD (only in dev)
+	app.use(
+		"/*",
+		cors({
+			origin: whitelist,
+			credentials: true,
+			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			allowHeaders: ["Content-Type", "Authorization"],
+		}),
+	);
+}
 
-// CORS (only in dev)
-app.use(cors());
-// if (isDev) {
-// 	app.use(
-// 		"/*",
-// 		cors({
-// 			origin: whitelist,
-// 			credentials: true,
-// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-// 			allowHeaders: ["Content-Type", "Authorization"],
-// 		}),
-// 	);
-// }
+// CORS — only for public chart/dashboard show and embed endpoints
+const publicCors = cors({
+	origin: "*",
+	allowMethods: ["GET", "OPTIONS"],
+	allowHeaders: ["Content-Type", "Authorization"],
+});
 
+// app.use(`/*`, publicCors);
+app.use(`/charts/show/*`, publicCors);
+app.use(`/dashboards/show/*`, publicCors);
+// app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
+// app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
@@ -80,6 +90,7 @@ app.use(cors());
 // Health check endpoint (minimal response for k8s liveness probes)
 app.get("/", (c) => c.json({
 	status: "ok",
+	isDev: isDev,
 	version: {
 		sha: BUILD_SHA,
 		buildTime: BUILD_TIME
@@ -97,6 +108,8 @@ app.get("/health/ready", async (c) => {
 
 		return c.json({
 			status: "ready",
+			isDev: isDev,
+			routes_prefix: ROUTES_PREFIX,
 			database: "connected",
 			version: {
 				sha: BUILD_SHA,
