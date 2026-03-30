@@ -66,16 +66,6 @@ export default function DashboardTable({
       ),
     },
     {
-      name: "Description",
-      selector: (row) => row.description ?? "",
-      sortable: true,
-      cell: (row) => (
-        <div className="text-sm text-base-content/70 truncate max-w-xs">
-          {row.description || "—"}
-        </div>
-      ),
-    },
-    {
       name: "Visibility",
       cell: (row) => (
         <span className="text-sm">
@@ -101,14 +91,14 @@ export default function DashboardTable({
       name: "Actions",
       cell: (row) => (
         <div className="flex gap-2">
-          <button
+          {/* <button
             type="button"
             aria-label="view"
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => handleViewDashboard(row.id ?? "")}
           >
             <FaEye fill={actionColor} size={actionSize} aria-hidden="true" />
-          </button>
+          </button> */}
           <button
             type="button"
             aria-label="edit"

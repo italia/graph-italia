@@ -58,7 +58,7 @@ function AuthPage() {
               onClick={() => handleAskAnotherCode()}
               className="link font-semibold link-primary"
             >
-              {t(`body.errors.invalidParam.actions.recoverPassoword.label`)}
+              {t(`body.errors.invalidParam.actions.recoverPassword.label`)}
             </a>
           </div>
         </div>

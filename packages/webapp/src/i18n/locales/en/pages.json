@@ -325,8 +325,11 @@
     },
     "home": {
         "header": {
-            "myCharts": "My Charts",
-            "noCharts": "Welcome"
+            "title": "Private Area",
+            "charts": "Charts",
+            "noCharts": "Welcome",
+            "dashboards": "Dashboards",
+            "noDashboards": "There is no Dashboards yet"
         },
         "body": {
             "actions": {
@@ -347,6 +350,8 @@
             }
         },
         "modals": {
+            "cancel": "Cancel",
+            "confirm": "Delete",
             "createChart": {
                 "title": "Create new chart",
                 "description": "Name your chart to start editing it",

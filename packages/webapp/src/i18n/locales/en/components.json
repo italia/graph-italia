@@ -193,7 +193,7 @@
                     },
                     "social": {
                         "label": "Source on",
-                        "platoforms": {
+                        "platforms": {
                             "github": {
                                 "ariaLabel": "GitHub (si apre in nuova finestra)"
                             }

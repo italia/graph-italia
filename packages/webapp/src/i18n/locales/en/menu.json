@@ -1,8 +1,8 @@
 {
     "menu": {
         "items": {
-            "charts": {
-                "label": "Charts"
+            "examples": {
+                "label": "Examples"
             },
             "tools": {
                 "label": "Tools",

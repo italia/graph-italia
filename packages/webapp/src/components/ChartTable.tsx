@@ -100,7 +100,239 @@ export default function ChartTable({
   }
 
   const COLUMNS_TRANSLATION_KEY_PATH = `columns`;
+  const columns: TableColumn<FieldDataType>[] = [
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`),
+      maxWidth: "80px",
+      selector: (row: FieldDataType) => row.chart,
+      sortable: true,
+      cell: (row: FieldDataType) => {
+        // let iconName = "";
+        let IconComponent = FaRegSquare;
+        switch (row.chart) {
+          case "bar":
+            IconComponent = FaChartBar;
+            break;
+          case "line":
+            IconComponent = FaChartLine;
+            break;
+          case "pie":
+            IconComponent = FaChartPie;
+            break;
+          case "kpiGroup":
+            IconComponent = FaList;
+            break;
+          case "cmap":
+            IconComponent = FaMapLocationDot;
+            break;
+          case "map":
+            IconComponent = FaMap;
+            break;
+          default:
+            IconComponent = FaRegSquare;
+        }
+        return (
+          <div className="overflow-hidden">
+            <div className="flex items-center gap-2">
+              <IconComponent
+                fill={currentTheme === "dark" ? "#fff" : "#06c"}
+                size={24}
+                aria-hidden="true"
+              />
+              <span className="capitalize">{row.chart}</span>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`),
+      selector: (row: FieldDataType) => row.name ?? "",
+      sortable: true,
+      cell: (row: FieldDataType) => (
+        <div className="text-md font-medium">
+          <div>{row.name}</div>
+        </div>
+      ),
+    },
 
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`),
+      selector: (row: FieldDataType) => row.isRemote ?? false,
+      cell: (row: FieldDataType) =>
+        row.remoteUrl ? (
+          <div className="flex gap-2">
+            <a
+              href={row.remoteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="open remote URL"
+              className="btn btn-ghost btn-xs btn-square"
+            >
+              <FaLink
+                fill={actionColor}
+                size={actionSize}
+                aria-hidden="true"
+              />
+            </a>
+            <button
+              type="button"
+              aria-label="copy remote URL"
+              className="btn btn-ghost btn-xs btn-square"
+              onClick={handleCopy(`${row.remoteUrl || ""}`)}
+            >
+              <FaCopy
+                fill={actionColor}
+                size={actionSize}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+        ) : (
+          "No"
+        ),
+      sortable: true,
+    },
+
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.visibility.label`),
+      cell: (row: FieldDataType) => (
+        <div>
+          {row.publish ? (
+            <span className="text-content">
+              {t(
+                `${COLUMNS_TRANSLATION_KEY_PATH}.visibility.values.public`,
+              )}{" "}
+            </span>
+          ) : (
+            <span className="text-content">
+              {" "}
+              {t(
+                `${COLUMNS_TRANSLATION_KEY_PATH}.visibility.values.private`,
+              )}{" "}
+            </span>
+          )}
+
+        </div>
+      ),
+    },
+
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
+      selector: (row: FieldDataType) => row.createdAt ?? "",
+      cell: (row: FieldDataType) =>
+        dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
+      sortable: true,
+    },
+
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
+      selector: (row: FieldDataType) => row.updatedAt ?? "",
+      cell: (row: FieldDataType) =>
+        dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm"),
+      sortable: true,
+    },
+
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
+      cell: (row: FieldDataType) => (
+        <div className="flex gap-2">
+
+          <button
+            type="button"
+            aria-label="embed"
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={() =>
+              setShow(
+                `<iframe width="600" height="400" src="${window.location.origin}${ROUTES.embedChart(row.id ?? "")}" frameborder="0" allowfullscreen></iframe>`,
+              )
+            }
+          >
+            <FaCode
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
+          </button>
+
+
+
+          <button
+            type="button"
+            aria-label="copy link"
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={handleCopy(
+              `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
+            )}
+          >
+            <FaCopy
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+      ),
+    },
+
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.actions.label`),
+      cell: (row: FieldDataType) => (
+        <div className="flex gap-2">
+
+          <button
+            type="button"
+            aria-label="preview"
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={() => setData(row)}
+          >
+            <FaEye
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
+          </button>
+          <a
+            href={row.chart === "cmap" ? ROUTES.editMap(row.id) : row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
+            aria-label="edit"
+            className="btn btn-ghost btn-xs btn-square"
+          >
+            <FaPenToSquare
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
+          </a>
+          <a
+            href={`${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="view"
+            className="btn btn-ghost btn-xs btn-square"
+          >
+            <FaLink
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
+          </a>
+          <button
+            type="button"
+            aria-label="delete"
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={() => handleDeleteChart(row.id ?? "")}
+          >
+            <FaTrashCan
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
+          </button>
+
+        </div>
+      ),
+    },
+  ];
   return (
     <div className="flex flex-col gap-2">
       <div role="status" aria-live="polite" className="sr-only">
@@ -112,230 +344,7 @@ export default function ChartTable({
           <DataTable
             onRowClicked={(row) => handleRowClick(row)}
             onSort={handleSort}
-            columns={[
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`),
-                maxWidth: "80px",
-                selector: (row: FieldDataType) => row.chart,
-                sortable: true,
-                cell: (row: FieldDataType) => {
-                  // let iconName = "";
-                  let IconComponent = FaRegSquare;
-                  switch (row.chart) {
-                    case "bar":
-                      IconComponent = FaChartBar;
-                      break;
-                    case "line":
-                      IconComponent = FaChartLine;
-                      break;
-                    case "pie":
-                      IconComponent = FaChartPie;
-                      break;
-                    case "kpiGroup":
-                      IconComponent = FaList;
-                      break;
-                    case "cmap":
-                      IconComponent = FaMapLocationDot;
-                      break;
-                    case "map":
-                      IconComponent = FaMap;
-                      break;
-                    default:
-                      IconComponent = FaRegSquare;
-                  }
-                  return (
-                    <div className="overflow-hidden">
-                      <div className="flex items-center gap-2">
-                        <IconComponent
-                          fill={currentTheme === "dark" ? "#fff" : "#06c"}
-                          size={24}
-                          aria-hidden="true"
-                        />
-                        <span className="capitalize">{row.chart}</span>
-                      </div>
-                    </div>
-                  );
-                },
-              },
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`),
-                selector: (row: FieldDataType) => row.name ?? "",
-                sortable: true,
-                cell: (row: FieldDataType) => (
-                  <div className="text-md font-medium">
-                    <div>{row.name}</div>
-                  </div>
-                ),
-              },
-
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`),
-                selector: (row: FieldDataType) => row.isRemote ?? false,
-                cell: (row: FieldDataType) =>
-                  row.remoteUrl ? (
-                    <div className="flex gap-2">
-                      <a
-                        href={row.remoteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="open remote URL"
-                        className="btn btn-ghost btn-xs btn-square"
-                      >
-                        <FaLink
-                          fill={actionColor}
-                          size={actionSize}
-                          aria-hidden="true"
-                        />
-                      </a>
-                      <button
-                        type="button"
-                        aria-label="copy remote URL"
-                        className="btn btn-ghost btn-xs btn-square"
-                        onClick={handleCopy(`${row.remoteUrl || ""}`)}
-                      >
-                        <FaCopy
-                          fill={actionColor}
-                          size={actionSize}
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </div>
-                  ) : (
-                    "No"
-                  ),
-                sortable: true,
-              },
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
-                selector: (row: FieldDataType) => row.createdAt ?? "",
-                cell: (row: FieldDataType) =>
-                  dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
-                sortable: true,
-              },
-
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
-                selector: (row: FieldDataType) => row.updatedAt ?? "",
-                cell: (row: FieldDataType) =>
-                  dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm"),
-                sortable: true,
-              },
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.visibility.label`),
-                cell: (row: FieldDataType) => (
-                  <div>
-                    {row.publish ? (
-                      <span className="text-content">
-                        {t(
-                          `${COLUMNS_TRANSLATION_KEY_PATH}.visibility.values.public`,
-                        )}{" "}
-                      </span>
-                    ) : (
-                      <span className="text-content">
-                        {" "}
-                        {t(
-                          `${COLUMNS_TRANSLATION_KEY_PATH}.visibility.values.private`,
-                        )}{" "}
-                      </span>
-                    )}
-
-                  </div>
-                ),
-              },
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
-                cell: (row: FieldDataType) => (
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      aria-label="preview"
-                      className="btn btn-ghost btn-xs btn-square"
-                      onClick={() => setData(row)}
-                    >
-                      <FaEye
-                        fill={actionColor}
-                        size={actionSize}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="embed"
-                      className="btn btn-ghost btn-xs btn-square"
-                      onClick={() =>
-                        setShow(
-                          `<iframe width="600" height="400" src="${window.location.origin}${ROUTES.embedChart(row.id ?? "")}" frameborder="0" allowfullscreen></iframe>`,
-                        )
-                      }
-                    >
-                      <FaCode
-                        fill={actionColor}
-                        size={actionSize}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <a
-                      href={`${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="view"
-                      className="btn btn-ghost btn-xs btn-square"
-                    >
-                      <FaLink
-                        fill={actionColor}
-                        size={actionSize}
-                        aria-hidden="true"
-                      />
-                    </a>
-                    <button
-                      type="button"
-                      aria-label="copy link"
-                      className="btn btn-ghost btn-xs btn-square"
-                      onClick={handleCopy(
-                        `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
-                      )}
-                    >
-                      <FaCopy
-                        fill={actionColor}
-                        size={actionSize}
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                ),
-              },
-
-              {
-                name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.actions.label`),
-                cell: (row: FieldDataType) => (
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      aria-label="delete"
-                      className="btn btn-ghost btn-xs btn-square"
-                      onClick={() => handleDeleteChart(row.id ?? "")}
-                    >
-                      <FaTrashCan
-                        fill={actionColor}
-                        size={actionSize}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <a
-                      href={row.chart === "cmap" ? ROUTES.editMap(row.id) : row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
-                      aria-label="edit"
-                      className="btn btn-ghost btn-xs btn-square"
-                    >
-                      <FaPenToSquare
-                        fill={actionColor}
-                        size={actionSize}
-                        aria-hidden="true"
-                      />
-                    </a>
-                  </div>
-                ),
-              },
-            ]}
+            columns={columns}
             data={list as FieldDataTypeWithPreview[]}
             theme={currentTheme}
             pagination
@@ -343,7 +352,6 @@ export default function ChartTable({
           />
         </div>
       )}
-
       <Dialog
         toggle={data ? true : false}
         title={t(`modals.previewChart.title`)}

@@ -23,6 +23,7 @@ import useChartsStoreState from "../../lib/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import useStoreState from "../../lib/storeState.ts";
+import { Helmet } from 'react-helmet';
 
 
 function Home() {
@@ -152,25 +153,40 @@ function Home() {
 
   return (
     <Layout>
-      <div className="p-4">
+      <Helmet>
+        <title>
+          {t(`header.title`)}
+        </title>
+        <meta name="description" content={t(`head.meta.description.content`)} />
+      </Helmet>
+      <div className="w-full flex justify-between items-center gap-2  bg-base-300 py-4 px-8 rounded-lg">
+        <div className="flex gap-4">
+          <h1 className="text-2xl font-bold">{t(`header.title`)}</h1>
+        </div>
+        <div className="flex-shrink-0">
+          <div className="flex my-5 gap-4">
+            {!loading && <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowCreateNewDialog(true)}
+            >
+              + Create New
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div className="p-8">
         <div>
           {loading ? (
             <Loading />
           ) : (
             <>
-              <h1 className="text-4xl font-bold">
-                {t(`header.${list && list.length ? "myCharts" : "noCharts"}`)}
-              </h1>
+              <h3 className="text-lg mb-4 font-semibold">
+                {t(`header.${list && list.length ? "charts" : "noCharts"}`)}
+              </h3>
 
-              <div className="flex my-5 gap-4">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => setShowCreateNewDialog(true)}
-                >
-                  + Create New
-                </button>
-              </div>
               <div>
                 <ChartTable
                   list={list as FieldDataType[]}
@@ -180,9 +196,9 @@ function Home() {
               </div>
 
               <div className="mt-10">
-                <h2 className="text-2xl font-bold mb-4">
-                  {dashboardList?.length ? "My Dashboards" : "No Dashboards yet"}
-                </h2>
+                <h3 className="text-lg mb-4 font-semibold" >
+                  {t(`header.${dashboardList && dashboardList.length ? "dashboards" : "noDashboards"}`)}
+                </h3>
                 {dashboardLoading ? (
                   <Loading />
                 ) : (
@@ -257,7 +273,7 @@ function Home() {
       >
         <div></div>
       </GenericDialog>
-    </Layout>
+    </Layout >
   );
 }
 

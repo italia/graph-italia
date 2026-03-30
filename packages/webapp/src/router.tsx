@@ -77,8 +77,8 @@ export const MENU: readonly MenuItem[] = [
   //   link: ROUTES.home,
   // },
   {
-    name: "Load Remote Data",
-    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.examples.label`,
+    name: "Examples",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.examples.label`,
     link: ROUTES.loadData,
   },
   {
@@ -101,12 +101,11 @@ export const MENU: readonly MenuItem[] = [
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
         link: ROUTES.generatePoi,
       },
-
-      {
-        name: "Check GeoJSon File",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
-        link: ROUTES.geo,
-      },
+      // {
+      //   name: "Check GeoJSon File",
+      //   translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
+      //   link: ROUTES.geo,
+      // },
     ],
   },
 ];
