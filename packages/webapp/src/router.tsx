@@ -71,10 +71,15 @@ export type MenuItem =
   | (TMenuItem & { subMenu: readonly MenuSubItem[] });
 
 export const MENU: readonly MenuItem[] = [
+  // {
+  //   name: "Charts",
+  //   translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
+  //   link: ROUTES.home,
+  // },
   {
-    name: "Charts",
-    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
-    link: ROUTES.home,
+    name: "Load Remote Data",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.examples.label`,
+    link: ROUTES.loadData,
   },
   {
     name: "Tools",
@@ -96,11 +101,7 @@ export const MENU: readonly MenuItem[] = [
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
         link: ROUTES.generatePoi,
       },
-      {
-        name: "Load Remote Data",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData.label`,
-        link: ROUTES.loadData,
-      },
+
       {
         name: "Check GeoJSon File",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,

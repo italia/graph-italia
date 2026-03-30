@@ -1,5 +1,5 @@
 import type { ChartConfigType, FieldDataType } from "dataviz-components";
-import type { KpiFormValues } from "../../pages/private/EditKpiGroupOld/kpi-form";
+import type { KpiFormValues } from "../../pages/private/kpi-form";
 import { create } from "zustand";
 import * as api from "../api";
 
@@ -34,14 +34,13 @@ const defaultKpiGroupData: KpiGroupFieldDataType = {
     data: null,
 };
 
-type EditKpiGroupVM = {
-    name: string;
-    description: string;
-};
+
 
 type EditKpiGroupState = {
     id?: string;
-    vm: EditKpiGroupVM;
+    name: string;
+    description?: string;
+    publish?: boolean;
     kpiGroup: KpiGroupFieldDataType;
     isLoading: boolean;
     loaded: boolean;
@@ -62,6 +61,9 @@ interface EditKpiGroupActions {
     load: (id: string) => void;
     reload: () => void;
     save: () => Promise<boolean>;
+    setName: (name: string) => void;
+    setDescription: (description: string) => void;
+    setPublish: (publish: boolean) => void;
     // add modal
     showAddKpiFormModal: () => void;
     closeKpiGroupFormModal: () => void;
@@ -83,7 +85,9 @@ interface EditKpiGroupActions {
 type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
-    vm: { name: "", description: "" },
+    name: "",
+    description: "",
+    publish: true,
     kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
@@ -138,6 +142,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             editKpiGroupFormModalVisible: false,
             selectedKpi: undefined,
             selectedKpiIndex: undefined,
+            pendingChanges: true,
         });
     },
     showEditKpiFormModal: (selectedKpiIndex: number) => {
@@ -191,14 +196,19 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             selectedKpiIndex: undefined,
         });
     },
+    setName: (name) => set({ name, pendingChanges: true }),
+    setDescription: (description) => set({ description, pendingChanges: true }),
+    setPublish: (publish) => set({ publish, pendingChanges: true }),
     load: async (id: string) => {
         try {
             const response = await api.getKpiGroup({ id });
             if (response && response.data) {
                 console.log(response.data);
-                const { name, description, config, dataSource } = response.data;
+                const { name, description, publish, config, dataSource } = response.data as typeof response.data & { publish?: boolean };
                 set({
-                    vm: { name, description },
+                    name: name || "",
+                    description: description || "",
+                    publish: publish ?? true,
                     isLoading: false,
                     loaded: true,
                     id,
@@ -222,13 +232,16 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     },
     save: async () => {
         console.log("save kpi group");
-        const { id, kpiGroup } = get();
+        const { id, name, description, publish, kpiGroup } = get();
         if (!id) {
             throw new Error("ID is undefined");
         }
         const response = await api.saveKpiGroup({
             id,
             payload: {
+                name,
+                description,
+                publish,
                 config: kpiGroup.config,
                 dataSource: kpiGroup.dataSource,
             },

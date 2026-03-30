@@ -66,77 +66,78 @@ function RenderChart(props: RenderProps) {
   /** Loading */
   if (loading) return null;
 
-  const height = props.config?.h || 500;
-  /** Default style */
+  // const showMinHeight = props.chart !== "kpi" && props.chart !== "kpiGroup";
+  // const height = props.config?.h || showMinHeight ? 500 : 100;
+  // const minHeight = rowHeight ? rowHeight : height;
+
   const baseStyle = {
     width: "100%",
-    height: "100%",
     maxHeight: "100%",
+    height: "auto",
   };
-  let chartWrapStyle = {
+  const chartWrapStyle = {
     ...baseStyle,
-    minHeight: rowHeight ? rowHeight : height,
-  };
+    minHeight: 0,
+  }
+  // if (showMinHeight) {
+  //   chartWrapStyle = {
+  //     ...chartWrapStyle,
+  //     minHeight: minHeight,
+  //   }
+  // };
 
   /** Render  */
-
   return (
-    <div style={baseStyle}>
-      <div
-        className={`w-full min-height-[${rowHeight ? rowHeight + "px" : height + "px"
-          }] h-full max-height-full p-4`}
-        style={chartWrapStyle}
-      >
-        <div ref={wrapRef}>
-          {props && (
-            <>
-              {(props.chart === "bar" || props.chart === "line") && (
-                <BasicChart
-                  id={props.id}
-                  data={getBasicValues(props)}
-                  isMobile={isMobile}
-                  setEchartInstance={setEchartInstance}
-                  rowHeight={rowHeight}
-                  hFactor={hFactor}
-                />
-              )}
-              {props.chart === "pie" && (
-                <PieChart
-                  id={props.id}
-                  data={getPieValues(props)}
-                  isMobile={isMobile}
-                  setEchartInstance={setEchartInstance}
-                  rowHeight={rowHeight}
-                  hFactor={hFactor}
-                />
-              )}
-              {props.chart === "map" && (
-                <GeoMapChart
-                  id={props.id}
-                  data={getMapValues(props)}
-                  isMobile={isMobile}
-                  setEchartInstance={setEchartInstance}
-                  rowHeight={rowHeight}
-                  hFactor={hFactor}
-                />
-              )}
-              {props.chart === "cmap" && (
-                <ClusterMap
-                  data={props}
-                  rowHeight={rowHeight}
-                  hFactor={hFactor}
-                />
-              )}
-              {(props.chart === "kpi" || props.chart === "kpiGroup") && (
-                <KpiGroup
-                  data={props}
-                  rowHeight={rowHeight}
-                  hFactor={hFactor}
-                />
-              )}
-            </>
-          )}
-        </div>
+    <div style={chartWrapStyle}>
+      <div ref={wrapRef}>
+        {props && (
+          <>
+            {(props.chart === "bar" || props.chart === "line") && (
+              <BasicChart
+                id={props.id}
+                data={getBasicValues(props)}
+                isMobile={isMobile}
+                setEchartInstance={setEchartInstance}
+                rowHeight={rowHeight}
+                hFactor={hFactor}
+              />
+            )}
+            {props.chart === "pie" && (
+              <PieChart
+                id={props.id}
+                data={getPieValues(props)}
+                isMobile={isMobile}
+                setEchartInstance={setEchartInstance}
+                rowHeight={rowHeight}
+                hFactor={hFactor}
+              />
+            )}
+            {props.chart === "map" && (
+              <GeoMapChart
+                id={props.id}
+                data={getMapValues(props)}
+                isMobile={isMobile}
+                setEchartInstance={setEchartInstance}
+                rowHeight={rowHeight}
+                hFactor={hFactor}
+              />
+            )}
+            {props.chart === "cmap" && (
+              <ClusterMap
+                data={props}
+                rowHeight={rowHeight}
+                hFactor={hFactor}
+              />
+            )}
+            {(props.chart === "kpi" || props.chart === "kpiGroup") && (
+              <KpiGroup
+                data={props}
+                rowHeight={rowHeight}
+                hFactor={hFactor}
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,3 @@
-/**
- * Full Header – three-band layout matching developers.italia.it style
- * Slim (#accent) + Centre (#primary) + Nav (#primary), no dividers, outer shadow
- */
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
@@ -52,7 +48,7 @@ export default function HeaderCompleta() {
 
       {/* ── 1. SLIM BAR — accent (#0059b3), h-12, text-sm ── */}
       <div className="bg-accent">
-        <div className="max-w-screen-xl mx-auto px-[18px] flex items-center justify-between h-12">
+        <div className="mx-auto px-[18px] flex items-center justify-between h-12">
           <a
             href="https://innovazione.gov.it/"
             target="_blank"
@@ -82,7 +78,7 @@ export default function HeaderCompleta() {
 
       {/* ── 2. CENTRE BAND — primary (#06c), logo 80px, title 1.75rem ── */}
       <div className="bg-primary">
-        <div className="max-w-screen-xl mx-auto px-[18px] flex items-center justify-between py-6">
+        <div className="mx-auto px-[18px] flex items-center justify-between py-6">
           <a
             href={ROUTES.root}
             aria-label={t(`center.brand.title`)}
@@ -144,7 +140,7 @@ export default function HeaderCompleta() {
 
       {/* ── 3. NAV BAND — primary (#06c), nav-link py-2 px-4 text-sm ── */}
       <div className="bg-primary relative">
-        <div className="max-w-screen-xl mx-auto px-[18px] flex items-center h-12">
+        <div className="mx-auto px-[18px] flex items-center h-12">
 
           {/* Hamburger – mobile only */}
           <button

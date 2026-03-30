@@ -36,7 +36,7 @@ export default function KpiGroup({
 
   const resolvedTheme = useResolvedTheme();
   // const background = data.config.background || "#F2F7FC";
-  console.log("rendering kpi-group", id, dataSource, config, resolvedTheme);
+  // console.log("rendering kpi-group", id, dataSource, config, resolvedTheme);
   return (
     <div
       id={id}

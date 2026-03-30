@@ -9,9 +9,10 @@ import {
   useRef,
   useState,
 } from "react";
+import DataTable, { type TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaInfo, FaPlus } from "react-icons/fa";
-import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
+import { FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { Helmet } from "react-helmet";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -20,14 +21,18 @@ import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import EditStepComponent from "../../components/EditStepComponent";
 import GenericDialog from "../../components/layout/GenericDialog";
+import registerDarkTheme from "../../components/layout/DataTableDarkTheme";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 import { HOME_ROUTE } from "../../router";
 import useEditKpiGroupStore from "../../lib/store/kpi_store";
+import { useSettingsStore } from "../../lib/store/settings_store";
+
+registerDarkTheme();
 import {
   KPI_FORM_ID,
   KpiForm,
   type KpiFormValues,
-} from "./EditKpiGroupOld/kpi-form";
+} from "./kpi-form";
 
 // ────────────────────────────────────────────────────────────────────────────
 // KPI Group Config Form
@@ -118,81 +123,65 @@ const KpiConfigForm = forwardRef<
 KpiConfigForm.displayName = "KpiConfigForm";
 
 // ────────────────────────────────────────────────────────────────────────────
-// KPI Dropdown
+// KPI Table
 // ────────────────────────────────────────────────────────────────────────────
-interface KpiDropdownProps {
-  title: string;
-  onEdit: () => void;
-  onDelete: () => void;
+type KpiRow = KpiFormValues & { _index: number };
+
+interface KpiTableProps {
+  data: KpiFormValues[];
+  onEdit: (index: number) => void;
+  onDelete: (index: number) => void;
 }
 
-function KpiDropdown({ title, onEdit, onDelete }: KpiDropdownProps) {
-  const { t } = useTranslation("pages", {
-    keyPrefix: "charts.editKpiGroup.components.kpiDropdown",
-  });
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+function KpiTable({ data, onEdit, onDelete }: KpiTableProps) {
+  const { settings } = useSettingsStore();
+  const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
+  const actionColor = currentTheme === "dark" ? "#fff" : "#111";
 
-  useEffect(() => {
-    const handleClickOutside = (event: Event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
+  const rows: KpiRow[] = data.map((item, index) => ({ ...item, _index: index }));
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
+  const columns: TableColumn<KpiRow>[] = [
+    {
+      name: "Title",
+      selector: (row) => row.title,
+      sortable: true,
+      grow: 1,
+    },
+    {
+      name: "Actions",
+      width: "90px",
+      cell: (row) => (
+        <div className="flex gap-1">
+          <button
+            type="button"
+            aria-label="edit"
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={(e) => { e.stopPropagation(); onEdit(row._index); }}
+          >
+            <FaPenToSquare fill={actionColor} size={16} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            aria-label="delete"
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={(e) => { e.stopPropagation(); onDelete(row._index); }}
+          >
+            <FaTrashCan fill={actionColor} size={16} aria-hidden="true" />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div ref={dropdownRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="btn btn-xs btn-primary btn-outline m-1"
-      >
-        {title}
-      </button>
-
-      {isOpen && (
-        <ul className="menu absolute top-full left-0 mt-1 bg-base-300 rounded-box z-10 w-32 p-2 shadow-lg border">
-          <li>
-            <button
-              type="button"
-              className="text-sm"
-              onClick={() => {
-                onEdit();
-                setIsOpen(false);
-              }}
-            >
-              <BsPencilFill />
-              {t("actions.edit.label")}
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              className="text-sm"
-              onClick={() => {
-                onDelete();
-                setIsOpen(false);
-              }}
-            >
-              <BsFillTrashFill />
-              {t("actions.delete.label")}
-            </button>
-          </li>
-        </ul>
-      )}
-    </div>
+    <DataTable
+      columns={columns}
+      data={rows}
+      theme={currentTheme}
+      onRowClicked={(row) => onEdit(row._index)}
+      highlightOnHover
+      pointerOnHover
+    />
   );
 }
 
@@ -210,6 +199,9 @@ function EditKpiGroupPage() {
     load,
     reload,
     save,
+    setName,
+    setDescription,
+    setPublish,
     showEditKpiFormModal,
     updateKpi,
     closeEditKpiFormModal,
@@ -221,7 +213,10 @@ function EditKpiGroupPage() {
     deleteModalVisible,
     editKpiGroupFormModalVisible,
     selectedKpi,
-    vm,
+    selectedKpiIndex,
+    name,
+    description,
+    publish,
     kpiGroup,
     isLoading,
     loaded,
@@ -247,9 +242,13 @@ function EditKpiGroupPage() {
     }
   }
 
-  function handleAddKpi(data: KpiFormValues) {
-    addKpi(data);
-    setAddFormKey((k) => k + 1);
+  function handleFormSubmit(data: KpiFormValues) {
+    if (editKpiGroupFormModalVisible) {
+      updateKpi(data);
+    } else {
+      addKpi(data);
+      setAddFormKey((k) => k + 1);
+    }
   }
 
   function handleApplyConfig() {
@@ -272,7 +271,7 @@ function EditKpiGroupPage() {
       <Helmet>
         <title>
           {t("head.title.label")}
-          {vm.name ? `: ${vm.name}` : ""}
+          {name ? `: ${name}` : ""}
         </title>
       </Helmet>
 
@@ -285,7 +284,7 @@ function EditKpiGroupPage() {
         >
           {t("header.actions.back.label")}
         </button>
-        <div className="flex gap-4">{vm.name || "Edit KPI Group"}</div>
+        <div className="flex gap-4">{name || "Edit KPI Group"}</div>
         <button
           type="button"
           onClick={saveHandler}
@@ -309,16 +308,65 @@ function EditKpiGroupPage() {
             <EditStepComponent
               title={t("body.options.setup.title")}
               Icon={FaInfo}
-              isOpen={true}
+              isOpen={false}
               isDisabled={false}
               index={0}
             >
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
-                  <h1 className="text-2xl font-bold">{vm.name}</h1>
-                  {vm.description && (
-                    <p className="text-base-content/70">{vm.description}</p>
-                  )}
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-4">
+                      <input
+                        id="kpigroup_visibility"
+                        type="checkbox"
+                        checked={publish ?? true}
+                        onChange={() =>
+                          setPublish(!(publish ?? true))
+                        }
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <label
+                        htmlFor="kpigroup_visibility"
+                        className="text-sm text-base-content/70 cursor-pointer"
+                      >
+                        {t("body.options.setup.form.fields.visibility.label")}
+                      </label>
+                      <span className="text-sm text-base-content font-bold">
+                        {t(
+                          `body.options.setup.form.fields.visibility.values.${(publish ?? true) ? "public" : "private"}`,
+                        )}
+                      </span>
+                    </div>
+                    <label
+                      htmlFor="kpigroup_title"
+                      className="mt-4 text-base-content/70"
+                    >
+                      {t("body.options.setup.form.fields.title.label")}
+                    </label>
+                    <input
+                      id="kpigroup_title"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                    />
+                    <label
+                      htmlFor="kpigroup_description"
+                      className="mt-4 text-base-content/70"
+                    >
+                      {t("body.options.setup.form.fields.description.label")}
+                    </label>
+                    <textarea
+                      id="kpigroup_description"
+                      value={description ?? ""}
+                      rows={3}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder={t(
+                        "body.options.setup.form.fields.description.placeholder",
+                      )}
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                    />
+                  </div>
                 </div>
               </div>
             </EditStepComponent>
@@ -326,7 +374,7 @@ function EditKpiGroupPage() {
             <EditStepComponent
               title={t("body.options.configuration.title")}
               Icon={FaCog}
-              isOpen={loaded}
+              isOpen={false}
               isDisabled={!loaded}
               index={1}
             >
@@ -353,7 +401,8 @@ function EditKpiGroupPage() {
           </div>
 
           {/* Right: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg min-h-[500px]">
+          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg ]">
+
             {kpiGroup.dataSource.length > 0 ? (
               <RenderChart {...kpiGroup} />
             ) : (
@@ -363,71 +412,60 @@ function EditKpiGroupPage() {
                 </p>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* Full-width: KPI management step */}
-        <div className="mt-4">
-          <EditStepComponent
-            title={t("body.actions.addKpi.label")}
-            Icon={FaPlus}
-            isOpen={loaded}
-            isDisabled={!loaded}
-            index={2}
-          >
+
             {kpiGroup.dataSource.length > 0 && (
-              <div className="flex flex-wrap gap-2 pb-6 mb-6 border-b border-base-200">
-                {kpiGroup.dataSource.map(
-                  (ds: { title: string }, index: number) => (
-                    <KpiDropdown
-                      key={`${ds.title}-${index}`}
-                      title={ds.title}
-                      onEdit={() => showEditKpiFormModal(index)}
-                      onDelete={() => showDeleteKpiModal(index)}
-                    />
-                  ),
-                )}
+              <div className="mb-6">
+                <KpiTable
+                  data={kpiGroup.dataSource}
+                  onEdit={showEditKpiFormModal}
+                  onDelete={showDeleteKpiModal}
+                />
               </div>
             )}
 
-            {/* Hidden when edit modal is open to avoid form id conflict */}
-            {!editKpiGroupFormModalVisible && (
+            <EditStepComponent
+              title={t("body.actions.addKpi.label")}
+              Icon={FaPlus}
+              isOpen={loaded}
+              isDisabled={!loaded}
+              index={2}
+            >
+
+
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
-                  <KpiForm key={addFormKey} onSubmit={handleAddKpi} />
-                  <div className="mt-4">
-                    <button
-                      type="submit"
-                      form={KPI_FORM_ID}
-                      className="btn btn-primary"
-                    >
-                      {t("body.actions.addKpi.label")} +
+                  <KpiForm
+                    key={editKpiGroupFormModalVisible ? `edit-${selectedKpiIndex}` : addFormKey}
+                    initialValues={editKpiGroupFormModalVisible ? selectedKpi : undefined}
+                    onSubmit={handleFormSubmit}
+                  />
+                  <div className="mt-4 flex gap-2">
+                    {editKpiGroupFormModalVisible && (
+                      <button
+                        type="button"
+                        onClick={closeEditKpiFormModal}
+                        className="btn btn-outline"
+                      >
+                        {t("body.actions.cancelEdit.label")}
+                      </button>
+                    )}
+                    <button type="submit" form={KPI_FORM_ID} className="btn btn-primary">
+                      {editKpiGroupFormModalVisible
+                        ? t("body.actions.updateKpi.label")
+                        : `${t("body.actions.addKpi.label")} +`}
                     </button>
                   </div>
                 </div>
               </div>
-            )}
-          </EditStepComponent>
-        </div>
-      </div>
+            </EditStepComponent>
 
-      {/* Edit KPI Modal */}
-      {editKpiGroupFormModalVisible && (
-        <GenericDialog
-          toggle={editKpiGroupFormModalVisible}
-          title={t("modals.editKpiForm.title")}
-          confirmCb={() => {
-            document
-              .getElementById(KPI_FORM_ID)
-              ?.dispatchEvent(
-                new Event("submit", { cancelable: true, bubbles: true }),
-              );
-          }}
-          cancelCb={closeEditKpiFormModal}
-        >
-          <KpiForm onSubmit={updateKpi} initialValues={selectedKpi} />
-        </GenericDialog>
-      )}
+
+          </div>
+        </div>
+
+
+      </div>
 
       {/* Delete KPI Modal */}
       {deleteModalVisible && (

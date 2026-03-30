@@ -1,19 +1,19 @@
 import React, { useMemo } from "react";
 import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
-import { HOME_ROUTE } from "../../router";
 
 const TOTAL_COLS = 12;
 const ALL_COLS = { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 };
 const BREAKPOINTS = { lg: 1200, md: 768, sm: 480, xs: 320, xxs: 0 };
 const ROW_HEIGHT = 380;
 const MARGIN = 16;
+const TABBAR = 40;
 
 const SPAN_UNITS: Record<string, number[]> = {
   lg: [4, 8, 12],
@@ -109,7 +109,7 @@ function DashboardViewPage() {
               >
                 {layout.map((item) => {
                   const currentChart = charts[item.i] as FieldDataType;
-                  const chartHeight = ROW_HEIGHT * item.h + MARGIN * (item.h - 1);
+                  const chartHeight = ((ROW_HEIGHT * item.h) - (MARGIN * (item.h)) - TABBAR);
 
                   return (
                     <div
