@@ -28,7 +28,7 @@ router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
             chart: 'kpiGroup' as 'kpiGroup',
             config: {
                 direction: "vertical",
-                h: 0,
+                h: 500,
                 labeLine: false,
                 legend: false,
                 legendPosition: "",

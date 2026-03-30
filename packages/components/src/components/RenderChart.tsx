@@ -127,7 +127,7 @@ function RenderChart(props: RenderProps) {
                   hFactor={hFactor}
                 />
               )}
-              {props.chart === "kpi" && (
+              {(props.chart === "kpi" || props.chart === "kpiGroup") && (
                 <KpiGroup
                   data={props}
                   rowHeight={rowHeight}

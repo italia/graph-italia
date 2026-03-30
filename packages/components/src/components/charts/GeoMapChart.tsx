@@ -103,7 +103,7 @@ function GeoMapChart({
             color: "inherit",
           },
           zoom: 1.2,
-          roam: true,
+          roam: false,
           select: { disabled: true },
           emphasis: {
             label: {

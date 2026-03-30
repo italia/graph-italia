@@ -14,7 +14,7 @@ export default function KpiGroup({
   rowHeight?: number;
 }) {
   const { id, config } = data;
-  const dataSource: KpiItemType[] = data.dataSource as KpiItemType[];
+  const dataSource: KpiItemType[] = data.dataSource as KpiItemType[] || data.data as any[] || [];
   const { direction } = config;
   const isVertical = direction === "vertical";
   const kpiGroupClass = isVertical
@@ -36,14 +36,14 @@ export default function KpiGroup({
 
   const resolvedTheme = useResolvedTheme();
   // const background = data.config.background || "#F2F7FC";
-
+  console.log("rendering kpi-group", id, dataSource, config, resolvedTheme);
   return (
     <div
       id={id}
       className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
       style={{ ...divStyle, backgroundColor: "transparent" }}
     >
-      {dataSource.map((item: KpiItemType, index: number) => (
+      {dataSource?.map((item: KpiItemType, index: number) => (
         <div className={`${resolvedTheme} dv-kpi-group-item`} key={`${index}-${item.title}`}>
           <Kpi data={item} />
         </div>
