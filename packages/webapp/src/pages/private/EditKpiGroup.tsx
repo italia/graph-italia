@@ -1,7 +1,7 @@
 import "dataviz-components/dist/style.css";
 import type { ChartConfigType } from "dataviz-components";
 import { RenderChart } from "dataviz-components";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   forwardRef,
   useEffect,
@@ -35,33 +35,11 @@ import {
 type KpiGroupConfigType = Pick<
   ChartConfigType,
   | "direction"
-  | "h"
-  | "labeLine"
-  | "legend"
-  | "legendPosition"
-  | "palette"
-  | "tooltip"
-  | "tooltipFormatter"
-  | "valueFormatter"
-  | "totalLabel"
-  | "tooltipTrigger"
-  | "colors"
   | "background"
 >;
 
 const configDefaultValues: KpiGroupConfigType = {
   direction: "vertical",
-  h: 0,
-  labeLine: false,
-  legend: false,
-  legendPosition: "",
-  palette: [] as string[],
-  tooltip: false,
-  tooltipFormatter: "",
-  valueFormatter: "",
-  totalLabel: "",
-  tooltipTrigger: "",
-  colors: [],
   background: "",
 };
 
@@ -79,28 +57,12 @@ const KpiConfigForm = forwardRef<
   const { t } = useTranslation("pages", {
     keyPrefix: "charts.editKpiGroup.components.kpiConfigForm",
   });
-  const { register, control, reset, getValues, watch, setValue } = useForm({
+  const { register, reset, getValues, } = useForm({
     defaultValues: {
       ...configDefaultValues,
       ...props.config,
     },
   });
-
-  const legendValue = watch("legend");
-  const tooltipValue = watch("tooltip");
-
-  useEffect(() => {
-    if (!legendValue) {
-      setValue("legendPosition", "");
-    }
-  }, [legendValue, setValue]);
-
-  useEffect(() => {
-    if (!tooltipValue) {
-      setValue("tooltipFormatter", "");
-      setValue("tooltipTrigger", "");
-    }
-  }, [tooltipValue, setValue]);
 
   useImperativeHandle(ref, () => ({
     getFormData: () => getValues(),
@@ -130,233 +92,24 @@ const KpiConfigForm = forwardRef<
       </div>
 
       <div>
-        <label htmlFor="kpi_height" className="label">
-          <span className="label-text font-medium">
-            {t("form.fields.height.label")}
-          </span>
-        </label>
-        <input
-          id="kpi_height"
-          {...register("h", { valueAsNumber: true })}
-          type="number"
-          className="input input-bordered w-full"
-        />
-      </div>
-
-      <div className="flex items-center gap-2">
-        <input
-          id="kpi_labeLine"
-          {...register("labeLine")}
-          type="checkbox"
-          className="checkbox"
-        />
-        <label htmlFor="kpi_labeLine" className="label-text font-medium">
-          {t("form.fields.labelLine.label")}
-        </label>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <input
-          id="kpi_legend"
-          {...register("legend")}
-          type="checkbox"
-          className="checkbox"
-        />
-        <label htmlFor="kpi_legend" className="label-text font-medium">
-          {t("form.fields.legend.label")}
-        </label>
-      </div>
-
-      {legendValue && (
-        <div>
-          <label htmlFor="kpi_legendPosition" className="label">
-            <span className="label-text font-medium">
-              {t("form.fields.legendPosition.label")}
-            </span>
-          </label>
-          <select
-            id="kpi_legendPosition"
-            {...register("legendPosition")}
-            className="input input-bordered w-full"
-          >
-            <option value="">
-              {t("form.fields.legendPosition.values.noValue")}
-            </option>
-            <option value="top">
-              {t("form.fields.legendPosition.values.top")}
-            </option>
-            <option value="bottom">
-              {t("form.fields.legendPosition.values.bottom")}
-            </option>
-            <option value="left">
-              {t("form.fields.legendPosition.values.left")}
-            </option>
-            <option value="right">
-              {t("form.fields.legendPosition.values.right")}
-            </option>
-          </select>
-        </div>
-      )}
-
-      <div>
-        <label htmlFor="kpi_palette" className="label">
-          <span className="label-text font-medium">
-            {t("form.fields.palette.label")}
-          </span>
-        </label>
-        <Controller
-          name="palette"
-          control={control}
-          render={({ field }) => (
-            <input
-              id="kpi_palette"
-              type="text"
-              value={field.value}
-              onChange={(e) =>
-                field.onChange(e.target.value.split(",").map((s) => s.trim()))
-              }
-              placeholder="es: red, blue, green"
-              className="input input-bordered w-full"
-            />
-          )}
-        />
-      </div>
-
-      <div className="flex items-center gap-2">
-        <input
-          id="kpi_tooltip"
-          {...register("tooltip")}
-          type="checkbox"
-          className="checkbox"
-        />
-        <label htmlFor="kpi_tooltip" className="label-text font-medium">
-          {t("form.fields.tooltip.label")}
-        </label>
-      </div>
-
-      {tooltipValue && (
-        <div>
-          <label htmlFor="kpi_tooltipFormatter" className="label">
-            <span className="label-text font-medium">
-              {t("form.fields.tooltipFormatter.label")}
-            </span>
-          </label>
-          <input
-            id="kpi_tooltipFormatter"
-            {...register("tooltipFormatter")}
-            type="text"
-            placeholder="es: {b}: {c}"
-            className="input input-bordered w-full"
-          />
-        </div>
-      )}
-
-      {tooltipValue && (
-        <div>
-          <label htmlFor="kpi_tooltipTrigger" className="label">
-            <span className="label-text font-medium">
-              {t("form.fields.tooltipTrigger.label")}
-            </span>
-          </label>
-          <select
-            id="kpi_tooltipTrigger"
-            {...register("tooltipTrigger")}
-            className="input input-bordered w-full"
-          >
-            <option value="">
-              {t("form.fields.tooltipTrigger.values.noValue")}
-            </option>
-            <option value="item">
-              {t("form.fields.tooltipTrigger.values.item")}
-            </option>
-            <option value="axis">
-              {t("form.fields.tooltipTrigger.values.axis")}
-            </option>
-          </select>
-        </div>
-      )}
-
-      <div>
-        <label htmlFor="kpi_valueFormatter" className="label">
-          <span className="label-text font-medium">
-            {t("form.fields.valueFormatter.label")}
-          </span>
-        </label>
-        <input
-          id="kpi_valueFormatter"
-          {...register("valueFormatter")}
-          type="text"
-          placeholder="es: {c}%"
-          className="input input-bordered w-full"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="kpi_totalLabel" className="label">
-          <span className="label-text font-medium">
-            {t("form.fields.totalLabel.label")}
-          </span>
-        </label>
-        <input
-          id="kpi_totalLabel"
-          {...register("totalLabel")}
-          type="text"
-          placeholder="es: Totale"
-          className="input input-bordered w-full"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="kpi_colors" className="label">
-          <span className="label-text font-medium">
-            {t("form.fields.colors.label")}
-          </span>
-        </label>
-        <Controller
-          name="colors"
-          control={control}
-          render={({ field }) => (
-            <input
-              id="kpi_colors"
-              type="text"
-              value={field.value.join(",")}
-              onChange={(e) =>
-                field.onChange(e.target.value.split(",").map((s) => s.trim()))
-              }
-              placeholder="es: #ff0000, #00ff00, #0000ff"
-              className="input input-bordered w-full"
-            />
-          )}
-        />
-      </div>
-
-      <div>
         <label htmlFor="kpi_background" className="label">
           <span className="label-text font-medium">
             {t("form.fields.background.label")}
           </span>
         </label>
-        <Controller
-          name="background"
-          control={control}
-          render={({ field }) => (
-            <div className="flex gap-2">
-              <input
-                id="kpi_background"
-                type="text"
-                value={field.value}
-                onChange={(e) => field.onChange(e.target.value)}
-                className="input input-bordered flex-1"
-              />
-              <input
-                type="color"
-                value={field.value || "#FFFFFF"}
-                onChange={(e) => field.onChange(e.target.value)}
-                className="w-12 h-10 border border-base-300 rounded cursor-pointer"
-              />
-            </div>
-          )}
-        />
+        <select
+          id="kpi_background"
+          {...register("background")}
+          className="input input-bordered w-full"
+        >
+          <option value="">
+            {t("form.fields.background.values.theme")}
+          </option>
+          <option value="accent">
+            {t("form.fields.background.values.accent")}
+          </option>
+        </select>
+
       </div>
     </div>
   );
