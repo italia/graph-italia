@@ -86,6 +86,12 @@
             }
         },
         "editKpiGroup": {
+            "unsavedChanges": "You have unsaved changes",
+            "head": {
+                "title": {
+                    "label": "Edit KPI Group"
+                }
+            },
             "components": {
                 "kpiConfigForm": {
                     "form": {
@@ -143,7 +149,11 @@
                                 "label": "Colors (comma separated)"
                             },
                             "background": {
-                                "label": "Background"
+                                "label": "Background",
+                                "values": {
+                                    "theme": "Default theme",
+                                    "accent": "Accent"
+                                }
                             }
                         }
                     }
@@ -218,7 +228,9 @@
                     },
                     "save": {
                         "default": "Save",
-                        "isSaving": "Saving"
+                        "isSaving": "Saving",
+                        "success": "Saved successfully",
+                        "error": "Error saving"
                     },
                     "reset": {
                         "default": "Reset",
@@ -227,12 +239,44 @@
                 }
             },
             "body": {
+                "options": {
+                    "setup": {
+                        "title": "Info",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Visibility",
+                                    "values": {
+                                        "public": "Public",
+                                        "private": "Private"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Name"
+                                },
+                                "description": {
+                                    "label": "Description",
+                                    "placeholder": "Enter a description..."
+                                }
+                            }
+                        }
+                    },
+                    "configuration": {
+                        "title": "Configuration"
+                    }
+                },
                 "actions": {
                     "changeConfiguration": {
-                        "label": "Change configuration"
+                        "label": "Apply configuration"
                     },
                     "addKpi": {
                         "label": "Add KPI"
+                    },
+                    "cancelEdit": {
+                        "label": "Cancel"
+                    },
+                    "updateKpi": {
+                        "label": "Update KPI"
                     }
                 },
                 "messages": {

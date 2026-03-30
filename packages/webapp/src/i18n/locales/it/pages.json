@@ -86,64 +86,74 @@
             }
         },
         "editKpiGroup": {
+            "unsavedChanges": "Hai modifiche non salvate",
+            "head": {
+                "title": {
+                    "label": "Modifica gruppo KPI"
+                }
+            },
             "components": {
                 "kpiConfigForm": {
                     "form": {
                         "fields": {
                             "direction": {
-                                "label": "Direction",
+                                "label": "Direzione",
                                 "values": {
-                                    "horizontal": "Horizontal",
-                                    "vertical": "Vertical"
+                                    "horizontal": "Orizzontale",
+                                    "vertical": "Verticale"
                                 }
                             },
                             "height": {
-                                "label": "Height"
+                                "label": "Altezza"
                             },
                             "labelLine": {
-                                "label": "Label Line"
+                                "label": "Linea etichetta"
                             },
                             "legend": {
-                                "label": "Legend"
+                                "label": "Legenda"
                             },
                             "legendPosition": {
-                                "label": "Legend Position",
+                                "label": "Posizione legenda",
                                 "values": {
-                                    "noValue": "--Select a value--",
-                                    "top": "Top",
-                                    "bottom": "Bottom",
-                                    "left": "Left",
-                                    "right": "Right"
+                                    "noValue": "--Seleziona un valore--",
+                                    "top": "In alto",
+                                    "bottom": "In basso",
+                                    "left": "A sinistra",
+                                    "right": "A destra"
                                 }
                             },
                             "palette": {
-                                "label": "Palette (comma separated)"
+                                "label": "Palette (separata da virgola)"
                             },
                             "tooltip": {
                                 "label": "Tooltip"
                             },
                             "tooltipFormatter": {
-                                "label": "Tooltip Formatter"
+                                "label": "Formattatore tooltip"
                             },
                             "tooltipTrigger": {
-                                "label": "Tooltip Trigger",
+                                "label": "Trigger tooltip",
                                 "values": {
-                                    "noValue": "--Select a value--",
-                                    "item": "Item",
-                                    "axis": "Axis"
+                                    "noValue": "--Seleziona un valore--",
+                                    "item": "Elemento",
+                                    "axis": "Asse"
                                 }
                             },
                             "valueFormatter": {
-                                "label": "Value Formatter"
+                                "label": "Formattatore valore"
                             },
                             "totalLabel": {
-                                "label": "Total Label"
+                                "label": "Etichetta totale"
                             },
                             "colors": {
-                                "label": "Colors (comma separated)"
+                                "label": "Colori (separati da virgola)"
                             },
                             "background": {
-                                "label": "Background"
+                                "label": "Sfondo",
+                                "values": {
+                                    "theme": "Tema predefinito",
+                                    "accent": "Accento"
+                                }
                             }
                         }
                     }
@@ -151,10 +161,10 @@
                 "kpiDropdown": {
                     "actions": {
                         "edit": {
-                            "label": "Edit"
+                            "label": "Modifica"
                         },
                         "delete": {
-                            "label": "Delete"
+                            "label": "Elimina"
                         }
                     }
                 },
@@ -162,50 +172,50 @@
                     "form": {
                         "fieldSets": {
                             "additionalInfos": {
-                                "label": "Additional infos"
+                                "label": "Informazioni aggiuntive"
                             }
                         },
                         "fields": {
                             "title": {
-                                "label": "Title"
+                                "label": "Titolo"
                             },
                             "value": {
-                                "label": "Value"
+                                "label": "Valore"
                             },
                             "openDataPath": {
-                                "label": "Open Data Path"
+                                "label": "Percorso Open Data"
                             },
                             "showFlow": {
-                                "label": "Show flow"
+                                "label": "Mostra andamento"
                             },
                             "flowDirection": {
-                                "label": "Flow direction",
+                                "label": "Direzione andamento",
                                 "values": {
-                                    "noValue": "--Select a value--",
-                                    "positive": "Positive",
-                                    "negative": "Negative"
+                                    "noValue": "--Seleziona un valore--",
+                                    "positive": "Positivo",
+                                    "negative": "Negativo"
                                 }
                             },
                             "flowValue": {
-                                "label": "Flow value"
+                                "label": "Valore andamento"
                             },
                             "flowDetail": {
-                                "label": "Flow detail"
+                                "label": "Dettaglio andamento"
                             },
                             "backgroundColor": {
-                                "label": "Background color"
+                                "label": "Colore di sfondo"
                             },
                             "valuePrefix": {
-                                "label": "Value prefix"
+                                "label": "Prefisso valore"
                             },
                             "valueSuffix": {
-                                "label": "Value suffix"
+                                "label": "Suffisso valore"
                             },
                             "percentage": {
-                                "label": "Percentage"
+                                "label": "Percentuale"
                             },
                             "footerText": {
-                                "label": "Footer text"
+                                "label": "Testo a piè di pagina"
                             }
                         }
                     }
@@ -214,48 +224,82 @@
             "header": {
                 "actions": {
                     "back": {
-                        "label": "Back to list"
+                        "label": "Torna alla lista"
                     },
                     "save": {
-                        "default": "Save",
-                        "isSaving": "Saving"
+                        "default": "Salva",
+                        "isSaving": "Salvataggio...",
+                        "success": "Salvato con successo",
+                        "error": "Errore durante il salvataggio"
                     },
                     "reset": {
-                        "default": "Reset",
-                        "isSaving": "Saving"
+                        "default": "Reimposta",
+                        "isSaving": "Salvataggio..."
                     }
                 }
             },
             "body": {
+                "options": {
+                    "setup": {
+                        "title": "Info",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Visibilità",
+                                    "values": {
+                                        "public": "Pubblico",
+                                        "private": "Privato"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Nome"
+                                },
+                                "description": {
+                                    "label": "Descrizione",
+                                    "placeholder": "Inserisci una descrizione..."
+                                }
+                            }
+                        }
+                    },
+                    "configuration": {
+                        "title": "Configurazione"
+                    }
+                },
                 "actions": {
                     "changeConfiguration": {
-                        "label": "Change configuration"
+                        "label": "Applica configurazione"
                     },
                     "addKpi": {
-                        "label": "Add KPI"
+                        "label": "Aggiungi KPI"
+                    },
+                    "cancelEdit": {
+                        "label": "Annulla"
+                    },
+                    "updateKpi": {
+                        "label": "Aggiorna KPI"
                     }
                 },
                 "messages": {
-                    "noKpi": "No KPIs. Add a new KPI."
+                    "noKpi": "Nessun KPI. Aggiungi un nuovo KPI."
                 }
             },
             "modals": {
                 "addKpiForm": {
-                    "title": "New KPI"
+                    "title": "Nuovo KPI"
                 },
                 "editKpiForm": {
-                    "title": "Edit KPI"
+                    "title": "Modifica KPI"
                 },
                 "config": {
-                    "title": "KPI Group Configuration"
+                    "title": "Configurazione gruppo KPI"
                 },
                 "delete": {
-                    "title": "Confirm deletion",
-                    "message": "Do you want to delete KPI with title"
+                    "title": "Conferma eliminazione",
+                    "message": "Vuoi eliminare il KPI con titolo"
                 },
                 "showConfirmNavigation": {
-                    "title": "Confirm exit",
-                    "message": "Do you want to exit without saving?"
+                    "title": "Conferma uscita",
+                    "message": "Vuoi uscire senza salvare?"
                 }
             }
         }
