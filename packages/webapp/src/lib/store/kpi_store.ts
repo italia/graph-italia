@@ -5,17 +5,6 @@ import * as api from "../api";
 
 type KpiGroupConfigType = Pick<ChartConfigType,
     | "direction"
-    | "h"
-    | "labeLine"
-    | "legend"
-    | "legendPosition"
-    | "palette"
-    | "tooltip"
-    | "tooltipFormatter"
-    | "valueFormatter"
-    | "totalLabel"
-    | "tooltipTrigger"
-    | "colors"
     | "background"
 >;
 
@@ -108,7 +97,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             const { kpiGroup } = get();
             set({
                 configModalVisible: false,
-                kpiGroup: { ...kpiGroup, config: { ...config } },
+                kpiGroup: { ...kpiGroup, config: { ...defaultKpiGroupData.config, ...config } },
                 pendingChanges: true,
             });
         } else {
