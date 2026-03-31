@@ -29,7 +29,7 @@ export default function DashboardTable({
   list,
   handleDeleteDashboard,
   handleEditDashboard,
-  handleViewDashboard,
+
 }: DashboardTableProps) {
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
