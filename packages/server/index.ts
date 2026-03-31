@@ -136,8 +136,6 @@ app.get("/health/ready", async (c) => {
 	}
 });
 
-
-
 // API routes
 app.route("/auth", authRoutes);
 app.route("/api-keys", apiKeyRoutes);

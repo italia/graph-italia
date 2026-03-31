@@ -100,11 +100,11 @@ async function restore() {
       where: { id: u.id },
       update: {},
       create: {
-        id:        u.id,
-        email:     u.email,
-        password:  u.password,
-        verifyed:  u.verifyed,
-        role:      u.role,
+        id: u.id,
+        email: u.email,
+        password: u.password,
+        verifyed: u.verifyed,
+        role: u.role,
         createdAt: new Date(u.createdAt),
         updatedAt: new Date(u.updatedAt),
       },
@@ -129,8 +129,8 @@ async function restore() {
 
     const project = await prisma.project.create({
       data: {
-        name:      "Default Project",
-        ownerId:   userId,
+        name: "Default Project",
+        ownerId: userId,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -140,7 +140,7 @@ async function restore() {
       data: {
         userId,
         projectId: project.id,
-        role:      "ADMIN",
+        role: "ADMIN",
       },
     });
 
@@ -159,20 +159,19 @@ async function restore() {
     }
     await prisma.chart.create({
       data: {
-        id:          c.id,
-        name:        c.name,
+        id: c.id,
+        name: c.name,
         description: c.description,
-        chart:       c.chart,
-        config:      c.config ?? undefined,
-        data:        c.data ?? undefined,
-        dataSource:  c.dataSource ?? undefined,
-        publish:     c.publish,
-        remoteUrl:   c.remoteUrl,
-        isRemote:    c.isRemote,
-        preview:     c.preview,
+        chart: c.chart,
+        config: c.config ?? undefined,
+        data: c.data ?? undefined,
+        dataSource: c.dataSource ?? undefined,
+        publish: c.publish,
+        remoteUrl: c.remoteUrl,
+        isRemote: c.isRemote,
         projectId,
-        createdAt:   new Date(c.createdAt),
-        updatedAt:   new Date(c.updatedAt),
+        createdAt: new Date(c.createdAt),
+        updatedAt: new Date(c.updatedAt),
       },
     });
   }
@@ -188,13 +187,13 @@ async function restore() {
     }
     await prisma.dashboard.create({
       data: {
-        id:          d.id,
-        name:        d.name,
+        id: d.id,
+        name: d.name,
         description: d.description,
-        publish:     d.publish,
+        publish: d.publish,
         projectId,
-        createdAt:   new Date(d.createdAt),
-        updatedAt:   new Date(d.updatedAt),
+        createdAt: new Date(d.createdAt),
+        updatedAt: new Date(d.updatedAt),
       },
     });
   }
@@ -206,12 +205,12 @@ async function restore() {
     await prisma.slot.create({
       data: {
         dashboardId: s.dashboardId,
-        chartId:     s.chartId,
-        settings:    s.settings ?? undefined,
-        name:        s.name,
+        chartId: s.chartId,
+        settings: s.settings ?? undefined,
+        name: s.name,
         description: s.description,
-        createdAt:   new Date(s.createdAt),
-        updatedAt:   new Date(s.updatedAt),
+        createdAt: new Date(s.createdAt),
+        updatedAt: new Date(s.updatedAt),
       },
     });
   }
