@@ -4,6 +4,7 @@ import type { User } from "./prisma/client";
 import type { UserCreateInput } from "./prisma/models";
 import generatePin from "../pin";
 import { prisma } from "./prisma";
+import { createDefaultProject } from "./projectDb";
 
 export function getUsers() {
 	return prisma.user.findMany({});
@@ -17,11 +18,11 @@ export function findUserByEmail(email: string) {
 	});
 }
 
-export function createUserByEmailAndPassword(user: UserCreateInput) {
+export async function createUserByEmailAndPassword(user: UserCreateInput) {
 	user.password = bcrypt.hashSync(user.password, 12);
-	return prisma.user.create({
-		data: user,
-	});
+	const created = await prisma.user.create({ data: user });
+	await createDefaultProject(created.id);
+	return created;
 }
 
 export function findUserById(id: User["id"]) {

@@ -51,7 +51,14 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Project: 'Project',
+  ProjectMember: 'ProjectMember',
+  OrgProject: 'OrgProject',
+  Org: 'Org',
+  Membership: 'Membership',
   User: 'User',
+  ApiKey: 'ApiKey',
+  ApiLog: 'ApiLog',
   Code: 'Code',
   DataSource: 'DataSource',
   Chart: 'Chart',
@@ -76,6 +83,59 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  ownerId: 'ownerId'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectMemberScalarFieldEnum = {
+  userId: 'userId',
+  projectId: 'projectId',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
+
+
+export const OrgProjectScalarFieldEnum = {
+  orgId: 'orgId',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrgProjectScalarFieldEnum = (typeof OrgProjectScalarFieldEnum)[keyof typeof OrgProjectScalarFieldEnum]
+
+
+export const OrgScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrgScalarFieldEnum = (typeof OrgScalarFieldEnum)[keyof typeof OrgScalarFieldEnum]
+
+
+export const MembershipScalarFieldEnum = {
+  userId: 'userId',
+  orgId: 'orgId',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -87,6 +147,32 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ApiKeyScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  role: 'role',
+  expire: 'expire',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  projectId: 'projectId'
+} as const
+
+export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+
+
+export const ApiLogScalarFieldEnum = {
+  id: 'id',
+  method: 'method',
+  endpoint: 'endpoint',
+  status: 'status',
+  responseTime: 'responseTime',
+  timestamp: 'timestamp',
+  apiKeyId: 'apiKeyId'
+} as const
+
+export type ApiLogScalarFieldEnum = (typeof ApiLogScalarFieldEnum)[keyof typeof ApiLogScalarFieldEnum]
 
 
 export const CodeScalarFieldEnum = {
@@ -111,7 +197,7 @@ export const DataSourceScalarFieldEnum = {
   isTrasposed: 'isTrasposed',
   remoteUrl: 'remoteUrl',
   isRemote: 'isRemote',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -130,8 +216,7 @@ export const ChartScalarFieldEnum = {
   publish: 'publish',
   remoteUrl: 'remoteUrl',
   isRemote: 'isRemote',
-  preview: 'preview',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -155,7 +240,7 @@ export const DashboardScalarFieldEnum = {
   name: 'name',
   description: 'description',
   publish: 'publish',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

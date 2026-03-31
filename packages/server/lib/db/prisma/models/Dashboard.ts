@@ -29,7 +29,7 @@ export type DashboardMinAggregateOutputType = {
   name: string | null
   description: string | null
   publish: boolean | null
-  userId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -39,7 +39,7 @@ export type DashboardMaxAggregateOutputType = {
   name: string | null
   description: string | null
   publish: boolean | null
-  userId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -49,7 +49,7 @@ export type DashboardCountAggregateOutputType = {
   name: number
   description: number
   publish: number
-  userId: number
+  projectId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -61,7 +61,7 @@ export type DashboardMinAggregateInputType = {
   name?: true
   description?: true
   publish?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -71,7 +71,7 @@ export type DashboardMaxAggregateInputType = {
   name?: true
   description?: true
   publish?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -81,7 +81,7 @@ export type DashboardCountAggregateInputType = {
   name?: true
   description?: true
   publish?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -164,7 +164,7 @@ export type DashboardGroupByOutputType = {
   name: string | null
   description: string | null
   publish: boolean
-  userId: string
+  projectId: string
   createdAt: Date
   updatedAt: Date
   _count: DashboardCountAggregateOutputType | null
@@ -195,10 +195,10 @@ export type DashboardWhereInput = {
   name?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolFilter<"Dashboard"> | boolean
-  userId?: Prisma.StringFilter<"Dashboard"> | string
+  projectId?: Prisma.StringFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   slots?: Prisma.SlotListRelationFilter
 }
 
@@ -207,10 +207,10 @@ export type DashboardOrderByWithRelationInput = {
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
   slots?: Prisma.SlotOrderByRelationAggregateInput
 }
 
@@ -222,10 +222,10 @@ export type DashboardWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolFilter<"Dashboard"> | boolean
-  userId?: Prisma.StringFilter<"Dashboard"> | string
+  projectId?: Prisma.StringFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   slots?: Prisma.SlotListRelationFilter
 }, "id">
 
@@ -234,7 +234,7 @@ export type DashboardOrderByWithAggregationInput = {
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DashboardCountOrderByAggregateInput
@@ -250,7 +250,7 @@ export type DashboardScalarWhereWithAggregatesInput = {
   name?: Prisma.StringNullableWithAggregatesFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolWithAggregatesFilter<"Dashboard"> | boolean
-  userId?: Prisma.StringWithAggregatesFilter<"Dashboard"> | string
+  projectId?: Prisma.StringWithAggregatesFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Dashboard"> | Date | string
 }
@@ -262,7 +262,7 @@ export type DashboardCreateInput = {
   publish?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutDashboardInput
+  project: Prisma.ProjectCreateNestedOneWithoutDashboardInput
   slots?: Prisma.SlotCreateNestedManyWithoutDashboardInput
 }
 
@@ -271,7 +271,7 @@ export type DashboardUncheckedCreateInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   slots?: Prisma.SlotUncheckedCreateNestedManyWithoutDashboardInput
@@ -284,7 +284,7 @@ export type DashboardUpdateInput = {
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutDashboardNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDashboardNestedInput
   slots?: Prisma.SlotUpdateManyWithoutDashboardNestedInput
 }
 
@@ -293,7 +293,7 @@ export type DashboardUncheckedUpdateInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   slots?: Prisma.SlotUncheckedUpdateManyWithoutDashboardNestedInput
@@ -304,7 +304,7 @@ export type DashboardCreateManyInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -323,7 +323,7 @@ export type DashboardUncheckedUpdateManyInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -343,7 +343,7 @@ export type DashboardCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   publish?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -353,7 +353,7 @@ export type DashboardMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   publish?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -363,7 +363,7 @@ export type DashboardMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   publish?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -373,45 +373,45 @@ export type DashboardScalarRelationFilter = {
   isNot?: Prisma.DashboardWhereInput
 }
 
-export type DashboardCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.DashboardCreateWithoutUserInput, Prisma.DashboardUncheckedCreateWithoutUserInput> | Prisma.DashboardCreateWithoutUserInput[] | Prisma.DashboardUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutUserInput | Prisma.DashboardCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.DashboardCreateManyUserInputEnvelope
+export type DashboardCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.DashboardCreateWithoutProjectInput, Prisma.DashboardUncheckedCreateWithoutProjectInput> | Prisma.DashboardCreateWithoutProjectInput[] | Prisma.DashboardUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutProjectInput | Prisma.DashboardCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.DashboardCreateManyProjectInputEnvelope
   connect?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
 }
 
-export type DashboardUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.DashboardCreateWithoutUserInput, Prisma.DashboardUncheckedCreateWithoutUserInput> | Prisma.DashboardCreateWithoutUserInput[] | Prisma.DashboardUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutUserInput | Prisma.DashboardCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.DashboardCreateManyUserInputEnvelope
+export type DashboardUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.DashboardCreateWithoutProjectInput, Prisma.DashboardUncheckedCreateWithoutProjectInput> | Prisma.DashboardCreateWithoutProjectInput[] | Prisma.DashboardUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutProjectInput | Prisma.DashboardCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.DashboardCreateManyProjectInputEnvelope
   connect?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
 }
 
-export type DashboardUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.DashboardCreateWithoutUserInput, Prisma.DashboardUncheckedCreateWithoutUserInput> | Prisma.DashboardCreateWithoutUserInput[] | Prisma.DashboardUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutUserInput | Prisma.DashboardCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.DashboardUpsertWithWhereUniqueWithoutUserInput | Prisma.DashboardUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.DashboardCreateManyUserInputEnvelope
+export type DashboardUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.DashboardCreateWithoutProjectInput, Prisma.DashboardUncheckedCreateWithoutProjectInput> | Prisma.DashboardCreateWithoutProjectInput[] | Prisma.DashboardUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutProjectInput | Prisma.DashboardCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.DashboardUpsertWithWhereUniqueWithoutProjectInput | Prisma.DashboardUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.DashboardCreateManyProjectInputEnvelope
   set?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
   disconnect?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
   delete?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
   connect?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
-  update?: Prisma.DashboardUpdateWithWhereUniqueWithoutUserInput | Prisma.DashboardUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.DashboardUpdateManyWithWhereWithoutUserInput | Prisma.DashboardUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.DashboardUpdateWithWhereUniqueWithoutProjectInput | Prisma.DashboardUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.DashboardUpdateManyWithWhereWithoutProjectInput | Prisma.DashboardUpdateManyWithWhereWithoutProjectInput[]
   deleteMany?: Prisma.DashboardScalarWhereInput | Prisma.DashboardScalarWhereInput[]
 }
 
-export type DashboardUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.DashboardCreateWithoutUserInput, Prisma.DashboardUncheckedCreateWithoutUserInput> | Prisma.DashboardCreateWithoutUserInput[] | Prisma.DashboardUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutUserInput | Prisma.DashboardCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.DashboardUpsertWithWhereUniqueWithoutUserInput | Prisma.DashboardUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.DashboardCreateManyUserInputEnvelope
+export type DashboardUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.DashboardCreateWithoutProjectInput, Prisma.DashboardUncheckedCreateWithoutProjectInput> | Prisma.DashboardCreateWithoutProjectInput[] | Prisma.DashboardUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DashboardCreateOrConnectWithoutProjectInput | Prisma.DashboardCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.DashboardUpsertWithWhereUniqueWithoutProjectInput | Prisma.DashboardUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.DashboardCreateManyProjectInputEnvelope
   set?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
   disconnect?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
   delete?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
   connect?: Prisma.DashboardWhereUniqueInput | Prisma.DashboardWhereUniqueInput[]
-  update?: Prisma.DashboardUpdateWithWhereUniqueWithoutUserInput | Prisma.DashboardUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.DashboardUpdateManyWithWhereWithoutUserInput | Prisma.DashboardUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.DashboardUpdateWithWhereUniqueWithoutProjectInput | Prisma.DashboardUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.DashboardUpdateManyWithWhereWithoutProjectInput | Prisma.DashboardUpdateManyWithWhereWithoutProjectInput[]
   deleteMany?: Prisma.DashboardScalarWhereInput | Prisma.DashboardScalarWhereInput[]
 }
 
@@ -429,7 +429,7 @@ export type DashboardUpdateOneRequiredWithoutSlotsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DashboardUpdateToOneWithWhereWithoutSlotsInput, Prisma.DashboardUpdateWithoutSlotsInput>, Prisma.DashboardUncheckedUpdateWithoutSlotsInput>
 }
 
-export type DashboardCreateWithoutUserInput = {
+export type DashboardCreateWithoutProjectInput = {
   id?: string
   name?: string | null
   description?: string | null
@@ -439,7 +439,7 @@ export type DashboardCreateWithoutUserInput = {
   slots?: Prisma.SlotCreateNestedManyWithoutDashboardInput
 }
 
-export type DashboardUncheckedCreateWithoutUserInput = {
+export type DashboardUncheckedCreateWithoutProjectInput = {
   id?: string
   name?: string | null
   description?: string | null
@@ -449,30 +449,30 @@ export type DashboardUncheckedCreateWithoutUserInput = {
   slots?: Prisma.SlotUncheckedCreateNestedManyWithoutDashboardInput
 }
 
-export type DashboardCreateOrConnectWithoutUserInput = {
+export type DashboardCreateOrConnectWithoutProjectInput = {
   where: Prisma.DashboardWhereUniqueInput
-  create: Prisma.XOR<Prisma.DashboardCreateWithoutUserInput, Prisma.DashboardUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.DashboardCreateWithoutProjectInput, Prisma.DashboardUncheckedCreateWithoutProjectInput>
 }
 
-export type DashboardCreateManyUserInputEnvelope = {
-  data: Prisma.DashboardCreateManyUserInput | Prisma.DashboardCreateManyUserInput[]
+export type DashboardCreateManyProjectInputEnvelope = {
+  data: Prisma.DashboardCreateManyProjectInput | Prisma.DashboardCreateManyProjectInput[]
   skipDuplicates?: boolean
 }
 
-export type DashboardUpsertWithWhereUniqueWithoutUserInput = {
+export type DashboardUpsertWithWhereUniqueWithoutProjectInput = {
   where: Prisma.DashboardWhereUniqueInput
-  update: Prisma.XOR<Prisma.DashboardUpdateWithoutUserInput, Prisma.DashboardUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.DashboardCreateWithoutUserInput, Prisma.DashboardUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.DashboardUpdateWithoutProjectInput, Prisma.DashboardUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.DashboardCreateWithoutProjectInput, Prisma.DashboardUncheckedCreateWithoutProjectInput>
 }
 
-export type DashboardUpdateWithWhereUniqueWithoutUserInput = {
+export type DashboardUpdateWithWhereUniqueWithoutProjectInput = {
   where: Prisma.DashboardWhereUniqueInput
-  data: Prisma.XOR<Prisma.DashboardUpdateWithoutUserInput, Prisma.DashboardUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.DashboardUpdateWithoutProjectInput, Prisma.DashboardUncheckedUpdateWithoutProjectInput>
 }
 
-export type DashboardUpdateManyWithWhereWithoutUserInput = {
+export type DashboardUpdateManyWithWhereWithoutProjectInput = {
   where: Prisma.DashboardScalarWhereInput
-  data: Prisma.XOR<Prisma.DashboardUpdateManyMutationInput, Prisma.DashboardUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.DashboardUpdateManyMutationInput, Prisma.DashboardUncheckedUpdateManyWithoutProjectInput>
 }
 
 export type DashboardScalarWhereInput = {
@@ -483,7 +483,7 @@ export type DashboardScalarWhereInput = {
   name?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolFilter<"Dashboard"> | boolean
-  userId?: Prisma.StringFilter<"Dashboard"> | string
+  projectId?: Prisma.StringFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
 }
@@ -495,7 +495,7 @@ export type DashboardCreateWithoutSlotsInput = {
   publish?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutDashboardInput
+  project: Prisma.ProjectCreateNestedOneWithoutDashboardInput
 }
 
 export type DashboardUncheckedCreateWithoutSlotsInput = {
@@ -503,7 +503,7 @@ export type DashboardUncheckedCreateWithoutSlotsInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -531,7 +531,7 @@ export type DashboardUpdateWithoutSlotsInput = {
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutDashboardNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDashboardNestedInput
 }
 
 export type DashboardUncheckedUpdateWithoutSlotsInput = {
@@ -539,12 +539,12 @@ export type DashboardUncheckedUpdateWithoutSlotsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type DashboardCreateManyUserInput = {
+export type DashboardCreateManyProjectInput = {
   id?: string
   name?: string | null
   description?: string | null
@@ -553,7 +553,7 @@ export type DashboardCreateManyUserInput = {
   updatedAt?: Date | string
 }
 
-export type DashboardUpdateWithoutUserInput = {
+export type DashboardUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -563,7 +563,7 @@ export type DashboardUpdateWithoutUserInput = {
   slots?: Prisma.SlotUpdateManyWithoutDashboardNestedInput
 }
 
-export type DashboardUncheckedUpdateWithoutUserInput = {
+export type DashboardUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -573,7 +573,7 @@ export type DashboardUncheckedUpdateWithoutUserInput = {
   slots?: Prisma.SlotUncheckedUpdateManyWithoutDashboardNestedInput
 }
 
-export type DashboardUncheckedUpdateManyWithoutUserInput = {
+export type DashboardUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -618,10 +618,10 @@ export type DashboardSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   name?: boolean
   description?: boolean
   publish?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   slots?: boolean | Prisma.Dashboard$slotsArgs<ExtArgs>
   _count?: boolean | Prisma.DashboardCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dashboard"]>
@@ -631,10 +631,10 @@ export type DashboardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   description?: boolean
   publish?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dashboard"]>
 
 export type DashboardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -642,10 +642,10 @@ export type DashboardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   description?: boolean
   publish?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dashboard"]>
 
 export type DashboardSelectScalar = {
@@ -653,28 +653,28 @@ export type DashboardSelectScalar = {
   name?: boolean
   description?: boolean
   publish?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DashboardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "publish" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["dashboard"]>
+export type DashboardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "publish" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["dashboard"]>
 export type DashboardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   slots?: boolean | Prisma.Dashboard$slotsArgs<ExtArgs>
   _count?: boolean | Prisma.DashboardCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DashboardIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 export type DashboardIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 
 export type $DashboardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Dashboard"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs>
     slots: Prisma.$SlotPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -682,7 +682,7 @@ export type $DashboardPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     name: string | null
     description: string | null
     publish: boolean
-    userId: string
+    projectId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["dashboard"]>
@@ -1079,7 +1079,7 @@ readonly fields: DashboardFieldRefs;
  */
 export interface Prisma__DashboardClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   slots<T extends Prisma.Dashboard$slotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Dashboard$slotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1114,7 +1114,7 @@ export interface DashboardFieldRefs {
   readonly name: Prisma.FieldRef<"Dashboard", 'String'>
   readonly description: Prisma.FieldRef<"Dashboard", 'String'>
   readonly publish: Prisma.FieldRef<"Dashboard", 'Boolean'>
-  readonly userId: Prisma.FieldRef<"Dashboard", 'String'>
+  readonly projectId: Prisma.FieldRef<"Dashboard", 'String'>
   readonly createdAt: Prisma.FieldRef<"Dashboard", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Dashboard", 'DateTime'>
 }

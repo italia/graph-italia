@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client"
   output   = "../lib/db/prisma"
@@ -42,6 +45,7 @@ model Project {
   owner   User   @relation("ProjectOwner", fields: [ownerId], references: [id])
   ownerId String
 
+  // Explicit junction tables (carry role / metadata)
   members ProjectMember[]
   orgs    OrgProject[]
 
@@ -52,6 +56,7 @@ model Project {
 }
 
 // Direct user ↔ project membership with a role.
+// A solo user joins a project here.
 model ProjectMember {
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
@@ -66,6 +71,8 @@ model ProjectMember {
 }
 
 // Org ↔ project association.
+// All org members inherit access; their effective project role is derived from OrgRole
+// (OrgRole.ADMIN → can manage the project, OrgRole.USER → read/write, cannot delete).
 model OrgProject {
   org       Org     @relation(fields: [orgId], references: [id], onDelete: Cascade)
   orgId     String
@@ -198,6 +205,7 @@ model Chart {
 
   remoteUrl String?
   isRemote  Boolean @default(false)
+  preview   String?
 
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String

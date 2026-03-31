@@ -3,10 +3,14 @@ import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
 // Routes
 import authRoutes from "./routes/auth.ts";
+import apiKeyRoutes from "./routes/apikeys.ts";
 import chartRoutes from "./routes/charts.ts";
 import dashRoutes from "./routes/dashboards.ts";
+import dataSourceRoutes from "./routes/datasources.ts";
 import suggestionsRoutes from "./routes/hints.ts";
 import kpiGroupRoutes from "./routes/kpi-group.ts";
+import orgRoutes from "./routes/orgs.ts";
+import projectRoutes from "./routes/projects.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
@@ -136,10 +140,14 @@ app.get("/health/ready", async (c) => {
 
 // API routes
 app.route("/auth", authRoutes);
+app.route("/api-keys", apiKeyRoutes);
 app.route("/charts", chartRoutes);
 app.route("/charts/kpi-group", kpiGroupRoutes);
 app.route("/dashboards", dashRoutes);
+app.route("/datasources", dataSourceRoutes);
 app.route("/hints", suggestionsRoutes);
+app.route("/orgs", orgRoutes);
+app.route("/projects", projectRoutes);
 
 app.get("/openapi.json", openAPIRouteHandler(app, {
 	documentation: {

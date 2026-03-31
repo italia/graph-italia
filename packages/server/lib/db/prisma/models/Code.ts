@@ -425,14 +425,6 @@ export type CodeUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.CodeScalarWhereInput | Prisma.CodeScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type CodeCreateWithoutUserInput = {
   id?: string
   code: string

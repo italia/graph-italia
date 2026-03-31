@@ -10,14 +10,10 @@ import { prisma } from "./prisma";
 
 export const dashboardDb = createDb(prisma.dashboard);
 
-export async function findDashboardByUserId(userId: string) {
+export async function findDashboardsByProjectId(projectId: string) {
 	return prisma.dashboard.findMany({
-		where: {
-			userId,
-		},
-		orderBy: {
-			updatedAt: "desc",
-		},
+		where: { projectId },
+		orderBy: { updatedAt: "desc" },
 	});
 }
 
