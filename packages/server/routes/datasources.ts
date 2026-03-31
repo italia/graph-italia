@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import * as z from "zod";
 import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
 import db from "../lib/db";
-import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
 

@@ -6,9 +6,9 @@ import {
 	generateTokens,
 	setAccessTokenCookie,
 	clearAccessTokenCookie,
-} from "../lib/jwt-hono";
+} from "../lib/jwt";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
-import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import {
 	validator as zValidator,

@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import * as z from "zod";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
-import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { checkAuth, requireUser } from "../lib/middlewares";
 import type { ParsedToken } from "../types";
 
 const router = new Hono();

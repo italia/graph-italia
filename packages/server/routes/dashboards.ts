@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import * as z from "zod";
-import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
 import db from "../lib/db";

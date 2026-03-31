@@ -2,7 +2,7 @@ import axios from "axios";
 import { Hono } from "hono";
 import * as z from "zod";
 import db from "../lib/db";
-import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
 import {
@@ -64,7 +64,6 @@ const chartSchema = z.object({
 	updatedAt: z.string(),
 });
 const chartListSchema = z.array(chartSchema);
-
 const errorMessageSchema = z.object({ error: z.string() });
 const publishResultSchema = z.object({ published: z.boolean() });
 

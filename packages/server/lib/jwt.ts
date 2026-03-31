@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import { setCookie, deleteCookie } from "hono/cookie";
+import type { Context } from "hono";
 import { sign, verify } from "jsonwebtoken";
 import type { User } from "@prisma/client";
 import { logger } from "./logger";
@@ -52,4 +54,25 @@ export function verifyAccessToken(token: string) {
 
 export function hashToken(token: string) {
 	return crypto.createHash("sha512").update(token).digest("hex");
+}
+
+export function setAccessTokenCookie(c: Context, token: string) {
+	const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+	const isProduction = process.env.NODE_ENV === "production";
+
+	setCookie(c, "access_token", token, {
+		expires,
+		httpOnly: true,
+		sameSite: "Lax",
+		secure: isProduction,
+		path: "/",
+	});
+	logger.debug("Access token cookie set", { expires: expires.toISOString() });
+}
+
+export function clearAccessTokenCookie(c: Context) {
+	deleteCookie(c, "access_token", {
+		path: "/",
+	});
+	logger.debug("Access token cookie cleared");
 }
