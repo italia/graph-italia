@@ -11,6 +11,9 @@ type CreateKpiGroup = {
 }
 
 type UpdateKpiGroup = {
+    name: string;
+    description?: string;
+    publish?: boolean;
     config: {};
     data: unknown[];
 }
@@ -27,9 +30,12 @@ export async function findKpiGroupById(id: string) {
     return kpiGroupDb.findById(id);
 }
 
-export async function updateKpiGroup(id: Chart["id"], { config, data }: UpdateKpiGroup) {
+export async function updateKpiGroup(id: Chart["id"], { name, description, publish, config, data }: UpdateKpiGroup) {
     return await kpiGroupDb.update(id,
         {
+            name,
+            description,
+            publish,
             config: config as Prisma.JsonObject,
             data: data as Prisma.JsonArray
         });

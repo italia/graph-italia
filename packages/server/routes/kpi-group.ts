@@ -45,10 +45,6 @@ router.post("/", requireUser, zValidator("json", createSchema), async (c) => {
             ...body,
         };
         const result = await db.createKpiGroup(chartData);
-        logger.info("kpiGroup created", {
-            chartId: result.id,
-            userId: user.userId,
-        });
         return c.json<CreateResponseBody>(result, 201);
     } catch (err) {
         logger.error(
@@ -98,6 +94,9 @@ const datasourceSchema = z.object({
 
 const datasourceArraySchema = z.array(datasourceSchema);
 const updateBodySchema = z.object({
+    name: z.string(),
+    description: z.string().optional(),
+    publish: z.boolean().optional(),
     config: configSchema,
     dataSource: datasourceArraySchema,
 });
@@ -111,22 +110,20 @@ router.put(
         const id = c.req.valid("param").id;
         const body = c.req.valid("json");
         const { dataSource, config } = body;
-        console.log("updating kpi group-params", id, config, dataSource);
-        const r = await db.updateKpiGroup(id, { config, data: dataSource });
-        console.log("update result", r);
+        const { name = "", description = "", publish = true } = body;
+        await db.updateKpiGroup(id, { name, description, publish, config, data: dataSource });
         return c.json({ id });
     })
 // #endregion
 
 // #region: QUERY
-const findByIdSchema = z.object({
-    id: z.string({
-        message: 'Id is required',
-    }),
-});
+const findByIdSchema = z.object({ id: z.string({ message: 'Id is required' }) });
 type FindByIdResponseBody = {
     data: {
-        name: string; description: string, config: any, dataSource: {}[]
+        name: string;
+        description: string,
+        config: any,
+        dataSource: {}[]
     }
 } | { message: string };
 
@@ -143,7 +140,6 @@ router.get(
                 return c.json({ message: 'KPI Group not found' }, 404);
             }
             const { name, description, config, data: dataSource } = result;
-
             return c.json<FindByIdResponseBody>({ data: { name, description, config, dataSource } });
         } catch (err) {
             logger.error(

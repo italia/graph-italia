@@ -109,7 +109,6 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         }
     },
     showAddKpiFormModal: () => {
-        console.log("add item");
         set({ addKpiFormModalVisible: true });
     },
     addKpi: (data: KpiFormValues) => {
@@ -119,7 +118,6 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             pendingChanges: true,
             addKpiFormModalVisible: false,
         });
-        console.log("KPI saved:", data);
     },
     updateKpi: (data: KpiFormValues) => {
         const { kpiGroup, selectedKpiIndex } = get();
@@ -231,7 +229,6 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
         }
     },
     save: async () => {
-        console.log("save kpi group");
         const { id, name, description, publish, kpiGroup } = get();
         if (!id) {
             throw new Error("ID is undefined");
