@@ -48,7 +48,6 @@ type EditKpiGroupState = {
         message: string;
     };
     addKpiFormModalVisible?: boolean;
-    configModalVisible?: boolean;
     editKpiGroupFormModalVisible?: boolean;
     deleteModalVisible?: boolean;
     pendingChanges: boolean;
@@ -64,15 +63,12 @@ interface EditKpiGroupActions {
     setName: (name: string) => void;
     setDescription: (description: string) => void;
     setPublish: (publish: boolean) => void;
-    // add modal
-    showAddKpiFormModal: () => void;
-    closeKpiGroupFormModal: () => void;
+
+    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
     // edit modal
     showEditKpiFormModal: (index: number) => void;
     closeEditKpiFormModal: () => void;
-    // config modal
-    showConfigFormModal: () => void;
-    closeConfigFormModal: (config?: KpiGroupConfigType) => void;
+
     // delete modal
     confirmDeleteModal: () => void;
     cancelDeleteModal: () => void;
@@ -92,40 +88,29 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     isLoading: true,
     loaded: false,
     pendingChanges: false,
-    showConfigFormModal: () => {
-        set({ configModalVisible: true });
-    },
+
     closeConfigFormModal: (config) => {
         // Implement the logic to change the configuration
         if (config) {
             const { kpiGroup } = get();
             set({
-                configModalVisible: false,
                 kpiGroup: { ...kpiGroup, config: { ...defaultKpiGroupData.config, ...config } },
                 pendingChanges: true,
             });
-        } else {
-            set({ configModalVisible: false });
         }
-    },
-    showAddKpiFormModal: () => {
-        set({ addKpiFormModalVisible: true });
     },
     addKpi: (data: KpiFormValues) => {
         const { kpiGroup } = get();
         set({
             kpiGroup: { ...kpiGroup, dataSource: [...kpiGroup.dataSource, data] },
             pendingChanges: true,
-            addKpiFormModalVisible: false,
         });
     },
     updateKpi: (data: KpiFormValues) => {
         const { kpiGroup, selectedKpiIndex } = get();
-
         if (isNaN(Number(selectedKpiIndex))) {
             throw new Error();
         }
-
         const dataSource = kpiGroup.dataSource;
 
         set({
