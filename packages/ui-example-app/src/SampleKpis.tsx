@@ -53,6 +53,45 @@ function App() {
   };
   // return <KpiGroup data={data} />;
 
+  const data3: FieldDataType = {
+    id: "kpi-group3",
+    dataSource: [
+      {
+        title: "Risorse allocate",
+        value: "2778",
+        value_prefix: "€",
+        value_suffix: "milioni",
+        background_color: "accent",
+        footer_text: "I fondi assegnati agli enti tramite i decreti di finanziamento.",
+      },
+      {
+        title: "Risorse liquidate",
+        value: "1846",
+        value_prefix: "€",
+        value_suffix: "milioni",
+        background_color: "accent",
+        footer_text: "I fondi già erogati agli enti dopo aver completato i progetti.",
+      },
+    ],
+    chart: "kpi",
+    config: {
+      direction: "horizontal",
+      h: 0,
+      labeLine: false,
+      legend: false,
+      legendPosition: "",
+      palette: [],
+      tooltip: false,
+      tooltipFormatter: "",
+      valueFormatter: "",
+      totalLabel: "",
+      tooltipTrigger: "",
+      colors: [],
+      background: "",
+    },
+    data: null,
+  };
+
   const singleKpi1 = generateFakeKpis(1)[0] as KpiItemType;
   const singleKpi2 = generateFakeKpis(1)[0] as KpiItemType;
 
@@ -60,6 +99,10 @@ function App() {
     <div>
       <ColorSchemeProvider >
         <RenderChart {...data1} />
+      </ColorSchemeProvider>
+      <hr />
+      <ColorSchemeProvider >
+        <RenderChart {...data3} />
       </ColorSchemeProvider>
       <hr />
       <ColorSchemeProvider >

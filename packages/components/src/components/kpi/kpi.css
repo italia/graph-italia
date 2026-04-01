@@ -1,19 +1,10 @@
 /* ===========================================
    KPI Components - Custom CSS
-   Replaces Bootstrap Italia CDN dependency
-   All classes prefixed with "dv-kpi-" to avoid conflicts
+   Replicates Bootstrap Italia utility classes with "dv-kpi-" prefix
+   Font sizes match PA Digitale 2026 BloccoGrafico overrides
    =========================================== */
 
-/* --- HR Reset (Bootstrap Italia style) --- */
-hr {
-  margin: 1rem 0;
-  color: inherit;
-  border: 0;
-  border-top: 1px solid;
-  opacity: 0.25;
-}
-
-/* --- Bootstrap Italia Colors (extracted) --- */
+/* --- Bootstrap Italia Colors --- */
 .dv-kpi-primary-color-a9 {
   color: hsl(210, 100%, 25%) !important;
 }
@@ -25,19 +16,20 @@ hr {
 .dv-kpi-primary-border-color-a9.dv-kpi-border {
   border-color: hsl(210, 100%, 25%) !important;
 }
-/*
-.dv-kpi-white-bg {
-  background-color: #fff !important;
-} */
 
+/* --- Backgrounds (same as ECharts themes) --- */
 .dv-kpi-bg {
-  background-color: #fff !important;
+  background-color: #F5FAFF !important;
 }
 
-/* .dataviz-dark .dv-kpi-bg {
-  background-color: #222 !important;
-  color: #fff !important;
-} */
+.dataviz-dark .dv-kpi-bg {
+  background-color: #1a1a2e !important;
+  color: #e0e0e0;
+}
+
+.dv-kpi-bg-accent {
+  background-color: #f2f7fc !important;
+}
 
 .dv-kpi-bg-success {
   background-color: rgb(0, 128, 85) !important;
@@ -53,7 +45,7 @@ hr {
 }
 
 .dv-kpi-border-top {
-  border-top: 1px solid hsl(210, 4%, 78%) !important;
+  border-top: 1px solid #000 !important;
 }
 
 .dv-kpi-border-end-0 {
@@ -73,7 +65,7 @@ hr {
 }
 
 .dv-kpi-border-secondary {
-  border-color: rgb(93, 112, 131) !important;
+  border-color: #000 !important;
 }
 
 .dv-kpi-rounded {
@@ -98,25 +90,17 @@ hr {
   padding-bottom: 0.25rem !important;
 }
 
-.dv-kpi-px-1 {
-  padding-left: 0.25rem !important;
-  padding-right: 0.25rem !important;
+.dv-kpi-px-3 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
 }
 
 .dv-kpi-mt-3 {
-  margin-top: 1rem !important;
-}
-
-.dv-kpi-me-1 {
-  margin-right: 0.25rem !important;
+  margin-top: 4px !important;
 }
 
 .dv-kpi-me-3 {
   margin-right: 1rem !important;
-}
-
-.dv-kpi-ms-1 {
-  margin-left: 0.25rem !important;
 }
 
 .dv-kpi-ms-3 {
@@ -136,59 +120,36 @@ hr {
   color: #fff !important;
 }
 
-/* --- KPI Typography (mid-caption) --- */
-.dv-kpi-mid-caption {
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
+/* --- KPI Typography (mid-caption) ---
+   Values from PA Digitale 2026 BloccoGrafico/index.module.scss overrides
+*/
 
-.dv-kpi-mid-caption--xsmall {
-  font-size: 0.75rem;
-  line-height: 1.3;
-}
-
+/* Title: 18px / 700 / 28px line-height / black */
 .dv-kpi-mid-caption--xlarge {
-  font-size: 0.875rem;
-  line-height: 1.4;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 28px;
+  color: #000;
 }
 
+/* Value: 28px / 600 / 32px line-height */
 .dv-kpi-mid-caption--xxlarge {
-  font-size: 1.125rem;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 32px;
+}
+
+/* Footer / percentage / flow: 16px / 400 / 24px line-height */
+.dv-kpi-mid-caption {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+/* Small variant (kept for backward compat) */
+.dv-kpi-mid-caption--xsmall {
+  font-size: 12px;
   line-height: 1.3;
-}
-
-/* --- Bootstrap Grid System (minimal) --- */
-.dv-kpi-container {
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.dv-kpi-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-}
-
-.dv-kpi-row > * {
-  flex-shrink: 0;
-  width: 100%;
-  max-width: 100%;
-}
-
-.dv-kpi-col-6 {
-  flex: 0 0 auto;
-  width: 50%;
-  display: flex;
-}
-
-.dv-kpi-col-6 > .dv-kpi-item {
-  flex: 1;
-  display: flex;
-}
-
-.dv-kpi-col-6 > .dv-kpi-item > div {
-  flex: 1;
 }
 
 /* ===========================================
@@ -198,62 +159,115 @@ hr {
 .dv-kpi-group,
 .dv-kpi-group.div {
   box-sizing: border-box;
+  font-family: "Titillium Web", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: medium;
   color: inherit;
   background-color: transparent;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.dv-kpi-group-vertical,
+/* Spaziatura hr adiacenti a kpi group */
+.dv-kpi-group + hr,
+hr + .dv-kpi-group,
+hr + .dv-kpi-container {
+  margin-top: 2rem;
+}
+
+.dv-kpi-group *,
+.dv-kpi-group *::before,
+.dv-kpi-group *::after {
+  box-sizing: border-box;
+}
+
+/* Horizontal layout: equal columns in a row (like Bootstrap .row > .col) */
 .dv-kpi-group-horizontal {
   display: flex;
-  align-items: center;
-  overflow-y: scroll;
-}
-
-.dv-kpi-group-horizontal {
-  justify-content: flex-start;
   flex-wrap: wrap;
-}
-
-.dv-kpi-group-vertical {
+  gap: 16px;
   max-width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
 }
 
-.dv-kpi-group-item {
-  padding: 4px;
-  display: block;
-  overflow: hidden;
-  min-width: 350px;
-  height: max-content;
-  width: max-content;
-}
-
+/* Vertical layout: full-width stacked */
 .dv-kpi-group-vertical {
-  .dv-kpi-group-item {
-    width: 100%;
-    height: max-content;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 100%;
 }
 
-.dv-kpi-item {
+/* --- KPI Group Item --- */
+.dv-kpi-group-item {
+  display: flex;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+/* Max 4 colonne: min-width 25% (meno gap) forza il wrap dopo 4 */
+.dv-kpi-group-horizontal > .dv-kpi-group-item {
+  flex: 1 1 calc(25% - 6px);
+  min-width: calc(25% - 6px);
+}
+
+.dv-kpi-group-vertical > .dv-kpi-group-item {
   width: 100%;
 }
 
-.dv-kpi-group-horizontal::-webkit-scrollbar {
-  height: 8px;
+/* La card si estende all'altezza del fratello più alto nella riga */
+.dv-kpi-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-@media screen and (max-width: 800px) {
-  .dv-kpi-group-vertical,
-  .dv-kpi-group-horizontal {
-    display: block;
+.dv-kpi-item > div {
+  flex: 1;
+}
+
+/* Riga valore: flex-wrap, column-gap per spaziatura inline,
+   row-gap per stacco quando wrappa. column-gap non si applica
+   a inizio riga, quindi elementi wrappati partono allineati a sinistra. */
+.dv-kpi-value-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.75rem;
+  row-gap: 4px;
+}
+
+/* Dentro la value-row i margini laterali sono gestiti da column-gap */
+.dv-kpi-value-row > .dv-kpi-me-3 {
+  margin-right: 0 !important;
+}
+.dv-kpi-value-row > .dv-kpi-ms-3 {
+  margin-left: 0 !important;
+}
+
+/* --- Container query: scala font quando l'item è stretto (4 col su container piccolo) --- */
+@container (max-width: 220px) {
+  .dv-kpi-mid-caption--xxlarge {
+    font-size: 22px !important;
+    line-height: 28px !important;
   }
-  .dv-kpi-group-item {
-    width: 100%;
-    height: max-content;
-    overflow-x: scroll;
+
+  .dv-kpi-mid-caption--xlarge {
+    font-size: 16px !important;
+    line-height: 24px !important;
+  }
+
+  .dv-kpi-me-3 {
+    margin-right: 0.5rem !important;
+  }
+
+  .dv-kpi-ms-3 {
+    margin-left: 0.5rem !important;
+  }
+}
+
+/* --- Responsive --- */
+@media screen and (max-width: 600px) {
+  .dv-kpi-group-horizontal > .dv-kpi-group-item {
+    flex-basis: 100%;
+    min-width: 0;
   }
 }

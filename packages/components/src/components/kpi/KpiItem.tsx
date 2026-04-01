@@ -19,17 +19,25 @@ export default function Kpi({ data }: { data: KpiItemType }) {
     footer_text,
   } = data;
 
+  // background_color can be "accent" (→ #f2f7fc), a hex/rgb value, or empty
+  let bgClass = "";
+  let bgStyle: React.CSSProperties | undefined;
+  if (background_color === "accent") {
+    bgClass = "dv-kpi-bg-accent";
+  } else if (background_color) {
+    bgStyle = { backgroundColor: background_color };
+  }
+
   return (
     <div className="dv-kpi-item dv-kpi-bg">
       <div
-        className={`dv-kpi-p-2 dv-kpi-ps-3 ${
-          background_color || ""
-        } ${border_classes}`}
+        className={`dv-kpi-p-2 dv-kpi-ps-3 ${bgClass} ${border_classes}`}
+        style={bgStyle}
       >
         <div className="dv-kpi-mid-caption--xlarge dv-kpi-fw-semibold dv-kpi-text-black">
           {title}
         </div>
-        <div>
+        <div className="dv-kpi-value-row">
           {value_prefix && (
             <span className="dv-kpi-mid-caption--xxlarge dv-kpi-primary-color-a9 dv-kpi-fw-semibold dv-kpi-me-3">
               {value_prefix}
@@ -45,7 +53,7 @@ export default function Kpi({ data }: { data: KpiItemType }) {
             </span>
           )}
           {percentage && (
-            <span className="dv-kpi-mid-caption--xsmall dv-kpi-ms-1">
+            <span className="dv-kpi-mid-caption dv-kpi-ms-3">
               {percentage}
             </span>
           )}
@@ -54,12 +62,12 @@ export default function Kpi({ data }: { data: KpiItemType }) {
             <span
               className={`${
                 flow_direction == "+" ? "dv-kpi-bg-success" : "dv-kpi-bg-danger"
-              } dv-kpi-text-white dv-kpi-py-1 dv-kpi-px-1 dv-kpi-rounded dv-kpi-ms-1 dv-kpi-mid-caption--xsmall`}
+              } dv-kpi-text-white dv-kpi-py-1 dv-kpi-px-3 dv-kpi-rounded dv-kpi-ms-3 dv-kpi-mid-caption`}
             >
               {flow_value && (
                 <span className="dv-kpi-fw-semibold">
                   <span
-                    className="dv-kpi-me-1"
+                    className="dv-kpi-me-3"
                     dangerouslySetInnerHTML={{
                       __html: flow_direction == "+" ? "&#8593;" : "&#8595;",
                     }}
@@ -68,7 +76,7 @@ export default function Kpi({ data }: { data: KpiItemType }) {
                 </span>
               )}
               {flow_detail && (
-                <span className="dv-kpi-ms-1">{flow_detail}</span>
+                <span className="dv-kpi-ms-3">{flow_detail}</span>
               )}
             </span>
           )}
