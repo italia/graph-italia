@@ -60,7 +60,7 @@ WORKDIR /tmp/clean
 COPY --from=install /temp/prod/node_modules ./root_node_modules
 COPY --from=install /temp/prod/packages/server/node_modules ./server_node_modules
 
-# Clean up but KEEP prisma (needed for db push/migrate)
+# Clean up but KEEP prisma CLI (needed for migrations in cluster)
 RUN for dir in root_node_modules server_node_modules; do \
         cd /tmp/clean/$dir && \
         find . -type d \( -name "test" -o -name "tests" -o -name "__tests__" -o -name "spec" \) -exec rm -rf {} + 2>/dev/null || true && \
@@ -69,12 +69,12 @@ RUN for dir in root_node_modules server_node_modules; do \
         find . -type d -empty -delete 2>/dev/null || true; \
     done
 
-# RELEASE Stage - Include Node.js for Prisma CLI (db push/migrate)
+# RELEASE Stage - Include Node.js for Prisma CLI in runtime jobs
 FROM oven/bun:1.3.1-slim AS release
 
 WORKDIR /usr/src/app
 
-# Install Node.js for Prisma CLI runtime (needed for db push in migration jobs)
+# Install Node.js for Prisma CLI runtime (needed for migration jobs)
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends ca-certificates curl && \
     rm -rf /var/lib/apt/lists/*
@@ -95,7 +95,7 @@ COPY --from=build /usr/src/app/packages/server/lib ./packages/server/lib
 COPY --from=build /usr/src/app/packages/server/routes ./packages/server/routes
 COPY --from=build /usr/src/app/packages/server/package.json ./packages/server/
 
-# Copy Prisma schema (needed for db push)
+# Copy Prisma schema and migrations for runtime jobs
 COPY --from=build /usr/src/app/packages/server/prisma ./packages/server/prisma
 
 # Copy seeds directory (needed for seeding jobs)

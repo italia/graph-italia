@@ -17,11 +17,22 @@ imagePullSecret:
 # =============================================================================
 # DATABASE MIGRATION (Helm pre-upgrade/pre-install hook)
 # =============================================================================
-# Runs prisma db push before deployment to ensure schema is up to date
-# This is idempotent and safe to run multiple times
+# Supported modes:
+# - auto: use migrate deploy when versioned migrations exist, otherwise fallback to db push
+# - migrateDeploy: force prisma migrate deploy (fails if no migration files)
+# - dbPush: force legacy prisma db push
 dbMigration:
   enabled: false
-  # Accept data loss during migration (use with caution in production!)
+  mode: auto
+  # In auto mode, allow fallback to db push when no migration files are found.
+  # Keep true for backward compatibility with legacy releases.
+  # Set false to fail fast and avoid accidental schema drift.
+  allowLegacyDbPushFallback: true
+  # Automatically migrates legacy schema (userId-based) to project-based schema
+  # before running Prisma migrations. Recommended for one-time transition.
+  legacySchemaAutoMigrate: true
+  # Applies only to the legacy prisma db push fallback path.
+  # Ignored when prisma migrate deploy is used.
   acceptDataLoss: false
   # How long to keep the job after completion (seconds)
   ttlSecondsAfterFinished: 300

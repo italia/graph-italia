@@ -561,7 +561,7 @@ graph TB
             Server --> DB[(PostgreSQL<br/>Azure)]
 
             subgraph "Helm Hooks"
-                Migration[Job: db-migration<br/>prisma db push]
+                Migration[Job: db-migration<br/>prisma migrate deploy]
                 Seed[Job: db-seed<br/>seed-users.ts]
             end
 
@@ -579,7 +579,7 @@ graph TB
 |------------|-------------|
 | `webapp-deployment` | Frontend React servito da nginx |
 | `server-deployment` | Backend API Bun/Hono |
-| `db-migration-job` | Hook pre-upgrade per `prisma db push` |
+| `db-migration-job` | Hook pre-upgrade per migration Prisma |
 | `db-seed-job` | Hook pre-upgrade per seeding utenti |
 | `ingress` | Routing HTTP/HTTPS con cert-manager |
 
@@ -595,7 +595,7 @@ graph TB
 2. Applicare schema al database:
    ```bash
    cd packages/server
-   bunx prisma db push
+   bunx prisma migrate deploy
    ```
 
 3. (Opzionale) Seed utenti di test:
@@ -616,7 +616,7 @@ sequenceDiagram
     participant DB as PostgreSQL
 
     Helm->>Migration: pre-upgrade hook (weight: -5)
-    Migration->>DB: prisma db push
+    Migration->>DB: prisma migrate deploy
     DB-->>Migration: Schema synced
     Migration-->>Helm: Job completed
 
@@ -634,7 +634,10 @@ sequenceDiagram
 ```yaml
 dbMigration:
   enabled: true
-  acceptDataLoss: false  # MAI true in produzione!
+  mode: migrateDeploy
+  allowLegacyDbPushFallback: false
+  legacySchemaAutoMigrate: true
+  acceptDataLoss: false  # Solo per fallback legacy con db push
 
 dbSeed:
   enabled: true

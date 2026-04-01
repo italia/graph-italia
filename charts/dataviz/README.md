@@ -29,7 +29,7 @@ Entrambi i componenti supportano:
 graph TB
     subgraph "Namespace: dataviz"
         subgraph "Helm Hooks (Pre-upgrade)"
-            MigrationJob[Job<br/>db-migration<br/>prisma db push]
+            MigrationJob[Job<br/>db-migration<br/>prisma migrate deploy]
             SeedJob[Job<br/>db-seed<br/>seed users]
         end
         
@@ -127,12 +127,22 @@ La chart include due Helm hooks che vengono eseguiti **prima** del deployment:
 
 ### Migration Hook (`dbMigration`)
 
-Esegue `prisma db push` per sincronizzare lo schema del database:
+Il job supporta tre modalita operative:
+
+- `mode: auto` (default): usa `prisma migrate deploy` se trova migration versionate, altrimenti fallback legacy a `prisma db push`
+- `mode: migrateDeploy`: forza `prisma migrate deploy` e fallisce se non trova migration files
+- `mode: dbPush`: forza il comportamento legacy con `prisma db push`
+
+Prima di applicare le migration, il job esegue sempre `prisma migrate status` quando usa il path `migrate deploy`, cosi eventuali incoerenze (es. modifiche manuali al DB non baselinate) falliscono con un errore esplicito.
+Inoltre, con `legacySchemaAutoMigrate: true`, il job esegue un bootstrap automatico per convertire lo schema legacy (`userId`) allo schema a progetti (`projectId`) e baseline delle migration storiche.
 
 ```yaml
 dbMigration:
   enabled: true           # Abilita il job di migration
-  acceptDataLoss: false   # MAI true in production!
+  mode: migrateDeploy     # Consigliato per ambienti con migration versionate
+  allowLegacyDbPushFallback: false
+  legacySchemaAutoMigrate: true
+  acceptDataLoss: false   # Solo per fallback legacy con db push
   ttlSecondsAfterFinished: 300
   backoffLimit: 3
 ```
@@ -155,7 +165,7 @@ dbSeed:
 
 ### Ordine di esecuzione
 
-1. **Migration** (hook-weight: -5) - Sincronizza schema DB
+1. **Migration** (hook-weight: -5) - Applica le migration Prisma pendenti
 2. **Seed** (hook-weight: 0) - Crea utenti
 3. **Deployment** - Avvia i pod
 

@@ -53,10 +53,80 @@ spec:
               set -e
               echo "🔄 Starting database migration..."
               echo "📍 Working directory: $(pwd)"
-              
-              echo "📊 Running prisma db push..."
-              bunx prisma db push --schema=prisma/schema.prisma --url="$DATABASE_URL" {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
-              
+              if [ -z "${DATABASE_URL:-}" ]; then
+                echo "❌ DATABASE_URL is empty. Aborting migration job."
+                exit 1
+              fi
+
+              MIGRATION_MODE="{{ .Values.dbMigration.mode | default "auto" }}"
+              ALLOW_LEGACY_FALLBACK="{{ if hasKey .Values.dbMigration "allowLegacyDbPushFallback" }}{{ .Values.dbMigration.allowLegacyDbPushFallback }}{{ else }}true{{ end }}"
+              LEGACY_AUTOMIGRATE="{{ if hasKey .Values.dbMigration "legacySchemaAutoMigrate" }}{{ .Values.dbMigration.legacySchemaAutoMigrate }}{{ else }}true{{ end }}"
+
+              if [ "$LEGACY_AUTOMIGRATE" = "true" ]; then
+                echo "🧭 Running legacy schema auto-migration bootstrap check..."
+                bun run seeds/migrate-legacy-projects.ts
+
+                if [ -f /tmp/legacy-schema-migrated ]; then
+                  echo "🗂️ Legacy migration applied, baselining existing Prisma migrations..."
+                  bunx prisma migrate resolve --applied 20260331142948_init_projects --schema=prisma/schema.prisma
+                  bunx prisma migrate resolve --applied 20260331143614_remove_preview --schema=prisma/schema.prisma
+                fi
+              else
+                echo "⏭️ legacySchemaAutoMigrate disabled, skipping legacy bootstrap."
+              fi
+
+              run_migrate_deploy() {
+                echo "🔎 Running prisma migrate status..."
+                if ! bunx prisma migrate status --schema=prisma/schema.prisma; then
+                  echo "❌ prisma migrate status failed."
+                  echo "💡 Database may be out of sync due to manual changes."
+                  echo "💡 Verify baseline/state before retrying deploy (for example with prisma migrate resolve)."
+                  exit 1
+                fi
+
+                echo "🚀 Running prisma migrate deploy..."
+                bunx prisma migrate deploy --schema=prisma/schema.prisma
+              }
+
+              run_db_push() {
+                echo "📊 Running legacy prisma db push..."
+                bunx prisma db push --schema=prisma/schema.prisma {{ if .Values.dbMigration.acceptDataLoss }}--accept-data-loss{{ end }}
+              }
+
+              HAS_VERSIONED_MIGRATIONS=false
+              if ls prisma/migrations/*/migration.sql >/dev/null 2>&1; then
+                HAS_VERSIONED_MIGRATIONS=true
+              fi
+
+              case "$MIGRATION_MODE" in
+                migrateDeploy)
+                  if [ "$HAS_VERSIONED_MIGRATIONS" != "true" ]; then
+                    echo "❌ dbMigration.mode=migrateDeploy but no versioned migrations were found."
+                    exit 1
+                  fi
+                  run_migrate_deploy
+                  ;;
+                dbPush)
+                  run_db_push
+                  ;;
+                auto)
+                  if [ "$HAS_VERSIONED_MIGRATIONS" = "true" ]; then
+                    run_migrate_deploy
+                  elif [ "$ALLOW_LEGACY_FALLBACK" = "true" ]; then
+                    echo "⚠️ No versioned migrations found. Falling back to legacy db push."
+                    run_db_push
+                  else
+                    echo "❌ No versioned migrations found and legacy fallback is disabled."
+                    echo "💡 Set dbMigration.mode=dbPush for legacy releases or enable allowLegacyDbPushFallback."
+                    exit 1
+                  fi
+                  ;;
+                *)
+                  echo "❌ Invalid dbMigration.mode: $MIGRATION_MODE (expected: auto | migrateDeploy | dbPush)"
+                  exit 1
+                  ;;
+              esac
+
               echo "✅ Database migration completed successfully!"
           env:
             - name: DATABASE_URL
