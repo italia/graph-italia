@@ -74,7 +74,7 @@ function Home() {
             {examples.map((example) => (
               <div
                 key={example.title}
-                className="card border border-base-300 bg-base-200 shadow-sm"
+                className="card border border-base-200 bg-base-100 shadow-md"
               >
                 <div className="card-body gap-2">
                   <h2 className="card-title text-base leading-snug">
