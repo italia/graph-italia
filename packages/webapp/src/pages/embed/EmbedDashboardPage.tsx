@@ -113,7 +113,7 @@ function EmbedDashboardPage() {
                   return (
                     <div
                       key={item.i}
-                      className="overflow-hidden rounded-lg bg-base-100 shadow-sm border"
+                      className="overflow-hidden rounded-lg g-base-100 border border-base-200 shadow-sm"
                     >
                       {currentChart && (
                         <RenderChart
