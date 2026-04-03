@@ -324,6 +324,14 @@
         }
     },
     "home": {
+        "head": {
+            "title": "Home",
+            "meta": {
+                "description": {
+                    "content": "Creating chart"
+                }
+            }
+        },
         "header": {
             "title": "Private Area",
             "charts": "Charts",
@@ -333,7 +341,9 @@
         },
         "body": {
             "actions": {
-                "label": "Create new",
+                "createNew": {
+                    "label": "Create new"
+                },
                 "actionItems": {
                     "createChart": {
                         "label": "Create Chart"
@@ -350,6 +360,14 @@
             }
         },
         "modals": {
+            "createNew": {
+                "title": "Create new",
+                "description": "What would you like to create?",
+                "labels": {
+                    "confirm": "Select an option above",
+                    "cancel": "Close"
+                }
+            },
             "cancel": "Cancel",
             "confirm": "Delete",
             "createChart": {

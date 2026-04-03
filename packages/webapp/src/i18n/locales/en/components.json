@@ -192,7 +192,7 @@
                         "tagline": "Share your charts"
                     },
                     "social": {
-                        "label": "Source on",
+                        "label": "Sources on",
                         "platforms": {
                             "github": {
                                 "ariaLabel": "GitHub (si apre in nuova finestra)"
@@ -334,6 +334,7 @@
             }
         },
         "chartTable": {
+            "noDataComponent": "No charts created",
             "columns": {
                 "type": {
                     "label": "Type"
@@ -391,6 +392,26 @@
             },
             "columns": {
                 "title": "Data Matching Column"
+            }
+        },
+        "dashboardTable": {
+            "noDataComponent": "No dashboards created",
+            "columns": {
+                "name": {
+                    "label": "Name"
+                },
+                "visibility": {
+                    "label": "Visibility"
+                },
+                "createdAt": {
+                    "label": "Created At"
+                },
+                "updatedAt": {
+                    "label": "Updated At"
+                },
+                "actions": {
+                    "label": "Actions"
+                }
             }
         },
         "dataMngTable": {
