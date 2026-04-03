@@ -1,0 +1,32 @@
+{
+    "hero": {
+        "chip": "Data visualization made simple",
+        "title": "<block>Transform Data Into</block> <gradient>stunning visuals</gradient> <withBlock>with <brand>Dataviz</brand><withBlock>",
+        "description": "Effortlessly convert your CSV data into beautiful, interactive charts with Dataviz. Whether you're a data analyst, business professional, or content creator, Dataviz offers an intuitive interface to bring your numbers to life.",
+        "ctas": {
+            "getStarted": "Get Started",
+            "quickStart": "Quick start guide"
+        }
+    },
+    "contentBlock": {
+        "tag": "Features",
+        "title": "Everything you need",
+        "features": {
+            "easyToUse": {
+                "title": "Upload & Parse Your Data in Seconds",
+                "content": "Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks."
+            },
+            "customization": {
+                "title": "Customizable Chart Creation",
+                "content": "Choose how to represent your data by selecting which columns to display as series, and easily define your X and Y axes. Dataviz offers a range of chart types: Bar, Line, Pie charts and Geographical Maps (Geomap). No matter the type, you have full control over your data's presentation!"
+            },
+            "saveAndShare": {
+                "title": "Save, Share and Publish",
+                "content": "Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips."
+            }
+        },
+        "ctas": {
+            "getStarted": "Get Started"
+        }
+    }
+}
