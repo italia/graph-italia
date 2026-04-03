@@ -442,6 +442,11 @@
             "dashboards": "Dashboard",
             "noDashboards": "Non ci sono ancora Dashboard"
         },
+        "projectSwitcher": {
+            "title": "I Tuoi Progetti",
+            "selectPrompt": "Seleziona Progetto",
+            "newBtn": "Nuovo Progetto"
+        },
         "body": {
             "actions": {
                 "createNew": {
@@ -474,6 +479,17 @@
             },
             "cancel": "Annulla",
             "confirm": "Elimina",
+            "createProject": {
+                "title": "Crea Nuovo Progetto",
+                "description": "I progetti ti aiutano a organizzare i tuoi grafici e le tue dashboard.",
+                "confirm": "Crea Progetto",
+                "form": {
+                    "name": {
+                        "label": "Nome Progetto",
+                        "placeholder": "Es: Dashboard Marketing"
+                    }
+                }
+            },
             "createChart": {
                 "title": "Crea nuovo grafico",
                 "description": "Dai un nome al grafico per iniziare a modificarlo",
@@ -583,7 +599,6 @@
             "role": "Ruolo",
             "actions": "Azioni"
         },
-
         "modal": {
             "createOrgTitle": "Crea Nuova Organizzazione",
             "createOrgDesc": "Inserisci un nome per la tua nuova organizzazione.",
@@ -604,6 +619,5 @@
             "email": "Indirizzo Email",
             "role": "Ruolo"
         }
-
     }
 }

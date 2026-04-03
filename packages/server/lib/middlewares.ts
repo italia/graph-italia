@@ -74,20 +74,37 @@ export const requireUser = createMiddleware(async (c, next) => {
 //   - API key  → apiKey.projectId (already scoped at key creation)
 //   - User     → their default project (oldest owned/member project)
 export const requireAuth = createMiddleware(async (c, next) => {
-	const user = c.get("user");
-	const apiKey = c.get("apiKey");
+	const user = c.get("user") as { userId: string } | null;
+	const apiKey = c.get("apiKey") as { projectId: string } | null;
 
 	if (!user && !apiKey) {
 		throw new HTTPException(401, { message: "Unauthorized." });
 	}
 
-	const projectId = apiKey
-		? apiKey.projectId
-		: await getDefaultProjectId((user as { userId: string }).userId);
+	let projectId: string | null = null;
+
+	if (apiKey) {
+		projectId = apiKey.projectId;
+	} else if (user) {
+		// Priority 1: Explicit project ID from header (for project switching in webapp)
+		const headerProjectId = c.req.header("x-project-id");
+		if (headerProjectId) {
+			const allowed = await canUserModifyProject(user.userId, headerProjectId);
+			if (allowed) {
+				projectId = headerProjectId;
+			}
+		}
+
+		// Priority 2: Fallback to default project
+		if (!projectId) {
+			projectId = await getDefaultProjectId(user.userId);
+		}
+	}
 
 	c.set("projectId", projectId);
 	await next();
 });
+
 
 // Middleware to require a valid API key (any role)
 export const requireApiKey = createMiddleware(async (c, next) => {

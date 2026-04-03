@@ -3,6 +3,7 @@ import { type FieldDataType } from "dataviz-components";
 import { useEffect, useState } from "react";
 import { FaChartBar, FaList, FaMap, FaRegSquare } from "react-icons/fa6";
 
+
 import Layout from "../../components/layout/index.tsx";
 // import RenderChart from "../components/RenderChart";
 import Loading from "../../components/layout/Loading.tsx";
@@ -38,6 +39,10 @@ function Home() {
     string | null
   >(null);
   const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
+  const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
+  const [newProjectName, setNewProjectName] = useState("");
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
+
 
   async function fetchDashboards() {
     setDashboardLoading(true);
@@ -63,11 +68,45 @@ function Home() {
     }
   }
 
+  async function fetchProjects() {
+    try {
+      const data = await api.getProjects();
+      setProjects(data);
+      // If no project selected, select the first one (or server will fallback to default)
+      if (!currentProjectId && data.length > 0) {
+        // We don't necessarily need to set it here because the server handles default,
+        // but it's good for UI consistency
+      }
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+    }
+  }
+
   useEffect(() => {
+    fetchProjects();
     fetchCharts();
     fetchDashboards();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentProjectId]);
+
+  const handleCreateProject = async () => {
+    if (!newProjectName) return;
+    setIsCreatingProject(true);
+    try {
+      const project = await api.createProject({ name: newProjectName });
+      if (project) {
+        await fetchProjects();
+        setCurrentProjectId(project.id);
+        setShowCreateProjectDialog(false);
+        setNewProjectName("");
+      }
+    } catch (error) {
+      console.error("Failed to create project:", error);
+    } finally {
+      setIsCreatingProject(false);
+    }
+  };
+
 
   function handleLoadChart(item: FieldDataType) {
     send({ type: "CONFIG" });
@@ -174,9 +213,41 @@ function Home() {
         <title>{t(`header.title`)}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex justify-between items-center gap-2  bg-base-300 py-4 px-8 rounded-lg">
-        <div className="flex gap-4">
+      <div className="w-full flex justify-between items-center gap-4 bg-base-300 py-4 px-8 rounded-lg mb-6">
+        <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">{t(`header.title`)}</h1>
+          {/* Project Switcher */}
+          <div className="flex items-center gap-2 mt-1">
+            <div className="dropdown dropdown-bottom">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-xs normal-case gap-2 px-1 opacity-70 hover:opacity-100">
+                <FaFolderOpen className="text-secondary" />
+                <span className="max-w-[200px] truncate">
+                  {projects.find(p => p.id === currentProjectId)?.name || t("projectSwitcher.selectPrompt", "Select Project")}
+                </span>
+                <FaChevronDown className="w-3 h-3" />
+              </div>
+              <ul tabIndex={0} className="dropdown-content z-[20] menu p-2 shadow bg-base-200 rounded-box w-52 border border-base-300 mt-1">
+                <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{t("projectSwitcher.title", "Your Projects")}</li>
+                {projects.map(project => (
+                  <li key={project.id}>
+                    <button
+                      className={`${currentProjectId === project.id ? "active" : ""}`}
+                      onClick={() => setCurrentProjectId(project.id)}
+                    >
+                      {project.name}
+                    </button>
+                  </li>
+                ))}
+                <div className="divider my-1"></div>
+                <li>
+                  <button onClick={() => setShowCreateProjectDialog(true)} className="text-primary gap-2">
+                    <FaFolderPlus /> {t("projectSwitcher.newBtn", "New Project")}
+                  </button>
+                </li>
+              </ul>
+
+            </div>
+          </div>
         </div>
         <div className="flex-shrink-0">
           <div className="flex my-5 gap-4">
@@ -276,6 +347,36 @@ function Home() {
         </div>
       </GenericDialog>
 
+      {/* Create Project Dialog */}
+      <GenericDialog
+        toggle={showCreateProjectDialog}
+        title={t("modals.createProject.title", "Create New Project")}
+        description={t("modals.createProject.description", "Projects help you organize your charts and dashboards.")}
+        labels={{ cancel: t("modals.cancel"), confirm: t("modals.createProject.confirm", "Create Project") }}
+        confirmCb={handleCreateProject}
+        cancelCb={() => setShowCreateProjectDialog(false)}
+      >
+        <div className="form-control w-full py-2">
+          <label className="label">
+            <span className="label-text font-semibold">{t("modals.createProject.form.name.label", "Project Name")}</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder={t("modals.createProject.form.name.placeholder", "E.g. Marketing Dashboard")}
+            value={newProjectName}
+            onChange={(e) => setNewProjectName(e.target.value)}
+            autoFocus
+          />
+
+          {isCreatingProject && (
+            <div className="flex justify-center mt-4">
+              <span className="loading loading-spinner"></span>
+            </div>
+          )}
+        </div>
+      </GenericDialog>
+
       <GenericDialog
         toggle={!!pendingDeleteId}
         title={t(`body.confirms.deleteChart.label`)}
@@ -286,6 +387,7 @@ function Home() {
       >
         <div></div>
       </GenericDialog>
+
 
       <GenericDialog
         toggle={!!pendingDeleteDashboardId}
