@@ -1,8 +1,11 @@
+import { useTranslation } from "react-i18next";
 import Layout from "../components/layout";
-import { HOME_ROUTE } from "../router";
 import { useUserStore } from "../lib/store/user_store";
+import { HOME_ROUTE } from "../router";
 
 export default function Landing() {
+  const { t } = useTranslation("homepage");
+
   const { user } = useUserStore();
 
   const features = [
@@ -174,7 +177,12 @@ export default function Landing() {
               <path d="M100 200V.5M.5 .5H200" fill="none" />
             </pattern>
           </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-base-200" aria-hidden="true">
+          <svg
+            x="50%"
+            y={-1}
+            className="overflow-visible fill-base-200"
+            aria-hidden="true"
+          >
             <path
               d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
               strokeWidth={0}
@@ -227,10 +235,7 @@ export default function Landing() {
                 >
                   Get started
                 </a>
-                <a
-                  href="/quickstart"
-                  className="btn btn-outline"
-                >
+                <a href="/quickstart" className="btn btn-outline">
                   Quick start guide
                 </a>
               </div>
@@ -374,10 +379,7 @@ export default function Landing() {
               started.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="/quickstart"
-                className="btn btn-primary btn-lg"
-              >
+              <a href="/quickstart" className="btn btn-primary btn-lg">
                 Go to Quick start guide
               </a>
               <a
