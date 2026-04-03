@@ -341,6 +341,9 @@
         },
         "body": {
             "actions": {
+                "createNew": {
+                    "label": "Crea nuovo"
+                },
                 "label": "Crea nuovo",
                 "actionItems": {
                     "createChart": {

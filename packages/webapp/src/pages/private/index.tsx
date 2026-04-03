@@ -1,40 +1,31 @@
 import { useMachine } from "@xstate/react";
 import { type FieldDataType } from "dataviz-components";
 import { useEffect, useState } from "react";
-import {
-  FaChartBar,
-  FaList,
-  FaMap,
-  FaRegSquare,
-} from "react-icons/fa6";
+import { FaChartBar, FaList, FaMap, FaRegSquare } from "react-icons/fa6";
 
 import Layout from "../../components/layout/index.tsx";
 // import RenderChart from "../components/RenderChart";
 import Loading from "../../components/layout/Loading.tsx";
 
+import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ChartTable from "../../components/ChartTable.tsx";
 import DashboardTable from "../../components/DashboardTable.tsx";
-import { ROUTES } from "../../router.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import * as api from "../../lib/api.ts";
 import useChartsStoreState from "../../lib/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import useStoreState from "../../lib/storeState.ts";
-import { Helmet } from 'react-helmet';
-
+import { ROUTES } from "../../router.tsx";
 
 function Home() {
   const { t } = useTranslation("pages", { keyPrefix: "home" });
   const [state, send] = useMachine(stepMachine);
   const { loadItem } = useStoreState((state) => state);
 
-  const {
-    list,
-    setList,
-  } = useChartsStoreState((state) => state);
+  const { list, setList } = useChartsStoreState((state) => state);
   const { list: dashboardList, setList: setDashboardList } =
     useDashboardsStoreState((state) => state);
 
@@ -43,7 +34,9 @@ function Home() {
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [isCreatingNewChart, setIsCreatingNewChart] = useState<number>(0);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [pendingDeleteDashboardId, setPendingDeleteDashboardId] = useState<string | null>(null);
+  const [pendingDeleteDashboardId, setPendingDeleteDashboardId] = useState<
+    string | null
+  >(null);
   const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
 
   async function fetchDashboards() {
@@ -64,7 +57,7 @@ function Home() {
       const data = await api.getCharts();
       setList(data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -100,10 +93,14 @@ function Home() {
   function navigateToEdit(key: ItemTypeNames, id: string) {
     if (!id) throw new Error("Missing ID");
     switch (key) {
-      case "dash": return navigate(ROUTES.editDashboard(id));
-      case "kpi": return navigate(ROUTES.editKpi(id));
-      case "map": return navigate(ROUTES.editMap(id));
-      default: return navigate(ROUTES.editChart(id));
+      case "dash":
+        return navigate(ROUTES.editDashboard(id));
+      case "kpi":
+        return navigate(ROUTES.editKpi(id));
+      case "map":
+        return navigate(ROUTES.editMap(id));
+      default:
+        return navigate(ROUTES.editChart(id));
     }
   }
 
@@ -116,11 +113,31 @@ function Home() {
   }
 
   const itemTypes = [
-    { id: 1, key: "chart", label: "Chart", icon: <FaChartBar size={24} aria-hidden="true" /> },
-    { id: 2, key: "kpi", label: "KPI Group", icon: <FaList size={24} aria-hidden="true" /> },
-    { id: 3, key: "map", label: "Map", icon: <FaMap size={24} aria-hidden="true" /> },
-    { id: 4, key: "dash", label: "Dashboard", icon: <FaRegSquare size={24} aria-hidden="true" /> },
-  ]
+    {
+      id: 1,
+      key: "chart",
+      label: "Chart",
+      icon: <FaChartBar size={24} aria-hidden="true" />,
+    },
+    {
+      id: 2,
+      key: "kpi",
+      label: "KPI Group",
+      icon: <FaList size={24} aria-hidden="true" />,
+    },
+    {
+      id: 3,
+      key: "map",
+      label: "Map",
+      icon: <FaMap size={24} aria-hidden="true" />,
+    },
+    {
+      id: 4,
+      key: "dash",
+      label: "Dashboard",
+      icon: <FaRegSquare size={24} aria-hidden="true" />,
+    },
+  ];
 
   async function handleCreateFromDialog(id: number, key: ItemTypeNames) {
     const name = generateName(key);
@@ -138,7 +155,7 @@ function Home() {
         default:
           response = await api.createChart({
             name,
-            chart: key === "chart" ? "bar" : key === "map" ? "cmap" : key
+            chart: key === "chart" ? "bar" : key === "map" ? "cmap" : key,
           });
           break;
       }
@@ -154,9 +171,7 @@ function Home() {
   return (
     <Layout>
       <Helmet>
-        <title>
-          {t(`header.title`)}
-        </title>
+        <title>{t(`header.title`)}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
       <div className="w-full flex justify-between items-center gap-2  bg-base-300 py-4 px-8 rounded-lg">
@@ -165,18 +180,18 @@ function Home() {
         </div>
         <div className="flex-shrink-0">
           <div className="flex my-5 gap-4">
-            {!loading && <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => setShowCreateNewDialog(true)}
-            >
-              + Create New
-            </button>
-            }
+            {!loading && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setShowCreateNewDialog(true)}
+              >
+                + {t(`body.actions.createNew.label`)}
+              </button>
+            )}
           </div>
         </div>
       </div>
-
 
       <div className="p-6">
         {loading ? (
@@ -198,17 +213,25 @@ function Home() {
             </div>
             <div className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6">
               <div className="mt-10">
-                <h3 className="text-lg mb-4 font-semibold" >
-                  {t(`header.${dashboardList && dashboardList.length ? "dashboards" : "noDashboards"}`)}
+                <h3 className="text-lg mb-4 font-semibold">
+                  {t(
+                    `header.${dashboardList && dashboardList.length ? "dashboards" : "noDashboards"}`,
+                  )}
                 </h3>
                 {dashboardLoading ? (
                   <Loading />
                 ) : (
                   <DashboardTable
                     list={dashboardList ?? []}
-                    handleDeleteDashboard={(id) => setPendingDeleteDashboardId(id)}
-                    handleEditDashboard={(item) => navigate(ROUTES.editDashboard(item.id ?? ""))}
-                    handleViewDashboard={(id) => navigate(ROUTES.viewDashboard(id))}
+                    handleDeleteDashboard={(id) =>
+                      setPendingDeleteDashboardId(id)
+                    }
+                    handleEditDashboard={(item) =>
+                      navigate(ROUTES.editDashboard(item.id ?? ""))
+                    }
+                    handleViewDashboard={(id) =>
+                      navigate(ROUTES.viewDashboard(id))
+                    }
                   />
                 )}
               </div>
@@ -223,7 +246,10 @@ function Home() {
         title="Create New"
         description="What would you like to create?"
         labels={{ cancel: "Close", confirm: "Select an option above" }}
-        cancelCb={() => { setShowCreateNewDialog(false); setIsCreatingNewChart(0); }}
+        cancelCb={() => {
+          setShowCreateNewDialog(false);
+          setIsCreatingNewChart(0);
+        }}
       >
         <div className="grid grid-cols-2 gap-4 py-2">
           {itemTypes.map(({ key, id, icon, label }) => (
@@ -237,9 +263,7 @@ function Home() {
               {isCreatingNewChart === id ? (
                 <span className="loading loading-spinner loading-md" />
               ) : (
-                <span className="">
-                  {icon}
-                </span>
+                <span className="">{icon}</span>
               )}
               <span className="font-semibold">
                 {isCreatingNewChart === 1 ? "Creating..." : label}
@@ -267,7 +291,8 @@ function Home() {
         labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
         confirmCb={() => {
           if (!pendingDeleteDashboardId) return;
-          api.deleteDashaboard(pendingDeleteDashboardId)
+          api
+            .deleteDashaboard(pendingDeleteDashboardId)
             .then(() => fetchDashboards())
             .finally(() => setPendingDeleteDashboardId(null));
         }}
@@ -275,7 +300,7 @@ function Home() {
       >
         <div></div>
       </GenericDialog>
-    </Layout >
+    </Layout>
   );
 }
 

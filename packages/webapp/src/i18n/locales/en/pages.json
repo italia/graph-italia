@@ -341,7 +341,9 @@
         },
         "body": {
             "actions": {
-                "label": "Create new",
+                "createNew": {
+                    "label": "Create new"
+                },
                 "actionItems": {
                     "createChart": {
                         "label": "Create Chart"
