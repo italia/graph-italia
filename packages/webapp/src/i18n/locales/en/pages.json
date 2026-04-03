@@ -333,9 +333,11 @@
         },
         "projectSwitcher": {
             "title": "Your Projects",
+            "personal": "Personal Projects",
             "selectPrompt": "Select Project",
             "newBtn": "New Project"
         },
+
 
         "body": {
             "actions": {
@@ -369,6 +371,17 @@
                     }
                 }
             },
+            "renameProject": {
+                "title": "Rename Project",
+                "description": "Enter a new name for this project.",
+                "confirm": "Rename",
+                "form": {
+                    "name": {
+                        "label": "Project Name"
+                    }
+                }
+            },
+
 
             "createChart": {
                 "title": "Create new chart",
@@ -442,10 +455,14 @@
         "table": {
             "id": "ID",
             "role": "Role",
+            "project": "Project",
+            "orgs": "Organizations",
+            "owner": "Owner",
             "created": "Created At",
-            "expires": "Expires (min)",
+            "expires": "Expires",
             "actions": "Actions"
         },
+
         "modal": {
             "createTitle": "Create API Key",
             "createDesc": "Configure your new API key.",
@@ -461,8 +478,13 @@
         },
         "form": {
             "role": "Role",
+            "project": "Project",
+            "selectProject": "Select a project",
+            "personal": "Personal",
             "expire": "Expiration (minutes)"
         }
+
+
     },
     "orgs": {
         "title": "Organizations",

@@ -6,8 +6,13 @@ import type { ProjectRole } from "./prisma/client";
 export function findProjectsByUserId(userId: string) {
   return prisma.project.findMany({
     where: {
-      OR: [{ ownerId: userId }, { members: { some: { userId } } }],
+      OR: [
+        { ownerId: userId },
+        { members: { some: { userId } } },
+        { orgs: { some: { org: { members: { some: { userId } } } } } },
+      ],
     },
+
     include: {
       members: { include: { user: { select: { id: true, email: true } } } },
       orgs: { include: { org: { select: { id: true, name: true } } } },

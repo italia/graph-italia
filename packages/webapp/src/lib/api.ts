@@ -397,12 +397,13 @@ export async function saveKpiGroup({
 
 export interface ApiKey {
   id: string;
-  projectId: string;
-  role: "READONLY" | "READWRITE";
+  key?: string;
+  role: string;
   expire: number;
   createdAt: string;
-  lastUsedAt?: string;
-  key?: string; // only present on create
+  updatedAt: string;
+  projectId: string;
+  project?: Project;
 }
 
 export async function getApiKeys(): Promise<ApiKey[]> {
@@ -539,7 +540,14 @@ export interface Project {
     id: string;
     email: string;
   };
+  orgs?: {
+    org: {
+      id: string;
+      name: string;
+    };
+  }[];
 }
+
 
 
 export async function getProjects(): Promise<Project[]> {
@@ -578,5 +586,14 @@ export async function transferProjectToOrg(projectId: string, orgId: string): Pr
   const response = await axios.post(`${getServerUrlWithApi()}/projects/${projectId}/orgs`, { orgId });
   return response.status === 201;
 }
+
+export async function updateProject(projectId: string, payload: { name: string }): Promise<Project | null> {
+  const response = await axios.put(`${getServerUrlWithApi()}/projects/${projectId}`, payload);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
 
 

@@ -333,9 +333,11 @@
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
+            "personal": "Progetti Personali",
             "selectPrompt": "Seleziona Progetto",
             "newBtn": "Nuovo Progetto"
         },
+
 
         "body": {
             "actions": {
@@ -366,6 +368,16 @@
                     "name": {
                         "label": "Nome Progetto",
                         "placeholder": "Es: Dashboard Marketing"
+                    }
+                }
+            },
+            "renameProject": {
+                "title": "Rinomina Progetto",
+                "description": "Inserisci un nuovo nome per questo progetto.",
+                "confirm": "Rinomina",
+                "form": {
+                    "name": {
+                        "label": "Nome Progetto"
                     }
                 }
             },
@@ -442,10 +454,14 @@
         "table": {
             "id": "ID",
             "role": "Ruolo",
+            "project": "Progetto",
+            "orgs": "Organizzazioni",
+            "owner": "Proprietario",
             "created": "Creato il",
-            "expires": "Scadenza (min)",
+            "expires": "Scadenza",
             "actions": "Azioni"
         },
+
         "modal": {
             "createTitle": "Crea API Key",
             "createDesc": "Configura la tua nuova API key.",
@@ -461,8 +477,13 @@
         },
         "form": {
             "role": "Ruolo",
+            "project": "Progetto",
+            "selectProject": "Seleziona un progetto",
+            "personal": "Personale",
             "expire": "Scadenza (minuti)"
         }
+
+
     },
     "orgs": {
         "title": "Organizzazioni",
