@@ -6,7 +6,9 @@ import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
 
-const router = new Hono();
+type Env = { Variables: { user: ParsedToken | null; token: string | undefined } };
+
+const router = new Hono<Env>();
 router.use("*", checkAuth, requireUser);
 
 const projectIdSchema = z.object({ projectId: z.string() });
@@ -34,6 +36,19 @@ router.get("/", async (c) => {
     return c.json({ error: "Internal error" }, 500);
   }
 });
+
+
+/** GET /personal — all personal projects (not associated with any org) */
+router.get("/personal", async (c) => {
+  try {
+    const user = c.get("user") as ParsedToken;
+    return c.json(await db.findPersonalProjectsByUserId(user.userId));
+  } catch (e) {
+    logger.error("Projects personal error", e instanceof Error ? e : undefined);
+    return c.json({ error: "Internal error" }, 500);
+  }
+});
+
 
 // ─── Get :projectId ───────────────────────────────────────────────────────────
 

@@ -8,13 +8,40 @@ export function findApiKeysByProjectId(projectId: string) {
   return prisma.apiKey.findMany({
     where: { projectId },
     orderBy: { createdAt: "desc" },
-    select: {
-      id: true, role: true, expire: true, createdAt: true, updatedAt: true, projectId: true,
-      // never expose the raw key in list view
-      key: false,
+    include: {
+      project: {
+        include: {
+          owner: { select: { id: true, email: true } },
+          orgs: { include: { org: { select: { id: true, name: true } } } },
+        },
+      },
     },
   });
 }
+
+export function findApiKeysByUserId(userId: string) {
+  return prisma.apiKey.findMany({
+    where: {
+      project: {
+        OR: [
+          { ownerId: userId },
+          { members: { some: { userId } } },
+          { orgs: { some: { org: { members: { some: { userId } } } } } },
+        ],
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    include: {
+      project: {
+        include: {
+          owner: { select: { id: true, email: true } },
+          orgs: { include: { org: { select: { id: true, name: true } } } },
+        },
+      },
+    },
+  });
+}
+
 
 export function findApiKeyById(id: string) {
   return prisma.apiKey.findUnique({ where: { id } });

@@ -12,7 +12,7 @@ export function findChartsByProjectId(projectId: string) {
   });
 }
 
-export function createChart(data: Prisma.ChartCreateInput) {
+export function createChart(data: Prisma.ChartUncheckedCreateInput) {
   return prisma.chart.create({ data });
 }
 

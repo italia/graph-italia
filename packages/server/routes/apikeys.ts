@@ -2,35 +2,35 @@ import { Hono } from "hono";
 import * as z from "zod";
 import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
 import db from "../lib/db";
-import { checkAuth, requireUser } from "../lib/middlewares";
+import { checkAuth, requireUser, requireAuth } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import type { ParsedToken } from "../types";
 
-type Env = { Variables: { user: ParsedToken | null; token: string | undefined } };
+type Env = { Variables: { user: ParsedToken | null; token: string | undefined; projectId: string | null } };
 
 const router = new Hono<Env>();
 router.use("*", checkAuth);
 router.use("*", requireUser);
+router.use("*", requireAuth);
 
 const detailSchema = z.object({ id: z.string() });
 const createSchema = z.object({
   role: z.enum(["READONLY", "READWRITE"]).default("READONLY"),
   expire: z.number().int().positive().default(60),
-  // optional: pass a projectId explicitly, otherwise falls back to default project
+  // optional: pass a projectId explicitly, otherwise falls back to active project or default
   projectId: z.string().optional(),
 });
 const logsLimitSchema = z.object({ limit: z.coerce.number().int().positive().max(500).default(100) });
 
 // ─── Index ────────────────────────────────────────────────────────────────────
 
-/** GET / — list api keys for the user's default project (key value hidden) */
+/** GET / — list api keys for the current user across all accessible projects */
 router.get("/", async (c) => {
   try {
     const user = c.get("user") as ParsedToken;
-    const projectId = await db.getDefaultProjectId(user.userId);
-    if (!projectId) return c.json([]);
-    return c.json(await db.findApiKeysByProjectId(projectId));
+    return c.json(await db.findApiKeysByUserId(user.userId));
   } catch (e) {
+
     logger.error("ApiKeys index error", e instanceof Error ? e : undefined);
     return c.json({ error: "Internal error" }, 500);
   }
@@ -47,8 +47,8 @@ router.post("/", zValidator("json", createSchema), async (c) => {
     const user = c.get("user") as ParsedToken;
     const { role, expire, projectId: bodyProjectId } = c.req.valid("json");
 
-    const projectId = bodyProjectId ?? (await db.getDefaultProjectId(user.userId));
-    if (!projectId) return c.json({ error: "No project found for user" }, 500);
+    const projectId = bodyProjectId ?? c.get("projectId");
+    if (!projectId) return c.json({ error: "No project found" }, 500);
 
     const allowed = await db.canUserModifyProject(user.userId, projectId);
     if (!allowed) return c.json({ error: "Not Authorized" }, 401);
@@ -58,6 +58,7 @@ router.post("/", zValidator("json", createSchema), async (c) => {
     // Return full key ONCE on creation
     return c.json(apiKey, 201);
   } catch (e) {
+
     logger.error("ApiKey create error", e instanceof Error ? e : undefined);
     return c.json({ error: "Internal error" }, 500);
   }

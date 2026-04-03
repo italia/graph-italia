@@ -436,11 +436,17 @@
             }
         },
         "header": {
-            "title": "Area privata",
+            "title": "Area Privata",
             "charts": "Grafici",
             "noCharts": "Benvenuto",
             "dashboards": "Dashboard",
             "noDashboards": "Non ci sono ancora Dashboard"
+        },
+        "projectSwitcher": {
+            "title": "I Tuoi Progetti",
+            "personal": "Progetti Personali",
+            "selectPrompt": "Seleziona Progetto",
+            "newBtn": "Nuovo Progetto"
         },
         "body": {
             "actions": {
@@ -474,6 +480,27 @@
             },
             "cancel": "Annulla",
             "confirm": "Elimina",
+            "createProject": {
+                "title": "Crea Nuovo Progetto",
+                "description": "I progetti ti aiutano a organizzare i tuoi grafici e le tue dashboard.",
+                "confirm": "Crea Progetto",
+                "form": {
+                    "name": {
+                        "label": "Nome Progetto",
+                        "placeholder": "Es: Dashboard Marketing"
+                    }
+                }
+            },
+            "renameProject": {
+                "title": "Rinomina Progetto",
+                "description": "Inserisci un nuovo nome per questo progetto.",
+                "confirm": "Rinomina",
+                "form": {
+                    "name": {
+                        "label": "Nome Progetto"
+                    }
+                }
+            },
             "createChart": {
                 "title": "Crea nuovo grafico",
                 "description": "Dai un nome al grafico per iniziare a modificarlo",
@@ -536,6 +563,95 @@
                     "label": "Puoi ora chiudere questa finestra o <redirectLink>accedere</redirectLink>."
                 }
             }
+        }
+    },
+    "apikeys": {
+        "title": "API Key",
+        "description": "Gestisci le tue API key per l'accesso programmatico.",
+        "createBtn": "Crea Nuova Key",
+        "noKeys": "Nessuna API key trovata.",
+        "table": {
+            "id": "ID",
+            "role": "Ruolo",
+            "project": "Progetto",
+            "orgs": "Organizzazioni",
+            "owner": "Proprietario",
+            "created": "Creato il",
+            "expires": "Scadenza",
+            "actions": "Azioni"
+        },
+        "modal": {
+            "createTitle": "Crea API Key",
+            "createDesc": "Configura la tua nuova API key.",
+            "successTitle": "Key Creata con Successo",
+            "successDesc": "Copia questa key ora. Non potrai più vederla!",
+            "warning": "Una volta chiusa questa finestra, la key verrà nascosta per sempre per motivi di sicurezza.",
+            "close": "Chiudi",
+            "cancel": "Annulla",
+            "create": "Crea Key",
+            "deleteTitle": "Elimina API Key",
+            "deleteDesc": "Sei sicuro di voler eliminare questa API key? L'azione non può essere annullata.",
+            "delete": "Elimina"
+        },
+        "form": {
+            "role": "Ruolo",
+            "project": "Progetto",
+            "selectProject": "Seleziona un progetto",
+            "personal": "Personale",
+            "expire": "Scadenza (minuti)"
+        }
+    },
+    "orgs": {
+        "title": "Organizzazioni",
+        "description": "Gestisci le tue organizzazioni e i loro membri.",
+        "createBtn": "Nuova Organizzazione",
+        "listTitle": "Le Tue Organizzazioni",
+        "noOrgs": "Nessuna organizzazione trovata.",
+        "membersTitle": "Membri",
+        "projectsTitle": "Progetti dell'Organizzazione",
+        "addMemberBtn": "Aggiungi Membro",
+        "transferProjectBtn": "Trasferisci Progetto",
+        "noMembers": "Nessun membro trovato in questa organizzazione.",
+        "noProjects": "Nessun progetto associato a questa organizzazione.",
+        "selectPrompt": "Seleziona un'organizzazione per gestire i suoi membri.",
+        "tabs": {
+            "members": "Membri",
+            "projects": "Progetti"
+        },
+        "table": {
+            "user": "Utente",
+            "role": "Ruolo",
+            "actions": "Azioni",
+            "projectName": "Nome Progetto",
+            "projectId": "ID",
+            "owner": "Proprietario"
+        },
+        "unknownOwner": "Sconosciuto",
+        "modal": {
+            "createOrgTitle": "Crea Nuova Organizzazione",
+            "createOrgDesc": "Inserisci un nome per la tua nuova organizzazione.",
+            "addMemberTitle": "Aggiungi Membro",
+            "addMemberDesc": "Invita un utente a unirsi a questa organizzazione.",
+            "deleteOrgTitle": "Elimina Organizzazione",
+            "deleteOrgDesc": "Sei sicuro di voler eliminare questa organizzazione? Questo rimuoverà tutte le associazioni ai progetti.",
+            "removeMemberTitle": "Rimuovi Membro",
+            "removeMemberDesc": "Sei sicuro di voler rimuovere questo utente dall'organizzazione?",
+            "transferProjectTitle": "Trasferisci Progetto Personale",
+            "transferProjectDesc": "Seleziona uno dei tuoi progetti personali da trasferire a questa organizzazione.",
+            "transfer": "Trasferisci",
+            "cancel": "Annulla",
+            "create": "Crea",
+            "add": "Invita",
+            "delete": "Elimina",
+            "remove": "Rimuovi"
+        },
+        "form": {
+            "orgName": "Nome Organizzazione",
+            "email": "Indirizzo Email",
+            "role": "Ruolo",
+            "project": "Progetto",
+            "selectProject": "Seleziona un progetto",
+            "noPersonalProjects": "Nessun progetto personale trovato"
         }
     }
 }

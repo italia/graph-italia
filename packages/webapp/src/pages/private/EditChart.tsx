@@ -29,7 +29,7 @@ import ThemeSwitcherComponent from "../../components/layout/ThemeSwitcher.tsx";
 import { defaultConfig } from "../../lib/constants.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
-import useStoreState from "../../lib/storeState.ts";
+import useStoreState from "../../lib/store/storeState.ts";
 
 
 function EditChartPage() {

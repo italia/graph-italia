@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { FieldDataType, RemoteStoreStateType } from "../types";
+import type { FieldDataType, RemoteStoreStateType } from "../../types";
 
 type CreateKpiGroupState = {
   setShowCreateKpiGroupModal: (value: boolean) => void;

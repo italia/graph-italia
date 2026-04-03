@@ -6,8 +6,13 @@ import type { ProjectRole } from "./prisma/client";
 export function findProjectsByUserId(userId: string) {
   return prisma.project.findMany({
     where: {
-      OR: [{ ownerId: userId }, { members: { some: { userId } } }],
+      OR: [
+        { ownerId: userId },
+        { members: { some: { userId } } },
+        { orgs: { some: { org: { members: { some: { userId } } } } } },
+      ],
     },
+
     include: {
       members: { include: { user: { select: { id: true, email: true } } } },
       orgs: { include: { org: { select: { id: true, name: true } } } },
@@ -15,6 +20,34 @@ export function findProjectsByUserId(userId: string) {
     orderBy: { createdAt: "asc" },
   });
 }
+
+export function findPersonalProjectsByUserId(userId: string) {
+  return prisma.project.findMany({
+    where: {
+      ownerId: userId,
+      orgs: { none: {} },
+    },
+    include: {
+      members: { include: { user: { select: { id: true, email: true } } } },
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
+export function findProjectsByOrgId(orgId: string) {
+  return prisma.project.findMany({
+    where: {
+      orgs: { some: { orgId } },
+    },
+    include: {
+      owner: { select: { id: true, email: true } },
+      members: { include: { user: { select: { id: true, email: true } } } },
+      orgs: { include: { org: { select: { id: true, name: true } } } },
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
 
 export function findProjectById(id: string) {
   return prisma.project.findUnique({

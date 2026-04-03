@@ -3,7 +3,7 @@ import DataTable from "../../components/DataMngTable";
 import GenerateRandomPoi from "../../components/GenerateRandomPoi";
 import Layout from "../../components/layout";
 import { downloadJSON } from "../../lib/downloadUtils";
-import useStoreState from "../../lib/storeState";
+import useStoreState from "../../lib/store/storeState";
 
 import type { FieldDataType } from "dataviz-components";
 import { RenderChart } from "dataviz-components";

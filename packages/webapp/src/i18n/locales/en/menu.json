@@ -23,6 +23,17 @@
                         "label": "Check GeoJSon File"
                     }
                 }
+            },
+            "settings": {
+                "label": "Settings",
+                "subItems": {
+                    "apikeys": {
+                        "label": "API Keys"
+                    },
+                    "orgs": {
+                        "label": "Organizations"
+                    }
+                }
             }
         }
     }

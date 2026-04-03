@@ -23,6 +23,17 @@
                         "label": "Preview dei file GeoJson"
                     }
                 }
+            },
+            "settings": {
+                "label": "Impostazioni",
+                "subItems": {
+                    "apikeys": {
+                        "label": "API Key"
+                    },
+                    "orgs": {
+                        "label": "Organizzazioni"
+                    }
+                }
             }
         }
     }
