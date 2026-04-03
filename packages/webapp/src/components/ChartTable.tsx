@@ -1,9 +1,7 @@
 import { type FieldDataType } from "dataviz-components";
 import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
-import DataTable, {
-  type TableColumn,
-} from "react-data-table-component";
+import DataTable, { type TableColumn } from "react-data-table-component";
 import {
   FaChartBar,
   FaChartLine,
@@ -27,9 +25,9 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
-import Dialog from "./layout/Dialog";
-import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
 import { ROUTES } from "../router.tsx";
+import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import Dialog from "./layout/Dialog";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -95,7 +93,12 @@ export default function ChartTable({
 
   const navigate = useNavigate();
   function handleRowClick(item: FieldDataType) {
-    const path = item.chart === "cmap" ? ROUTES.editMap(item.id) : item.chart === "kpiGroup" ? ROUTES.editKpi(item.id) : ROUTES.editChart(item.id);
+    const path =
+      item.chart === "cmap"
+        ? ROUTES.editMap(item.id)
+        : item.chart === "kpiGroup"
+          ? ROUTES.editKpi(item.id)
+          : ROUTES.editChart(item.id);
     navigate(path);
   }
 
@@ -169,11 +172,7 @@ export default function ChartTable({
               aria-label="open remote URL"
               className="btn btn-ghost btn-xs btn-square"
             >
-              <FaLink
-                fill={actionColor}
-                size={actionSize}
-                aria-hidden="true"
-              />
+              <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
             </a>
             <button
               type="button"
@@ -181,11 +180,7 @@ export default function ChartTable({
               className="btn btn-ghost btn-xs btn-square"
               onClick={handleCopy(`${row.remoteUrl || ""}`)}
             >
-              <FaCopy
-                fill={actionColor}
-                size={actionSize}
-                aria-hidden="true"
-              />
+              <FaCopy fill={actionColor} size={actionSize} aria-hidden="true" />
             </button>
           </div>
         ) : (
@@ -212,7 +207,6 @@ export default function ChartTable({
               )}{" "}
             </span>
           )}
-
         </div>
       ),
     },
@@ -237,7 +231,6 @@ export default function ChartTable({
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
       cell: (row: FieldDataType) => (
         <div className="flex gap-2">
-
           <button
             type="button"
             aria-label="embed"
@@ -248,14 +241,8 @@ export default function ChartTable({
               )
             }
           >
-            <FaCode
-              fill={actionColor}
-              size={actionSize}
-              aria-hidden="true"
-            />
+            <FaCode fill={actionColor} size={actionSize} aria-hidden="true" />
           </button>
-
-
 
           <button
             type="button"
@@ -265,11 +252,7 @@ export default function ChartTable({
               `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
             )}
           >
-            <FaCopy
-              fill={actionColor}
-              size={actionSize}
-              aria-hidden="true"
-            />
+            <FaCopy fill={actionColor} size={actionSize} aria-hidden="true" />
           </button>
         </div>
       ),
@@ -279,21 +262,22 @@ export default function ChartTable({
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.actions.label`),
       cell: (row: FieldDataType) => (
         <div className="flex gap-2">
-
           <button
             type="button"
             aria-label="preview"
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => setData(row)}
           >
-            <FaEye
-              fill={actionColor}
-              size={actionSize}
-              aria-hidden="true"
-            />
+            <FaEye fill={actionColor} size={actionSize} aria-hidden="true" />
           </button>
           <a
-            href={row.chart === "cmap" ? ROUTES.editMap(row.id) : row.chart === "kpiGroup" ? ROUTES.editKpi(row.id) : ROUTES.editChart(row.id)}
+            href={
+              row.chart === "cmap"
+                ? ROUTES.editMap(row.id)
+                : row.chart === "kpiGroup"
+                  ? ROUTES.editKpi(row.id)
+                  : ROUTES.editChart(row.id)
+            }
             aria-label="edit"
             className="btn btn-ghost btn-xs btn-square"
           >
@@ -310,11 +294,7 @@ export default function ChartTable({
             aria-label="view"
             className="btn btn-ghost btn-xs btn-square"
           >
-            <FaLink
-              fill={actionColor}
-              size={actionSize}
-              aria-hidden="true"
-            />
+            <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
           <button
             type="button"
@@ -328,21 +308,17 @@ export default function ChartTable({
               aria-hidden="true"
             />
           </button>
-
         </div>
       ),
     },
   ];
   return (
-
-
     <div className="flex flex-col gap-2">
       <div role="status" aria-live="polite" className="sr-only">
         {copyStatus}
       </div>
 
       {list && (
-
         <DataTable
           onRowClicked={(row) => handleRowClick(row)}
           onSort={handleSort}
@@ -351,8 +327,8 @@ export default function ChartTable({
           theme={currentTheme}
           pagination
           highlightOnHover
+          noDataComponent={t(`noDataComponent`)}
         />
-
       )}
 
       <Dialog

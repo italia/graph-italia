@@ -334,6 +334,7 @@
             }
         },
         "chartTable": {
+            "noDataComponent": "Nessun grafico creato",
             "columns": {
                 "type": {
                     "label": "Tipo"
