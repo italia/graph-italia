@@ -394,6 +394,26 @@
                 "title": "Colonna di corrispondenza dati"
             }
         },
+        "dashboardTable": {
+            "noDataComponent": "Nessuna dashboard creata",
+            "columns": {
+                "name": {
+                    "label": "Nome"
+                },
+                "visibility": {
+                    "label": "Visibilità"
+                },
+                "createdAt": {
+                    "label": "Creato il"
+                },
+                "updatedAt": {
+                    "label": "Aggiornato il"
+                },
+                "actions": {
+                    "label": "Azioni"
+                }
+            }
+        },
         "dataMngTable": {
             "header": {
                 "rows": "righe",
