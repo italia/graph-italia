@@ -154,6 +154,26 @@
                         "label": "Add Chart"
                     }
                 }
+            },
+            "components": {
+                "slotToolbar": {
+                    "width": {
+                        "label": "Width"
+                    },
+                    "height": {
+                        "label": "Height"
+                    },
+                    "actions": {
+                        "change": {
+                            "label": "Change",
+                            "title": "Assign Chart"
+                        },
+                        "remove": {
+                            "label": "Remove",
+                            "title": "Remove Slot"
+                        }
+                    }
+                }
             }
         },
         "editKpiGroup": {

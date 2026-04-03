@@ -154,6 +154,26 @@
                         "label": "Aggiungi Grafico"
                     }
                 }
+            },
+            "components": {
+                "slotToolbar": {
+                    "width": {
+                        "label": "Larghezza"
+                    },
+                    "height": {
+                        "label": "Altezza"
+                    },
+                    "actions": {
+                        "change": {
+                            "label": "Cambia",
+                            "title": "Assegna Grafico"
+                        },
+                        "remove": {
+                            "label": "Rimuovi",
+                            "title": "Rimuovi slot"
+                        }
+                    }
+                }
             }
         },
         "editKpiGroup": {

@@ -164,6 +164,9 @@ function SlotToolbar({
   onAddChart: () => void;
   onSizeChange: (colSpan: number, rowSpan: number) => void;
 }) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editDashboard`,
+  });
   return (
     <div
       className="rgl-drag-handle flex items-center gap-1 px-2 bg-base-200 border-b shrink-0 cursor-move select-none"
@@ -171,7 +174,9 @@ function SlotToolbar({
     >
       <span className="badge badge-error badge-xs font-mono">{item.i}</span>
 
-      <span className="text-xs opacity-50 ml-1">Width</span>
+      <span className="text-xs opacity-50 ml-1">
+        {t(`components.slotToolbar.width.label`)}
+      </span>
       {[1, 2, 3].map((span) => (
         <button
           key={span}
@@ -184,7 +189,9 @@ function SlotToolbar({
         </button>
       ))}
 
-      <span className="text-xs opacity-50 ml-1">Height</span>
+      <span className="text-xs opacity-50 ml-1">
+        {t(`components.slotToolbar.height.label`)}
+      </span>
       {[1, 2, 3, 4].map((rows) => (
         <button
           key={rows}
@@ -200,16 +207,16 @@ function SlotToolbar({
       <button
         type="button"
         className="btn btn-xs btn-outline ml-1"
-        title="Assign chart"
+        title={t(`components.slotToolbar.actions.change.title`)}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onAddChart}
       >
-        Change
+        {t(`components.slotToolbar.actions.change.label`)}
       </button>
       <button
         type="button"
         className="btn btn-xs btn-error ml-auto"
-        title="Remove slot"
+        title={t(`components.slotToolbar.actions.remove.title`)}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onDelete}
       >
