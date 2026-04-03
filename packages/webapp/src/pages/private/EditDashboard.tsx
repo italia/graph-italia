@@ -294,7 +294,7 @@ function DashboardEditPage() {
                   isDisabled={false}
                   index={0}
                 >
-                  <div className="card bg-base-100 shadow-sm border border-base-200">
+                  <div className="card bg-base-100 shadow-sm border border-base-300">
                     <div className="card-body">
                       <div className="flex flex-col space-y-2">
                         <div className="flex items-center gap-4">
@@ -379,24 +379,32 @@ function DashboardEditPage() {
 
             </div>
 
+            <div className="card bg-base-100 shadow-sm border border-base-200">
+              <div className="card-body">
 
-            <EditStepComponent
-              title={`Edit Dashboard slots`}
-              description={`Create Slots and assign charts`}
-              Icon={FaInfo}
-              isOpen={true}
-              isDisabled={false}
-              index={1}
-            >
-              <div className="w-full flex align-center justify-between">
-                <button type="button" className="btn btn-primary mb-4" onClick={addItem}>
-                  Add slot +
-                </button>
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-primary font-bold">
+                    <FaInfo />
+                  </span>
+                </div>
+                <div>
+                  <h2 className="card-title text-xl">
+                    {`Edit Dashboard slots`}
+                  </h2>
+                  <p className="text-sm text-base-content/60">
+                    {`Create Slots and assign charts`}
+                  </p>
+                </div>
 
-                <a href={`${ROUTES.viewDashboard(id)}`} target="_blank" className="btn btn-outline">View Chart</a>
+                <div className="w-full flex align-center justify-between">
+                  <button type="button" className="btn btn-primary mb-4" onClick={addItem}>
+                    Add slot +
+                  </button>
+
+                  <a href={`${ROUTES.viewDashboard(id)}`} target="_blank" className="btn btn-outline">View Chart</a>
+                </div>
               </div>
-            </EditStepComponent>
-
+            </div>
             {/* Max-width container — ResponsiveGrid measures this element's width */}
             <div style={{ margin: "0 auto" }} className="bg-base-300">
               <ResponsiveGrid
@@ -428,7 +436,7 @@ function DashboardEditPage() {
                   return (
                     <div
                       key={item.i}
-                      className="flex flex-col overflow-hidden border rounded-lg bg-base-100 shadow-sm"
+                      className="flex flex-col overflow-hidden  rounded-lg bg-base-100  border border-base-200 shadow-sm"
                     >
                       <SlotToolbar
                         item={item}
@@ -463,6 +471,7 @@ function DashboardEditPage() {
               </ResponsiveGrid>
             </div>
           </div>
+
         )}
 
         {show && (
@@ -471,7 +480,7 @@ function DashboardEditPage() {
           </Dialog>
         )}
       </div>
-    </AppLayout>
+    </AppLayout >
   );
 }
 

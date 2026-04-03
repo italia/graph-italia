@@ -41,46 +41,48 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-      <div className="mx-auto w-full max-w-sm lg:w-96">
-        <div>
-          <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            {t(`header.label`)}
-          </h2>
-        </div>
-
-        <div className="mt-10">
+      <div className="mx-auto w-full  min-w-sm max-w-lg card bg-base-100 shadow-sm border border-base-200">
+        <div className="card-body p-8">
           <div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6"
-                >
-                  {t(`form.fields.email.label`)}
-                </label>
-                <div className="mt-2 form-control">
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    className="input input-bordered w-full"
-                    {...register("email", { required: true })}
-                  />
-                  {errors["email"] && (
-                    <span className="text-error">
-                      {t(`form.fields.email.errors.required`)}
-                    </span>
-                  )}
+            <h2 className="text-2xl font-bold leading-9 tracking-tight text-content">
+              {t(`header.label`)}
+            </h2>
+          </div>
+
+          <div className="mt-10">
+            <div>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium leading-6"
+                  >
+                    {t(`form.fields.email.label`)}
+                  </label>
+                  <div className="mt-2 form-control">
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      className="input input-bordered w-full"
+                      {...register("email", { required: true })}
+                    />
+                    {errors["email"] && (
+                      <span className="text-error">
+                        {t(`form.fields.email.errors.required`)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              {message && <p className="text-error">{message}</p>}
-              <div>
-                <button type="submit" className="btn btn-primary w-full">
-                  {t(`form.actions.submit.label`)}
-                </button>
-              </div>
-            </form>
+                {message && <p className="text-error">{message}</p>}
+                <div>
+                  <button type="submit" className="btn btn-primary w-full">
+                    {t(`form.actions.submit.label`)}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

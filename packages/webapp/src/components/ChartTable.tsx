@@ -334,24 +334,27 @@ export default function ChartTable({
     },
   ];
   return (
+
+
     <div className="flex flex-col gap-2">
       <div role="status" aria-live="polite" className="sr-only">
         {copyStatus}
       </div>
 
       {list && (
-        <div ref={tableRef}>
-          <DataTable
-            onRowClicked={(row) => handleRowClick(row)}
-            onSort={handleSort}
-            columns={columns}
-            data={list as FieldDataTypeWithPreview[]}
-            theme={currentTheme}
-            pagination
-            highlightOnHover
-          />
-        </div>
+
+        <DataTable
+          onRowClicked={(row) => handleRowClick(row)}
+          onSort={handleSort}
+          columns={columns}
+          data={list as FieldDataTypeWithPreview[]}
+          theme={currentTheme}
+          pagination
+          highlightOnHover
+        />
+
       )}
+
       <Dialog
         toggle={data ? true : false}
         title={t(`modals.previewChart.title`)}

@@ -21,6 +21,7 @@ export const KPI_FORM_ID = "kpi-form";
 const defaultValues: KpiFormValues = {
   title: "",
   value: "",
+  flow_direction: "+",
 };
 
 export function KpiForm({
@@ -50,7 +51,7 @@ export function KpiForm({
   };
 
   return (
-    <div className="w-full card bg-base-100 shadow-md rounded-lg p-6">
+    <div className="w-full">
       <form
         id={KPI_FORM_ID}
         onSubmit={handleSubmit(onSubmitHandler)}
@@ -127,27 +128,17 @@ export function KpiForm({
 
           {/* Info aggiuntive */}
           <div className="">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {t("form.fieldSets.additionalInfos.label")}
-            </h3>
 
             {/* Mostra andamento */}
             <div className="mb-4">
-              <label className="flex items-center space-x-3 cursor-pointer">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    {...register("show_flow")}
-                  />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 transition-colors">
-                    {" "}
-                  </div>
-                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
-                    {" "}
-                  </div>
-                </div>
-                <span className="text-sm font-medium text-gray-700">
+              <label htmlFor="show_flow" className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  id="show_flow"
+                  type="checkbox"
+                  className="toggle toggle-primary"
+                  {...register("show_flow")}
+                />
+                <span className="text-sm font-medium text-content/70">
                   {t("form.fields.showFlow.label")}
                 </span>
               </label>
@@ -155,61 +146,75 @@ export function KpiForm({
 
 
             <div className="mb-4">
-              <label htmlFor="direction" className="label">
-                <span className="label-text font-medium">
-                  {t("form.fields.flowDirection.label")}
-                </span>
-              </label>
-              <select
-                id="direction"
-                className="input input-bordered"
-                {...register("flow_direction")}
-                disabled={!showFlow}
-              >
-                <option>
-                  {t("form.fields.flowDirection.values.noValue")}
-                </option>
-                <option value="+">
-                  {" "}
-                  {t("form.fields.flowDirection.values.positive")}
-                  (+)
-                </option>
-                <option value="-">
-                  {t("form.fields.flowDirection.values.negative")} (-)
-                </option>
-              </select>
+              <div>
+                <label htmlFor="direction" className="label">
+                  <span className="label-text font-medium">
+                    {t("form.fields.flowDirection.label")}
+                  </span>
+                </label>
+              </div>
+              <div>
+                <select
+                  id="direction"
+                  className="input input-bordered"
+                  {...register("flow_direction")}
+                  disabled={!showFlow}
+                >
+                  <option>
+                    {t("form.fields.flowDirection.values.noValue")}
+                  </option>
+                  <option value="+">
+                    {" "}
+                    {t("form.fields.flowDirection.values.positive")}
+                    (+)
+                  </option>
+                  <option value="-">
+                    {t("form.fields.flowDirection.values.negative")} (-)
+                  </option>
+                </select>
+              </div>
             </div>
 
             {/* Valore andamento */}
             <div className="mb-4">
-              <label htmlFor="flow_value" className="label">
-                <span className="label-text font-medium">
-                  {t("form.fields.flowValue.label")}
-                </span>
-              </label>
-              <input
-                id="flow_value"
-                type="text"
-                disabled={!showFlow}
-                className="input input-bordered"
-                {...register("flow_value")}
-              />
+              <div>
+                <label htmlFor="flow_value" className="label">
+                  <span className="label-text font-medium">
+                    {t("form.fields.flowValue.label")}
+                  </span>
+                </label>
+              </div>
+              <div>
+                <input
+                  id="flow_value"
+                  type="text"
+                  disabled={!showFlow}
+                  className="input input-bordered"
+                  {...register("flow_value")}
+                />
+              </div>
             </div>
 
             {/* Dettaglio andamento */}
             <div className="mb-6">
-              <label htmlFor="flow_detail" className="label">
-                <span className="label-text font-medium">
-                  {t("form.fields.flowDetail.label")}
-                </span>
-              </label>
-              <input
-                id="flow_detail"
-                type="text"
-                disabled={!showFlow}
-                className="input input-bordered"
-                {...register("flow_detail")}
-              />
+
+              <div>
+                <label htmlFor="flow_detail" className="label">
+                  <span className="label-text font-medium">
+                    {t("form.fields.flowDetail.label")}
+                  </span>
+                </label>
+              </div>
+              <div>
+                <input
+                  id="flow_detail"
+                  type="text"
+                  disabled={!showFlow}
+                  className="input input-bordered"
+                  {...register("flow_detail")}
+                />
+              </div>
+
             </div>
           </div>
 

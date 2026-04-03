@@ -1,6 +1,6 @@
 import "dataviz-components/dist/style.css";
-import type { ChartConfigType } from "dataviz-components";
-import { RenderChart } from "dataviz-components";
+import type { ChartColorScheme, ChartConfigType } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart } from "dataviz-components";
 import { useForm } from "react-hook-form";
 import {
   forwardRef,
@@ -23,7 +23,7 @@ import EditStepComponent from "../../components/EditStepComponent";
 import GenericDialog from "../../components/layout/GenericDialog";
 import registerDarkTheme from "../../components/layout/DataTableDarkTheme";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
-import { HOME_ROUTE } from "../../router";
+import { HOME_ROUTE, ROUTES } from "../../router";
 import useEditKpiGroupStore from "../../lib/store/kpi_store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 
@@ -33,6 +33,7 @@ import {
   KpiForm,
   type KpiFormValues,
 } from "./kpi-form";
+import ThemeSwitcherComponent from "../../components/layout/ThemeSwitcher";
 
 // ────────────────────────────────────────────────────────────────────────────
 // KPI Group Config Form
@@ -194,6 +195,10 @@ function EditKpiGroupPage() {
   const navigate = useNavigate();
   const kpiConfigFormRef = useRef<KpiConfigFormHandle>(null);
   const [addFormKey, setAddFormKey] = useState(0);
+  const { settings } = useSettingsStore();
+  const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
+    settings?.preferredTheme === "dark" ? "dark" : "light",
+  );
 
   const {
     load,
@@ -403,8 +408,45 @@ function EditKpiGroupPage() {
           {/* Right: Preview */}
           <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg ]">
 
+            <div>
+              <h1 className="text-2xl font-bold">{name}</h1>
+              <div className="text-base-content/80">
+                {description ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: description.replace(/\n/g, "<br />"),
+                    }}
+                  />
+                ) : (
+                  <p className="italic text-base-content">{""}</p>
+                )}
+              </div>
+            </div>
+
+
             {kpiGroup.dataSource.length > 0 ? (
-              <RenderChart {...kpiGroup} />
+
+              <>
+                {publish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
+                <ThemeSwitcherComponent
+                  currentTheme={previewScheme}
+                  handleChange={(value: ChartColorScheme) =>
+                    setPreviewScheme(value)
+                  }
+                />
+                <div
+                  className="overflow-auto min-h-[380px] relative rounded-lg"
+                  style={{
+                    backgroundColor:
+                      previewScheme === "dark" ? "#1a1a2e" : "#F5FAFF",
+                  }}
+                >
+                  <ColorSchemeProvider scheme={previewScheme}>
+                    <RenderChart {...kpiGroup} />
+                  </ColorSchemeProvider>
+                </div>
+              </>
+
             ) : (
               <div className="flex items-center justify-center h-full">
                 <p className="italic text-base-content/60">
@@ -432,39 +474,32 @@ function EditKpiGroupPage() {
               index={2}
             >
 
-
-              <div className="card bg-base-100 shadow-sm border border-base-200">
-                <div className="card-body">
-                  <KpiForm
-                    key={editKpiGroupFormModalVisible ? `edit-${selectedKpiIndex}` : addFormKey}
-                    initialValues={editKpiGroupFormModalVisible ? selectedKpi : undefined}
-                    onSubmit={handleFormSubmit}
-                  />
-                  <div className="mt-4 flex gap-2">
-                    {editKpiGroupFormModalVisible && (
-                      <button
-                        type="button"
-                        onClick={closeEditKpiFormModal}
-                        className="btn btn-outline"
-                      >
-                        {t("body.actions.cancelEdit.label")}
-                      </button>
-                    )}
-                    <button type="submit" form={KPI_FORM_ID} className="btn btn-primary">
-                      {editKpiGroupFormModalVisible
-                        ? t("body.actions.updateKpi.label")
-                        : `${t("body.actions.addKpi.label")} +`}
+              <div className="">
+                <KpiForm
+                  key={editKpiGroupFormModalVisible ? `edit-${selectedKpiIndex}` : addFormKey}
+                  initialValues={editKpiGroupFormModalVisible ? selectedKpi : undefined}
+                  onSubmit={handleFormSubmit}
+                />
+                <div className="mt-4 flex gap-2">
+                  {editKpiGroupFormModalVisible && (
+                    <button
+                      type="button"
+                      onClick={closeEditKpiFormModal}
+                      className="btn btn-outline"
+                    >
+                      {t("body.actions.cancelEdit.label")}
                     </button>
-                  </div>
+                  )}
+                  <button type="submit" form={KPI_FORM_ID} className="btn btn-primary">
+                    {editKpiGroupFormModalVisible
+                      ? t("body.actions.updateKpi.label")
+                      : `${t("body.actions.addKpi.label")} +`}
+                  </button>
                 </div>
               </div>
             </EditStepComponent>
-
-
           </div>
         </div>
-
-
       </div>
 
       {/* Delete KPI Modal */}

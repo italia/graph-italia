@@ -52,9 +52,9 @@ export default function SlimHeader() {
   return (
     <header className="relative">
       {/* ── Main bar ── */}
-      <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12">
+      <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12 shadow-md z-20">
         {/* Left: hamburger + brand + separator + desktop nav */}
-        <div className="navbar-start flex items-center gap-4">
+        <div className="navbar-start flex items-center gap-4 ">
           {/* Hamburger – mobile only */}
           <button
             type="button"

@@ -177,12 +177,13 @@ function Home() {
         </div>
       </div>
 
-      <div className="p-8">
-        <div>
-          {loading ? (
-            <Loading />
-          ) : (
-            <>
+
+      <div className="p-6">
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <div className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6">
               <h3 className="text-lg mb-4 font-semibold">
                 {t(`header.${list && list.length ? "charts" : "noCharts"}`)}
               </h3>
@@ -194,7 +195,8 @@ function Home() {
                   handleDeleteChart={handleDeleteChart}
                 />
               </div>
-
+            </div>
+            <div className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6">
               <div className="mt-10">
                 <h3 className="text-lg mb-4 font-semibold" >
                   {t(`header.${dashboardList && dashboardList.length ? "dashboards" : "noDashboards"}`)}
@@ -210,11 +212,11 @@ function Home() {
                   />
                 )}
               </div>
-            </>
-          )}
-        </div>
-
+            </div>
+          </>
+        )}
       </div>
+
       {/* Create New dialog */}
       <GenericDialog
         toggle={showCreateNewDialog}
