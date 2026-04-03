@@ -85,6 +85,109 @@
                 }
             }
         },
+        "editDashboard": {
+            "head": {
+                "title": {
+                    "label": "Edit dashboard"
+                },
+                "meta": {
+                    "description": {
+                        "content": "Edit dashboard"
+                    }
+                }
+            },
+            "header": {
+                "actions": {
+                    "back": {
+                        "label": "Back to list"
+                    },
+                    "save": {
+                        "default": "Save",
+                        "isSaving": "Saving..."
+                    }
+                }
+            },
+            "body": {
+                "options": {
+                    "setup": {
+                        "title": "Setup Info",
+                        "description": "Name, description and visibility of the dashboard",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Dashboard Visibility",
+                                    "values": {
+                                        "private": "Private",
+                                        "public": "Public"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Dashboard Title"
+                                },
+                                "description": {
+                                    "label": "Dashboard Description",
+                                    "placeholder": "Add a description"
+                                }
+                            }
+                        }
+                    }
+                },
+                "preview": {
+                    "loadDataMessage": "Load your data to display the data preview"
+                }
+            },
+            "slots": {
+                "title": "Edit dashboard slots",
+                "description": "Create a slot and assign it to a chart",
+                "actions": {
+                    "addSlot": {
+                        "label": "Add Slot"
+                    },
+                    "viewChart": {
+                        "label": "View Chart"
+                    }
+                }
+            },
+            "bottom": {
+                "actions": {
+                    "addChart": {
+                        "label": "Add Chart"
+                    }
+                }
+            },
+            "components": {
+                "chartSelection": {
+                    "form": {
+                        "fields": {
+                            "selectChart": {
+                                "label": "Select a chart",
+                                "options": {
+                                    "noValue": "--Select a chart--"
+                                }
+                            }
+                        }
+                    }
+                },
+                "slotToolbar": {
+                    "width": {
+                        "label": "Width"
+                    },
+                    "height": {
+                        "label": "Height"
+                    },
+                    "actions": {
+                        "change": {
+                            "label": "Change",
+                            "title": "Assign Chart"
+                        },
+                        "remove": {
+                            "label": "Remove",
+                            "title": "Remove Slot"
+                        }
+                    }
+                }
+            }
+        },
         "editKpiGroup": {
             "unsavedChanges": "You have unsaved changes",
             "head": {
