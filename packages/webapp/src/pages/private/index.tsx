@@ -243,9 +243,12 @@ function Home() {
       {/* Create New dialog */}
       <GenericDialog
         toggle={showCreateNewDialog}
-        title="Create New"
-        description="What would you like to create?"
-        labels={{ cancel: "Close", confirm: "Select an option above" }}
+        title={t(`modals.createNew.title`)}
+        description={t(`modals.createNew.description`)}
+        labels={{
+          cancel: t(`modals.createNew.labels.cancel`),
+          confirm: t(`modals.createNew.labels.confirm`),
+        }}
         cancelCb={() => {
           setShowCreateNewDialog(false);
           setIsCreatingNewChart(0);

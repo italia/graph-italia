@@ -360,6 +360,14 @@
             }
         },
         "modals": {
+            "createNew": {
+                "title": "Create new",
+                "description": "What would you like to create?",
+                "labels": {
+                    "confirm": "Select an option above",
+                    "cancel": "Close"
+                }
+            },
             "cancel": "Cancel",
             "confirm": "Delete",
             "createChart": {

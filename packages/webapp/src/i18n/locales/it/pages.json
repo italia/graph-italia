@@ -361,6 +361,14 @@
             }
         },
         "modals": {
+            "createNew": {
+                "title": "Crea nuovo",
+                "description": "Cosa vorresti creare?",
+                "labels": {
+                    "confirm": "Seleziona un'opzione sopra",
+                    "cancel": "Chiudi"
+                }
+            },
             "cancel": "Annulla",
             "confirm": "Elimina",
             "createChart": {
