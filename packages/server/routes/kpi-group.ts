@@ -15,7 +15,9 @@ router.use("*", checkAuth);
 const createSchema = z.object({
     name: z.string(),
     description: z.string().optional(),
+    projectId: z.string().optional(),
 });
+
 
 type CreateResponseBody = { id: string }
 
@@ -25,11 +27,11 @@ router.post("/", requireAuth, zValidator("json", createSchema), async (c) => {
         const user = c.get("user") as ParsedToken | null;
         if (!user) return c.json({ error: "User authentication required for this operation" }, 403);
 
-        const projectId = c.get("projectId");
+        const { projectId: bodyProjectId, ...body } = c.req.valid("json");
+        const projectId = bodyProjectId ?? c.get("projectId");
         if (!projectId) return c.json({ error: "No project found" }, 500);
         if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-        const body = c.req.valid("json");
         const chartData = {
             userId: user.userId,
             chart: 'kpiGroup' as 'kpiGroup',

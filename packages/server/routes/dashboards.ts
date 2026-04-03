@@ -31,7 +31,10 @@ const createDashboardSchema = z.object({
 	isRemote: z.boolean().optional(),
 	publish: z.boolean().optional(),
 	preview: z.string().nullable().optional(),
+	projectId: z.string().optional(),
 });
+
+
 
 const updateDashboardSchema = z.object({
 	name: z.string().optional(),
@@ -91,12 +94,13 @@ router.get("/show/:id", zValidator("param", detailSchema), async (c) => {
 /** Create — places dashboard in the caller's project */
 router.post("/", requireAuth, zValidator("json", createDashboardSchema), async (c) => {
 	try {
-		const projectId = c.get("projectId");
+		const { projectId: bodyProjectId, ...body } = c.req.valid("json");
+		const projectId = bodyProjectId ?? c.get("projectId");
 		if (!projectId) return c.json({ error: "No project found" }, 500);
 		if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-		const body = c.req.valid("json");
 		const result = await db.dashboardDb.create({ projectId, ...body });
+
 		logger.info("Dashboard created", { dashboardId: result.id, projectId });
 		return c.json(result, 201);
 	} catch (err) {
@@ -140,7 +144,12 @@ router.put("/:id/slots", requireAuth, zValidator("param", detailSchema), zValida
 			(s) => s.chartId,
 		);
 
-		const result = await db.updateSlots(dashboardId, { toCreate, toUpdate, toDelete });
+		const result = await db.updateSlots(dashboardId, {
+			toCreate: toCreate as any,
+			toUpdate: toUpdate as any,
+			toDelete: toDelete as any,
+		});
+
 		logger.debug("Dashboard slots updated", {
 			dashboardId,
 			created: toCreate.length,

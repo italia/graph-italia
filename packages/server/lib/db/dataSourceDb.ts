@@ -1,5 +1,6 @@
 import { prisma } from "./prisma";
-import type { DataSource, Prisma } from "./prisma/client";
+import { type DataSource, Prisma } from "./prisma/client";
+
 
 export function findDataSourceById(id: DataSource["id"]) {
   return prisma.dataSource.findUnique({ where: { id } });
@@ -12,7 +13,8 @@ export function findDataSourcesByProjectId(projectId: string) {
   });
 }
 
-export function createDataSource(data: Prisma.DataSourceCreateInput) {
+export function createDataSource(data: Prisma.DataSourceUncheckedCreateInput) {
+
   return prisma.dataSource.create({ data });
 }
 
