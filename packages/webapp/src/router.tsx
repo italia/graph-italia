@@ -12,7 +12,11 @@ import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
 import PrivateAreaPage from "./pages/private";
+import EditApiKeysPage from "./pages/private/EditApiKeys";
+import EditOrgsPage from "./pages/private/EditOrgs";
 import QuickStartPage from "./pages/QuickStartPage";
+
+
 import ShowChartPage from "./pages/display/ShowChartPage";
 import DashboardViewPage from "./pages/display/ShowDashboardPage";
 import RootRoute from "./pages/Splash";
@@ -46,6 +50,10 @@ export const ROUTES = {
   editKpi: (id?: string) => `/private/edit/kpi${id ? `/${id}` : ""}`,
   editMap: (id?: string) => `/private/edit/map${id ? `/${id}` : ""}`,
   editDashboard: (id: string) => `/private/edit/dashboard/${id}`,
+  editApiKeys: "/private/edit/apikeys",
+  editOrgs: "/private/edit/orgs",
+
+
   // Display / embed
   viewChart: (id: string) => `/display/charts/${id}`,
   embedChart: (id: string) => `/embed/charts/${id}`,
@@ -101,14 +109,28 @@ export const MENU: readonly MenuItem[] = [
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
         link: ROUTES.generatePoi,
       },
-      // {
-      //   name: "Check GeoJSon File",
-      //   translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
-      //   link: ROUTES.geo,
-      // },
+    ],
+  },
+  {
+    name: "Settings",
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.label`,
+    link: "",
+    subMenu: [
+      {
+        name: "API Keys",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.subItems.apikeys.label`,
+        link: ROUTES.editApiKeys,
+      },
+      {
+        name: "Organizations",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.subItems.orgs.label`,
+        link: ROUTES.editOrgs,
+      },
     ],
   },
 ];
+
+
 // Assertion necessaria per compatibilità React 19 / react-router-dom (element: ReactElement vs ReactNode)
 const routes = [
   // Root: landing se non loggato, home Charts se loggato
@@ -168,7 +190,25 @@ const routes = [
       </ProtectedRoute>
     ),
   },
+  {
+    path: "/private/edit/apikeys",
+    element: (
+      <ProtectedRoute>
+        <EditApiKeysPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/private/edit/orgs",
+    element: (
+      <ProtectedRoute>
+        <EditOrgsPage />
+      </ProtectedRoute>
+    ),
+  },
   //PUBLIC PART
+
+
   {
     path: "/gdpr",
     element: <PolicyPage />,

@@ -383,3 +383,131 @@ export async function saveKpiGroup({
   );
   return Boolean(response.data.id);
 }
+/** API KEYS calls */
+
+export interface ApiKey {
+  id: string;
+  projectId: string;
+  role: "READONLY" | "READWRITE";
+  expire: number;
+  createdAt: string;
+  lastUsedAt?: string;
+  key?: string; // only present on create
+}
+
+export async function getApiKeys(): Promise<ApiKey[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/apikeys`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function createApiKey(payload: {
+  role: string;
+  expire: number;
+  projectId?: string;
+}): Promise<ApiKey | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/apikeys`, payload);
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function deleteApiKey(id: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/apikeys/${id}`);
+  return response.status === 204;
+}
+
+export async function getApiKeyLogs(id: string, limit = 100) {
+  const response = await axios.get(`${getServerUrlWithApi()}/apikeys/${id}/logs?limit=${limit}`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+/** ORGANIZATION calls */
+
+export interface Organization {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  members?: OrganizationMember[];
+}
+
+export interface OrganizationMember {
+  userId: string;
+  orgId: string;
+  role: "USER" | "ADMIN";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getOrgs(): Promise<Organization[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function getOrgDetail(orgId: string): Promise<Organization | null> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs/${orgId}`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function createOrg(name: string): Promise<Organization | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/orgs`, { name });
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function updateOrg(orgId: string, name: string): Promise<Organization | null> {
+  const response = await axios.put(`${getServerUrlWithApi()}/orgs/${orgId}`, { name });
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function deleteOrg(orgId: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/orgs/${orgId}`);
+  return response.status === 204;
+}
+
+export async function getOrgMembers(orgId: string): Promise<OrganizationMember[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs/${orgId}/members`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function addOrgMember(orgId: string, email: string, role: string): Promise<OrganizationMember | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/orgs/${orgId}/members`, { email, role });
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+
+export async function updateOrgMemberRole(orgId: string, userId: string, role: string): Promise<OrganizationMember | null> {
+  const response = await axios.put(`${getServerUrlWithApi()}/orgs/${orgId}/members/${userId}`, { role });
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function removeOrgMember(orgId: string, userId: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/orgs/${orgId}/members/${userId}`);
+  return response.status === 204;
+}

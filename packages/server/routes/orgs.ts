@@ -4,6 +4,9 @@ import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
 import db from "../lib/db";
 import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
+import { sendActivationEmail } from "../lib/email";
+import { randomBytes } from "crypto";
+
 import type { ParsedToken } from "../types";
 
 type Env = { Variables: { user: ParsedToken | null; token: string | undefined } };
@@ -18,9 +21,10 @@ const memberIdSchema = z.object({ orgId: z.string(), userId: z.string() });
 const createOrgSchema = z.object({ name: z.string() });
 const updateOrgSchema = z.object({ name: z.string() });
 const addMemberSchema = z.object({
-  userId: z.string(),
+  email: z.string().email(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
 });
+
 const updateRoleSchema = z.object({ role: z.enum(["USER", "ADMIN"]) });
 
 const errSchema = z.object({ error: z.string() });
@@ -216,10 +220,21 @@ router.post(
     try {
       const user = c.get("user") as ParsedToken;
       const { orgId } = c.req.valid("param");
-      const { userId, role } = c.req.valid("json");
+      const { email, role } = c.req.valid("json");
       if (!(await db.isOrgAdmin(user.userId, orgId))) return c.json({ error: "Not Authorized" }, 401);
-      const result = await db.addOrgMember(orgId, userId, role);
-      logger.info("Org member added", { orgId, userId });
+
+      let targetUser = await db.findUserByEmail(email);
+      if (!targetUser) {
+        // Create user with random password
+        const password = randomBytes(12).toString("hex") + "A1!";
+        targetUser = await db.createUserByEmailAndPassword({ email, password });
+        const pin = await db.createCode(targetUser.id);
+        await sendActivationEmail(targetUser, pin);
+        logger.info("New user created during org invitation", { email, userId: targetUser.id });
+      }
+
+      const result = await db.addOrgMember(orgId, targetUser.id, role);
+      logger.info("Org member added", { orgId, userId: targetUser.id, email });
       return c.json(result, 201);
     } catch (e) {
       logger.error("Org add member error", e instanceof Error ? e : undefined);
@@ -227,6 +242,7 @@ router.post(
     }
   },
 );
+
 
 router.put(
   "/:orgId/members/:userId",

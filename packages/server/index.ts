@@ -138,7 +138,8 @@ app.get("/health/ready", async (c) => {
 
 // API routes
 app.route("/auth", authRoutes);
-app.route("/api-keys", apiKeyRoutes);
+app.route("/apikeys", apiKeyRoutes);
+
 app.route("/charts", chartRoutes);
 app.route("/charts/kpi-group", kpiGroupRoutes);
 app.route("/dashboards", dashRoutes);

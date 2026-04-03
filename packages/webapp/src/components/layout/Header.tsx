@@ -14,10 +14,10 @@ export default function SlimHeader() {
   });
   const { t: translateMenu } = useTranslation("menu");
   const { user, clearUser } = useUserStore();
-  const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [dropdownUserOpen, setDropdownUserOpen] = useState(false);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
-  const dropdownToolsRef = useRef<HTMLLIElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const dropdownUserRef = useRef<HTMLDivElement>(null);
 
   const { settings, setTheme, setLanguage } = useSettingsStore();
@@ -56,7 +56,7 @@ export default function SlimHeader() {
   }, []);
 
   return (
-    <header className="relative">
+    <header className="relative" ref={headerRef}>
       {/* ── Main bar ── */}
       <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12 shadow-md z-20">
         {/* Left: hamburger + brand + separator + desktop nav */}
@@ -113,24 +113,24 @@ export default function SlimHeader() {
             <ul className="flex items-center gap-1 list-none m-0 p-0">
               {MENU.map((item) => {
                 if ("subMenu" in item) {
+                  const isOpen = openDropdown === item.name;
                   return (
                     <li
                       key={item.name}
                       className="relative"
-                      ref={dropdownToolsRef}
                     >
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-3 py-1.5 text-primary-content text-sm rounded bg-transparent border-none cursor-pointer hover:bg-primary-content/15"
-                        aria-expanded={dropdownToolsOpen}
+                        aria-expanded={isOpen}
                         aria-haspopup="true"
-                        onClick={() => setDropdownToolsOpen((v) => !v)}
+                        onClick={() => setOpenDropdown(isOpen ? null : item.name)}
                       >
                         {item.translationKey
                           ? translateMenu(item.translationKey)
                           : item.name}
                         <svg
-                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${dropdownToolsOpen ? "rotate-180" : ""}`}
+                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                           aria-hidden="true"
                           viewBox="0 0 24 24"
                         >
@@ -139,13 +139,14 @@ export default function SlimHeader() {
                       </button>
 
                       <ul
-                        className={`absolute top-full left-0 z-[1000] min-w-40 py-2 mt-1 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0 ${dropdownToolsOpen ? "block" : "hidden"}`}
+                        className={`absolute top-full left-0 z-[1000] min-w-40 py-2 mt-1 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0 ${isOpen ? "block" : "hidden"}`}
                       >
                         {item.subMenu.map((sub: MenuSubItem) => (
                           <li key={sub.name}>
                             <a
                               href={sub.link}
                               className="block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary"
+                              onClick={() => setOpenDropdown(null)}
                             >
                               {sub.translationKey
                                 ? translateMenu(sub.translationKey)

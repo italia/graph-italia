@@ -536,5 +536,71 @@
                 }
             }
         }
+    },
+    "apikeys": {
+        "title": "API Keys",
+        "description": "Manage your API keys for programmatic access.",
+        "createBtn": "Create New Key",
+        "noKeys": "No API keys found.",
+        "table": {
+            "id": "ID",
+            "role": "Role",
+            "created": "Created At",
+            "expires": "Expires (min)",
+            "actions": "Actions"
+        },
+        "modal": {
+            "createTitle": "Create API Key",
+            "createDesc": "Configure your new API key.",
+            "successTitle": "Key Created Successfully",
+            "successDesc": "Copy this key now. You won't be able to see it again!",
+            "warning": "Once you close this window, the key will be hidden forever for security reasons.",
+            "close": "Close",
+            "cancel": "Cancel",
+            "create": "Create Key",
+            "deleteTitle": "Delete API Key",
+            "deleteDesc": "Are you sure you want to delete this API key? This action cannot be undone.",
+            "delete": "Delete"
+        },
+        "form": {
+            "role": "Role",
+            "expire": "Expiration (minutes)"
+        }
+    },
+    "orgs": {
+        "title": "Organizations",
+        "description": "Manage your organizations and their members.",
+        "createBtn": "New Organization",
+        "listTitle": "Your Organizations",
+        "noOrgs": "No organizations found.",
+        "membersTitle": "Members",
+        "addMemberBtn": "Add Member",
+        "noMembers": "No members found in this organization.",
+        "selectPrompt": "Select an organization to manage its members.",
+        "table": {
+            "user": "User",
+            "role": "Role",
+            "actions": "Actions"
+        },
+        "modal": {
+            "createOrgTitle": "Create New Organization",
+            "createOrgDesc": "Enter a name for your new organization.",
+            "addMemberTitle": "Add Member",
+            "addMemberDesc": "Invite a user to join this organization.",
+            "deleteOrgTitle": "Delete Organization",
+            "deleteOrgDesc": "Are you sure you want to delete this organization? This will remove all project associations.",
+            "removeMemberTitle": "Remove Member",
+            "removeMemberDesc": "Are you sure you want to remove this user from the organization?",
+            "cancel": "Cancel",
+            "create": "Create",
+            "add": "Invite",
+            "delete": "Delete",
+            "remove": "Remove"
+        },
+        "form": {
+            "orgName": "Organization Name",
+            "email": "Email Address",
+            "role": "Role"
+        }
     }
 }
