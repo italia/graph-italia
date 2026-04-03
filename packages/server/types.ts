@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import type { ApiKeyModel } from './lib/db/prisma/models/ApiKey';
 
 export const paramsWithIdSchema = z.object({
   id: z.string().min(1, 'Invalid id'),
@@ -34,3 +35,11 @@ export interface ParsedToken {
   userId: string;
   name: string;
 }
+
+/** Shared Hono context variables for routes that support both user and API key auth. */
+export type AppVariables = {
+  user: ParsedToken | null;
+  token: string | undefined;
+  apiKey: ApiKeyModel | null;
+  projectId: string | null;
+};

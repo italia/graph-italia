@@ -4,6 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import { verifyAccessToken } from "./jwt";
 import { logger } from "./logger";
 import { findApiKeyByRawKey } from "./db/apiKeyDb";
+import { getDefaultProjectId, canUserModifyProject } from "./db/projectDb";
 import type { Context } from "hono";
 import type { ApiKeyRole } from "./db/prisma/enums";
 
@@ -68,6 +69,26 @@ export const requireUser = createMiddleware(async (c, next) => {
 	}
 });
 
+// Middleware to require either an authenticated user or a valid API key.
+// Resolves and sets "projectId" in context:
+//   - API key  → apiKey.projectId (already scoped at key creation)
+//   - User     → their default project (oldest owned/member project)
+export const requireAuth = createMiddleware(async (c, next) => {
+	const user = c.get("user");
+	const apiKey = c.get("apiKey");
+
+	if (!user && !apiKey) {
+		throw new HTTPException(401, { message: "Unauthorized." });
+	}
+
+	const projectId = apiKey
+		? apiKey.projectId
+		: await getDefaultProjectId((user as { userId: string }).userId);
+
+	c.set("projectId", projectId);
+	await next();
+});
+
 // Middleware to require a valid API key (any role)
 export const requireApiKey = createMiddleware(async (c, next) => {
 	const apiKey = c.get("apiKey");
@@ -90,3 +111,19 @@ export const requireApiKeyRole = (requiredRole: ApiKeyRole) =>
 		}
 		await next();
 	});
+
+/**
+ * Route-handler helper — checks whether the current caller can write to a project.
+ *
+ * - Authenticated user: must be project owner or ADMIN member.
+ * - API key: must have READWRITE role AND be scoped to that exact project.
+ *
+ * Returns false (never throws) so the caller decides the response shape.
+ */
+export async function canModify(c: Context, projectId: string): Promise<boolean> {
+	const user = c.get("user") as { userId: string } | null;
+	const apiKey = c.get("apiKey") as { role: string; projectId: string } | null;
+	if (user) return canUserModifyProject(user.userId, projectId);
+	if (apiKey) return apiKey.role === "READWRITE" && apiKey.projectId === projectId;
+	return false;
+}
