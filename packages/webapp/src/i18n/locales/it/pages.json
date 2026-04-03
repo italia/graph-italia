@@ -85,6 +85,29 @@
                 }
             }
         },
+        "editDashboard": {
+            "head": {
+                "title": {
+                    "label": "Modifica dashboard"
+                },
+                "meta": {
+                    "description": {
+                        "content": "Modifica dashboard"
+                    }
+                }
+            },
+            "header": {
+                "actions": {
+                    "back": {
+                        "label": "Torna alla lista"
+                    },
+                    "save": {
+                        "default": "Salva",
+                        "isSaving": "Salvataggio..."
+                    }
+                }
+            }
+        },
         "editKpiGroup": {
             "unsavedChanges": "Hai modifiche non salvate",
             "head": {
