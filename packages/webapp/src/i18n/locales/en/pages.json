@@ -106,6 +106,35 @@
                         "isSaving": "Saving..."
                     }
                 }
+            },
+            "body": {
+                "options": {
+                    "setup": {
+                        "title": "Setup Info",
+                        "description": "Name, description and visibility of the dashboard",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Dashboard Visibility",
+                                    "values": {
+                                        "private": "Private",
+                                        "public": "Public"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Dashboard Title"
+                                },
+                                "description": {
+                                    "label": "Dashboard Description",
+                                    "placeholder": "Add a description"
+                                }
+                            }
+                        }
+                    }
+                },
+                "preview": {
+                    "loadDataMessage": "Load your data to display the data preview"
+                }
             }
         },
         "editKpiGroup": {
