@@ -192,7 +192,7 @@
                         "tagline": "Share your charts"
                     },
                     "social": {
-                        "label": "Source on",
+                        "label": "Sources on",
                         "platforms": {
                             "github": {
                                 "ariaLabel": "GitHub (si apre in nuova finestra)"

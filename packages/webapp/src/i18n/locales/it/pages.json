@@ -2,86 +2,86 @@
     "auth": {
         "header": {
             "accountCreated": {
-                "label": "Your account has been created successfully."
+                "label": "Il tuo account è stato creato con successo."
             },
             "checkEmail": {
-                "label": "Check your email to activate your account"
+                "label": "Controlla la tua email per attivare il tuo account"
             }
         }
     },
     "charts": {
         "editChart": {
-            "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+            "unsavedChanges": "Hai modifiche non salvate. Sei sicuro di voler uscire?",
             "save": {
                 "success": {
-                    "label": "Chart saved successfully!"
+                    "label": "Grafico salvato con successo!"
                 },
                 "error": {
-                    "label": "Error saving chart!"
+                    "label": "Errore durante il salvataggio del grafico!"
                 }
             },
             "head": {
                 "title": {
-                    "label": "Edit Chart"
+                    "label": "Modifica grafico"
                 },
                 "meta": {
                     "description": {
-                        "content": "Creating chart"
+                        "content": "Creazione grafico"
                     }
                 }
             },
             "header": {
                 "actions": {
                     "back": {
-                        "label": "Back to list"
+                        "label": "Torna alla lista"
                     },
                     "save": {
-                        "default": "Save",
-                        "isSaving": "Saving"
+                        "default": "Salva",
+                        "isSaving": "Salvataggio..."
                     }
                 }
             },
             "body": {
                 "options": {
                     "setup": {
-                        "title": "Setup Info",
-                        "description": "Name, description and visibility of the chart",
+                        "title": "Informazioni",
+                        "description": "Nome, descrizione e visibilità del grafico",
                         "form": {
                             "fields": {
                                 "visibility": {
-                                    "label": "Chart Visibility",
+                                    "label": "Visibilità grafico",
                                     "values": {
-                                        "private": "Private",
-                                        "public": "Public"
+                                        "private": "Privato",
+                                        "public": "Pubblico"
                                     }
                                 },
                                 "title": {
-                                    "label": "Chart Title"
+                                    "label": "Titolo grafico"
                                 },
                                 "description": {
-                                    "label": "Chart Description",
-                                    "placeholder": "Add a description"
+                                    "label": "Descrizione grafico",
+                                    "placeholder": "Aggiungi una descrizione"
                                 }
                             }
                         }
                     },
                     "configuration": {
-                        "title": "Configure the chart",
-                        "description": "Choose the chart type and customize its appearance",
-                        "status": "Please load data and proceed to configuration step to see chart options"
+                        "title": "Configura il grafico",
+                        "description": "Scegli il tipo di grafico e personalizza l'aspetto",
+                        "status": "Carica i dati e procedi alla fase di configurazione per vedere le opzioni del grafico"
                     },
                     "data": {
-                        "title": "Load your data",
-                        "description": "Import data from CSV, JSON files or from a remote source",
+                        "title": "Carica i tuoi dati",
+                        "description": "Importa dati da file CSV, JSON o da una fonte remota",
                         "actions": {
                             "useData": {
-                                "label": "Use thi data"
+                                "label": "Usa questi dati"
                             }
                         }
                     }
                 },
                 "preview": {
-                    "loadDataMessage": "Load your data to display the data preview"
+                    "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima"
                 }
             }
         },
@@ -307,45 +307,45 @@
     "utility": {
         "generateDataPage": {
             "header": {
-                "title": "Generate data",
-                "description": "Create a random dataset with configurable rows, columns and value range. Use it to try charts or export as CSV/JSON."
+                "title": "Genera dati",
+                "description": "Crea un dataset casuale con righe, colonne e intervallo di valori configurabili. Usalo per provare i grafici o esportarlo come CSV/JSON."
             }
         },
         "generatePoiPage": {
             "header": {
-                "title": "Generate POI data",
-                "description": "Create a random POI dataset. Use it to try charts or export as CSV/JSON."
+                "title": "Genera dati POI",
+                "description": "Crea un dataset POI casuale. Usalo per provare i grafici o esportarlo come CSV/JSON."
             }
         },
         "loadRemoteDataPage": {
-            "title": "Load remote data",
-            "description": "Here some Open Data sources of real data you can use here",
+            "title": "Carica dati remoti",
+            "description": "Qui alcune fonti di Open Data con dati reali che puoi utilizzare",
             "link": "Dati Italia, Governo e servizi pubblici"
         }
     },
     "home": {
         "header": {
-            "title": "Private Area",
-            "charts": "Charts",
-            "noCharts": "Welcome",
-            "dashboards": "Dashboards",
-            "noDashboards": "There is no Dashboards yet"
+            "title": "Area privata",
+            "charts": "Grafici",
+            "noCharts": "Benvenuto",
+            "dashboards": "Dashboard",
+            "noDashboards": "Non ci sono ancora Dashboard"
         },
         "body": {
             "actions": {
-                "label": "Create new",
+                "label": "Crea nuovo",
                 "actionItems": {
                     "createChart": {
-                        "label": "Create Chart"
+                        "label": "Crea grafico"
                     },
                     "createKPIGroup": {
-                        "label": "Create KPI Group"
+                        "label": "Crea gruppo KPI"
                     }
                 }
             },
             "confirms": {
                 "deleteChart": {
-                    "label": "Are you sure you want to delete this chart?"
+                    "label": "Sei sicuro di voler eliminare questo grafico?"
                 }
             }
         },
@@ -353,41 +353,41 @@
             "cancel": "Annulla",
             "confirm": "Elimina",
             "createChart": {
-                "title": "Create new chart",
-                "description": "Name your chart to start editing it",
+                "title": "Crea nuovo grafico",
+                "description": "Dai un nome al grafico per iniziare a modificarlo",
                 "labels": {
                     "confirm": {
-                        "default": "Create",
-                        "isCreating": "Creating..."
+                        "default": "Crea",
+                        "isCreating": "Creazione in corso..."
                     },
-                    "cancel": "Cancel"
+                    "cancel": "Annulla"
                 },
                 "form": {
                     "fields": {
                         "name": {
-                            "label": "Chart name",
-                            "placeholder": "E.g.: Monthly sales 2024",
-                            "content": "You can change the name later"
+                            "label": "Nome grafico",
+                            "placeholder": "Es.: Vendite mensili 2024",
+                            "content": "Puoi cambiare il nome in seguito"
                         }
                     }
                 }
             },
             "createKpiGroup": {
-                "title": "Create KPI Group",
-                "description": "Enter data to create a new KPI indicator group",
+                "title": "Crea gruppo KPI",
+                "description": "Inserisci i dati per creare un nuovo gruppo di indicatori KPI",
                 "labels": {
-                    "confirm": "Create",
-                    "cancel": "Cancel"
+                    "confirm": "Crea",
+                    "cancel": "Annulla"
                 },
                 "form": {
                     "fields": {
                         "name": {
-                            "label": "Name",
-                            "placeholder": "Enter the KPI group name"
+                            "label": "Nome",
+                            "placeholder": "Inserisci il nome del gruppo KPI"
                         },
                         "description": {
-                            "label": "Description",
-                            "placeholder": "Enter a description (optional)"
+                            "label": "Descrizione",
+                            "placeholder": "Inserisci una descrizione (opzionale)"
                         }
                     }
                 }
@@ -398,20 +398,20 @@
         "body": {
             "errors": {
                 "invalidParam": {
-                    "label": "Invalid params, use the recover password flow to get a new code.",
+                    "label": "Parametri non validi, usa il flusso di recupero password per ottenere un nuovo codice.",
                     "actions": {
                         "recoverPassword": {
-                            "label": "Recover Password"
+                            "label": "Recupera password"
                         }
                     }
                 }
             },
             "messages": {
-                "valid": "The code is valid"
+                "valid": "Il codice è valido"
             },
             "actions": {
                 "init": {
-                    "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
+                    "label": "Puoi ora chiudere questa finestra o <redirectLink>accedere</redirectLink>."
                 }
             }
         }
