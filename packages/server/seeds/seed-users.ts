@@ -1,6 +1,6 @@
+import { hash } from "bcrypt";
 import db from "../lib/db";
 import { prisma } from "../lib/db/prisma";
-import { hash } from "bcrypt";
 
 type Role = "USER" | "ADMIN";
 
@@ -157,6 +157,10 @@ export default async function main() {
       console.log(`✅ Verifying user: ${user.email}`);
       await db.setVerifyed(user.id);
     }
+  }
+
+  for (const user of users) {
+    await db.createDefaultProject(user.id);
   }
 
   console.log(`🎉 Seeding complete! Total users: ${users.length}`);
