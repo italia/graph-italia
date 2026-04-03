@@ -1,20 +1,16 @@
 import dayjs from "dayjs";
 import { useCallback, useRef } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
-import {
-  FaEye,
-  FaLink,
-  FaPenToSquare,
-  FaTrashCan,
-} from "react-icons/fa6";
+import { FaLink, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
-import type { FieldDataType } from "../types";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAriaSort } from "../hooks/useAriaSort";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
-import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import { useState } from "react";
 import { ROUTES } from "../router.tsx";
+import type { FieldDataType } from "../types";
+import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
 
 registerDarkTheme();
 
@@ -29,8 +25,10 @@ export default function DashboardTable({
   list,
   handleDeleteDashboard,
   handleEditDashboard,
-
 }: DashboardTableProps) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.dashboardTable",
+  });
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
   const actionColor = currentTheme === "dark" ? "#fff" : "#111";
@@ -44,10 +42,7 @@ export default function DashboardTable({
   useAriaSort(tableRef, sortState);
 
   const handleSort = useCallback(
-    (
-      column: TableColumn<FieldDataType>,
-      direction: "asc" | "desc",
-    ) => {
+    (column: TableColumn<FieldDataType>, direction: "asc" | "desc") => {
       const key = typeof column.name === "string" ? column.name : "";
       if (key) setSortState({ columnKey: key, direction });
     },
@@ -58,37 +53,33 @@ export default function DashboardTable({
 
   const columns: TableColumn<FieldDataType>[] = [
     {
-      name: "Name",
+      name: t(`columns.name.label`),
       selector: (row) => row.name ?? "",
       sortable: true,
+      cell: (row) => <div className="text-md font-medium">{row.name}</div>,
+    },
+    {
+      name: t(`columns.visibility.label`),
       cell: (row) => (
-        <div className="text-md font-medium">{row.name}</div>
+        <span className="text-sm">{row.publish ? "Public" : "Private"}</span>
       ),
     },
     {
-      name: "Visibility",
-      cell: (row) => (
-        <span className="text-sm">
-          {row.publish ? "Public" : "Private"}
-        </span>
-      ),
-    },
-    {
-      name: "Created",
+      name: t(`columns.createdAt.label`),
       selector: (row) => row.createdAt ?? "",
       sortable: true,
       cell: (row) =>
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: "Updated",
+      name: t(`columns.updatedAt.label`),
       selector: (row) => row.updatedAt ?? "",
       sortable: true,
       cell: (row) =>
         row.updatedAt ? dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: "Actions",
+      name: t(`columns.actions.label`),
       cell: (row) => (
         <div className="flex gap-2">
           {/* <button
@@ -105,7 +96,11 @@ export default function DashboardTable({
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => handleEditDashboard(row)}
           >
-            <FaPenToSquare fill={actionColor} size={actionSize} aria-hidden="true" />
+            <FaPenToSquare
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
           </button>
           <a
             href={ROUTES.viewDashboard(row.id ?? "")}
@@ -122,7 +117,11 @@ export default function DashboardTable({
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => handleDeleteDashboard(row.id ?? "")}
           >
-            <FaTrashCan fill={actionColor} size={actionSize} aria-hidden="true" />
+            <FaTrashCan
+              fill={actionColor}
+              size={actionSize}
+              aria-hidden="true"
+            />
           </button>
         </div>
       ),
@@ -139,6 +138,7 @@ export default function DashboardTable({
         onRowClicked={(row) => navigate(ROUTES.editDashboard(row.id ?? ""))}
         pagination
         highlightOnHover
+        noDataComponent={t(`noDataComponent`)}
       />
     </div>
   );
