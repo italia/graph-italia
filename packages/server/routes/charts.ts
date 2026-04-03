@@ -32,6 +32,7 @@ const createChartSchema = z.object({
 	isRemote: z.boolean().optional(),
 	publish: z.boolean().optional(),
 	preview: z.string().nullable().optional(),
+	projectId: z.string().optional(),
 });
 
 const updateChartSchema = z.object({
@@ -175,11 +176,11 @@ router.post(
 	zValidator("json", createChartSchema),
 	async (c) => {
 		try {
-			const projectId = c.get("projectId");
+			const { projectId: bodyProjectId, ...body } = c.req.valid("json");
+			const projectId = bodyProjectId ?? c.get("projectId");
 			if (!projectId) return c.json({ error: "No project found" }, 500);
 			if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-			const body = c.req.valid("json");
 			const result = await db.createChart({ projectId, ...body });
 			logger.info("Chart created", { chartId: result.id, projectId, chartType: body.chart });
 			return c.json(result, 201);
