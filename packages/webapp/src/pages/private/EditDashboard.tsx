@@ -515,7 +515,7 @@ function DashboardEditPage() {
                               className="btn btn-sm btn-outline"
                               onClick={() => showAddModal(item.i)}
                             >
-                              Add Chart +
+                              + {t(`bottom.actions.addChart.label`)}
                             </button>
                           </div>
                         )}

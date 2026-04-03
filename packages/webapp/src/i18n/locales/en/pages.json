@@ -147,6 +147,13 @@
                         "label": "View Chart"
                     }
                 }
+            },
+            "bottom": {
+                "actions": {
+                    "addChart": {
+                        "label": "Add Chart"
+                    }
+                }
             }
         },
         "editKpiGroup": {
