@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import Layout from "../components/layout";
 import { useUserStore } from "../lib/store/user_store";
 import { HOME_ROUTE } from "../router";
@@ -208,35 +208,36 @@ export default function Landing() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                 </span>
-                Data visualization made simple
+                {t("hero.chip")}
               </p>
               <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
-                <span className="block">Transform Data Into</span>
-                <span className="mt-1 block py-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-[1.4]">
-                  Stunning Visuals
-                </span>
-                <span className="block mt-1">
-                  with{" "}
-                  <span className="inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text py-0.5 font-semibold tracking-wide text-transparent">
-                    Dataviz
-                  </span>
-                </span>
+                <Trans
+                  t={t}
+                  i18nKey="hero.title"
+                  components={{
+                    block: <span className="block" />,
+                    gradient: (
+                      <span className="mt-1 block py-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-[1.4]" />
+                    ),
+                    withBlock: <span className="block mt-1" />,
+                    brand: (
+                      <span className="inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text py-0.5 font-semibold tracking-wide text-transparent" />
+                    ),
+                  }}
+                />
               </h1>
               <p className="mt-8 text-lg leading-8 text-base-content/70 max-w-2xl mx-auto sm:text-xl">
-                Effortlessly convert your CSV data into beautiful, interactive
-                charts with Dataviz. Whether you're a data analyst, business
-                professional, or content creator, Dataviz offers an intuitive
-                interface to bring your numbers to life.
+                {t("hero.description")}
               </p>
               <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
                 <a
                   href={user ? HOME_ROUTE : "/login"}
                   className="btn btn-primary"
                 >
-                  Get started
+                  {t("hero.ctas.getStarted")}
                 </a>
                 <a href="/quickstart" className="btn btn-outline">
-                  Quick start guide
+                  {t("hero.ctas.quickStart")}
                 </a>
               </div>
               <div

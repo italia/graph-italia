@@ -1,1 +1,11 @@
-{}
+{
+    "hero": {
+        "chip": "Data visualization made simple",
+        "title": "<block>Transform Data Into</block> <gradient>stunning visuals</gradient> <withBlock>with <brand>Dataviz</brand><withBlock>",
+        "description": "Effortlessly convert your CSV data into beautiful, interactive charts with Dataviz. Whether you're a data analyst, business professional, or content creator, Dataviz offers an intuitive interface to bring your numbers to life.",
+        "ctas": {
+            "getStarted": "Get Started",
+            "quickStart": "Quick start guide"
+        }
+    }
+}

@@ -1,1 +1,11 @@
-{}
+{
+    "hero": {
+        "chip": "Dai forma ai tuoi dati",
+        "title": "<block>Racconta i tuoi dati in modo semplice</block> <gradient>trasformandoli in grafici</gradient> <withBlock>semplici e accessibili<withBlock>",
+        "description": "Usa Dataviz per convertire la tua base dati da un file CSV in grafici interattivi. L’interfaccia intuitiva rende l’utilizzo della piattaforma semplice e accessibile a tutti.",
+        "ctas": {
+            "getStarted": "Accedi e inizia",
+            "quickStart": "Come usare Dataviz"
+        }
+    }
+}
