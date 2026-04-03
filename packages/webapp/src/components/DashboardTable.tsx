@@ -65,14 +65,14 @@ export default function DashboardTable({
       ),
     },
     {
-      name: t(`columns.created.label`),
+      name: t(`columns.createdAt.label`),
       selector: (row) => row.createdAt ?? "",
       sortable: true,
       cell: (row) =>
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: t(`columns.updated.label`),
+      name: t(`columns.updatedAt.label`),
       selector: (row) => row.updatedAt ?? "",
       sortable: true,
       cell: (row) =>
