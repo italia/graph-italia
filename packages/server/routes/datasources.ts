@@ -21,7 +21,9 @@ const createSchema = z.object({
   isTrasposed: z.boolean().optional(),
   remoteUrl: z.string().nullable().optional(),
   isRemote: z.boolean().optional(),
+  projectId: z.string().optional(),
 });
+
 
 const updateSchema = createSchema.partial();
 const linkSchema = z.object({ chartId: z.string(), config: z.unknown().optional() });
@@ -116,12 +118,15 @@ router.post(
   zValidator("json", createSchema),
   async (c) => {
     try {
-      const projectId = c.get("projectId");
+      const { projectId: bodyProjectId, ...body } = c.req.valid("json");
+      const projectId = bodyProjectId ?? c.get("projectId");
       if (!projectId) return c.json({ error: "No project found" }, 500);
       if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-      const body = c.req.valid("json");
-      const result = await db.createDataSource({ projectId, data: body.data, ...body });
+      const result = await db.createDataSource({ projectId, ...(body as any) });
+
+
+
       logger.info("DataSource created", { id: result.id, projectId });
       return c.json(result, 201);
     } catch (e) {
@@ -149,7 +154,8 @@ router.put(
       const ds = await db.findDataSourceById(id);
       if (!ds) return c.json({ error: "Not Found" }, 404);
       if (!(await canModify(c, ds.projectId))) return c.json({ error: "Write access required" }, 403);
-      return c.json(await db.updateDataSource(id, body));
+      return c.json(await db.updateDataSource(id, body as any));
+
     } catch (e) {
       logger.error("DataSource update error", e instanceof Error ? e : undefined);
       return c.json({ error: "Internal error" }, 500);
