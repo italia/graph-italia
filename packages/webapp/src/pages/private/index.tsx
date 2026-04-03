@@ -23,12 +23,12 @@ import DashboardTable from "../../components/DashboardTable.tsx";
 import { ROUTES } from "../../router.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import * as api from "../../lib/api.ts";
-import useChartsStoreState from "../../lib/chartListStore.ts";
+import useChartsStoreState from "../../lib/store/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
-import useStoreState from "../../lib/storeState.ts";
+import useStoreState from "../../lib/store/storeState.ts";
 import { Helmet } from 'react-helmet';
-import useProjectStore from "../../lib/projectStore.ts";
+import useProjectStore from "../../lib/store/projectStore.ts";
 import { FaFolderPlus, FaFolderOpen } from "react-icons/fa6";
 
 
