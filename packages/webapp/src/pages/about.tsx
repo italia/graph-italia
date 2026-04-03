@@ -10,40 +10,19 @@ export default function Landing() {
 
   const features = [
     {
-      name: "Upload & Parse Your Data in Seconds",
-      description:
-        "Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks.",
+      name: t("contentBlock.features.easyToUse.title"),
+      description: t("contentBlock.features.easyToUse.content"),
       icon: "upload",
     },
     {
-      name: "Customizable Chart Creation",
-      description:
-        "Choose how to represent your data by selecting which columns to display as series, and easily define your X and Y axes. Dataviz offers a range of chart types: Bar, Line, Pie charts and Geographical Maps (Geomap). No matter the type, you have full control over your data's presentation!",
+      name: t("contentBlock.features.customization.title"),
+      description: t("contentBlock.features.customization.content"),
       icon: "chart",
     },
     {
-      name: "Intuitive Filtering & Data Selection",
-      description:
-        "Only want to display specific data points? Use our simple filtering options to select which columns or data sets to include in your visualization, ensuring clarity and focus in your chart.",
-      icon: "filter",
-    },
-    {
-      name: "Fine-Tune Chart Parameters",
-      description:
-        "Tweak and customize each aspect of your chart. From colors to data labels, control every detail to ensure your chart perfectly fits your needs and looks great.",
-      icon: "palette",
-    },
-    {
-      name: "Save, Edit & Reuse Your Charts",
-      description:
-        "Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips.",
+      name: t("contentBlock.features.saveAndShare.title"),
+      description: t("contentBlock.features.saveAndShare.content"),
       icon: "save",
-    },
-    {
-      name: "Publish & Embed Your Charts",
-      description:
-        "Share your work with the world! Once your chart is ready, publish it directly from Dataviz and get an embed code to seamlessly integrate your visualizations into any website or platform.",
-      icon: "share",
     },
   ];
 
@@ -319,20 +298,20 @@ export default function Landing() {
           <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <span className="inline-block text-sm font-medium text-primary uppercase tracking-wider mb-3">
-                Features
+                {t("contentBlock.tag")}
               </span>
               <h2
                 id="features-heading"
                 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl"
               >
-                Everything you need
+                {t("contentBlock.title")}
               </h2>
-              <p className="mt-4 text-lg leading-8 text-base-content/70">
+              {/* <p className="mt-4 text-lg leading-8 text-base-content/70">
                 Start visualizing your data with Dataviz today. Dataviz makes
                 data visualization quick, simple, and powerful. Try it and see
                 how easily you can create, edit, and publish stunning charts in
                 minutes.
-              </p>
+              </p> */}
             </div>
 
             <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -361,13 +340,13 @@ export default function Landing() {
         </section>
 
         {/* Divisore tra Features e CTA */}
-        <div
+        {/* <div
           className="landing__divider h-px w-full bg-base-200"
           aria-hidden="true"
-        />
+        /> */}
 
         {/* Sezione Ready to create your first chart */}
-        <section
+        {/* <section
           className="landing__cta relative bg-base-100/80 py-16 lg:py-20"
           aria-label="Call to action"
         >
@@ -391,7 +370,7 @@ export default function Landing() {
               </a>
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
     </Layout>
   );
