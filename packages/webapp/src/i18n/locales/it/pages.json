@@ -135,6 +135,18 @@
                 "preview": {
                     "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima"
                 }
+            },
+            "slots": {
+                "title": "Modifica dashboard slots",
+                "description": "Crea uno slot e assegnalo al grafico",
+                "actions": {
+                    "addSlot": {
+                        "label": "Aggiungi slot"
+                    },
+                    "viewChart": {
+                        "label": "Visualizza grafico"
+                    }
+                }
             }
         },
         "editKpiGroup": {

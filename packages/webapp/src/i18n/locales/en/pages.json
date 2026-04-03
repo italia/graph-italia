@@ -135,6 +135,18 @@
                 "preview": {
                     "loadDataMessage": "Load your data to display the data preview"
                 }
+            },
+            "slots": {
+                "title": "Edit dashboard slots",
+                "description": "Create a slot and assign it to a chart",
+                "actions": {
+                    "addSlot": {
+                        "label": "Add Slot"
+                    },
+                    "viewChart": {
+                        "label": "View Chart"
+                    }
+                }
             }
         },
         "editKpiGroup": {

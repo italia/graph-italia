@@ -429,11 +429,9 @@ function DashboardEditPage() {
                   </span>
                 </div>
                 <div>
-                  <h2 className="card-title text-xl">
-                    {`Edit Dashboard slots`}
-                  </h2>
+                  <h2 className="card-title text-xl">{t(`slots.title`)}</h2>
                   <p className="text-sm text-base-content/60">
-                    {`Create Slots and assign charts`}
+                    {t(`slots.description`)}
                   </p>
                 </div>
 
@@ -443,7 +441,7 @@ function DashboardEditPage() {
                     className="btn btn-primary mb-4"
                     onClick={addItem}
                   >
-                    Add slot +
+                    + {t(`slots.actions.addSlot.label`)}
                   </button>
 
                   <a
@@ -451,7 +449,7 @@ function DashboardEditPage() {
                     target="_blank"
                     className="btn btn-outline"
                   >
-                    View Chart
+                    {t(`slots.actions.viewChart.label`)}
                   </a>
                 </div>
               </div>
