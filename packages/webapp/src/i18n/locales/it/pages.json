@@ -415,5 +415,75 @@
                 }
             }
         }
+    },
+    "apikeys": {
+        "title": "API Key",
+        "description": "Gestisci le tue API key per l'accesso programmatico.",
+        "createBtn": "Crea Nuova Key",
+        "noKeys": "Nessuna API key trovata.",
+        "table": {
+            "id": "ID",
+            "role": "Ruolo",
+            "created": "Creato il",
+            "expires": "Scadenza (min)",
+            "actions": "Azioni"
+        },
+        "modal": {
+            "createTitle": "Crea API Key",
+            "createDesc": "Configura la tua nuova API key.",
+            "successTitle": "Key Creata con Successo",
+            "successDesc": "Copia questa key ora. Non potrai più vederla!",
+            "warning": "Una volta chiusa questa finestra, la key verrà nascosta per sempre per motivi di sicurezza.",
+            "close": "Chiudi",
+            "cancel": "Annulla",
+            "create": "Crea Key",
+            "deleteTitle": "Elimina API Key",
+            "deleteDesc": "Sei sicuro di voler eliminare questa API key? L'azione non può essere annullata.",
+            "delete": "Elimina"
+        },
+        "form": {
+            "role": "Ruolo",
+            "expire": "Scadenza (minuti)"
+        }
+    },
+    "orgs": {
+        "title": "Organizzazioni",
+        "description": "Gestisci le tue organizzazioni e i loro membri.",
+        "createBtn": "Nuova Organizzazione",
+        "listTitle": "Le Tue Organizzazioni",
+        "noOrgs": "Nessuna organizzazione trovata.",
+        "membersTitle": "Membri",
+        "addMemberBtn": "Aggiungi Membro",
+        "noMembers": "Nessun membro trovato in questa organizzazione.",
+        "selectPrompt": "Seleziona un'organizzazione per gestire i suoi membri.",
+        "table": {
+            "user": "Utente",
+            "role": "Ruolo",
+            "actions": "Azioni"
+        },
+
+        "modal": {
+            "createOrgTitle": "Crea Nuova Organizzazione",
+            "createOrgDesc": "Inserisci un nome per la tua nuova organizzazione.",
+            "addMemberTitle": "Aggiungi Membro",
+            "addMemberDesc": "Invita un utente a unirsi a questa organizzazione.",
+            "deleteOrgTitle": "Elimina Organizzazione",
+            "deleteOrgDesc": "Sei sicuro di voler eliminare questa organizzazione? Questo rimuoverà tutte le associazioni ai progetti.",
+            "removeMemberTitle": "Rimuovi Membro",
+            "removeMemberDesc": "Sei sicuro di voler rimuovere questo utente dall'organizzazione?",
+            "cancel": "Annulla",
+            "create": "Crea",
+            "add": "Invita",
+            "delete": "Elimina",
+            "remove": "Rimuovi"
+        },
+        "form": {
+            "orgName": "Nome Organizzazione",
+            "email": "Indirizzo Email",
+            "role": "Ruolo"
+        }
+
     }
 }
+
+
