@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { MatrixType, StoreStateType } from "../types";
-import { defaultConfig } from "./constants";
+import type { MatrixType, StoreStateType } from "../../types";
+import { defaultConfig } from "../constants";
 // import { persist } from "zustand/middleware";
 
 const useStoreState = create<StoreStateType>()(

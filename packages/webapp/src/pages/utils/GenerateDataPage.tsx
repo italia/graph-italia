@@ -3,7 +3,7 @@ import DataMngTable from "../../components/DataMngTable";
 import GenerateRandomData from "../../components/GenerateRandomData";
 import Layout from "../../components/layout";
 import { dataToCSV, downloadCSV, downloadJSON } from "../../lib/downloadUtils";
-import useStoreState from "../../lib/storeState";
+import useStoreState from "../../lib/store/storeState";
 import {
   getAvailablePalettes,
   getPalette,

@@ -49,16 +49,17 @@ export async function canUserModifyProject(
   userId: string,
   projectId: string,
 ): Promise<boolean> {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-    select: {
-      ownerId: true,
-      members: {
-        where: { userId, role: "ADMIN" },
-        select: { userId: true },
-      },
+  const project = await prisma.project.findFirst({
+    where: {
+      id: projectId,
+      OR: [
+        { ownerId: userId },
+        { members: { some: { userId } } }, // Simple check: any member can see/use it for now, can be refined to ADMIN role
+        { orgs: { some: { org: { members: { some: { userId } } } } } },
+      ],
     },
+    select: { id: true },
   });
-  if (!project) return false;
-  return project.ownerId === userId || project.members.length > 0;
+  return !!project;
 }
+

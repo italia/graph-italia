@@ -16,7 +16,7 @@ import ChartTable from "../../components/ChartTable.tsx";
 import DashboardTable from "../../components/DashboardTable.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import * as api from "../../lib/api.ts";
-import useChartsStoreState from "../../lib/chartListStore.ts";
+import useChartsStoreState from "../../lib/store/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import useStoreState from "../../lib/storeState.ts";

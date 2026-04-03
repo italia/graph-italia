@@ -5,7 +5,7 @@ import Layout from "../../components/layout";
 import LoadSource from "../../components/load-data/LoadRemoteCSVSource";
 import examples from "../../data/examples.json";
 import { dataToCSV, downloadCSV, downloadJSON } from "../../lib/downloadUtils";
-import useStoreState from "../../lib/storeState";
+import useStoreState from "../../lib/store/storeState";
 
 function Home() {
   const { t } = useTranslation("pages", {

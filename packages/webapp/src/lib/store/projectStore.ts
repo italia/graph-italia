@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Project } from "./api";
+import type { Project } from "../api";
 
 interface ProjectState {
   projects: Project[];
