@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaTrash, FaPlus, FaUsers, FaUserPlus, FaShieldHalved, FaBuilding, FaChevronRight, FaChevronDown } from "react-icons/fa6";
+import { FaTrash, FaPlus, FaUsers, FaUserPlus, FaShieldHalved, FaBuilding, FaChevronRight, FaChevronDown, FaFolderTree, FaRightLeft } from "react-icons/fa6";
+
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import Layout from "../../components/layout/index.tsx";
@@ -15,8 +16,8 @@ export default function EditOrgsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newOrgName, setNewOrgName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-
   // Member management state
+
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [membersLoading, setMembersLoading] = useState(false);
@@ -25,10 +26,20 @@ export default function EditOrgsPage() {
   const [newMemberRole, setNewMemberRole] = useState<"USER" | "ADMIN">("USER");
   const [isAddingMember, setIsAddingMember] = useState(false);
 
+  // Project management state
+  const [projects, setProjects] = useState<api.Project[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(false);
+  const [personalProjects, setPersonalProjects] = useState<api.Project[]>([]);
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [selectedProjectIdToTransfer, setSelectedProjectIdToTransfer] = useState("");
+  const [isTransferring, setIsTransferring] = useState(false);
 
   // Delete/Remove state
   const [pendingDeleteOrgId, setPendingDeleteOrgId] = useState<string | null>(null);
   const [pendingRemoveUserId, setPendingRemoveUserId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"members" | "projects">("members");
+
+
 
   const fetchOrgs = async () => {
     setLoading(true);
@@ -54,17 +65,41 @@ export default function EditOrgsPage() {
     }
   };
 
+  const fetchOrgProjects = async (orgId: string) => {
+    setProjectsLoading(true);
+    try {
+      const data = await api.getOrgProjects(orgId);
+      setProjects(data);
+    } catch (error) {
+      console.error("Failed to fetch organization projects:", error);
+    } finally {
+      setProjectsLoading(false);
+    }
+  };
+
+  const fetchPersonalProjects = async () => {
+    try {
+      const data = await api.getPersonalProjects();
+      setPersonalProjects(data);
+    } catch (error) {
+      console.error("Failed to fetch personal projects:", error);
+    }
+  };
+
   useEffect(() => {
     fetchOrgs();
   }, []);
 
   useEffect(() => {
     if (selectedOrgId) {
-      fetchMembers(selectedOrgId);
+      if (activeTab === "members") fetchMembers(selectedOrgId);
+      if (activeTab === "projects") fetchOrgProjects(selectedOrgId);
     } else {
       setMembers([]);
+      setProjects([]);
     }
-  }, [selectedOrgId]);
+  }, [selectedOrgId, activeTab]);
+
 
   const handleCreateOrg = async () => {
     if (!newOrgName) return;
@@ -132,6 +167,22 @@ export default function EditOrgsPage() {
     }
   };
 
+  const handleTransferProject = async () => {
+    if (!selectedOrgId || !selectedProjectIdToTransfer) return;
+    setIsTransferring(true);
+    try {
+      await api.transferProjectToOrg(selectedProjectIdToTransfer, selectedOrgId);
+      fetchOrgProjects(selectedOrgId);
+      setShowTransferModal(false);
+      setSelectedProjectIdToTransfer("");
+    } catch (error) {
+      console.error("Failed to transfer project:", error);
+    } finally {
+      setIsTransferring(false);
+    }
+  };
+
+
   return (
     <Layout>
       <Helmet>
@@ -194,71 +245,153 @@ export default function EditOrgsPage() {
           )}
         </div>
 
-        {/* Member Management */}
+        {/* Member & Project Management */}
         <div className="lg:col-span-2">
           {selectedOrgId ? (
             <div className="card bg-base-100 shadow-xl border border-base-200">
               <div className="card-body">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
                   <h2 className="card-title flex items-center gap-2">
-                    <FaUsers className="text-primary" />
-                    {orgs.find((o) => o.id === selectedOrgId)?.name} - {t("membersTitle", "Members")}
+                    <FaBuilding className="text-primary" />
+                    {orgs.find((o) => o.id === selectedOrgId)?.name}
                   </h2>
-                  <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowAddMemberModal(true)}>
-                    <FaUserPlus /> {t("addMemberBtn", "Add Member")}
-                  </button>
+                  <div className="tabs tabs-boxed">
+                    <button
+                      className={`tab ${activeTab === "members" ? "tab-active" : ""}`}
+                      onClick={() => setActiveTab("members")}
+                    >
+                      <FaUsers className="mr-2" /> {t("tabs.members", "Members")}
+                    </button>
+                    <button
+                      className={`tab ${activeTab === "projects" ? "tab-active" : ""}`}
+                      onClick={() => {
+                        setActiveTab("projects");
+                        fetchPersonalProjects();
+                      }}
+                    >
+                      <FaFolderTree className="mr-2" /> {t("tabs.projects", "Projects")}
+                    </button>
+                  </div>
                 </div>
 
-                {membersLoading ? (
-                  <Loading />
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="table w-full">
-                      <thead>
-                        <tr>
-                          <th>{t("table.user", "User ID")}</th>
-                          <th>{t("table.role", "Role")}</th>
-                          <th className="text-right">{t("table.actions", "Actions")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {members.length === 0 ? (
-                          <tr>
-                            <td colSpan={3} className="text-center py-10 opacity-50">
-                              {t("noMembers", "No members found in this organization.")}
-                            </td>
-                          </tr>
-                        ) : (
-                          members.map((member) => (
-                            <tr key={member.userId} className="hover">
-                              <td className="font-mono text-xs">{member.userId}</td>
-                              <td>
-                                <select
-                                  className="select select-ghost select-xs font-bold"
-                                  value={member.role}
-                                  onChange={(e) => handleUpdateMemberRole(member.userId, e.target.value as any)}
-                                >
-                                  <option value="USER">USER</option>
-                                  <option value="ADMIN">ADMIN</option>
-                                </select>
-                              </td>
-                              <td className="text-right">
-                                <button
-                                  className="btn btn-ghost btn-xs text-error"
-                                  onClick={() => setPendingRemoveUserId(member.userId)}
-                                >
-                                  <FaTrash />
-                                </button>
-                              </td>
+                {activeTab === "members" ? (
+                  <>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold">{t("membersTitle", "Members")}</h3>
+                      <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowAddMemberModal(true)}>
+                        <FaUserPlus /> {t("addMemberBtn", "Add Member")}
+                      </button>
+                    </div>
+
+                    {membersLoading ? (
+                      <Loading />
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="table w-full">
+                          <thead>
+                            <tr>
+                              <th>{t("table.user", "User")}</th>
+                              <th>{t("table.role", "Role")}</th>
+                              <th className="text-right">{t("table.actions", "Actions")}</th>
                             </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                          </thead>
+                          <tbody>
+                            {members.length === 0 ? (
+                              <tr>
+                                <td colSpan={3} className="text-center py-10 opacity-50">
+                                  {t("noMembers", "No members found in this organization.")}
+                                </td>
+                              </tr>
+                            ) : (
+                              members.map((member) => (
+                                <tr key={member.userId} className="hover">
+                                  <td>
+                                    <div className="flex flex-col">
+                                      <span className="font-semibold">{member.user?.email || member.userId}</span>
+                                      {member.user?.email && <span className="text-[10px] opacity-40 font-mono uppercase tracking-tighter">{member.userId}</span>}
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <select
+                                      className="select select-ghost select-xs font-bold"
+                                      value={member.role}
+                                      onChange={(e) => handleUpdateMemberRole(member.userId, e.target.value as any)}
+                                    >
+                                      <option value="USER">USER</option>
+                                      <option value="ADMIN">ADMIN</option>
+                                    </select>
+                                  </td>
+                                  <td className="text-right">
+                                    <button
+                                      className="btn btn-ghost btn-xs text-error"
+                                      onClick={() => setPendingRemoveUserId(member.userId)}
+                                    >
+                                      <FaTrash />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold">{t("projectsTitle", "Organization Projects")}</h3>
+                      <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowTransferModal(true)}>
+                        <FaRightLeft /> {t("transferProjectBtn", "Transfer Project")}
+                      </button>
+                    </div>
+
+                    {projectsLoading ? (
+                      <Loading />
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="table w-full">
+                          <thead>
+                            <tr>
+                              <th>{t("table.projectName", "Project Name")}</th>
+                              <th>{t("table.projectId", "ID")}</th>
+                              <th>{t("table.owner", "Owner")}</th>
+                              <th className="text-right">{t("table.actions", "Actions")}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {projects.length === 0 ? (
+                              <tr>
+                                <td colSpan={4} className="text-center py-10 opacity-50">
+                                  {t("noProjects", "No projects associated with this organization.")}
+                                </td>
+                              </tr>
+                            ) : (
+                              projects.map((project) => (
+                                <tr key={project.id} className="hover">
+                                  <td className="font-semibold">{project.name}</td>
+                                  <td className="font-mono text-xs opacity-50">{project.id}</td>
+                                  <td>
+                                    <div className="flex flex-col">
+                                      <span className="text-xs">{project.owner?.email || t("unknownOwner", "Unknown")}</span>
+                                    </div>
+                                  </td>
+                                  <td className="text-right">
+                                    {/* Placeholder for future project-specific actions inside orgs */}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
+
           ) : (
             <div className="h-full flex flex-col items-center justify-center bg-base-200/50 rounded-2xl border-2 border-dashed border-base-300 min-h-[400px]">
               <FaBuilding size={48} className="opacity-20 mb-4" />
@@ -360,6 +493,40 @@ export default function EditOrgsPage() {
           <p className="text-sm font-mono opacity-70">User ID: {pendingRemoveUserId}</p>
         </div>
       </GenericDialog>
+
+      {/* Transfer Project Modal */}
+      <GenericDialog
+        toggle={showTransferModal}
+        title={t("modal.transferProjectTitle", "Transfer Personal Project")}
+        description={t("modal.transferProjectDesc", "Select one of your personal projects to transfer to this organization.")}
+        labels={{ cancel: t("modal.cancel", "Cancel"), confirm: t("modal.transfer", "Transfer") }}
+        confirmCb={handleTransferProject}
+        cancelCb={() => setShowTransferModal(false)}
+      >
+        <div className="space-y-4 py-4">
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text font-semibold">{t("form.project", "Project")}</span>
+            </label>
+            <select
+              className="select select-bordered w-full"
+              value={selectedProjectIdToTransfer}
+              onChange={(e) => setSelectedProjectIdToTransfer(e.target.value)}
+            >
+              <option value="" disabled>{t("form.selectProject", "Select a project")}</option>
+              {personalProjects.length === 0 ? (
+                <option disabled>{t("form.noPersonalProjects", "No personal projects found")}</option>
+              ) : (
+                personalProjects.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))
+              )}
+            </select>
+          </div>
+          {isTransferring && <span className="loading loading-spinner mx-auto block"></span>}
+        </div>
+      </GenericDialog>
+
     </Layout>
   );
 }

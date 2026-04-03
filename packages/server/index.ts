@@ -66,7 +66,7 @@ app.use(
 const publicCors = cors({
 	origin: "*",
 	allowMethods: ["GET", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization"],
+	allowHeaders: ["Content-Type", "Authorization","x-project-id"],
 });
 
 // app.use(`/*`, publicCors);
@@ -84,7 +84,7 @@ if (HOST.indexOf("localhost") !== -1) {
 			origin: whitelist,
 			credentials: true,
 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization"],
+			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
 		}),
 	);
 }

@@ -471,14 +471,27 @@
         "listTitle": "Your Organizations",
         "noOrgs": "No organizations found.",
         "membersTitle": "Members",
+        "projectsTitle": "Organization Projects",
         "addMemberBtn": "Add Member",
+        "transferProjectBtn": "Transfer Project",
         "noMembers": "No members found in this organization.",
+        "noProjects": "No projects associated with this organization.",
         "selectPrompt": "Select an organization to manage its members.",
+        "tabs": {
+            "members": "Members",
+            "projects": "Projects"
+        },
         "table": {
             "user": "User",
             "role": "Role",
-            "actions": "Actions"
+            "actions": "Actions",
+            "projectName": "Project Name",
+            "projectId": "ID",
+            "owner": "Owner"
         },
+        "unknownOwner": "Unknown",
+
+
 
         "modal": {
             "createOrgTitle": "Create New Organization",
@@ -489,7 +502,11 @@
             "deleteOrgDesc": "Are you sure you want to delete this organization? This will remove all project associations.",
             "removeMemberTitle": "Remove Member",
             "removeMemberDesc": "Are you sure you want to remove this user from the organization?",
+            "transferProjectTitle": "Transfer Personal Project",
+            "transferProjectDesc": "Select one of your personal projects to transfer to this organization.",
+            "transfer": "Transfer",
             "cancel": "Cancel",
+
             "create": "Create",
             "add": "Invite",
             "delete": "Delete",
@@ -498,8 +515,12 @@
         "form": {
             "orgName": "Organization Name",
             "email": "Email Address",
-            "role": "Role"
+            "role": "Role",
+            "project": "Project",
+            "selectProject": "Select a project",
+            "noPersonalProjects": "No personal projects found"
         }
+
 
     }
 }
