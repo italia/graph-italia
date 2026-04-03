@@ -24,13 +24,13 @@ const logsLimitSchema = z.object({ limit: z.coerce.number().int().positive().max
 
 // ─── Index ────────────────────────────────────────────────────────────────────
 
-/** GET / — list api keys for the active project */
+/** GET / — list api keys for the current user across all accessible projects */
 router.get("/", async (c) => {
   try {
-    const projectId = c.get("projectId");
-    if (!projectId) return c.json([]);
-    return c.json(await db.findApiKeysByProjectId(projectId));
+    const user = c.get("user") as ParsedToken;
+    return c.json(await db.findApiKeysByUserId(user.userId));
   } catch (e) {
+
     logger.error("ApiKeys index error", e instanceof Error ? e : undefined);
     return c.json({ error: "Internal error" }, 500);
   }

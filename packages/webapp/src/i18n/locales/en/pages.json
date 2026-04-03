@@ -444,6 +444,7 @@
         },
         "projectSwitcher": {
             "title": "Your Projects",
+            "personal": "Personal Projects",
             "selectPrompt": "Select Project",
             "newBtn": "New Project"
         },
@@ -561,8 +562,11 @@
         "table": {
             "id": "ID",
             "role": "Role",
+            "project": "Project",
+            "orgs": "Organizations",
+            "owner": "Owner",
             "created": "Created At",
-            "expires": "Expires (min)",
+            "expires": "Expires",
             "actions": "Actions"
         },
         "modal": {
@@ -580,6 +584,9 @@
         },
         "form": {
             "role": "Role",
+            "project": "Project",
+            "selectProject": "Select a project",
+            "personal": "Personal",
             "expire": "Expiration (minutes)"
         }
     },

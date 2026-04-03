@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FaChartBar, FaList, FaMap, FaRegSquare } from "react-icons/fa6";
 
 
+
 import Layout from "../../components/layout/index.tsx";
 // import RenderChart from "../components/RenderChart";
 import Loading from "../../components/layout/Loading.tsx";
@@ -42,6 +43,11 @@ function Home() {
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isCreatingProject, setIsCreatingProject] = useState(false);
+  const [showRenameProjectDialog, setShowRenameProjectDialog] = useState(false);
+  const [projectToRename, setProjectToRename] = useState<api.Project | null>(null);
+  const [renameProjectName, setRenameProjectName] = useState("");
+  const [isRenamingProject, setIsRenamingProject] = useState(false);
+
 
 
   async function fetchDashboards() {
@@ -106,6 +112,44 @@ function Home() {
       setIsCreatingProject(false);
     }
   };
+
+  const handleRenameProject = async () => {
+    if (!projectToRename || !renameProjectName) return;
+    setIsRenamingProject(true);
+    try {
+      await api.updateProject(projectToRename.id, { name: renameProjectName });
+      await fetchProjects();
+      setShowRenameProjectDialog(false);
+      setProjectToRename(null);
+      setRenameProjectName("");
+    } catch (error) {
+      console.error("Failed to rename project:", error);
+    } finally {
+      setIsRenamingProject(false);
+    }
+  };
+
+  const handleSelectProject = (projectId: string) => {
+    setCurrentProjectId(projectId);
+    // Force blur any active element to close DaisyUI dropdowns
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
+  const personalProjects = projects.filter(p => !p.orgs || p.orgs.length === 0);
+  const orgsWithProjects: Record<string, { name: string; projects: api.Project[] }> = {};
+
+  projects.forEach(p => {
+    p.orgs?.forEach(o => {
+      if (!orgsWithProjects[o.org.id]) {
+        orgsWithProjects[o.org.id] = { name: o.org.name, projects: [] };
+      }
+      orgsWithProjects[o.org.id].projects.push(p);
+    });
+  });
+
+
 
 
   function handleLoadChart(item: FieldDataType) {
@@ -226,25 +270,78 @@ function Home() {
                 </span>
                 <FaChevronDown className="w-3 h-3" />
               </div>
-              <ul tabIndex={0} className="dropdown-content z-[20] menu p-2 shadow bg-base-200 rounded-box w-52 border border-base-300 mt-1">
-                <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{t("projectSwitcher.title", "Your Projects")}</li>
-                {projects.map(project => (
-                  <li key={project.id}>
-                    <button
-                      className={`${currentProjectId === project.id ? "active" : ""}`}
-                      onClick={() => setCurrentProjectId(project.id)}
-                    >
-                      {project.name}
-                    </button>
-                  </li>
+              <ul tabIndex={0} className="dropdown-content z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto">
+                {personalProjects.length > 0 && (
+                  <>
+                    <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{t("projectSwitcher.personal", "Personal Projects")}</li>
+                    {personalProjects.map(project => (
+                      <li key={project.id}>
+                        <div className="flex items-center justify-between gap-1 group">
+                          <button
+                            className={`flex-grow text-left ${currentProjectId === project.id ? "active" : ""}`}
+                            onClick={() => handleSelectProject(project.id)}
+                          >
+                            {project.name}
+                          </button>
+                          <button
+                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 px-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setProjectToRename(project);
+                              setRenameProjectName(project.name);
+                              setShowRenameProjectDialog(true);
+                            }}
+                          >
+                            <FaPencil className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </>
+                )}
+
+                {Object.entries(orgsWithProjects).map(([orgId, orgData]) => (
+                  <div key={orgId}>
+                    <div className="divider my-0 opacity-20"></div>
+                    <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{orgData.name}</li>
+                    {orgData.projects.map(project => (
+                      <li key={project.id}>
+                        <div className="flex items-center justify-between gap-1 group">
+                          <button
+                            className={`flex-grow text-left ${currentProjectId === project.id ? "active" : ""}`}
+                            onClick={() => handleSelectProject(project.id)}
+                          >
+                            {project.name}
+                          </button>
+                          {/* Only allow renaming if owner (implicitly checked by server but UI feedback is good) */}
+                          <button
+                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 px-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setProjectToRename(project);
+                              setRenameProjectName(project.name);
+                              setShowRenameProjectDialog(true);
+                            }}
+                          >
+                            <FaPencil className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </div>
                 ))}
+
                 <div className="divider my-1"></div>
                 <li>
-                  <button onClick={() => setShowCreateProjectDialog(true)} className="text-primary gap-2">
+                  <button onClick={() => {
+                    setShowCreateProjectDialog(true);
+                    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+                  }} className="text-primary gap-2">
                     <FaFolderPlus /> {t("projectSwitcher.newBtn", "New Project")}
                   </button>
                 </li>
               </ul>
+
 
             </div>
           </div>
@@ -376,6 +473,36 @@ function Home() {
           )}
         </div>
       </GenericDialog>
+
+      {/* Rename Project Dialog */}
+
+      <GenericDialog
+        toggle={showRenameProjectDialog}
+        title={t("modals.renameProject.title", "Rename Project")}
+        description={t("modals.renameProject.description", "Enter a new name for this project.")}
+        labels={{ cancel: t("modals.cancel"), confirm: t("modals.renameProject.confirm", "Rename") }}
+        confirmCb={handleRenameProject}
+        cancelCb={() => setShowRenameProjectDialog(false)}
+      >
+        <div className="form-control w-full py-2">
+          <label className="label">
+            <span className="label-text font-semibold">{t("modals.renameProject.form.name.label", "Project Name")}</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            value={renameProjectName}
+            onChange={(e) => setRenameProjectName(e.target.value)}
+            autoFocus
+          />
+          {isRenamingProject && (
+            <div className="flex justify-center mt-4">
+              <span className="loading loading-spinner"></span>
+            </div>
+          )}
+        </div>
+      </GenericDialog>
+
 
       <GenericDialog
         toggle={!!pendingDeleteId}
