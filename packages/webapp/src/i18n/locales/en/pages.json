@@ -331,6 +331,12 @@
             "dashboards": "Dashboards",
             "noDashboards": "There is no Dashboards yet"
         },
+        "projectSwitcher": {
+            "title": "Your Projects",
+            "selectPrompt": "Select Project",
+            "newBtn": "New Project"
+        },
+
         "body": {
             "actions": {
                 "label": "Create new",
@@ -352,6 +358,18 @@
         "modals": {
             "cancel": "Cancel",
             "confirm": "Delete",
+            "createProject": {
+                "title": "Create New Project",
+                "description": "Projects help you organize your charts and dashboards.",
+                "confirm": "Create Project",
+                "form": {
+                    "name": {
+                        "label": "Project Name",
+                        "placeholder": "E.g. Marketing Dashboard"
+                    }
+                }
+            },
+
             "createChart": {
                 "title": "Create new chart",
                 "description": "Name your chart to start editing it",

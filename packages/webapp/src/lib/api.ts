@@ -1,6 +1,16 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
+// Interceptor to inject the active project ID into all requests
+axios.interceptors.request.use((config) => {
+  const projectId = localStorage.getItem("currentProjectId");
+  if (projectId) {
+    config.headers["x-project-id"] = projectId;
+  }
+  return config;
+});
+
+
 // Runtime configuration loaded from ConfigMap (in Kubernetes) or from /config.json
 // The config is loaded at app startup in main.tsx and stored in window.__ENV__
 // Falls back to import.meta.env (from .env file at build-time) for development, then to default
@@ -511,3 +521,30 @@ export async function removeOrgMember(orgId: string, userId: string): Promise<bo
   const response = await axios.delete(`${getServerUrlWithApi()}/orgs/${orgId}/members/${userId}`);
   return response.status === 204;
 }
+
+/** PROJECT calls */
+
+export interface Project {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getProjects(): Promise<Project[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/projects`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function createProject(payload: { name: string }): Promise<Project | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/projects`, payload);
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+

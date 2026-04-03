@@ -325,12 +325,18 @@
     },
     "home": {
         "header": {
-            "title": "Private Area",
-            "charts": "Charts",
-            "noCharts": "Welcome",
-            "dashboards": "Dashboards",
-            "noDashboards": "There is no Dashboards yet"
+            "title": "Area Privata",
+            "charts": "Grafici",
+            "noCharts": "Benvenuto",
+            "dashboards": "Dashboard",
+            "noDashboards": "Non ci sono ancora Dashboard"
         },
+        "projectSwitcher": {
+            "title": "I Tuoi Progetti",
+            "selectPrompt": "Seleziona Progetto",
+            "newBtn": "Nuovo Progetto"
+        },
+
         "body": {
             "actions": {
                 "label": "Create new",
@@ -352,6 +358,18 @@
         "modals": {
             "cancel": "Annulla",
             "confirm": "Elimina",
+            "createProject": {
+                "title": "Crea Nuovo Progetto",
+                "description": "I progetti ti aiutano a organizzare i tuoi grafici e le tue dashboard.",
+                "confirm": "Crea Progetto",
+                "form": {
+                    "name": {
+                        "label": "Nome Progetto",
+                        "placeholder": "Es: Dashboard Marketing"
+                    }
+                }
+            },
+
             "createChart": {
                 "title": "Create new chart",
                 "description": "Name your chart to start editing it",
