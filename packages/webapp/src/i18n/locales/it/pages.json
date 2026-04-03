@@ -591,13 +591,23 @@
         "listTitle": "Le Tue Organizzazioni",
         "noOrgs": "Nessuna organizzazione trovata.",
         "membersTitle": "Membri",
+        "projectsTitle": "Progetti dell'Organizzazione",
         "addMemberBtn": "Aggiungi Membro",
+        "transferProjectBtn": "Trasferisci Progetto",
         "noMembers": "Nessun membro trovato in questa organizzazione.",
+        "noProjects": "Nessun progetto associato a questa organizzazione.",
         "selectPrompt": "Seleziona un'organizzazione per gestire i suoi membri.",
+        "tabs": {
+            "members": "Membri",
+            "projects": "Progetti"
+        },
         "table": {
             "user": "Utente",
             "role": "Ruolo",
-            "actions": "Azioni"
+            "actions": "Azioni",
+            "projectName": "Nome Progetto",
+            "projectId": "ID",
+            "owner": "Proprietario"
         },
         "modal": {
             "createOrgTitle": "Crea Nuova Organizzazione",
@@ -608,6 +618,9 @@
             "deleteOrgDesc": "Sei sicuro di voler eliminare questa organizzazione? Questo rimuoverà tutte le associazioni ai progetti.",
             "removeMemberTitle": "Rimuovi Membro",
             "removeMemberDesc": "Sei sicuro di voler rimuovere questo utente dall'organizzazione?",
+            "transferProjectTitle": "Trasferisci Progetto Personale",
+            "transferProjectDesc": "Seleziona uno dei tuoi progetti personali da trasferire a questa organizzazione.",
+            "transfer": "Trasferisci",
             "cancel": "Annulla",
             "create": "Crea",
             "add": "Invita",
@@ -617,7 +630,10 @@
         "form": {
             "orgName": "Nome Organizzazione",
             "email": "Indirizzo Email",
-            "role": "Ruolo"
+            "role": "Ruolo",
+            "project": "Progetto",
+            "selectProject": "Seleziona un progetto",
+            "noPersonalProjects": "Nessun progetto personale trovato"
         }
     }
 }

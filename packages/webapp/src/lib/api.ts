@@ -453,7 +453,12 @@ export interface OrganizationMember {
   role: "USER" | "ADMIN";
   createdAt: string;
   updatedAt: string;
+  user?: {
+    id: string;
+    email: string;
+  };
 }
+
 
 export async function getOrgs(): Promise<Organization[]> {
   const response = await axios.get(`${getServerUrlWithApi()}/orgs`);
@@ -530,7 +535,12 @@ export interface Project {
   ownerId: string;
   createdAt: string;
   updatedAt: string;
+  owner?: {
+    id: string;
+    email: string;
+  };
 }
+
 
 export async function getProjects(): Promise<Project[]> {
   const response = await axios.get(`${getServerUrlWithApi()}/projects`);
@@ -547,4 +557,26 @@ export async function createProject(payload: { name: string }): Promise<Project 
   }
   return null;
 }
+
+export async function getOrgProjects(orgId: string): Promise<Project[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs/${orgId}/projects`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function getPersonalProjects(): Promise<Project[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/projects/personal`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function transferProjectToOrg(projectId: string, orgId: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/projects/${projectId}/orgs`, { orgId });
+  return response.status === 201;
+}
+
 

@@ -204,6 +204,32 @@ router.get(
   },
 );
 
+router.get(
+  "/:orgId/projects",
+  describeRoute({
+    description: "List projects of an org (members only)",
+    responses: {
+      200: { description: "Project list", content: { "application/json": { schema: resolver(z.unknown()) } } },
+      401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errSchema) } } },
+      500: { description: "Internal error", content: { "application/json": { schema: resolver(errSchema) } } },
+    },
+  }),
+  zValidator("param", orgIdSchema),
+  async (c) => {
+    try {
+      const user = c.get("user") as ParsedToken;
+      const { orgId } = c.req.valid("param");
+      const membership = await db.findMembership(user.userId, orgId);
+      if (!membership) return c.json({ error: "Not Authorized" }, 401);
+      return c.json(await db.findProjectsByOrgId(orgId));
+    } catch (e) {
+      logger.error("Org projects list error", e instanceof Error ? e : undefined);
+      return c.json({ error: "Internal error" }, 500);
+    }
+  },
+);
+
+
 router.post(
   "/:orgId/members",
   describeRoute({
