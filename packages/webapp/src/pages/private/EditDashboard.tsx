@@ -113,6 +113,9 @@ function ChartSelection({
   charts: assignedCharts,
   onSelect,
 }: ChartSelectionProps) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editDashboard`,
+  });
   const [available, setAvailable] = useState<ChartLookup[]>([]);
 
   useEffect(() => {
@@ -128,7 +131,7 @@ function ChartSelection({
   return (
     <div className="flex flex-col gap-2 min-w-[260px]">
       <label htmlFor="select-chart" className="label-text">
-        Select a chart:
+        {t(`components.chartSelection.form.fields.selectChart.label`)}
       </label>
       <select
         id="select-chart"
@@ -140,7 +143,11 @@ function ChartSelection({
         }}
       >
         <option value="" disabled>
-          — select a chart —
+          --{" "}
+          {t(
+            `components.chartSelection.form.fields.selectChart.options.noValue`,
+          )}{" "}
+          --
         </option>
         {available.map((c) => (
           <option key={c.id} value={c.id}>

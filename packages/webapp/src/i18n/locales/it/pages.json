@@ -156,6 +156,18 @@
                 }
             },
             "components": {
+                "chartSelection": {
+                    "form": {
+                        "fields": {
+                            "selectChart": {
+                                "label": "Seleziona un grafico",
+                                "options": {
+                                    "noValue": "Seleziona un grafico"
+                                }
+                            }
+                        }
+                    }
+                },
                 "slotToolbar": {
                     "width": {
                         "label": "Larghezza"
