@@ -1,0 +1,32 @@
+{
+    "hero": {
+        "chip": "Dai forma ai tuoi dati",
+        "title": "<block>Racconta i tuoi dati in modo semplice</block> <gradient>trasformandoli in grafici</gradient> <withBlock>semplici e accessibili<withBlock>",
+        "description": "Usa Dataviz per convertire la tua base dati da un file CSV in grafici interattivi. L’interfaccia intuitiva rende l’utilizzo della piattaforma semplice e accessibile a tutti.",
+        "ctas": {
+            "getStarted": "Accedi e inizia",
+            "quickStart": "Come usare Dataviz"
+        }
+    },
+    "contentBlock": {
+        "tag": "Come funziona",
+        "title": "Come usare Dataviz",
+        "features": {
+            "easyToUse": {
+                "title": "Carica i tuoi dati",
+                "content": "Se hai già una base dati per creare il grafico, carica il file in versione CSV, in alternativa, puoi utilizzare i dati di esempio disponibili su Dataviz."
+            },
+            "customization": {
+                "title": "Crea e personalizza il tuo grafico",
+                "content": "Seleziona la tipologia di grafico che vuoi creare e personalizzalo scegliendo le impostazioni che meglio lo possono rappresentare."
+            },
+            "saveAndShare": {
+                "title": "Salva, Condividi e Pubblica",
+                "content": "Una volta completato, potrai salvare il grafico e rivederlo in un secondo momento oppure, pubblicarlo e ottenere il link da utilizzare all’interno della tua pagina o sito."
+            }
+        },
+        "ctas": {
+            "getStarted": "Accedi e inizia"
+        }
+    }
+}

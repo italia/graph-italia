@@ -177,3 +177,5 @@ secrets.yaml
 secrets-*.yaml
 *.secrets.yaml
 !charts/**/values.yaml
+
+.claude/
