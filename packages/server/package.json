@@ -6,6 +6,7 @@
   "scripts": {
     "start": "bun index.ts",
     "dev": "bun --hot index.ts",
+    "test": "bun test",
     "dev:seed": "ts-node --esm ./seeds/seed-users.ts",
     "restore:data": "bun run seeds/restore-previous-data.ts"
   },

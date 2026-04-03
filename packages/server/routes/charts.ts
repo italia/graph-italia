@@ -2,9 +2,9 @@ import axios from "axios";
 import { Hono } from "hono";
 import * as z from "zod";
 import db from "../lib/db";
-import { checkAuth, requireUser } from "../lib/middlewares";
+import { checkAuth, requireAuth, canModify } from "../lib/middlewares";
 import { logger } from "../lib/logger";
-import type { ParsedToken } from "../types";
+import type { AppVariables } from "../types";
 import {
 	validator as zValidator,
 	resolver,
@@ -12,7 +12,8 @@ import {
 } from "hono-openapi";
 import parseCSV from "../lib/parseCSV";
 
-const router = new Hono();
+type Env = { Variables: AppVariables };
+const router = new Hono<Env>();
 
 router.use("*", checkAuth);
 
@@ -67,7 +68,7 @@ const chartListSchema = z.array(chartSchema);
 const errorMessageSchema = z.object({ error: z.string() });
 const publishResultSchema = z.object({ published: z.boolean() });
 
-/** Index — returns charts for the user's default project */
+/** Index — returns charts for the caller's project (user default or API key project) */
 router.get(
 	"/",
 	describeRoute({
@@ -77,16 +78,12 @@ router.get(
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
+	requireAuth,
 	async (c) => {
 		try {
-			const user = c.get("user") as ParsedToken | null;
-			if (!user) return c.json({ error: "Unauthorized" }, 401);
-
-			const projectId = await db.getDefaultProjectId(user.userId);
+			const projectId = c.get("projectId");
 			if (!projectId) return c.json([]);
-
-			const results = await db.findChartsByProjectId(projectId);
-			return c.json(results);
+			return c.json(await db.findChartsByProjectId(projectId));
 		} catch (err) {
 			logger.error("Charts index error", err instanceof Error ? err : undefined);
 			return c.json({ error: "Internal error" }, 500);
@@ -163,29 +160,28 @@ router.get(
 	},
 );
 
-/** Create — places chart in the user's default project */
+/** Create — places chart in the caller's project */
 router.post(
 	"/",
 	describeRoute({
 		responses: {
 			201: { description: "Successful response", content: { "application/json": { schema: resolver(chartSchema) } } },
 			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			403: { description: "Forbidden", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
-	requireUser,
+	requireAuth,
 	zValidator("json", createChartSchema),
 	async (c) => {
 		try {
+			const projectId = c.get("projectId");
+			if (!projectId) return c.json({ error: "No project found" }, 500);
+			if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
+
 			const body = c.req.valid("json");
-			const user = c.get("user") as ParsedToken;
-
-			const projectId = await db.getDefaultProjectId(user.userId);
-			if (!projectId) return c.json({ error: "No project found for user" }, 500);
-
 			const result = await db.createChart({ projectId, ...body });
-
-			logger.info("Chart created", { chartId: result.id, userId: user.userId, chartType: body.chart });
+			logger.info("Chart created", { chartId: result.id, projectId, chartType: body.chart });
 			return c.json(result, 201);
 		} catch (err) {
 			logger.error("Chart create error", err instanceof Error ? err : undefined);
@@ -201,24 +197,22 @@ router.post(
 		responses: {
 			200: { description: "Successful response", content: { "application/json": { schema: resolver(publishResultSchema) } } },
 			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			403: { description: "Forbidden", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			404: { description: "Not Found", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
-	requireUser,
+	requireAuth,
 	zValidator("param", detailSchema),
 	async (c) => {
 		try {
-			const user = c.get("user") as ParsedToken;
 			const { id: chartId } = c.req.valid("param");
 			const chart = await db.findChartById(chartId);
 			if (!chart) return c.json({ message: "Not Found" }, 404);
-
-			const allowed = await db.canUserModifyProject(user.userId, chart.projectId);
-			if (!allowed) return c.json({ message: "Not Authorized" }, 401);
+			if (!(await canModify(c, chart.projectId))) return c.json({ message: "Write access required" }, 403);
 
 			const result = await db.publishChart(chartId, !chart.publish);
-			logger.info("Chart publish toggled", { chartId, userId: user.userId, published: result.publish });
+			logger.info("Chart publish toggled", { chartId, published: result.publish });
 			return c.json({ published: result.publish });
 		} catch (err) {
 			logger.error("Chart publish error", err instanceof Error ? err : undefined);
@@ -233,25 +227,22 @@ router.delete(
 	describeRoute({
 		responses: {
 			200: { description: "Successful response", content: { "application/json": { schema: resolver(chartSchema) } } },
-			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			403: { description: "Forbidden", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			404: { description: "Not Found", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
-	requireUser,
+	requireAuth,
 	zValidator("param", detailSchema),
 	async (c) => {
 		try {
-			const user = c.get("user") as ParsedToken;
 			const { id: chartId } = c.req.valid("param");
 			const chart = await db.findChartById(chartId);
 			if (!chart) return c.json({ message: "Not Found" }, 404);
-
-			const allowed = await db.canUserModifyProject(user.userId, chart.projectId);
-			if (!allowed) return c.json({ message: "Not Authorized" }, 401);
+			if (!(await canModify(c, chart.projectId))) return c.json({ message: "Write access required" }, 403);
 
 			const result = await db.deleteChart(chartId);
-			logger.info("Chart deleted", { chartId, userId: user.userId });
+			logger.info("Chart deleted", { chartId });
 			return c.json(result);
 		} catch (err) {
 			logger.error("Chart delete error", err instanceof Error ? err : undefined);
@@ -266,28 +257,25 @@ router.put(
 	describeRoute({
 		responses: {
 			200: { description: "Successful response", content: { "application/json": { schema: resolver(chartSchema) } } },
-			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			403: { description: "Forbidden", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			404: { description: "Not Found", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
-	requireUser,
+	requireAuth,
 	zValidator("param", detailSchema),
 	zValidator("json", updateChartSchema),
 	async (c) => {
 		try {
-			const user = c.get("user") as ParsedToken;
 			const { id: chartId } = c.req.valid("param");
 			const chartData = c.req.valid("json");
 
 			const chart = await db.findChartById(chartId);
 			if (!chart) return c.json({ message: "Not Found" }, 404);
-
-			const allowed = await db.canUserModifyProject(user.userId, chart.projectId);
-			if (!allowed) return c.json({ message: "Not Authorized" }, 401);
+			if (!(await canModify(c, chart.projectId))) return c.json({ message: "Write access required" }, 403);
 
 			const result = await db.updateChart(chartId, chartData);
-			logger.debug("Chart updated", { chartId, userId: user.userId });
+			logger.debug("Chart updated", { chartId });
 			return c.json(result);
 		} catch (err) {
 			logger.error("Chart update error", err instanceof Error ? err : undefined);

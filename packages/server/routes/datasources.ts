@@ -2,11 +2,12 @@ import { Hono } from "hono";
 import * as z from "zod";
 import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
 import db from "../lib/db";
-import { checkAuth, requireUser } from "../lib/middlewares";
 import { logger } from "../lib/logger";
-import type { ParsedToken } from "../types";
+import { checkAuth, requireAuth, canModify } from "../lib/middlewares";
+import type { AppVariables } from "../types";
 
-const router = new Hono();
+type Env = { Variables: AppVariables };
+const router = new Hono<Env>();
 router.use("*", checkAuth);
 
 const detailSchema = z.object({ id: z.string({ error: "Id is required" }) });
@@ -55,6 +56,7 @@ const R = {
   201: (desc: string, schema: z.ZodTypeAny) => ({ "201": { description: desc, content: { "application/json": { schema: resolver(schema) } } } }),
   204: { description: "No Content" },
   401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errSchema) } } },
+  403: { description: "Forbidden", content: { "application/json": { schema: resolver(errSchema) } } },
   404: { description: "Not Found", content: { "application/json": { schema: resolver(errSchema) } } },
   500: { description: "Internal error", content: { "application/json": { schema: resolver(errSchema) } } },
 };
@@ -64,14 +66,13 @@ const R = {
 router.get(
   "/",
   describeRoute({
-    description: "List all data sources for the current user's default project",
+    description: "List all data sources for the caller's project",
     responses: { ...R[200]("Data source list", dataSourceListSchema), 401: R[401], 500: R[500] },
   }),
+  requireAuth,
   async (c) => {
     try {
-      const user = c.get("user") as ParsedToken | null;
-      if (!user) return c.json({ error: "Unauthorized" }, 401);
-      const projectId = await db.getDefaultProjectId(user.userId);
+      const projectId = c.get("projectId");
       if (!projectId) return c.json([]);
       return c.json(await db.findDataSourcesByProjectId(projectId));
     } catch (err) {
@@ -108,19 +109,20 @@ router.get(
 router.post(
   "/",
   describeRoute({
-    description: "Create a new data source in the user's default project",
-    responses: { ...R[201]("Created data source", dataSourceSchema), 401: R[401], 500: R[500] },
+    description: "Create a new data source in the caller's project",
+    responses: { ...R[201]("Created data source", dataSourceSchema), 401: R[401], 403: R[403], 500: R[500] },
   }),
-  requireUser,
+  requireAuth,
   zValidator("json", createSchema),
   async (c) => {
     try {
-      const user = c.get("user") as ParsedToken;
+      const projectId = c.get("projectId");
+      if (!projectId) return c.json({ error: "No project found" }, 500);
+      if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
+
       const body = c.req.valid("json");
-      const projectId = await db.getDefaultProjectId(user.userId);
-      if (!projectId) return c.json({ error: "No project found for user" }, 500);
       const result = await db.createDataSource({ projectId, data: body.data, ...body });
-      logger.info("DataSource created", { id: result.id, userId: user.userId });
+      logger.info("DataSource created", { id: result.id, projectId });
       return c.json(result, 201);
     } catch (e) {
       logger.error("DataSource create error", e instanceof Error ? e : undefined);
@@ -135,20 +137,18 @@ router.put(
   "/:id",
   describeRoute({
     description: "Update a data source",
-    responses: { ...R[200]("Updated data source", dataSourceSchema), 401: R[401], 404: R[404], 500: R[500] },
+    responses: { ...R[200]("Updated data source", dataSourceSchema), 401: R[401], 403: R[403], 404: R[404], 500: R[500] },
   }),
-  requireUser,
+  requireAuth,
   zValidator("param", detailSchema),
   zValidator("json", updateSchema),
   async (c) => {
     try {
-      const user = c.get("user") as ParsedToken;
       const { id } = c.req.valid("param");
       const body = c.req.valid("json");
       const ds = await db.findDataSourceById(id);
       if (!ds) return c.json({ error: "Not Found" }, 404);
-      const allowed = await db.canUserModifyProject(user.userId, ds.projectId);
-      if (!allowed) return c.json({ error: "Not Authorized" }, 401);
+      if (!(await canModify(c, ds.projectId))) return c.json({ error: "Write access required" }, 403);
       return c.json(await db.updateDataSource(id, body));
     } catch (e) {
       logger.error("DataSource update error", e instanceof Error ? e : undefined);
@@ -163,20 +163,18 @@ router.delete(
   "/:id",
   describeRoute({
     description: "Delete a data source",
-    responses: { 204: R[204], 401: R[401], 404: R[404], 500: R[500] },
+    responses: { 204: R[204], 401: R[401], 403: R[403], 404: R[404], 500: R[500] },
   }),
-  requireUser,
+  requireAuth,
   zValidator("param", detailSchema),
   async (c) => {
     try {
-      const user = c.get("user") as ParsedToken;
       const { id } = c.req.valid("param");
       const ds = await db.findDataSourceById(id);
       if (!ds) return c.json({ error: "Not Found" }, 404);
-      const allowed = await db.canUserModifyProject(user.userId, ds.projectId);
-      if (!allowed) return c.json({ error: "Not Authorized" }, 401);
+      if (!(await canModify(c, ds.projectId))) return c.json({ error: "Write access required" }, 403);
       await db.deleteDataSource(id);
-      logger.info("DataSource deleted", { id, userId: user.userId });
+      logger.info("DataSource deleted", { id });
       return c.body(null, 204);
     } catch (e) {
       logger.error("DataSource delete error", e instanceof Error ? e : undefined);
@@ -193,7 +191,7 @@ router.get(
     description: "List all charts linked to a data source",
     responses: { ...R[200]("Source link list", sourceLinkListSchema), 404: R[404], 500: R[500] },
   }),
-  requireUser,
+  requireAuth,
   zValidator("param", detailSchema),
   async (c) => {
     try {
@@ -212,20 +210,18 @@ router.post(
   "/:id/links",
   describeRoute({
     description: "Link a chart to a data source",
-    responses: { ...R[201]("Created source link", sourceLinkSchema), 401: R[401], 404: R[404], 500: R[500] },
+    responses: { ...R[201]("Created source link", sourceLinkSchema), 403: R[403], 404: R[404], 500: R[500] },
   }),
-  requireUser,
+  requireAuth,
   zValidator("param", detailSchema),
   zValidator("json", linkSchema),
   async (c) => {
     try {
-      const user = c.get("user") as ParsedToken;
       const { id: dataSourceId } = c.req.valid("param");
       const { chartId, config } = c.req.valid("json");
       const ds = await db.findDataSourceById(dataSourceId);
       if (!ds) return c.json({ error: "Not Found" }, 404);
-      const allowed = await db.canUserModifyProject(user.userId, ds.projectId);
-      if (!allowed) return c.json({ error: "Not Authorized" }, 401);
+      if (!(await canModify(c, ds.projectId))) return c.json({ error: "Write access required" }, 403);
       const result = await db.createSourceLink(dataSourceId, chartId, config);
       return c.json(result, 201);
     } catch (e) {
@@ -239,18 +235,16 @@ router.delete(
   "/:id/links/:chartId",
   describeRoute({
     description: "Remove a chart-datasource link",
-    responses: { 204: R[204], 401: R[401], 404: R[404], 500: R[500] },
+    responses: { 204: R[204], 403: R[403], 404: R[404], 500: R[500] },
   }),
-  requireUser,
+  requireAuth,
   async (c) => {
     try {
-      const user = c.get("user") as ParsedToken;
       const dataSourceId = c.req.param("id");
       const chartId = c.req.param("chartId");
       const ds = await db.findDataSourceById(dataSourceId);
       if (!ds) return c.json({ error: "Not Found" }, 404);
-      const allowed = await db.canUserModifyProject(user.userId, ds.projectId);
-      if (!allowed) return c.json({ error: "Not Authorized" }, 401);
+      if (!(await canModify(c, ds.projectId))) return c.json({ error: "Write access required" }, 403);
       await db.deleteSourceLink(dataSourceId, chartId);
       return c.body(null, 204);
     } catch (e) {
