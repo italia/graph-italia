@@ -1,10 +1,18 @@
+import {
+  ColorSchemeProvider,
+  RenderChart,
+  type FieldDataType,
+} from "dataviz-components";
 import React, { useEffect, useMemo, useState } from "react";
-import { WidthProvider, Responsive } from "react-grid-layout/legacy";
+import { Responsive, WidthProvider } from "react-grid-layout/legacy";
+import { Helmet } from "react-helmet";
+import { useTranslation } from "react-i18next";
+import { FaInfo } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import EditStepComponent from "../../components/EditStepComponent";
 import AppLayout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
-import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
 import * as api from "../../lib/api";
 import useDashboardEditStore, {
   type ChartLookup,
@@ -13,10 +21,6 @@ import useDashboardEditStore, {
 } from "../../lib/store/dashboard-edit.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { HOME_ROUTE, ROUTES } from "../../router";
-import { Helmet } from 'react-helmet';
-import { useTranslation } from "react-i18next";
-import { FaInfo } from "react-icons/fa";
-import EditStepComponent from "../../components/EditStepComponent";
 
 // ─── Grid constants ───────────────────────────────────────────────────────────
 // 12 cols everywhere (bootstrap-style). User picks conceptual spans 1–3.
@@ -67,9 +71,11 @@ function buildLayouts(items: TLayoutItem[]) {
 
   function packBp(bp: string) {
     const sorted = [...items].sort((a, b) =>
-      a.y !== b.y ? a.y - b.y : a.x - b.x
+      a.y !== b.y ? a.y - b.y : a.x - b.x,
     );
-    let x = 0, y = 0, rowMaxH = 1;
+    let x = 0,
+      y = 0,
+      rowMaxH = 1;
     return sorted.map((item) => {
       const w = toGridW(item.w, bp);
       if (x + w > TOTAL_COLS) {
@@ -103,19 +109,30 @@ interface ChartSelectionProps {
   onSelect: (chart?: TChartRef) => void;
 }
 
-function ChartSelection({ charts: assignedCharts, onSelect }: ChartSelectionProps) {
+function ChartSelection({
+  charts: assignedCharts,
+  onSelect,
+}: ChartSelectionProps) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editDashboard`,
+  });
   const [available, setAvailable] = useState<ChartLookup[]>([]);
 
   useEffect(() => {
     const usedIds = new Set(Object.values(assignedCharts).map((c) => c.id));
-    api.getCharts().then((list: ChartLookup[]) =>
-      setAvailable(list.filter((c) => !usedIds.has(c.id)))
-    ).catch(console.error);
+    api
+      .getCharts()
+      .then((list: ChartLookup[]) =>
+        setAvailable(list.filter((c) => !usedIds.has(c.id))),
+      )
+      .catch(console.error);
   }, [assignedCharts]);
 
   return (
     <div className="flex flex-col gap-2 min-w-[260px]">
-      <label htmlFor="select-chart" className="label-text">Select a chart:</label>
+      <label htmlFor="select-chart" className="label-text">
+        {t(`components.chartSelection.form.fields.selectChart.label`)}
+      </label>
       <select
         id="select-chart"
         className="select select-primary w-full"
@@ -125,9 +142,17 @@ function ChartSelection({ charts: assignedCharts, onSelect }: ChartSelectionProp
           onSelect(found);
         }}
       >
-        <option value="" disabled>— select a chart —</option>
+        <option value="" disabled>
+          --{" "}
+          {t(
+            `components.chartSelection.form.fields.selectChart.options.noValue`,
+          )}{" "}
+          --
+        </option>
         {available.map((c) => (
-          <option key={c.id} value={c.id}>{c.name}</option>
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
         ))}
       </select>
     </div>
@@ -146,6 +171,9 @@ function SlotToolbar({
   onAddChart: () => void;
   onSizeChange: (colSpan: number, rowSpan: number) => void;
 }) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editDashboard`,
+  });
   return (
     <div
       className="rgl-drag-handle flex items-center gap-1 px-2 bg-base-200 border-b shrink-0 cursor-move select-none"
@@ -153,7 +181,9 @@ function SlotToolbar({
     >
       <span className="badge badge-error badge-xs font-mono">{item.i}</span>
 
-      <span className="text-xs opacity-50 ml-1">Width</span>
+      <span className="text-xs opacity-50 ml-1">
+        {t(`components.slotToolbar.width.label`)}
+      </span>
       {[1, 2, 3].map((span) => (
         <button
           key={span}
@@ -166,7 +196,9 @@ function SlotToolbar({
         </button>
       ))}
 
-      <span className="text-xs opacity-50 ml-1">Height</span>
+      <span className="text-xs opacity-50 ml-1">
+        {t(`components.slotToolbar.height.label`)}
+      </span>
       {[1, 2, 3, 4].map((rows) => (
         <button
           key={rows}
@@ -182,16 +214,16 @@ function SlotToolbar({
       <button
         type="button"
         className="btn btn-xs btn-outline ml-1"
-        title="Assign chart"
+        title={t(`components.slotToolbar.actions.change.title`)}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onAddChart}
       >
-        Change
+        {t(`components.slotToolbar.actions.change.label`)}
       </button>
       <button
         type="button"
         className="btn btn-xs btn-error ml-auto"
-        title="Remove slot"
+        title={t(`components.slotToolbar.actions.remove.title`)}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onDelete}
       >
@@ -205,25 +237,42 @@ function SlotToolbar({
 function DashboardEditPage() {
   const { id } = useParams();
   const {
-    layout, show, charts, name, description,
-    isLoading, error, loaded,
-    setBreakpoint, setSelectedChart, setLayout,
-    addItem, deleteItem, updateItemSize,
-    showAddModal, closeAddModal,
-    load, reload, save, publish, setName, setDescription, setPublish
+    layout,
+    show,
+    charts,
+    name,
+    description,
+    isLoading,
+    error,
+    loaded,
+    setBreakpoint,
+    setSelectedChart,
+    setLayout,
+    addItem,
+    deleteItem,
+    updateItemSize,
+    showAddModal,
+    closeAddModal,
+    load,
+    reload,
+    save,
+    publish,
+    setName,
+    setDescription,
+    setPublish,
   } = useDashboardEditStore();
 
-  const [isSaving, setIsSaving] = useState<boolean>(false)
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   async function saveHandler() {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       const ok = await save();
       if (ok) reload();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
   }
 
@@ -238,15 +287,13 @@ function DashboardEditPage() {
   const layouts = useMemo(() => buildLayouts(layout), [layout]);
   const navigate = useNavigate();
   const { t } = useTranslation("pages", {
-    keyPrefix: `charts.editChart`,
+    keyPrefix: `charts.editDashboard`,
   });
 
   return (
     <AppLayout>
       <Helmet>
-        <title>
-          {`Edit Dashboard`}
-        </title>
+        <title>{`${t(`head.title.label`)}`}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
       <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
@@ -261,7 +308,9 @@ function DashboardEditPage() {
           <h3>Dashboard Editor</h3>
         </div>
         <div className="flex-shrink-0">
-          <button type="button" onClick={reload} className="btn btn-outline">Reset</button>
+          <button type="button" onClick={reload} className="btn btn-outline">
+            Reset
+          </button>
           <button
             type="button"
             onClick={saveHandler}
@@ -281,7 +330,11 @@ function DashboardEditPage() {
       </div>
       <div className="p-4">
         {isLoading && <Loading />}
-        {error && <div role="alert" className="alert alert-error">{error.message}</div>}
+        {error && (
+          <div role="alert" className="alert alert-error">
+            {error.message}
+          </div>
+        )}
         {loaded && (
           <div className="w-full">
             <div className="w-full grid grid-cols-2 xl:grid-cols-6  gap-4">
@@ -311,7 +364,9 @@ function DashboardEditPage() {
                             htmlFor="chart_visibility"
                             className="text-sm text-base-content/70 cursor-pointer"
                           >
-                            {t(`body.options.setup.form.fields.visibility.label`)}
+                            {t(
+                              `body.options.setup.form.fields.visibility.label`,
+                            )}
                           </label>
                           <span className="text-sm text-base-content font-bold">
                             {t(
@@ -339,7 +394,9 @@ function DashboardEditPage() {
                           htmlFor="chart_description"
                           className="mt-4 text-base-content/70"
                         >
-                          {t(`body.options.setup.form.fields.description.label`)}
+                          {t(
+                            `body.options.setup.form.fields.description.label`,
+                          )}
                         </label>
                         <textarea
                           id="chart_description"
@@ -376,32 +433,38 @@ function DashboardEditPage() {
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="card bg-base-100 shadow-sm border border-base-200">
               <div className="card-body">
-
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="text-primary font-bold">
                     <FaInfo />
                   </span>
                 </div>
                 <div>
-                  <h2 className="card-title text-xl">
-                    {`Edit Dashboard slots`}
-                  </h2>
+                  <h2 className="card-title text-xl">{t(`slots.title`)}</h2>
                   <p className="text-sm text-base-content/60">
-                    {`Create Slots and assign charts`}
+                    {t(`slots.description`)}
                   </p>
                 </div>
 
                 <div className="w-full flex align-center justify-between">
-                  <button type="button" className="btn btn-primary mb-4" onClick={addItem}>
-                    Add slot +
+                  <button
+                    type="button"
+                    className="btn btn-primary mb-4"
+                    onClick={addItem}
+                  >
+                    + {t(`slots.actions.addSlot.label`)}
                   </button>
 
-                  <a href={`${ROUTES.viewDashboard(id)}`} target="_blank" className="btn btn-outline">View Chart</a>
+                  <a
+                    href={`${ROUTES.viewDashboard(id)}`}
+                    target="_blank"
+                    className="btn btn-outline"
+                  >
+                    {t(`slots.actions.viewChart.label`)}
+                  </a>
                 </div>
               </div>
             </div>
@@ -431,7 +494,11 @@ function DashboardEditPage() {
                 {layout.map((item) => {
                   const currentChart = charts[item.i] as FieldDataType;
                   // Height of the chart area = total slot height minus toolbar
-                  const chartHeight = ROW_HEIGHT * item.h + MARGIN * (item.h - 1) - TOOLBAR_HEIGHT - 50;
+                  const chartHeight =
+                    ROW_HEIGHT * item.h +
+                    MARGIN * (item.h - 1) -
+                    TOOLBAR_HEIGHT -
+                    50;
 
                   return (
                     <div
@@ -442,7 +509,9 @@ function DashboardEditPage() {
                         item={item}
                         onDelete={() => deleteItem(item.i)}
                         onAddChart={() => showAddModal(item.i)}
-                        onSizeChange={(colSpan, rowSpan) => updateItemSize(item.i, colSpan, rowSpan)}
+                        onSizeChange={(colSpan, rowSpan) =>
+                          updateItemSize(item.i, colSpan, rowSpan)
+                        }
                       />
                       <div style={{ height: chartHeight, overflow: "hidden" }}>
                         {currentChart ? (
@@ -460,7 +529,7 @@ function DashboardEditPage() {
                               className="btn btn-sm btn-outline"
                               onClick={() => showAddModal(item.i)}
                             >
-                              Add Chart +
+                              + {t(`bottom.actions.addChart.label`)}
                             </button>
                           </div>
                         )}
@@ -471,7 +540,6 @@ function DashboardEditPage() {
               </ResponsiveGrid>
             </div>
           </div>
-
         )}
 
         {show && (
@@ -480,7 +548,7 @@ function DashboardEditPage() {
           </Dialog>
         )}
       </div>
-    </AppLayout >
+    </AppLayout>
   );
 }
 

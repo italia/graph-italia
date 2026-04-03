@@ -85,6 +85,109 @@
                 }
             }
         },
+        "editDashboard": {
+            "head": {
+                "title": {
+                    "label": "Modifica dashboard"
+                },
+                "meta": {
+                    "description": {
+                        "content": "Modifica dashboard"
+                    }
+                }
+            },
+            "header": {
+                "actions": {
+                    "back": {
+                        "label": "Torna alla lista"
+                    },
+                    "save": {
+                        "default": "Salva",
+                        "isSaving": "Salvataggio..."
+                    }
+                }
+            },
+            "body": {
+                "options": {
+                    "setup": {
+                        "title": "Informazioni",
+                        "description": "Nome, descrizione e visibilità della dashboard",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Visibilità dashboard",
+                                    "values": {
+                                        "private": "Privato",
+                                        "public": "Pubblico"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Titolo dashboard"
+                                },
+                                "description": {
+                                    "label": "Descrizione dashboard",
+                                    "placeholder": "Aggiungi una descrizione"
+                                }
+                            }
+                        }
+                    }
+                },
+                "preview": {
+                    "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima"
+                }
+            },
+            "slots": {
+                "title": "Modifica dashboard slots",
+                "description": "Crea uno slot e assegnalo al grafico",
+                "actions": {
+                    "addSlot": {
+                        "label": "Aggiungi slot"
+                    },
+                    "viewChart": {
+                        "label": "Visualizza grafico"
+                    }
+                }
+            },
+            "bottom": {
+                "actions": {
+                    "addChart": {
+                        "label": "Aggiungi Grafico"
+                    }
+                }
+            },
+            "components": {
+                "chartSelection": {
+                    "form": {
+                        "fields": {
+                            "selectChart": {
+                                "label": "Seleziona un grafico",
+                                "options": {
+                                    "noValue": "Seleziona un grafico"
+                                }
+                            }
+                        }
+                    }
+                },
+                "slotToolbar": {
+                    "width": {
+                        "label": "Larghezza"
+                    },
+                    "height": {
+                        "label": "Altezza"
+                    },
+                    "actions": {
+                        "change": {
+                            "label": "Cambia",
+                            "title": "Assegna Grafico"
+                        },
+                        "remove": {
+                            "label": "Rimuovi",
+                            "title": "Rimuovi slot"
+                        }
+                    }
+                }
+            }
+        },
         "editKpiGroup": {
             "unsavedChanges": "Hai modifiche non salvate",
             "head": {
