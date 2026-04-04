@@ -2,6 +2,6 @@ apiVersion: v2
 name: dataviz
 description: A Helm chart for Dataviz application (webapp and server)
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "1.0.0"
 
