@@ -265,13 +265,15 @@ function Home() {
         <title>{t(`header.title`)}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex justify-between items-center gap-4 bg-base-300 py-4 px-8 rounded-lg mb-6">
+      <div className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 bg-base-300 py-4 px-8 rounded-lg mb-6">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">{t(`header.title`)}</h1>
+        </div>
+        <div>
           {/* Project Switcher */}
           <div className="flex items-center gap-2 mt-1">
             <div className="dropdown dropdown-bottom">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-xs normal-case gap-2 px-1 opacity-70 hover:opacity-100">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-xl normal-case gap-2 px-1 opacity-70 hover:opacity-100">
                 <FaFolderOpen className="text-secondary" />
                 <span className="max-w-[200px] truncate">
                   {projects.find(p => p.id === currentProjectId)?.name || t("projectSwitcher.selectPrompt", "Select Project")}
@@ -355,7 +357,6 @@ function Home() {
                   </button>
                 </li>
               </ul>
-
 
             </div>
           </div>
