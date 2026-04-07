@@ -6,9 +6,7 @@ import { FaChartBar, FaList, FaMap, FaRegSquare } from "react-icons/fa6";
 
 
 import Layout from "../../components/layout/index.tsx";
-// import RenderChart from "../components/RenderChart";
 import Loading from "../../components/layout/Loading.tsx";
-
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
