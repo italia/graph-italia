@@ -15,6 +15,7 @@ import projectRoutes from "./routes/projects.ts";
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
+import { apiKeyUsageLogger } from "./lib/middlewares.ts";
 
 import { openAPIRouteHandler } from "hono-openapi"
 import { Scalar } from "@scalar/hono-api-reference";
@@ -51,6 +52,9 @@ app.use("*", metricsMiddleware);
 
 // Structured JSON logging (skips healthchecks)
 app.use("*", httpLogger);
+
+// API key usage tracking (logs requests authenticated via API key)
+app.use("*", apiKeyUsageLogger);
 
 // CSRF protection
 app.use(
