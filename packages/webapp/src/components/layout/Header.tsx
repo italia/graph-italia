@@ -6,7 +6,9 @@ import { useUserStore } from "../../lib/store/user_store.ts";
 import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
+import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket } from "react-icons/fa6";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
+
 
 export default function SlimHeader() {
   const { t } = useTranslation("components", {
@@ -42,11 +44,8 @@ export default function SlimHeader() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      if (
-        dropdownToolsRef.current &&
-        !dropdownToolsRef.current.contains(target)
-      ) {
-        setDropdownToolsOpen(false);
+      if (headerRef.current && !headerRef.current.contains(target)) {
+        setOpenDropdown(null);
       }
       if (
         dropdownUserRef.current &&
@@ -253,19 +252,7 @@ export default function SlimHeader() {
                   <li>
                     <button
                       type="button"
-                      className="w-full text-left block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary bg-transparent border-none cursor-pointer transition-colors duration-150"
-                      onClick={() => {
-                        setDropdownUserOpen(false);
-                        handleLogout();
-                      }}
-                    >
-                      {t(`actions.logout.label`)}
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      type="button"
-                      className="w-full text-left block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary bg-transparent border-none cursor-pointer transition-colors duration-150"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-base-content bg-transparent border-none cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors duration-150 text-left"
                       onClick={() => setDropdownUserOpen(false)}
                     >
                       <FaEnvelope className="w-4 h-4 opacity-70" />
@@ -357,9 +344,7 @@ export default function SlimHeader() {
                   className="block py-3 text-[0.9375rem] text-primary-content no-underline hover:text-primary-content/80"
                   onClick={() => setMenuMobileOpen(false)}
                 >
-                  {item.translationKey
-                    ? translateMenu(item.translationKey)
-                    : item.name}
+                  {item.translationKey ? translateMenu(item.translationKey) : item.name}
                 </a>
               </li>
             );

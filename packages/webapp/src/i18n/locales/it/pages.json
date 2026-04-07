@@ -444,7 +444,6 @@
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
-            "personal": "Progetti Personali",
             "selectPrompt": "Seleziona Progetto",
             "newBtn": "Nuovo Progetto"
         },
@@ -563,11 +562,8 @@
         "table": {
             "id": "ID",
             "role": "Ruolo",
-            "project": "Progetto",
-            "orgs": "Organizzazioni",
-            "owner": "Proprietario",
             "created": "Creato il",
-            "expires": "Scadenza",
+            "expires": "Scadenza (min)",
             "actions": "Azioni"
         },
         "modal": {
@@ -585,9 +581,6 @@
         },
         "form": {
             "role": "Ruolo",
-            "project": "Progetto",
-            "selectProject": "Seleziona un progetto",
-            "personal": "Personale",
             "expire": "Scadenza (minuti)"
         }
     },
@@ -629,6 +622,7 @@
             "transferProjectDesc": "Seleziona uno dei tuoi progetti personali da trasferire a questa organizzazione.",
             "transfer": "Trasferisci",
             "cancel": "Annulla",
+
             "create": "Crea",
             "add": "Invita",
             "delete": "Elimina",

@@ -490,6 +490,16 @@
                     }
                 }
             },
+            "renameProject": {
+                "title": "Rename Project",
+                "description": "Enter a new name for this project.",
+                "confirm": "Rename",
+                "form": {
+                    "name": {
+                        "label": "Project Name"
+                    }
+                }
+            },
             "createChart": {
                 "title": "Create new chart",
                 "description": "Name your chart to start editing it",
@@ -615,6 +625,7 @@
             "projectId": "ID",
             "owner": "Owner"
         },
+        "unknownOwner": "Unknown",
         "modal": {
             "createOrgTitle": "Create New Organization",
             "createOrgDesc": "Enter a name for your new organization.",

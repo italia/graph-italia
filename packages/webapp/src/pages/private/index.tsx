@@ -1,10 +1,14 @@
 import { useMachine } from "@xstate/react";
 import { type FieldDataType } from "dataviz-components";
 import { useEffect, useState } from "react";
-import { FaChartBar, FaList, FaMap, FaRegSquare } from "react-icons/fa6";
-
-
-
+import {
+  FaChevronDown,
+  FaChartBar,
+  FaList,
+  FaMap,
+  FaRegSquare,
+  FaPencil,
+} from "react-icons/fa6";
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import { Helmet } from "react-helmet";
@@ -17,7 +21,9 @@ import * as api from "../../lib/api.ts";
 import useChartsStoreState from "../../lib/store/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
-import useStoreState from "../../lib/storeState.ts";
+import useStoreState from "../../lib/store/storeState.ts";
+import useProjectStore from "../../lib/store/projectStore.ts";
+import { FaFolderPlus, FaFolderOpen } from "react-icons/fa6";
 import { ROUTES } from "../../router.tsx";
 
 function Home() {
@@ -34,9 +40,13 @@ function Home() {
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [isCreatingNewChart, setIsCreatingNewChart] = useState<number>(0);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [pendingDeleteDashboardId, setPendingDeleteDashboardId] = useState<
-    string | null
-  >(null);
+  const [pendingDeleteDashboardId, setPendingDeleteDashboardId] = useState<string | null>(null);
+  const {
+    projects,
+    currentProjectId,
+    setProjects,
+    setCurrentProjectId
+  } = useProjectStore();
   const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
@@ -276,12 +286,14 @@ function Home() {
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
                           <button
+                            type="button"
                             className={`flex-grow text-left ${currentProjectId === project.id ? "active" : ""}`}
                             onClick={() => handleSelectProject(project.id)}
                           >
                             {project.name}
                           </button>
                           <button
+                            type="button"
                             className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 px-1"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -306,6 +318,7 @@ function Home() {
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
                           <button
+                            type="button"
                             className={`flex-grow text-left ${currentProjectId === project.id ? "active" : ""}`}
                             onClick={() => handleSelectProject(project.id)}
                           >
@@ -313,6 +326,7 @@ function Home() {
                           </button>
                           {/* Only allow renaming if owner (implicitly checked by server but UI feedback is good) */}
                           <button
+                            type="button"
                             className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 px-1"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -331,10 +345,12 @@ function Home() {
 
                 <div className="divider my-1"></div>
                 <li>
-                  <button onClick={() => {
-                    setShowCreateProjectDialog(true);
-                    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-                  }} className="text-primary gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateProjectDialog(true);
+                      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+                    }} className="text-primary gap-2">
                     <FaFolderPlus /> {t("projectSwitcher.newBtn", "New Project")}
                   </button>
                 </li>
@@ -345,19 +361,20 @@ function Home() {
           </div>
         </div>
         <div className="flex-shrink-0">
-          <div className="flex my-5 gap-4">
-            {!loading && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => setShowCreateNewDialog(true)}
-              >
-                + {t(`body.actions.createNew.label`)}
-              </button>
-            )}
+          <div className="flex gap-4">
+            {!loading && <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowCreateNewDialog(true)}
+            >
+              + Create New
+            </button>
+            }
           </div>
         </div>
       </div>
+
+
 
       <div className="p-6">
         {loading ? (
@@ -452,10 +469,11 @@ function Home() {
         cancelCb={() => setShowCreateProjectDialog(false)}
       >
         <div className="form-control w-full py-2">
-          <label className="label">
+          <label htmlFor="create-project-input" className="label">
             <span className="label-text font-semibold">{t("modals.createProject.form.name.label", "Project Name")}</span>
           </label>
           <input
+            id="create-project-input"
             type="text"
             className="input input-bordered w-full"
             placeholder={t("modals.createProject.form.name.placeholder", "E.g. Marketing Dashboard")}
@@ -483,10 +501,11 @@ function Home() {
         cancelCb={() => setShowRenameProjectDialog(false)}
       >
         <div className="form-control w-full py-2">
-          <label className="label">
+          <label htmlFor="rename-project-input" className="label">
             <span className="label-text font-semibold">{t("modals.renameProject.form.name.label", "Project Name")}</span>
           </label>
           <input
+            id="rename-project-input"
             type="text"
             className="input input-bordered w-full"
             value={renameProjectName}
