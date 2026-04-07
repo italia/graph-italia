@@ -9,13 +9,8 @@ import {
   FaRegSquare,
   FaPencil,
 } from "react-icons/fa6";
-
-
-
 import Layout from "../../components/layout/index.tsx";
-// import RenderChart from "../components/RenderChart";
 import Loading from "../../components/layout/Loading.tsx";
-
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -29,8 +24,7 @@ import stepMachine from "../../lib/stepMachine.ts";
 import useStoreState from "../../lib/store/storeState.ts";
 import useProjectStore from "../../lib/store/projectStore.ts";
 import { FaFolderPlus, FaFolderOpen } from "react-icons/fa6";
-
-
+import { ROUTES } from "../../router.tsx";
 
 function Home() {
   const { t } = useTranslation("pages", { keyPrefix: "home" });
