@@ -3,7 +3,7 @@ import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { verifyAccessToken } from "./jwt";
 import { logger } from "./logger";
-import { findApiKeyByRawKey } from "./db/apiKeyDb";
+import { findApiKeyByRawKey, createApiLog } from "./db/apiKeyDb";
 import { getDefaultProjectId, canUserModifyProject } from "./db/projectDb";
 import type { Context } from "hono";
 import type { ApiKeyRole } from "./db/prisma/enums";
@@ -128,6 +128,29 @@ export const requireApiKeyRole = (requiredRole: ApiKeyRole) =>
 		}
 		await next();
 	});
+
+// Middleware to log API usage when the request is authenticated via API key.
+// Must be registered globally (before routes) so it wraps all handlers.
+export const apiKeyUsageLogger = createMiddleware(async (c, next) => {
+	const start = Date.now();
+	await next();
+	const apiKey = c.get("apiKey") as { id: string } | null | undefined;
+	if (!apiKey) return;
+	const responseTime = Date.now() - start;
+	try {
+		await createApiLog({
+			apiKeyId: apiKey.id,
+			method: c.req.method,
+			endpoint: c.req.path,
+			status: c.res.status,
+			responseTime,
+		});
+	} catch (err) {
+		logger.warn("Failed to write API key usage log", {
+			error: err instanceof Error ? err.message : "Unknown error",
+		});
+	}
+});
 
 /**
  * Route-handler helper — checks whether the current caller can write to a project.

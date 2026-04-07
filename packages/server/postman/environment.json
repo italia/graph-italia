@@ -1,0 +1,14 @@
+{
+  "id": "dataviz-env",
+  "name": "Dataviz API — Local",
+  "_postman_variable_scope": "environment",
+  "values": [
+    { "key": "base_url", "value": "http://localhost:3003/api", "enabled": true },
+    { "key": "api_key",  "value": "dv_replace_with_your_key",  "enabled": true },
+    { "key": "chart_id",      "value": "", "enabled": true },
+    { "key": "dashboard_id",  "value": "", "enabled": true },
+    { "key": "datasource_id", "value": "", "enabled": true },
+    { "key": "apikey_id",     "value": "", "enabled": true },
+    { "key": "project_id",    "value": "", "enabled": true }
+  ]
+}

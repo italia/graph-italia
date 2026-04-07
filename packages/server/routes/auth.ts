@@ -188,7 +188,18 @@ const loginSchema = z.object({
 	password: z.string({ error: "Password is required" }),
 });
 
-router.post("/login", zValidator("json", loginSchema), async (c) => {
+const loginSuccessSchema = z.object({ auth: z.boolean() });
+
+router.post("/login",
+	describeRoute({
+		description: "Authenticate with email and password. Sets an access_token cookie on success.",
+		responses: {
+			200: { description: "Logged in", content: { "application/json": { schema: resolver(loginSuccessSchema) } } },
+			401: { description: "Invalid credentials or unverified email", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	zValidator("json", loginSchema), async (c) => {
 	try {
 		const { email, password } = c.req.valid("json");
 		const existingUser = await db.findUserByEmail(email);
@@ -245,7 +256,14 @@ const recoverSchema = z.object({
 	email: z.email({ error: "Invalid email address" }),
 });
 
-router.post("/recover", zValidator("json", recoverSchema), async (c) => {
+router.post("/recover",
+	describeRoute({
+		description: "Request a password reset email. Always returns success to prevent email enumeration.",
+		responses: {
+			200: { description: "Recovery email sent (or silently ignored)", content: { "application/json": { schema: resolver(z.boolean()) } } },
+		},
+	}),
+	zValidator("json", recoverSchema), async (c) => {
 	clearAccessTokenCookie(c);
 	const { email } = c.req.valid("json");
 
@@ -264,7 +282,14 @@ router.post("/recover", zValidator("json", recoverSchema), async (c) => {
 
 // LOGOUT
 
-router.get("/logout", (c) => {
+router.get("/logout",
+	describeRoute({
+		description: "Clear the access_token cookie and log the user out.",
+		responses: {
+			200: { description: "Logged out", content: { "application/json": { schema: resolver(z.boolean()) } } },
+		},
+	}),
+	(c) => {
 	const user = c.get("user") as any;
 	logger.info("User logged out", { userId: user?.userId });
 	clearAccessTokenCookie(c);
@@ -280,7 +305,18 @@ const verifySchema = z.object({
 	code: z.string({ error: "code is required" }),
 });
 
-router.post("/verify", zValidator("json", verifySchema), async (c) => {
+const authSuccessSchema = z.object({ auth: z.boolean() });
+
+router.post("/verify",
+	describeRoute({
+		description: "Verify a user account using the PIN sent to their email.",
+		responses: {
+			200: { description: "Verified and logged in", content: { "application/json": { schema: resolver(authSuccessSchema) } } },
+			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	zValidator("json", verifySchema), async (c) => {
 	const { uid, code } = c.req.valid("json");
 
 	if (!uid || !code) {
@@ -337,6 +373,14 @@ const confirmSchema = z.object({
 
 router.get(
 	"/confirm/:uid/:code",
+	describeRoute({
+		description: "Confirm email via link (redirects to app on success).",
+		responses: {
+			302: { description: "Redirect to app after successful confirmation" },
+			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
 	zValidator("param", confirmSchema),
 	async (c) => {
 		const { uid, code } = c.req.valid("param");
@@ -387,6 +431,14 @@ const changePwdSchema = z.object({
 
 router.put(
 	"/pwd",
+	describeRoute({
+		description: "Change the current user's password. Requires an active session.",
+		responses: {
+			204: { description: "Password changed successfully" },
+			400: { description: "Missing user or password", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
 	requireUser,
 	zValidator("json", changePwdSchema),
 	async (c) => {
