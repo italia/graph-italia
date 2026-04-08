@@ -60,6 +60,18 @@ export function findProjectById(id: string) {
   });
 }
 
+export async function createProject(userId: string, name: string) {
+  return prisma.$transaction(async (tx) => {
+    const project = await tx.project.create({
+      data: { name, ownerId: userId },
+    });
+    await tx.projectMember.create({
+      data: { userId, projectId: project.id, role: "ADMIN" },
+    });
+    return project;
+  });
+}
+
 export function updateProject(id: string, name: string) {
   return prisma.project.update({ where: { id }, data: { name } });
 }

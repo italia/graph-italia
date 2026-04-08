@@ -134,12 +134,9 @@ router.post(
     try {
       const user = c.get("user") as ParsedToken;
       const { name } = c.req.valid("json");
-      const project = await db.createDefaultProject(user.userId);
-      const result = name !== "Default Project"
-        ? await db.updateProject(project.id, name)
-        : project;
-      logger.info("Project created", { projectId: result.id, userId: user.userId });
-      return c.json(result, 201);
+      const project = await db.createProject(user.userId, name);
+      logger.info("Project created", { projectId: project.id, userId: user.userId });
+      return c.json(project, 201);
     } catch (e) {
       logger.error("Project create error", e instanceof Error ? e : undefined);
       return c.json({ error: "Internal error" }, 500);

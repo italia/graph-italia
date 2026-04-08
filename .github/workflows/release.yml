@@ -193,6 +193,61 @@ jobs:
           kubectl rollout status deployment/dataviz-server -n dataviz
           echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz"
 
+  publish-npm:
+    name: 📦 Publish npm package
+    runs-on: arc-runner-italia
+    needs: [prepare]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v5
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: 📦 Install dependencies
+        working-directory: packages/components
+        run: bun install --frozen-lockfile || bun install
+
+      - name: 🏗️ Build library
+        working-directory: packages/components
+        run: bun run build
+
+      - name: 🔍 Check if version already published
+        id: check
+        working-directory: packages/components
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version 2>/dev/null; then
+            echo "already_published=true" >> $GITHUB_OUTPUT
+            echo "⚠️ ${PACKAGE_NAME}@${PACKAGE_VERSION} is already published, skipping."
+          else
+            echo "already_published=false" >> $GITHUB_OUTPUT
+            echo "📦 ${PACKAGE_NAME}@${PACKAGE_VERSION} will be published."
+          fi
+
+      - name: 🚀 Publish to npm
+        if: steps.check.outputs.already_published == 'false'
+        working-directory: packages/components
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: ✅ Published
+        if: steps.check.outputs.already_published == 'false'
+        run: echo "✅ Published ${{ steps.check.outputs.name }}@${{ steps.check.outputs.version }} to npm"
+
   deploy-test:
     name: 🧪 Deploy to Test Environment
     runs-on: arc-runner-italia
