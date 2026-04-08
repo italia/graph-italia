@@ -21,7 +21,7 @@ export function findUserByEmail(email: string) {
 export async function createUserByEmailAndPassword(user: UserCreateInput) {
 	user.password = bcrypt.hashSync(user.password, 12);
 	const created = await prisma.user.create({ data: user });
-	await createDefaultProject(created.id);
+	await createDefaultProject(created.id, created.email);
 	return created;
 }
 

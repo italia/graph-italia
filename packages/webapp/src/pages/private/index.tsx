@@ -86,10 +86,11 @@ function Home() {
     try {
       const data = await api.getProjects();
       setProjects(data);
-      // If no project selected, select the first one (or server will fallback to default)
-      if (!currentProjectId && data.length > 0) {
-        // We don't necessarily need to set it here because the server handles default,
-        // but it's good for UI consistency
+      if (data.length > 0) {
+        const exists = data.some(p => p.id === currentProjectId);
+        if (!currentProjectId || !exists) {
+          setCurrentProjectId(data[0].id);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch projects:", error);

@@ -1,14 +1,25 @@
 import { prisma } from "./prisma";
 
 /**
- * Creates a "Default Project" owned by the user and adds them as ADMIN member.
+ * Creates a default project owned by the user and adds them as ADMIN member.
+ * The project name is derived from the email prefix (e.g. "l.ponticelli's default project").
+ * If the user already owns at least one project, skips creation and returns null.
  * Called automatically on user registration.
  */
-export async function createDefaultProject(userId: string) {
+export async function createDefaultProject(userId: string, email?: string) {
+  const existing = await prisma.project.findFirst({
+    where: { ownerId: userId },
+    select: { id: true },
+  });
+  if (existing) return null;
+
+  const prefix = email ? email.split("@")[0] : null;
+  const name = prefix ? `${prefix}'s default project` : "Default Project";
+
   return prisma.$transaction(async (tx) => {
     const project = await tx.project.create({
       data: {
-        name: "Default Project",
+        name,
         ownerId: userId,
       },
     });
