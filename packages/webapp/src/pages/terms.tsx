@@ -13,22 +13,22 @@ export default function Landing() {
 
   **Last Updated:** February 2, 2026
 
-  Welcome to **Dataviz**. By accessing or using our web application, you agree to be bound by these Terms of Service. Please read them carefully.
+  Welcome to **Graph Italia**. By accessing or using our web application, you agree to be bound by these Terms of Service. Please read them carefully.
 
   ## 1\. Account Registration
 
-  To use the full features of Dataviz, you must create an account.
+  To use the full features of Graph Italia, you must create an account.
 
   *   You agree to provide a valid **email address** for account verification.
 
   *   You are responsible for maintaining the security of your account and password.
 
-  *   Dataviz cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.
+  *   Graph Italia cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.
 
 
   ## 2\. Use of Service & Data
 
-  Dataviz allows you to upload/connect data and transform it into visualizations.
+  Graph Italia allows you to upload/connect data and transform it into visualizations.
 
   *   **Ownership:** You retain full ownership of any data (CSV/JSON files) you upload and any charts you create.
 
@@ -39,7 +39,7 @@ export default function Landing() {
 
   ## 3\. Publishing and Embedding
 
-  Dataviz provides features that allow you to publish and embed your charts on external websites.
+  Graph Italia provides features that allow you to publish and embed your charts on external websites.
 
   *   **Public Access:** Once a chart is published, it is accessible to anyone with the link or anyone visiting the page where it is embedded.
 
@@ -68,11 +68,11 @@ export default function Landing() {
 
   ## 6\. Disclaimer of Warranties
 
-  The service is provided on an **"as is"** and **"as available"** basis. Dataviz makes no warranties, expressed or implied, regarding the reliability, accuracy, or availability of the service or the visualizations generated.
+  The service is provided on an **"as is"** and **"as available"** basis. Graph Italia makes no warranties, expressed or implied, regarding the reliability, accuracy, or availability of the service or the visualizations generated.
 
   ## 7\. Limitation of Liability
 
-  In no event shall Dataviz be liable for any direct, indirect, incidental, or consequential damages resulting from the use or the inability to use the service, including the loss of data or the breaking of embedded charts due to account deletion.
+  In no event shall Graph Italia be liable for any direct, indirect, incidental, or consequential damages resulting from the use or the inability to use the service, including the loss of data or the breaking of embedded charts due to account deletion.
 
   ## 8\. Modifications to Service
 

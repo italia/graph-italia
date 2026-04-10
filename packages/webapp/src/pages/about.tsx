@@ -189,7 +189,7 @@ export default function Landing() {
                 </span>
                 {t("hero.chip")}
               </p>
-              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
+              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight [text-wrap:balance]">
                 <Trans
                   t={t}
                   i18nKey="hero.title"
@@ -307,7 +307,7 @@ export default function Landing() {
                 {t("contentBlock.title")}
               </h2>
               {/* <p className="mt-4 text-lg leading-8 text-base-content/70">
-                Start visualizing your data with Dataviz today. Dataviz makes
+                Start visualizing your data with Graph Italia today. Graph Italia makes
                 data visualization quick, simple, and powerful. Try it and see
                 how easily you can create, edit, and publish stunning charts in
                 minutes.

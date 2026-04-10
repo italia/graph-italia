@@ -1,26 +1,26 @@
 {
     "back": "Back to home",
-    "title": "Come creare grafici con Dataviz",
-    "description": "Creare grafici usando Dataviz è semplice e puoi farlo usando dati che possiedi oppure da una banca dati.",
+    "title": "Come creare grafici con Graph Italia",
+    "description": "Creare grafici usando Graph Italia è semplice e puoi farlo usando dati che possiedi oppure da una banca dati.",
     "steps": {
         "step1": {
             "title": "1 - Accesso e creazione nuovo grafico",
-            "text": "Accedi al tuo account Dataviz. Nella dashboard, clicca sul pulsante <strong>\"Create New Chart\"</strong> per iniziare un nuovo progetto.",
+            "text": "Accedi al tuo account Graph Italia. Nella dashboard, clicca sul pulsante <strong>\"Create New Chart\"</strong> per iniziare un nuovo progetto.",
             "listItems": {
-                "item1": "Log in to your Dataviz account.",
+                "item1": "Log in to your Graph Italia account.",
                 "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
             }
         },
         "step2": {
             "title": "2 - Carica i tuoi dati",
-            "text": "Se hai già una base dati per creare il grafico, carica il file in versione CSV. Se non hai ancora dei dati, puoi usare: <strong>Dati di esempio</strong>: usa la base dati fornita da Dataviz (opzione <strong>\"Usa sample data”</strong>); oppure, <strong>Generare dati</strong>: vai nella sezione <strong>Tools</strong> e poi su <strong>Generate Data</strong> per creare automaticamente un file CSV da caricare sulla piattaforma. ",
+            "text": "Se hai già una base dati per creare il grafico, carica il file in versione CSV. Se non hai ancora dei dati, puoi usare: <strong>Dati di esempio</strong>: usa la base dati fornita da Graph Italia (opzione <strong>\"Usa sample data”</strong>); oppure, <strong>Generare dati</strong>: vai nella sezione <strong>Tools</strong> e poi su <strong>Generate Data</strong> per creare automaticamente un file CSV da caricare sulla piattaforma. ",
             "listItems": {
                 "item1": {
                     "text": "If you don't have data yet, you can",
                     "items": {
-                        "item1": "<strong>Sample data</strong>: use the datasets provided by Dataviz (option \"Use Sample Data\").",
+                        "item1": "<strong>Sample data</strong>: use the datasets provided by Graph Italia (option \"Use Sample Data\").",
                         "item2": "<strong>Generate data</strong>: from the Tools section → <a>Generate Data</a> to create a CSV automatically.",
-                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Dataviz will parse it and display the data in a table."
+                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Graph Italia will parse it and display the data in a table."
                     }
                 }
             }
