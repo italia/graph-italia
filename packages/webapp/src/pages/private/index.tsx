@@ -297,7 +297,8 @@ function Home() {
                           </button>
                           <button
                             type="button"
-                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 px-1"
+                            aria-label={t("projectSwitcher.renameBtn", { name: project.name, defaultValue: `Rinomina progetto ${project.name}` })}
+                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 px-1"
                             onClick={(e) => {
                               e.stopPropagation();
                               setProjectToRename(project);
@@ -305,7 +306,7 @@ function Home() {
                               setShowRenameProjectDialog(true);
                             }}
                           >
-                            <FaPencil className="w-3 h-3" />
+                            <FaPencil className="w-3 h-3" aria-hidden="true" />
                           </button>
                         </div>
                       </li>
@@ -330,7 +331,8 @@ function Home() {
                           {/* Only allow renaming if owner (implicitly checked by server but UI feedback is good) */}
                           <button
                             type="button"
-                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 px-1"
+                            aria-label={t("projectSwitcher.renameBtn", { name: project.name, defaultValue: `Rinomina progetto ${project.name}` })}
+                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 px-1"
                             onClick={(e) => {
                               e.stopPropagation();
                               setProjectToRename(project);
@@ -338,7 +340,7 @@ function Home() {
                               setShowRenameProjectDialog(true);
                             }}
                           >
-                            <FaPencil className="w-3 h-3" />
+                            <FaPencil className="w-3 h-3" aria-hidden="true" />
                           </button>
                         </div>
                       </li>
@@ -369,7 +371,7 @@ function Home() {
               className="btn btn-primary"
               onClick={() => setShowCreateNewDialog(true)}
             >
-              + Create New
+              <span aria-hidden="true">+</span> {t("body.actions.createNew.label", "Crea nuovo")}
             </button>
             }
           </div>
@@ -383,10 +385,16 @@ function Home() {
           <Loading />
         ) : (
           <>
-            <div className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6">
-              <h3 className="text-lg mb-4 font-semibold">
-                {t(`header.${list && list.length ? "charts" : "noCharts"}`)}
-              </h3>
+            <section
+              aria-labelledby="charts-section-heading"
+              className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6"
+            >
+              <h2
+                id="charts-section-heading"
+                className="text-lg mb-4 font-semibold"
+              >
+                {t(`header.charts`)}
+              </h2>
 
               <div>
                 <ChartTable
@@ -395,14 +403,18 @@ function Home() {
                   handleDeleteChart={handleDeleteChart}
                 />
               </div>
-            </div>
-            <div className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6">
+            </section>
+            <section
+              aria-labelledby="dashboards-section-heading"
+              className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6"
+            >
               <div className="mt-10">
-                <h3 className="text-lg mb-4 font-semibold">
-                  {t(
-                    `header.${dashboardList && dashboardList.length ? "dashboards" : "noDashboards"}`,
-                  )}
-                </h3>
+                <h2
+                  id="dashboards-section-heading"
+                  className="text-lg mb-4 font-semibold"
+                >
+                  {t(`header.dashboards`)}
+                </h2>
                 {dashboardLoading ? (
                   <Loading />
                 ) : (
@@ -420,7 +432,7 @@ function Home() {
                   />
                 )}
               </div>
-            </div>
+            </section>
           </>
         )}
       </div>

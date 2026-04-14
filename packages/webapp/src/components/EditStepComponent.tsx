@@ -12,7 +12,10 @@ export default function EditStepComponent(props: {
     <details className="collapse collapse-arrow bg-base-100 border border-base-200" name={`my-accordion-det-${index}`} aria-disabled={isDisabled} open={isOpen}>
       <summary className="collapse-title font-semibold">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <div
+            className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
+            aria-hidden="true"
+          >
             <span className="text-primary font-bold">
               <Icon />
             </span>

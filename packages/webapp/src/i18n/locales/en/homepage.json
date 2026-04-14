@@ -4,7 +4,7 @@
         "title": "<block>Transform Data Into</block> <gradient>stunning visuals</gradient> <withBlock>with <brand>Graph Italia</brand><withBlock>",
         "description": "Effortlessly convert your CSV data into beautiful, interactive charts with Graph Italia. Whether you're a data analyst, business professional, or content creator, Graph Italia offers an intuitive interface to bring your numbers to life.",
         "ctas": {
-            "getStarted": "Get Started",
+            "getStarted": "Log in",
             "quickStart": "Quick start guide"
         }
     },
@@ -26,7 +26,7 @@
             }
         },
         "ctas": {
-            "getStarted": "Get Started"
+            "getStarted": "Log in"
         }
     }
 }

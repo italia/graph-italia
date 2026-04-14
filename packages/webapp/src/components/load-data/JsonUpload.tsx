@@ -10,12 +10,14 @@ function UploadJSON({
 }) {
 
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
 
   let fileReader: FileReader | undefined;
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setData(null);
     setError(null);
+    setStatus(null);
     if (fileReader) {
       fileReader.abort();
     }
@@ -41,6 +43,9 @@ function UploadJSON({
       }
       if (data) {
         setData(data);
+        setStatus(
+          `File "${file?.name ?? "JSON"}" caricato: ${data.length} righe, ${data[0]?.length ?? 0} colonne.`,
+        );
       }
     };
   }
@@ -66,6 +71,10 @@ function UploadJSON({
             <span className="text-sm">{error}</span>
           </div>
         )}
+      </div>
+
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {status}
       </div>
 
     </div>

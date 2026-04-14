@@ -31,6 +31,14 @@
                 }
             },
             "header": {
+                "pageTitle": {
+                    "new": "New chart",
+                    "edit": "Edit chart"
+                },
+                "preview": {
+                    "heading": "Preview",
+                    "untitled": "Untitled chart"
+                },
                 "actions": {
                     "back": {
                         "label": "Back to list"
@@ -81,7 +89,8 @@
                     }
                 },
                 "preview": {
-                    "loadDataMessage": "Load your data to display the data preview"
+                    "loadDataMessage": "Load your data to display the data preview",
+                    "chartA11y": "Chart of type {{type}}: {{name}}. {{description}}"
                 }
             }
         },
@@ -97,6 +106,14 @@
                 }
             },
             "header": {
+                "pageTitle": {
+                    "new": "New dashboard",
+                    "edit": "Edit dashboard"
+                },
+                "preview": {
+                    "heading": "Preview",
+                    "untitled": "Untitled dashboard"
+                },
                 "actions": {
                     "back": {
                         "label": "Back to list"
@@ -437,10 +454,12 @@
         },
         "header": {
             "title": "Private Area",
-            "charts": "Charts",
-            "noCharts": "Welcome",
-            "dashboards": "Dashboards",
-            "noDashboards": "There is no Dashboards yet"
+            "charts": "My charts",
+            "noCharts": "My charts",
+            "chartsEmpty": "You haven't created any chart yet. Use \"Create new\" to start.",
+            "dashboards": "My dashboards",
+            "noDashboards": "My dashboards",
+            "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start."
         },
         "projectSwitcher": {
             "title": "Your Projects",

@@ -47,7 +47,7 @@
     },
     "actions": {
         "getStarted": {
-            "label": "Login and get started"
+            "label": "Log in"
         }
     }
 }

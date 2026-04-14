@@ -4,7 +4,7 @@
         "title": "<block>Racconta i tuoi dati in modo semplice</block> <gradient>trasformandoli in grafici</gradient> <withBlock>semplici e accessibili</withBlock>",
         "description": "Usa Graph Italia per convertire la tua base dati da un file CSV in grafici interattivi. L’interfaccia intuitiva rende l’utilizzo della piattaforma semplice e accessibile a tutti.",
         "ctas": {
-            "getStarted": "Accedi e inizia",
+            "getStarted": "Accedi",
             "quickStart": "Come usare Graph Italia"
         }
     },
@@ -26,7 +26,7 @@
             }
         },
         "ctas": {
-            "getStarted": "Accedi e inizia"
+            "getStarted": "Accedi"
         }
     }
 }

@@ -47,7 +47,7 @@
     },
     "actions": {
         "getStarted": {
-            "label": "Accedi e inizia"
+            "label": "Accedi"
         }
     }
 }

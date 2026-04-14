@@ -4,15 +4,19 @@ export default function Footer() {
   const { t } = useTranslation("components", {
     keyPrefix: "components.layout.footer",
   });
+  const brand = t(`brand.title`);
+  const tagline = t(`brand.tagline`);
+
   return (
     <footer className="footer bg-accent text-accent-content p-4">
-      <aside>
-        <p>
-          <span className="text-lg font-bold">{t(`brand.title`)}</span>:{" "}
-          <em> {t(`brand.tagline`)}</em>
-        </p>
-      </aside>
-      <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+      <div>
+        <p className="text-lg font-bold m-0">{brand}</p>
+        {tagline && <p className="m-0">{tagline}</p>}
+      </div>
+      <nav
+        aria-label={t(`navLabel`, { defaultValue: "Link del footer" })}
+        className="grid-flow-col gap-4 md:place-self-center md:justify-self-end"
+      >
         <a href="/quickstart" className="underline">
           {t(`links.quickstart.label`)}
         </a>

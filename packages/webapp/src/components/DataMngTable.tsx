@@ -6,6 +6,7 @@ import type { MatrixType } from "dataviz-components";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import { useAriaSort } from "../hooks/useAriaSort";
+import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import registerDarkTheme from "./layout/DataTableDarkTheme";
 
 registerDarkTheme();
@@ -41,6 +42,7 @@ export default function DataTable({
   } | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
+  usePaginationSelectKeyboard(tableRef);
 
   // Sync workingData and visibleColumns when data prop changes
   useEffect(() => {
@@ -264,6 +266,8 @@ export default function DataTable({
             <button
               type="button"
               className="btn btn-outline"
+              aria-expanded={showRenameForm}
+              aria-controls="rename-headers-panel"
               onClick={() =>
                 showRenameForm ? setShowRenameForm(false) : openRenameForm()
               }
@@ -307,8 +311,16 @@ export default function DataTable({
           )}
 
           {showRenameForm && (
-            <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-              <h4 className="text-sm font-semibold mb-3">
+            <div
+              id="rename-headers-panel"
+              role="region"
+              aria-labelledby="rename-headers-title"
+              className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200"
+            >
+              <h4
+                id="rename-headers-title"
+                className="text-sm font-semibold mb-3"
+              >
                 {t("renameForm.title")}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">

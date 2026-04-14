@@ -181,35 +181,57 @@ function SlotToolbar({
     >
       <span className="badge badge-error badge-xs font-mono">{item.i}</span>
 
-      <span className="text-xs opacity-50 ml-1">
-        {t(`components.slotToolbar.width.label`)}
-      </span>
-      {[1, 2, 3].map((span) => (
-        <button
-          key={span}
-          type="button"
-          className={`btn btn-xs ${item.w === span ? "btn-primary" : "btn-ghost"}`}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => onSizeChange(span, item.h)}
-        >
-          {span}
-        </button>
-      ))}
+      <div
+        role="group"
+        aria-label={t(`components.slotToolbar.width.label`)}
+        className="flex items-center gap-1"
+      >
+        <span className="text-xs opacity-50 ml-1" aria-hidden="true">
+          {t(`components.slotToolbar.width.label`)}
+        </span>
+        {[1, 2, 3].map((span) => (
+          <button
+            key={span}
+            type="button"
+            aria-label={t(`components.slotToolbar.width.option`, {
+              value: span,
+              defaultValue: `Larghezza {{value}}`,
+            })}
+            aria-pressed={item.w === span}
+            className={`btn btn-xs ${item.w === span ? "btn-primary" : "btn-ghost"}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => onSizeChange(span, item.h)}
+          >
+            {span}
+          </button>
+        ))}
+      </div>
 
-      <span className="text-xs opacity-50 ml-1">
-        {t(`components.slotToolbar.height.label`)}
-      </span>
-      {[1, 2, 3, 4].map((rows) => (
-        <button
-          key={rows}
-          type="button"
-          className={`btn btn-xs ${item.h === rows ? "btn-primary" : "btn-ghost"}`}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => onSizeChange(item.w, rows)}
-        >
-          {rows}
-        </button>
-      ))}
+      <div
+        role="group"
+        aria-label={t(`components.slotToolbar.height.label`)}
+        className="flex items-center gap-1"
+      >
+        <span className="text-xs opacity-50 ml-1" aria-hidden="true">
+          {t(`components.slotToolbar.height.label`)}
+        </span>
+        {[1, 2, 3, 4].map((rows) => (
+          <button
+            key={rows}
+            type="button"
+            aria-label={t(`components.slotToolbar.height.option`, {
+              value: rows,
+              defaultValue: `Altezza {{value}}`,
+            })}
+            aria-pressed={item.h === rows}
+            className={`btn btn-xs ${item.h === rows ? "btn-primary" : "btn-ghost"}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => onSizeChange(item.w, rows)}
+          >
+            {rows}
+          </button>
+        ))}
+      </div>
 
       <button
         type="button"
@@ -304,9 +326,9 @@ function DashboardEditPage() {
         >
           {t(`header.actions.back.label`)}
         </button>
-        <div className="flex gap-4">
-          <h3>Dashboard Editor</h3>
-        </div>
+        <h1 className="text-xl font-bold">
+          {id ? t(`header.pageTitle.edit`) : t(`header.pageTitle.new`)}
+        </h1>
         <div className="flex-shrink-0">
           <button type="button" onClick={reload} className="btn btn-outline">
             Reset
@@ -417,9 +439,18 @@ function DashboardEditPage() {
               </div>
 
               {/* Right column: Preview */}
-              <div className="xl:col-span-4 flex flex-col h-full p-4 bg-base-100  border border-base-300 rounded-lg">
+              <section
+                aria-labelledby="dashboard-preview-heading"
+                className="xl:col-span-4 flex flex-col h-full p-4 bg-base-100  border border-base-300 rounded-lg"
+              >
                 <div className="bg-base-100 bl-2 flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold">{name}</h1>
+                  <h2
+                    id="dashboard-preview-heading"
+                    className="text-2xl font-bold"
+                  >
+                    {t(`header.preview.heading`)}
+                    {name ? `: ${name}` : ""}
+                  </h2>
                   <div className="text-base-content/80">
                     {description ? (
                       <div
@@ -432,7 +463,7 @@ function DashboardEditPage() {
                     )}
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
 
             <div className="card bg-base-100 shadow-sm border border-base-200">
@@ -523,10 +554,10 @@ function DashboardEditPage() {
                             />
                           </ColorSchemeProvider>
                         ) : (
-                          <div className="flex items-center justify-center h-full text-base-content/40">
+                          <div className="flex items-center justify-center h-full">
                             <button
                               type="button"
-                              className="btn btn-sm btn-outline"
+                              className="btn btn-sm btn-primary"
                               onClick={() => showAddModal(item.i)}
                             >
                               + {t(`bottom.actions.addChart.label`)}

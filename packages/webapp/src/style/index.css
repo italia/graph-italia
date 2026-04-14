@@ -122,6 +122,21 @@
   --noise: 0;
 }
 
+/* react-data-table-component: the library renders its own SVG arrow overlaid on
+   a <select appearance:none>, but @tailwindcss/forms adds a second arrow via a
+   background-image rule on every <select>. Remove that background on the rdt
+   pagination select so only the library-provided arrow remains (WCAG 1.3.1 —
+   no duplicated icons on the same control). */
+.rdt_Pagination select {
+  background-image: none !important;
+  padding-right: 24px;
+}
+.rdt_Pagination select:focus-visible {
+  outline: 2px solid var(--color-primary, #0066cc);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* react-data-table-component: the library applies opacity:0.7 on both the
    sortable header AND its inner spans on hover/focus, compounding to ~0.49
    effective opacity — well below WCAG 1.4.3 minimum contrast (4.5:1). */
@@ -171,6 +186,13 @@ html {
     background-color 0.2s,
     color 0.2s,
     border-color 0.2s;
+}
+/* WCAG 2.4.7 — keyboard focus must be visible on btn-italia variants */
+.landing .btn-italia:focus-visible,
+.quickstart-page .btn-italia:focus-visible,
+.generate-data-page .btn-italia:focus-visible {
+  outline: 3px solid #ffcc00;
+  outline-offset: 2px;
 }
 .landing .btn-italia-primary,
 .quickstart-page .btn-italia-primary,
