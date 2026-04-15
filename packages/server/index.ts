@@ -70,14 +70,14 @@ app.use(
 const publicCors = cors({
 	origin: "*",
 	allowMethods: ["GET", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization","x-project-id"],
+	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
 });
 
 // app.use(`/*`, publicCors);
-app.use(`/charts/show/*`, publicCors);
-app.use(`/dashboards/show/*`, publicCors);
-// app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
-// app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
+// app.use(`/charts/show/*`, publicCors);
+// app.use(`/dashboards/show/*`, publicCors);
+app.use(`/charts/*`, publicCors);
+app.use(`/dashboards/*`, publicCors);
 
 
 if (HOST.indexOf("localhost") !== -1) {
