@@ -186,11 +186,11 @@ app.get("/openapi.json", openAPIRouteHandler(app, {
 				description: "Local server",
 			},
 			{
-				url: "https://graph-test.italia.it",
+				url: "https://graph-test.developers.italia.it",
 				description: "Staging server",
 			},
 			{
-				url: "https://graph.italia.it",
+				url: "https://graph.developers.italia.it",
 				description: "Production server",
 			},
 

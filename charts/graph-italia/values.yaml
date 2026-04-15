@@ -459,11 +459,11 @@ monitoring:
     # Email recipients (comma-separated)
     emailTo: ""
     # Email sender
-    emailFrom: ""  # TBD: email sender for graph.italia.it
+    emailFrom: ""  # TBD: email sender for graph.developers.italia.it
     # SMTP server
     smarthost: "smtp.eu.mailgun.org:587"
     # SMTP authentication
-    authUsername: ""  # TBD: SMTP auth for graph.italia.it
+    authUsername: ""  # TBD: SMTP auth for graph.developers.italia.it
     # Secret containing SMTP password
     authPasswordSecret: "alertmanager-smtp-secret"
     authPasswordKey: "password"

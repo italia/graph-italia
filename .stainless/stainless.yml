@@ -31,8 +31,8 @@ targets:
 # "production") to the corresponding url to use.
 environments:
   production: http://localhost:3000
-  test: http://graph-test.italia.it
-  environment_2: http://graph.italia.it
+  test: http://graph-test.developers.italia.it
+  environment_2: http://graph.developers.italia.it
 
 # `resources` define the structure and organization for your API, such as how
 # methods and models are grouped together and accessed. See the [configuration

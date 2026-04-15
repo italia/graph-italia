@@ -799,7 +799,7 @@ git merge feature/nome-funzionalita
 git push origin develop
 
 # ✅ CI/CD deploya automaticamente su graph-italia-test
-# URL: https://graph-test.italia.it
+# URL: https://graph-test.developers.italia.it
 ```
 
 #### 4. Promuovere in Produzione
@@ -827,7 +827,7 @@ git tag -a v1.2.0 -m "Release 1.2.0: descrizione"
 git push origin v1.2.0
 
 # ✅ CI/CD deploya automaticamente su graph-italia (produzione)
-# URL: https://graph.italia.it
+# URL: https://graph.developers.italia.it
 #
 # Il tag triggera:
 # - Build immagini Docker con versione 1.2.0
@@ -1187,8 +1187,8 @@ graph LR
 
 | Environment | Namespace | Database | Trigger | URL |
 |-------------|-----------|----------|---------|-----|
-| Test | `graph-italia-test` | Azure PostgreSQL | Push su `develop` | `graph-test.italia.it` |
-| Production | `graph-italia` | Azure PostgreSQL | Tag `v*.*.*` | `graph.italia.it` |
+| Test | `graph-italia-test` | Azure PostgreSQL | Push su `develop` | `graph-test.developers.italia.it` |
+| Production | `graph-italia` | Azure PostgreSQL | Tag `v*.*.*` | `graph.developers.italia.it` |
 
 ### Monitoring & Alerting
 
