@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "dataviz.fullname" . }}-server
+  name: {{ include "graph-italia.fullname" . }}-server
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: server
 spec:
   type: {{ .Values.server.service.type }}
@@ -14,7 +14,7 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "dataviz.selectorLabels" . | nindent 4 }}
+    {{- include "graph-italia.selectorLabels" . | nindent 4 }}
     component: server
 {{- end }}
 

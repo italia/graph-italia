@@ -2,7 +2,7 @@ import {
   ColorSchemeProvider,
   RenderChart,
   type FieldDataType,
-} from "dataviz-components";
+} from "graph-italia-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Helmet } from "react-helmet";

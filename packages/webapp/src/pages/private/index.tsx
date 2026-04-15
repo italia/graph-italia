@@ -1,5 +1,5 @@
 import { useMachine } from "@xstate/react";
-import { type FieldDataType } from "dataviz-components";
+import { type FieldDataType } from "graph-italia-components";
 import { useEffect, useState } from "react";
 import {
   FaChevronDown,

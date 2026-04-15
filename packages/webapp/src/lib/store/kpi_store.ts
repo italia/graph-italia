@@ -1,4 +1,4 @@
-import type { ChartConfigType, FieldDataType } from "dataviz-components";
+import type { ChartConfigType, FieldDataType } from "graph-italia-components";
 import type { KpiFormValues } from "../../pages/private/kpi-form";
 import { create } from "zustand";
 import * as api from "../api";

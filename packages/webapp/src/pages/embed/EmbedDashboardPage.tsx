@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-italia-components";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import Loading from "../../components/layout/Loading";

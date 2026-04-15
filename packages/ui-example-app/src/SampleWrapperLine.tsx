@@ -1,4 +1,4 @@
-import { ChartWrapper, type FieldDataType } from "dataviz-components";
+import { ChartWrapper, type FieldDataType } from "graph-italia-components";
 
 const lineWrapperData: FieldDataType = {
   dataSource: null,

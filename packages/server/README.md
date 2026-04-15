@@ -1,4 +1,4 @@
-# Dataviz chart server
+# Graph Italia chart server
 
 ## Install deps
 

@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dataviz.fullname" . }}-webapp
+  name: {{ include "graph-italia.fullname" . }}-webapp
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: webapp
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: webapp
   template:
     metadata:
       labels:
-        {{- include "dataviz.selectorLabels" . | nindent 8 }}
+        {{- include "graph-italia.selectorLabels" . | nindent 8 }}
         component: webapp
       annotations:
         checksum/image-pull-secret: {{ if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}{{ .Values.imagePullSecret.token | sha256sum }}{{ else }}""{{ end }}
@@ -31,7 +31,7 @@ spec:
     spec:
       {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
       imagePullSecrets:
-        - name: {{ include "dataviz.fullname" . }}-image-pull-secret
+        - name: {{ include "graph-italia.fullname" . }}-image-pull-secret
       {{- end }}
       {{- if .Values.webapp.nodeSelector }}
       nodeSelector:
@@ -50,11 +50,11 @@ spec:
       volumes:
         - name: webapp-config
           configMap:
-            name: {{ include "dataviz.fullname" . }}-webapp-config
+            name: {{ include "graph-italia.fullname" . }}-webapp-config
         {{- if .Values.webapp.nginxConfig }}
         - name: nginx-config
           configMap:
-            name: {{ include "dataviz.fullname" . }}-nginx-config
+            name: {{ include "graph-italia.fullname" . }}-nginx-config
         {{- end }}
         {{- if .Values.webapp.volumes }}
         {{- toYaml .Values.webapp.volumes | nindent 8 }}

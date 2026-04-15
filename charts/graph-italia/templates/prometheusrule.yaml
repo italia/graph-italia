@@ -2,9 +2,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{ include "dataviz.fullname" . }}
+  name: {{ include "graph-italia.fullname" . }}
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     {{- with .Values.monitoring.prometheusRule.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -13,27 +13,27 @@ spec:
     # ==========================================================================
     # CRITICAL ALERTS ONLY - Real problems that need immediate attention
     # ==========================================================================
-    - name: dataviz.critical
+    - name: graph-italia.critical
       rules:
         # -----------------------------------------------------------------------
         # Application Down - No pods running
         # -----------------------------------------------------------------------
-        - alert: DatavizDown
+        - alert: GraphItaliaDown
           expr: |
-            sum(kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment=~".*dataviz.*"}) == 0
+            sum(kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment=~".*graph-italia.*"}) == 0
           for: 2m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "DataViz is DOWN - No pods running"
+            summary: "Graph Italia is DOWN - No pods running"
             description: "Deployment {{ "{{ $labels.deployment }}" }} has 0 available replicas for 2+ minutes"
 
         # -----------------------------------------------------------------------
         # High Server Error Rate (5xx > 10% for 5 minutes)
         # -----------------------------------------------------------------------
-        - alert: DatavizHighErrorRate
+        - alert: GraphItaliaHighErrorRate
           expr: |
             (
               sum(rate(http_requests_total{status=~"5..", namespace="{{ .Release.Namespace }}"}[5m]))
@@ -43,65 +43,65 @@ spec:
           for: 5m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "High 5xx error rate on DataViz"
+            summary: "High 5xx error rate on Graph Italia"
             description: "Server error rate is {{ "{{ $value | humanizePercentage }}" }} (>10%) for 5+ minutes"
 
         # -----------------------------------------------------------------------
         # Database Connection Errors
         # -----------------------------------------------------------------------
-        - alert: DatavizDatabaseErrors
+        - alert: GraphItaliaDatabaseErrors
           expr: |
-            sum(rate(dataviz_db_queries_total{status="error", namespace="{{ .Release.Namespace }}"}[5m])) > 0.5
+            sum(rate(graph_italia_db_queries_total{status="error", namespace="{{ .Release.Namespace }}"}[5m])) > 0.5
           for: 3m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "Database errors on DataViz"
+            summary: "Database errors on Graph Italia"
             description: 'Database error rate: {{ "{{ $value | printf \"%.2f\" }}" }} errors/sec for 3+ minutes'
 
         # -----------------------------------------------------------------------
         # Pod CrashLooping (more than 5 restarts in 30 min)
         # -----------------------------------------------------------------------
-        - alert: DatavizCrashLooping
+        - alert: GraphItaliaCrashLooping
           expr: |
-            increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}", pod=~".*dataviz.*"}[30m]) > 5
+            increase(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}", pod=~".*graph-italia.*"}[30m]) > 5
           for: 5m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "DataViz pod is crash-looping"
+            summary: "Graph Italia pod is crash-looping"
             description: 'Pod {{ "{{ $labels.pod }}" }} has restarted {{ "{{ $value | printf \"%.0f\" }}" }} times in 30 minutes'
 
         # -----------------------------------------------------------------------
         # Ingress/WAF - High block rate (potential attack or misconfiguration)
         # -----------------------------------------------------------------------
-        - alert: DatavizHighWAFBlocks
+        - alert: GraphItaliaHighWAFBlocks
           expr: |
             (
-              sum(rate(nginx_ingress_controller_requests{status=~"4..", ingress=~".*dataviz.*"}[10m]))
+              sum(rate(nginx_ingress_controller_requests{status=~"4..", ingress=~".*graph-italia.*"}[10m]))
               /
-              sum(rate(nginx_ingress_controller_requests{ingress=~".*dataviz.*"}[10m]))
+              sum(rate(nginx_ingress_controller_requests{ingress=~".*graph-italia.*"}[10m]))
             ) > 0.30
           for: 10m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "High 4xx rate on DataViz ingress - possible attack or WAF issue"
+            summary: "High 4xx rate on Graph Italia ingress - possible attack or WAF issue"
             description: "{{ "{{ $value | humanizePercentage }}" }} of requests are returning 4xx (>30%) for 10+ minutes"
 
         # -----------------------------------------------------------------------
         # Application completely unresponsive (latency > 30s)
         # -----------------------------------------------------------------------
-        - alert: DatavizUnresponsive
+        - alert: GraphItaliaUnresponsive
           expr: |
             histogram_quantile(0.95, 
               sum(rate(http_request_duration_seconds_bucket{namespace="{{ .Release.Namespace }}"}[5m])) by (le)
@@ -109,16 +109,16 @@ spec:
           for: 5m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "DataViz is unresponsive"
+            summary: "Graph Italia is unresponsive"
             description: "p95 latency is {{ "{{ $value | humanizeDuration }}" }} (>30s) - application may be stuck"
 
         # -----------------------------------------------------------------------
         # Out of Memory (>95% memory used)
         # -----------------------------------------------------------------------
-        - alert: DatavizOutOfMemory
+        - alert: GraphItaliaOutOfMemory
           expr: |
             (
               max(container_memory_working_set_bytes{namespace="{{ .Release.Namespace }}", container=~"server|webapp"})
@@ -128,9 +128,9 @@ spec:
           for: 5m
           labels:
             severity: critical
-            service: dataviz
+            service: graph-italia
             namespace: {{ .Release.Namespace }}
           annotations:
-            summary: "DataViz is running out of memory"
+            summary: "Graph Italia is running out of memory"
             description: "Container {{ "{{ $labels.container }}" }} is at {{ "{{ $value | humanizePercentage }}" }} memory - OOM imminent"
 {{- end }}

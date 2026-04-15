@@ -1,6 +1,6 @@
 {
-  "id": "dataviz-env",
-  "name": "Dataviz API — Local",
+  "id": "graph-italia-env",
+  "name": "Graph Italia API — Local",
   "_postman_variable_scope": "environment",
   "values": [
     { "key": "base_url", "value": "http://localhost:3003/api", "enabled": true },

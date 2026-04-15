@@ -157,9 +157,9 @@ app.route("/projects", projectRoutes);
 app.get("/openapi.json", openAPIRouteHandler(app, {
 	documentation: {
 		info: {
-			title: "Dataviz API",
+			title: "Graph Italia API",
 			version: "1.0.0",
-			description: "API documentation for the Dataviz application"
+			description: "API documentation for the Graph Italia application"
 		},
 		components: {
 			securitySchemes: {
@@ -186,11 +186,11 @@ app.get("/openapi.json", openAPIRouteHandler(app, {
 				description: "Local server",
 			},
 			{
-				url: "http://dataviz-test.innovazione.gov.it",
+				url: "https://graph-test.italia.it",
 				description: "Staging server",
 			},
 			{
-				url: "http://dataviz.innovazione.gov.it",
+				url: "https://graph.italia.it",
 				description: "Production server",
 			},
 

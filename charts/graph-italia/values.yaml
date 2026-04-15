@@ -1,4 +1,4 @@
-# Default values for dataviz
+# Default values for graph-italia
 # This is a template file - actual values should be stored in the cluster
 # and reused with --reuse-values flag
 
@@ -40,7 +40,7 @@ dbMigration:
   backoffLimit: 3
   # Optional: use DATABASE_URL from an existing secret instead of server.env
   # databaseUrlFromSecret:
-  #   secretName: "dataviz-db-credentials"
+  #   secretName: "graph-italia-db-credentials"
   #   key: "DATABASE_URL"
 
 # =============================================================================
@@ -55,7 +55,7 @@ dbSeed:
   backoffLimit: 3
   # Optional: use DATABASE_URL from an existing secret
   # databaseUrlFromSecret:
-  #   secretName: "dataviz-db-credentials"
+  #   secretName: "graph-italia-db-credentials"
   #   key: "DATABASE_URL"
   # Users to seed (if not set, uses default users from seed script)
   # These will be exposed as SEED_USERS env var (JSON array)
@@ -70,7 +70,7 @@ dbSeed:
 webapp:
   enabled: true
   image:
-    repository: dataviz-webapp
+    repository: graph-italia-webapp
     pullPolicy: IfNotPresent
     tag: "latest"
   # Node scheduling (optional)
@@ -93,7 +93,7 @@ webapp:
   config:
     # Runtime configuration via ConfigMap
     # This allows using the same build image across different environments
-    serverUrl: ""  # e.g., "http://dataviz-server:3003" or "https://api.example.com"
+    serverUrl: ""  # e.g., "http://graph-italia-server:3003" or "https://api.example.com"
   resources:
     limits:
       cpu: 500m
@@ -168,7 +168,7 @@ webapp:
 server:
   enabled: true
   image:
-    repository: dataviz-srv
+    repository: graph-italia-srv
     pullPolicy: IfNotPresent
     tag: "latest"
   # Node scheduling (optional)
@@ -333,7 +333,7 @@ ingress:
     connections: 10
   # Single host mode: set host and paths
   # If host is set, paths will be used for routing
-  host: ""  # e.g., "dataviz.example.com"
+  host: ""  # e.g., "graph-italia.example.com"
   paths:
     webapp:
       path: "/"
@@ -344,20 +344,20 @@ ingress:
   # Multiple hosts mode: set hosts array
   # If hosts array is set, it takes precedence over single host mode
   hosts: []
-    # - host: webapp.dataviz.example.com
+    # - host: webapp.graph-italia.example.com
     #   paths:
     #     - path: /
     #       pathType: Prefix
     #       service: webapp
-    # - host: api.dataviz.example.com
+    # - host: api.graph-italia.example.com
     #   paths:
     #     - path: /
     #       pathType: Prefix
     #       service: server
   tls: []
-    # - secretName: dataviz-tls
+    # - secretName: graph-italia-tls
     #   hosts:
-    #     - dataviz.example.com
+    #     - graph-italia.example.com
 
 # Pod Disruption Budget
 podDisruptionBudget:
@@ -459,11 +459,11 @@ monitoring:
     # Email recipients (comma-separated)
     emailTo: ""
     # Email sender
-    emailFrom: "dataviz@innovazione.gov.it"
+    emailFrom: ""  # TBD: email sender for graph.italia.it
     # SMTP server
     smarthost: "smtp.eu.mailgun.org:587"
     # SMTP authentication
-    authUsername: "dataviz@innovazione.gov.it"
+    authUsername: ""  # TBD: SMTP auth for graph.italia.it
     # Secret containing SMTP password
     authPasswordSecret: "alertmanager-smtp-secret"
     authPasswordKey: "password"

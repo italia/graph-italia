@@ -1,6 +1,6 @@
-import "dataviz-components/dist/style.css";
-import type { ChartColorScheme, ChartConfigType } from "dataviz-components";
-import { ColorSchemeProvider, RenderChart } from "dataviz-components";
+import "graph-italia-components/dist/style.css";
+import type { ChartColorScheme, ChartConfigType } from "graph-italia-components";
+import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
 import { useForm } from "react-hook-form";
 import {
   forwardRef,

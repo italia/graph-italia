@@ -2,7 +2,7 @@ import {
   RenderChart,
   type FieldDataType,
   type PointData,
-} from "dataviz-components";
+} from "graph-italia-components";
 
 import { useState } from "react";
 import { generateSamplePoints } from "./lib/generatePoints";

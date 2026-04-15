@@ -3,9 +3,9 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ include "dataviz.fullname" . }}-webapp
+  name: {{ include "graph-italia.fullname" . }}-webapp
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: webapp
 spec:
   {{- if .Values.podDisruptionBudget.minAvailable }}
@@ -15,7 +15,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: webapp
 {{- end }}
 {{- if and .Values.webapp.enabled .Values.server.enabled }}
@@ -25,9 +25,9 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ include "dataviz.fullname" . }}-server
+  name: {{ include "graph-italia.fullname" . }}-server
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: server
 spec:
   {{- if .Values.podDisruptionBudget.minAvailable }}
@@ -37,7 +37,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: server
 {{- end }}
 {{- end }}

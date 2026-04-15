@@ -2,9 +2,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dataviz.fullname" . }}-db-migration-{{ .Release.Revision }}
+  name: {{ include "graph-italia.fullname" . }}-db-migration-{{ .Release.Revision }}
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: db-migration
   annotations:
     # Run before deployment upgrade
@@ -17,12 +17,12 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "dataviz.selectorLabels" . | nindent 8 }}
+        {{- include "graph-italia.selectorLabels" . | nindent 8 }}
         component: db-migration
     spec:
       {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
       imagePullSecrets:
-        - name: {{ include "dataviz.fullname" . }}-image-pull-secret
+        - name: {{ include "graph-italia.fullname" . }}-image-pull-secret
       {{- end }}
       {{- if .Values.server.nodeSelector }}
       nodeSelector:

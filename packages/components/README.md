@@ -1,4 +1,4 @@
-# Dataviz Components
+# Graph Italia Components
 
 This is a react library.
 
@@ -7,13 +7,13 @@ This is a react library.
 You can install with
 
 ```
-npm i dataviz-components@latest
+npm i graph-italia-components@latest
 # or yarn
-yarn add dataviz-components@latest
+yarn add graph-italia-components@latest
 # or pnpm
-pnpm add dataviz-components@latest
+pnpm add graph-italia-components@latest
 # or bun
-bun add dataviz-components@latest
+bun add graph-italia-components@latest
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ check the `exxample app`
 
 ## Theming
 
-The library ships with two built-in ECharts themes: **light** (`dataviz-light`) and **dark** (`dataviz-dark`).
+The library ships with two built-in ECharts themes: **light** (`graph-italia-light`) and **dark** (`graph-italia-dark`).
 Theme switching is handled automatically through the `ColorSchemeProvider` component.
 
 ### ColorSchemeProvider
@@ -36,7 +36,7 @@ The provider resolves the theme with this priority:
 4. Auto-detect from `prefers-color-scheme` media query
 
 ```tsx
-import { ColorSchemeProvider, RenderChart } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
 
 // Auto-detect from system preference
 <ColorSchemeProvider>
@@ -69,7 +69,7 @@ Example in the host page:
 ### Theme via postMessage
 
 For dynamic theme switching without reloading the iframe, use `postMessage`.
-The protocol expects a message with `type: "DATAVIZ_THEME"` and a `theme` payload.
+The protocol expects a message with `type: "GRAPH_ITALIA_THEME"` and a `theme` payload.
 
 #### Light / Dark
 
@@ -80,13 +80,13 @@ const iframe = document.getElementById("chart-iframe");
 
 // Switch to dark mode
 iframe.contentWindow.postMessage(
-  { type: "DATAVIZ_THEME", theme: "dark" },
+  { type: "GRAPH_ITALIA_THEME", theme: "dark" },
   "*"
 );
 
 // Switch to light mode
 iframe.contentWindow.postMessage(
-  { type: "DATAVIZ_THEME", theme: "light" },
+  { type: "GRAPH_ITALIA_THEME", theme: "light" },
   "*"
 );
 ```
@@ -101,7 +101,7 @@ const iframe = document.getElementById("chart-iframe");
 
 iframe.contentWindow.postMessage(
   {
-    type: "DATAVIZ_THEME",
+    type: "GRAPH_ITALIA_THEME",
     theme: {
       color: ["#c12e34", "#e6b600", "#0098d9", "#2b821d", "#005eaa"],
       backgroundColor: "#0d0d1a",
@@ -132,7 +132,7 @@ const iframe = document.getElementById("chart-iframe");
 
 iframe.addEventListener("load", () => {
   iframe.contentWindow.postMessage(
-    { type: "DATAVIZ_THEME", theme: "dark" },
+    { type: "GRAPH_ITALIA_THEME", theme: "dark" },
     "*"
   );
 });
@@ -176,5 +176,5 @@ npm publish
 than install the last version inside example project
 
 ```zsh
-npm add dataviz-components@latest
+npm add graph-italia-components@latest
 ```

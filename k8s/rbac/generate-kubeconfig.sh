@@ -4,7 +4,7 @@
 
 set -e
 
-NAMESPACE="dataviz"
+NAMESPACE="graph-italia"
 SERVICE_ACCOUNT="github-actions-deployer"
 SECRET_NAME="github-actions-deployer-token"
 

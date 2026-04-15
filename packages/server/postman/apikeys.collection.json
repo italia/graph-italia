@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Dataviz — API Keys",
-    "_postman_id": "dataviz-apikeys",
+    "name": "Graph Italia — API Keys",
+    "_postman_id": "graph-italia-apikeys",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {

@@ -1,4 +1,4 @@
-# Dataviz chart webapp
+# Graph Italia chart webapp
 
 ## Run locally
 

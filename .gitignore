@@ -169,7 +169,7 @@ dist
 .pnp.\*
 
 # Helm values files (should never be committed)
-# Exception: charts/dataviz/values.yaml is the default template and should be committed
+# Exception: charts/graph-italia/values.yaml is the default template and should be committed
 values.yaml
 values-*.yaml
 *.values.yaml

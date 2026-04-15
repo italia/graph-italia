@@ -2,28 +2,28 @@
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: AlertmanagerConfig
 metadata:
-  name: {{ include "dataviz.fullname" . }}-notifications
+  name: {{ include "graph-italia.fullname" . }}-notifications
   namespace: monitoring
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     alertmanagerConfig: main
 spec:
   receivers:
-    - name: dataviz-email
+    - name: graph-italia-email
       emailConfigs:
         - to: {{ .Values.monitoring.alertmanagerConfig.emailTo | quote }}
-          from: {{ .Values.monitoring.alertmanagerConfig.emailFrom | default "dataviz@innovazione.gov.it" | quote }}
+          from: {{ .Values.monitoring.alertmanagerConfig.emailFrom | default "" | quote }}
           smarthost: {{ .Values.monitoring.alertmanagerConfig.smarthost | default "smtp.eu.mailgun.org:587" | quote }}
-          authUsername: {{ .Values.monitoring.alertmanagerConfig.authUsername | default "dataviz@innovazione.gov.it" | quote }}
+          authUsername: {{ .Values.monitoring.alertmanagerConfig.authUsername | default "" | quote }}
           authPassword:
             name: {{ .Values.monitoring.alertmanagerConfig.authPasswordSecret | default "alertmanager-smtp-secret" }}
             key: {{ .Values.monitoring.alertmanagerConfig.authPasswordKey | default "password" }}
           requireTLS: true
           headers:
             - key: Subject
-              value: '[{{ "{{ .Status | toUpper }}" }}] DataViz: {{ "{{ .CommonLabels.alertname }}" }}'
+              value: '[{{ "{{ .Status | toUpper }}" }}] Graph Italia: {{ "{{ .CommonLabels.alertname }}" }}'
   route:
-    receiver: dataviz-email
+    receiver: graph-italia-email
     groupBy:
       - alertname
       - namespace
@@ -33,12 +33,12 @@ spec:
     matchers:
       - matchType: "=~"
         name: alertname
-        value: "Dataviz.*"
+        value: "GraphItalia.*"
     routes:
       - matchers:
           - matchType: "="
             name: severity
             value: critical
-        receiver: dataviz-email
+        receiver: graph-italia-email
         repeatInterval: 1h
 {{- end }}

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: graph-italia
+description: A Helm chart for Graph Italia application (webapp and server)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+

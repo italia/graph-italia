@@ -1,10 +1,10 @@
-# DataViz Grafana Dashboards
+# Graph Italia Grafana Dashboards
 
-This directory contains Grafana dashboard definitions for monitoring the DataViz application.
+This directory contains Grafana dashboard definitions for monitoring the Graph Italia application.
 
 ## Available Dashboards
 
-### dataviz-dashboard.json
+### graph-italia-dashboard.json
 
 Main application monitoring dashboard with the following panels:
 
@@ -39,7 +39,7 @@ The dashboard will be automatically created as a ConfigMap and discovered by Gra
 1. Open Grafana UI
 2. Go to **Dashboards** > **Import**
 3. Click **Upload JSON file**
-4. Select `dataviz-dashboard.json`
+4. Select `graph-italia-dashboard.json`
 5. Configure the Prometheus datasource
 6. Click **Import**
 
@@ -48,7 +48,7 @@ The dashboard will be automatically created as a ConfigMap and discovered by Gra
 Copy the dashboard to your Grafana provisioning directory:
 
 ```bash
-cp dataviz-dashboard.json /etc/grafana/provisioning/dashboards/
+cp graph-italia-dashboard.json /etc/grafana/provisioning/dashboards/
 ```
 
 And configure the provisioning in `grafana.ini` or via ConfigMap:
@@ -72,12 +72,12 @@ The dashboard expects the following Prometheus metrics:
 - `http_request_duration_seconds_bucket{namespace, method, path}` - Request latency histogram
 
 ### Database Metrics
-- `dataviz_db_queries_total{namespace, operation, status}` - Query counter
-- `dataviz_db_query_duration_seconds_bucket{namespace, operation}` - Query latency histogram
+- `graph_italia_db_queries_total{namespace, operation, status}` - Query counter
+- `graph_italia_db_query_duration_seconds_bucket{namespace, operation}` - Query latency histogram
 
 ### AI/OpenAI Metrics
-- `dataviz_ai_requests_total{namespace, status}` - AI request counter
-- `dataviz_ai_request_duration_seconds_bucket{namespace, model}` - AI request latency histogram
+- `graph_italia_ai_requests_total{namespace, status}` - AI request counter
+- `graph_italia_ai_request_duration_seconds_bucket{namespace, model}` - AI request latency histogram
 
 ### Kubernetes Metrics (from kube-state-metrics)
 - `kube_deployment_status_replicas_available{namespace, deployment}`
@@ -91,7 +91,7 @@ The dashboard includes these template variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `datasource` | Prometheus datasource | Auto-detected |
-| `namespace` | Kubernetes namespace filter | `dataviz.*` regex |
+| `namespace` | Kubernetes namespace filter | `graph-italia.*` regex |
 
 ## Alert Rules
 

@@ -1,10 +1,10 @@
 import { useMachine } from "@xstate/react";
-import type { ChartColorScheme } from "dataviz-components";
+import type { ChartColorScheme } from "graph-italia-components";
 import {
   ColorSchemeProvider,
   RenderChart,
-} from "dataviz-components";
-import "dataviz-components/dist/style.css";
+} from "graph-italia-components";
+import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";

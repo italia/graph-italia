@@ -1,4 +1,4 @@
-import { type FieldDataType } from "dataviz-components";
+import { type FieldDataType } from "graph-italia-components";
 import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
@@ -21,7 +21,7 @@ import { useAriaSort } from "../hooks/useAriaSort";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 
-import { RenderChart } from "dataviz-components";
+import { RenderChart } from "graph-italia-components";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

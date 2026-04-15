@@ -113,7 +113,7 @@ export default function HeaderCompleta() {
               <ul className="flex items-center list-none m-0 p-0" aria-label={t(`center.social.label`)}>
                 <li>
                   <a
-                    href="https://github.com/italia/dataviz"
+                    href="https://github.com/italia/graph-italia"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center w-10 h-10 text-primary-content hover:text-primary-content transition-colors duration-150"

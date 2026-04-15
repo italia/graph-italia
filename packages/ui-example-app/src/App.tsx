@@ -5,7 +5,7 @@ import SampleLinechart from "./SampleLinechart";
 import SampleMap from "./SampleMap";
 import SamplePiechart from "./SamplePiechart";
 
-import "dataviz-components/dist/style.css";
+import "graph-italia-components/dist/style.css";
 import SampleTable from "./SampleTable";
 import SampleWrapper from "./SampleWrapper";
 import SampleWrapperBar from "./SampleWrapperBar";

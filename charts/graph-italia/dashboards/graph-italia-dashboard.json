@@ -1,6 +1,6 @@
 {
   "annotations": { "list": [] },
-  "description": "DataViz Application Monitoring - HTTP, Database, AI, Resources, Logs",
+  "description": "Graph Italia Application Monitoring - HTTP, Database, AI, Resources, Logs",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -58,7 +58,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
       "id": 4,
       "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(dataviz_active_sessions{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "", "refId": "A" }],
+      "targets": [{ "expr": "sum(graph_italia_active_sessions{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "", "refId": "A" }],
       "title": "Active Sessions",
       "type": "stat"
     },
@@ -70,7 +70,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
       "id": 5,
       "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(dataviz_charts_created_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "", "refId": "A" }],
+      "targets": [{ "expr": "sum(graph_italia_charts_created_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "", "refId": "A" }],
       "title": "Charts Created",
       "type": "stat"
     },
@@ -82,7 +82,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
       "id": 6,
       "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(dataviz_ai_requests_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "", "refId": "A" }],
+      "targets": [{ "expr": "sum(graph_italia_ai_requests_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "", "refId": "A" }],
       "title": "AI Requests",
       "type": "stat"
     },
@@ -149,8 +149,8 @@
       "id": 20,
       "options": { "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
       "targets": [
-        { "expr": "sum(dataviz_charts_created_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Charts", "refId": "A" },
-        { "expr": "sum(dataviz_dashboards_created_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Dashboards", "refId": "B" }
+        { "expr": "sum(graph_italia_charts_created_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Charts", "refId": "A" },
+        { "expr": "sum(graph_italia_dashboards_created_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Dashboards", "refId": "B" }
       ],
       "title": "Content Created (Total)",
       "type": "timeseries"
@@ -164,8 +164,8 @@
       "id": 21,
       "options": { "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
       "targets": [
-        { "expr": "sum(dataviz_ai_requests_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "AI Requests", "refId": "A" },
-        { "expr": "sum(dataviz_emails_sent_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Emails Sent", "refId": "B" }
+        { "expr": "sum(graph_italia_ai_requests_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "AI Requests", "refId": "A" },
+        { "expr": "sum(graph_italia_emails_sent_total{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Emails Sent", "refId": "B" }
       ],
       "title": "AI & Emails (Total)",
       "type": "timeseries"
@@ -178,7 +178,7 @@
       "gridPos": { "h": 6, "w": 8, "x": 16, "y": 23 },
       "id": 22,
       "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "expr": "sum(dataviz_active_sessions{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Active Sessions", "refId": "A" }],
+      "targets": [{ "expr": "sum(graph_italia_active_sessions{namespace=\"$namespace\"}) or vector(0)", "legendFormat": "Active Sessions", "refId": "A" }],
       "title": "Active Sessions",
       "type": "timeseries"
     },
@@ -262,7 +262,7 @@
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
-      "targets": [{ "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} |~ `dataviz` |~ `(?i)(SELECT|UNION|INSERT|DELETE|DROP|<script|javascript:|onclick|onerror|eval\\(|;cat|;ls|;rm|\\.\\.%2f|%27|%22|%3c|%3e)`", "refId": "A" }],
+      "targets": [{ "expr": "{namespace=\"ingress-nginx\", app_kubernetes_io_name=\"ingress-nginx\"} |~ `graph-italia` |~ `(?i)(SELECT|UNION|INSERT|DELETE|DROP|<script|javascript:|onclick|onerror|eval\\(|;cat|;ls|;rm|\\.\\.%2f|%27|%22|%3c|%3e)`", "refId": "A" }],
       "title": "Suspicious Requests (WAF)",
       "type": "logs"
     },
@@ -314,19 +314,19 @@
   ],
   "refresh": "30s",
   "schemaVersion": 39,
-  "tags": ["dataviz", "api", "kubernetes"],
+  "tags": ["graph-italia", "api", "kubernetes"],
   "templating": {
     "list": [
       { "current": { "selected": false, "text": "Prometheus", "value": "prometheus" }, "hide": 0, "includeAll": false, "label": "Prometheus", "multi": false, "name": "datasource", "options": [], "query": "prometheus", "refresh": 1, "regex": "", "skipUrlSync": false, "type": "datasource" },
       { "current": { "selected": false, "text": "Loki", "value": "loki" }, "hide": 0, "includeAll": false, "label": "Loki", "multi": false, "name": "loki", "options": [], "query": "loki", "refresh": 1, "regex": "", "skipUrlSync": false, "type": "datasource" },
-      { "current": { "selected": false, "text": "dataviz-test", "value": "dataviz-test" }, "datasource": { "type": "prometheus", "uid": "${datasource}" }, "definition": "label_values(http_requests_total, namespace)", "hide": 0, "includeAll": false, "label": "Namespace", "multi": false, "name": "namespace", "options": [], "query": { "query": "label_values(http_requests_total, namespace)", "refId": "StandardVariableQuery" }, "refresh": 1, "regex": "dataviz.*", "skipUrlSync": false, "sort": 1, "type": "query" }
+      { "current": { "selected": false, "text": "graph-italia-test", "value": "graph-italia-test" }, "datasource": { "type": "prometheus", "uid": "${datasource}" }, "definition": "label_values(http_requests_total, namespace)", "hide": 0, "includeAll": false, "label": "Namespace", "multi": false, "name": "namespace", "options": [], "query": { "query": "label_values(http_requests_total, namespace)", "refId": "StandardVariableQuery" }, "refresh": 1, "regex": "graph-italia.*", "skipUrlSync": false, "sort": 1, "type": "query" }
     ]
   },
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "DataViz Application",
-  "uid": "dataviz-app",
+  "title": "Graph Italia Application",
+  "uid": "graph-italia-app",
   "version": 3,
   "weekStart": ""
 }

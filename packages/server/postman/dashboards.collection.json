@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Dataviz — Dashboards",
-    "_postman_id": "dataviz-dashboards",
+    "name": "Graph Italia — Dashboards",
+    "_postman_id": "graph-italia-dashboards",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {

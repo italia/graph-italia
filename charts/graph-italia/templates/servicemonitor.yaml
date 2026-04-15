@@ -2,9 +2,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "dataviz.fullname" . }}-server
+  name: {{ include "graph-italia.fullname" . }}-server
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: server
     {{- with .Values.monitoring.serviceMonitor.labels }}
     {{- toYaml . | nindent 4 }}
@@ -12,7 +12,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: server
   namespaceSelector:
     matchNames:
@@ -32,9 +32,9 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "dataviz.fullname" . }}-webapp
+  name: {{ include "graph-italia.fullname" . }}-webapp
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: webapp
     {{- with .Values.monitoring.serviceMonitor.labels }}
     {{- toYaml . | nindent 4 }}
@@ -42,7 +42,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: webapp
   namespaceSelector:
     matchNames:

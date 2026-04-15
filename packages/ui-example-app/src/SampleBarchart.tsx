@@ -1,4 +1,4 @@
-import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-italia-components";
 
 function App() {
   const sampleData: FieldDataType = {

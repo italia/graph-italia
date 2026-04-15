@@ -2,15 +2,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "dataviz.fullname" . }}-webapp
+  name: {{ include "graph-italia.fullname" . }}-webapp
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: webapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "dataviz.fullname" . }}-webapp
+    name: {{ include "graph-italia.fullname" . }}-webapp
   minReplicas: {{ .Values.webapp.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.webapp.autoscaling.maxReplicas }}
   metrics:

@@ -2,7 +2,7 @@ import {
   DataTable,
   type FieldDataType,
   type MatrixType,
-} from "dataviz-components";
+} from "graph-italia-components";
 
 function App() {
   const sampleData: FieldDataType = {

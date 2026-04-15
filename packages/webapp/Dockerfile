@@ -17,7 +17,7 @@ COPY packages/server/package.json ./packages/server/
 
 # Create minimal ui-example-app without link: dependency
 RUN mkdir -p packages/ui-example-app && \
-    echo '{"name":"dataviz-uiexampleapp","private":true}' > packages/ui-example-app/package.json
+    echo '{"name":"graph-italia-uiexampleapp","private":true}' > packages/ui-example-app/package.json
 
 # Copy components source directory (needed for workspace linking)
 COPY packages/components ./packages/components

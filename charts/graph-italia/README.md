@@ -1,6 +1,6 @@
-# Dataviz Helm Chart
+# Graph Italia Helm Chart
 
-Helm chart per il deployment dell'applicazione Dataviz su Kubernetes.
+Helm chart per il deployment dell'applicazione Graph Italia su Kubernetes.
 
 ## Panoramica
 
@@ -27,24 +27,24 @@ Entrambi i componenti supportano:
 
 ```mermaid
 graph TB
-    subgraph "Namespace: dataviz"
+    subgraph "Namespace: graph-italia"
         subgraph "Helm Hooks (Pre-upgrade)"
             MigrationJob[Job<br/>db-migration<br/>prisma migrate deploy]
             SeedJob[Job<br/>db-seed<br/>seed users]
         end
         
         subgraph "Ingress Layer"
-            Ingress[Ingress<br/>dataviz]
+            Ingress[Ingress<br/>graph-italia]
         end
         
         subgraph "Services"
-            WebappSvc[Service<br/>dataviz-webapp<br/>ClusterIP:80]
-            ServerSvc[Service<br/>dataviz-server<br/>ClusterIP:3003]
+            WebappSvc[Service<br/>graph-italia-webapp<br/>ClusterIP:80]
+            ServerSvc[Service<br/>graph-italia-server<br/>ClusterIP:3003]
         end
         
         subgraph "Deployments"
-            WebappDeploy[Deployment<br/>dataviz-webapp<br/>Replicas: 1]
-            ServerDeploy[Deployment<br/>dataviz-server<br/>Replicas: 1]
+            WebappDeploy[Deployment<br/>graph-italia-webapp<br/>Replicas: 1]
+            ServerDeploy[Deployment<br/>graph-italia-server<br/>Replicas: 1]
         end
         
         subgraph "Pods"
@@ -53,7 +53,7 @@ graph TB
         end
         
         subgraph "Configuration"
-            ConfigMap[ConfigMap<br/>dataviz-webapp-config<br/>config.json]
+            ConfigMap[ConfigMap<br/>graph-italia-webapp-config<br/>config.json]
             ImageSecret[Secret<br/>image-pull-secret<br/>GHCR token]
         end
     end
@@ -81,8 +81,8 @@ graph TB
 ### Prima installazione (con migration e seed)
 
 ```bash
-helm install dataviz oci://ghcr.io/italia/charts/dataviz --version <version> \
-  --namespace dataviz \
+helm install graph-italia oci://ghcr.io/italia/charts/graph-italia --version <version> \
+  --namespace graph-italia \
   --create-namespace \
   --set dbMigration.enabled=true \
   --set dbSeed.enabled=true \
@@ -115,8 +115,8 @@ dbSeed:
 EOF
 
 # Installa
-helm install dataviz oci://ghcr.io/italia/charts/dataviz --version <version> \
-  --namespace dataviz \
+helm install graph-italia oci://ghcr.io/italia/charts/graph-italia --version <version> \
+  --namespace graph-italia \
   --create-namespace \
   -f values-secrets.yaml
 ```
@@ -174,7 +174,7 @@ dbSeed:
 Dopo la prima installazione, puoi disabilitare il seed per evitare creazioni accidentali:
 
 ```bash
-helm upgrade dataviz ... --set dbSeed.enabled=false
+helm upgrade graph-italia ... --set dbSeed.enabled=false
 ```
 
 ## Configurazione Principale
@@ -186,7 +186,7 @@ La webapp usa un ConfigMap per la configurazione runtime:
 ```yaml
 webapp:
   config:
-    serverUrl: "https://dataviz.example.com"  # URL del server API
+    serverUrl: "https://graph-italia.example.com"  # URL del server API
 ```
 
 ### Server Environment Variables
@@ -197,7 +197,7 @@ server:
     PORT: "3003"
     DATABASE_URL: "postgresql://user:pass@host:5432/db"
     JWT_SECRET: "your-secret"
-    DOMAINS: "https://dataviz.example.com"
+    DOMAINS: "https://graph-italia.example.com"
     UPLOAD_SIZE_LIMIT: "15mb"
     ROUTES_PREFIX: "/api"
     SENDER_EMAIL: "noreply@example.com"
@@ -214,7 +214,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  host: "dataviz.example.com"
+  host: "graph-italia.example.com"
   paths:
     webapp:
       path: "/"
@@ -223,9 +223,9 @@ ingress:
       path: "/api"
       pathType: Prefix
   tls:
-    - secretName: dataviz-tls
+    - secretName: graph-italia-tls
       hosts:
-        - dataviz.example.com
+        - graph-italia.example.com
 ```
 
 ## Autoscaling
@@ -268,8 +268,8 @@ networkPolicy:
 
 ```bash
 # Con reuse-values (mantiene i secrets)
-helm upgrade dataviz oci://ghcr.io/italia/charts/dataviz --version <new-version> \
-  --namespace dataviz \
+helm upgrade graph-italia oci://ghcr.io/italia/charts/graph-italia --version <new-version> \
+  --namespace graph-italia \
   --reuse-values \
   --set webapp.image.tag="<new-tag>" \
   --set server.image.tag="<new-tag>"
@@ -279,28 +279,28 @@ helm upgrade dataviz oci://ghcr.io/italia/charts/dataviz --version <new-version>
 
 ```bash
 # Verifica pods
-kubectl get pods -n dataviz
+kubectl get pods -n graph-italia
 
 # Verifica jobs (migration/seed)
-kubectl get jobs -n dataviz
+kubectl get jobs -n graph-italia
 
 # Logs migration
-kubectl logs -n dataviz job/dataviz-db-migration-<revision>
+kubectl logs -n graph-italia job/graph-italia-db-migration-<revision>
 
 # Logs seed
-kubectl logs -n dataviz job/dataviz-db-seed-<revision>
+kubectl logs -n graph-italia job/graph-italia-db-seed-<revision>
 
 # Logs applicazione
-kubectl logs -n dataviz deployment/dataviz-webapp
-kubectl logs -n dataviz deployment/dataviz-server
+kubectl logs -n graph-italia deployment/graph-italia-webapp
+kubectl logs -n graph-italia deployment/graph-italia-server
 
 # Verifica ConfigMap
-kubectl get configmap -n dataviz
-kubectl describe configmap dataviz-webapp-config -n dataviz
+kubectl get configmap -n graph-italia
+kubectl describe configmap graph-italia-webapp-config -n graph-italia
 
 # Verifica ingress
-kubectl get ingress -n dataviz
-kubectl describe ingress dataviz -n dataviz
+kubectl get ingress -n graph-italia
+kubectl describe ingress graph-italia -n graph-italia
 ```
 
 ## Note Importanti

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DataTableComponent, { type TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
-import type { MatrixType } from "dataviz-components";
+import type { MatrixType } from "graph-italia-components";
 
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";

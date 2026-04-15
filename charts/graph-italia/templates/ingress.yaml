@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "dataviz.fullname" . }}
+  name: {{ include "graph-italia.fullname" . }}
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
   annotations:
     {{- /* User-defined annotations */}}
     {{- with .Values.ingress.annotations }}
@@ -51,7 +51,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ if eq .service "webapp" }}{{ include "dataviz.fullname" $ }}-webapp{{ else if eq .service "server" }}{{ include "dataviz.fullname" $ }}-server{{ else }}{{ .service }}{{ end }}
+                name: {{ if eq .service "webapp" }}{{ include "graph-italia.fullname" $ }}-webapp{{ else if eq .service "server" }}{{ include "graph-italia.fullname" $ }}-server{{ else }}{{ .service }}{{ end }}
                 port:
                   number: {{ if eq .service "webapp" }}{{ $.Values.webapp.service.port }}{{ else if eq .service "server" }}{{ $.Values.server.service.port }}{{ else }}{{ .port }}{{ end }}
           {{- end }}
@@ -66,7 +66,7 @@ spec:
             pathType: {{ .Values.ingress.paths.webapp.pathType }}
             backend:
               service:
-                name: {{ include "dataviz.fullname" . }}-webapp
+                name: {{ include "graph-italia.fullname" . }}-webapp
                 port:
                   number: {{ .Values.webapp.service.port }}
           {{- end }}
@@ -75,7 +75,7 @@ spec:
             pathType: {{ .Values.ingress.paths.server.pathType }}
             backend:
               service:
-                name: {{ include "dataviz.fullname" . }}-server
+                name: {{ include "graph-italia.fullname" . }}-server
                 port:
                   number: {{ .Values.server.service.port }}
           {{- end }}

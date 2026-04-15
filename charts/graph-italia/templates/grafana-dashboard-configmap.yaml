@@ -6,17 +6,17 @@
   
   Usage Options:
   1. Automatic (via Helm): Enable monitoring.grafanaDashboard.enabled in values.yaml
-  2. Manual Import: Import charts/dataviz/dashboards/dataviz-dashboard.json directly into Grafana
+  2. Manual Import: Import charts/graph-italia/dashboards/graph-italia-dashboard.json directly into Grafana
   
-  See charts/dataviz/dashboards/README.md for details.
+  See charts/graph-italia/dashboards/README.md for details.
 */ -}}
 {{- if .Values.monitoring.grafanaDashboard.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "dataviz.fullname" . }}-dashboard
+  name: {{ include "graph-italia.fullname" . }}-dashboard
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     {{- with .Values.monitoring.grafanaDashboard.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -24,6 +24,6 @@ metadata:
   namespace: {{ .Values.monitoring.grafanaDashboard.namespace }}
   {{- end }}
 data:
-  dataviz-dashboard.json: |-
-{{ .Files.Get "dashboards/dataviz-dashboard.json" | indent 4 }}
+  graph-italia-dashboard.json: |-
+{{ .Files.Get "dashboards/graph-italia-dashboard.json" | indent 4 }}
 {{- end }}

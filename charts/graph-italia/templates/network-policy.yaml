@@ -3,14 +3,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "dataviz.fullname" . }}-webapp
+  name: {{ include "graph-italia.fullname" . }}-webapp
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: webapp
 spec:
   podSelector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: webapp
   policyTypes:
     - Ingress
@@ -43,7 +43,7 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              {{- include "dataviz.selectorLabels" . | nindent 14 }}
+              {{- include "graph-italia.selectorLabels" . | nindent 14 }}
               component: server
       ports:
         - protocol: TCP
@@ -58,14 +58,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "dataviz.fullname" . }}-server
+  name: {{ include "graph-italia.fullname" . }}-server
   labels:
-    {{- include "dataviz.labels" . | nindent 4 }}
+    {{- include "graph-italia.labels" . | nindent 4 }}
     component: server
 spec:
   podSelector:
     matchLabels:
-      {{- include "dataviz.selectorLabels" . | nindent 6 }}
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
       component: server
   policyTypes:
     - Ingress
@@ -75,7 +75,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              {{- include "dataviz.selectorLabels" . | nindent 14 }}
+              {{- include "graph-italia.selectorLabels" . | nindent 14 }}
               component: webapp
       ports:
         - protocol: TCP
