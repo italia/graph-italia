@@ -83,7 +83,7 @@
                         "description": "Import data from CSV, JSON files or from a remote source",
                         "actions": {
                             "useData": {
-                                "label": "Use thi data"
+                                "label": "Use this data"
                             }
                         }
                     }
@@ -440,7 +440,7 @@
         "loadRemoteDataPage": {
             "title": "Load remote data",
             "description": "Here some Open Data sources of real data you can use here",
-            "link": "Dati Italia, Governo e servizi pubblici"
+            "link": "Dati Italia, Governo and public services"
         }
     },
     "home": {
