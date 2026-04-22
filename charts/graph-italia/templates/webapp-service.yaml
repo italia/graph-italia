@@ -1,0 +1,20 @@
+{{- if .Values.webapp.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "graph-italia.fullname" . }}-webapp
+  labels:
+    {{- include "graph-italia.labels" . | nindent 4 }}
+    component: webapp
+spec:
+  type: {{ .Values.webapp.service.type }}
+  ports:
+    - port: {{ .Values.webapp.service.port }}
+      targetPort: {{ .Values.webapp.containerPort | default 80 }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "graph-italia.selectorLabels" . | nindent 4 }}
+    component: webapp
+{{- end }}
+

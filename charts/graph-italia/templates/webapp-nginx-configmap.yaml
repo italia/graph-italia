@@ -1,0 +1,15 @@
+{{- if .Values.webapp.enabled }}
+{{- if .Values.webapp.nginxConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "graph-italia.fullname" . }}-nginx-config
+  labels:
+    {{- include "graph-italia.labels" . | nindent 4 }}
+    component: webapp
+data:
+  default.conf: |
+{{ .Values.webapp.nginxConfig | indent 4 }}
+{{- end }}
+{{- end }}
+

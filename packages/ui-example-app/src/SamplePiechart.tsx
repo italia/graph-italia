@@ -3,7 +3,7 @@ import {
   type FieldDataType,
   // DataTable,
   // type MatrixType,
-} from "dataviz-components";
+} from "graph-italia-components";
 export default function App() {
   const sampleData: FieldDataType = {
     "id": "cm92sw7bf00076c5hsplehz2k",

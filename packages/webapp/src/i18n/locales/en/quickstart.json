@@ -1,13 +1,13 @@
 {
     "back": "Back to home",
-    "title": "Quick Start Guide: Creating Your First Chart with Dataviz",
+    "title": "Quick Start Guide: Creating Your First Chart with Graph Italia",
     "description": "Follow this guide to visualize your data in minutes. You can use sample data or upload your own.",
     "steps": {
         "step1": {
             "title": "Step 1: Click on \"Create New Chart\"",
             "text": "",
             "listItems": {
-                "item1": "Log in to your Dataviz account.",
+                "item1": "Log in to your Graph Italia account.",
                 "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
             }
         },
@@ -18,9 +18,9 @@
                 "item1": {
                     "text": "If you don't have data yet, you can",
                     "items": {
-                        "item1": "<strong>Sample data</strong>: use the datasets provided by Dataviz (option \"Use Sample Data\").",
+                        "item1": "<strong>Sample data</strong>: use the datasets provided by Graph Italia (option \"Use Sample Data\").",
                         "item2": "<strong>Generate data</strong>: from the Tools section → <a>Generate Data</a> to create a CSV automatically.",
-                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Dataviz will parse it and display the data in a table."
+                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Graph Italia will parse it and display the data in a table."
                     }
                 }
             }
@@ -47,7 +47,7 @@
     },
     "actions": {
         "getStarted": {
-            "label": "Login and get started"
+            "label": "Log in"
         }
     }
 }

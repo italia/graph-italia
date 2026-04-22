@@ -183,13 +183,13 @@ export default function Landing() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 w-full">
             <div className="text-center">
               <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                <span className="relative flex h-2 w-2" aria-hidden>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-                </span>
+                <span
+                  className="relative inline-flex h-2 w-2 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
                 {t("hero.chip")}
               </p>
-              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
+              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight [text-wrap:balance]">
                 <Trans
                   t={t}
                   i18nKey="hero.title"
@@ -219,13 +219,15 @@ export default function Landing() {
                   {t("hero.ctas.quickStart")}
                 </a>
               </div>
-              <div
-                className="mt-16 flex items-center justify-center gap-8 text-sm text-base-content/60"
-                aria-hidden
+              <ul
+                className="mt-16 flex items-center justify-center gap-8 text-sm text-base-content/70 list-none p-0"
+                aria-label={t("hero.featuresLabel", {
+                  defaultValue: "Caratteristiche principali",
+                })}
               >
-                <span className="flex items-center gap-2">
+                <li className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 text-primary/60"
+                    className="h-5 w-5 text-primary/80"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -239,8 +241,8 @@ export default function Landing() {
                     />
                   </svg>
                   CSV upload
-                </span>
-                <span className="flex items-center gap-2">
+                </li>
+                <li className="flex items-center gap-2">
                   <svg
                     className="h-5 w-5 shrink-0 text-primary/80"
                     fill="none"
@@ -255,11 +257,11 @@ export default function Landing() {
                       d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
                     />
                   </svg>
-                  Charts & maps
-                </span>
-                <span className="flex items-center gap-2">
+                  Charts &amp; maps
+                </li>
+                <li className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 text-primary/60"
+                    className="h-5 w-5 text-primary/80"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -272,9 +274,9 @@ export default function Landing() {
                       d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
                     />
                   </svg>
-                  Publish & embed
-                </span>
-              </div>
+                  Publish &amp; embed
+                </li>
+              </ul>
             </div>
           </div>
         </section>
@@ -307,7 +309,7 @@ export default function Landing() {
                 {t("contentBlock.title")}
               </h2>
               {/* <p className="mt-4 text-lg leading-8 text-base-content/70">
-                Start visualizing your data with Dataviz today. Dataviz makes
+                Start visualizing your data with Graph Italia today. Graph Italia makes
                 data visualization quick, simple, and powerful. Try it and see
                 how easily you can create, edit, and publish stunning charts in
                 minutes.
@@ -318,9 +320,9 @@ export default function Landing() {
               {features.map((feature) => (
                 <article
                   key={feature.name}
-                  className="landing__feature-card group relative flex flex-col rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30"
+                  className="landing__feature-card relative flex flex-col rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm"
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <FeatureIcon name={feature.icon} />
                   </div>
                   <h3 className="text-lg font-semibold text-base-content">
@@ -330,7 +332,7 @@ export default function Landing() {
                     {feature.description}
                   </p>
                   <div
-                    className="mt-4 h-px w-12 rounded-full bg-primary/30 transition-all group-hover:w-full group-hover:bg-primary/50"
+                    className="mt-4 h-px w-12 rounded-full bg-primary/30"
                     aria-hidden="true"
                   />
                 </article>

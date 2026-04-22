@@ -27,7 +27,7 @@ COPY packages/webapp/package.json ./packages/webapp/
 
 # Create minimal ui-example-app without link: dependency
 RUN mkdir -p packages/ui-example-app && \
-    echo '{"name":"dataviz-uiexampleapp","private":true}' > packages/ui-example-app/package.json
+    echo '{"name":"graph-italia-uiexampleapp","private":true}' > packages/ui-example-app/package.json
 
 # Install all dependencies (needed for Prisma CLI)
 RUN bun install && \

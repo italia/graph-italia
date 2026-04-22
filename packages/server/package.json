@@ -1,5 +1,5 @@
 {
-  "name": "dataviz-server",
+  "name": "graph-italia-server",
   "version": "0.2.01",
   "module": "index.ts",
   "type": "module",

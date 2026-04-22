@@ -1,6 +1,6 @@
-import "dataviz-components/dist/style.css";
-import type { ChartColorScheme, ChartConfigType } from "dataviz-components";
-import { ColorSchemeProvider, RenderChart } from "dataviz-components";
+import "graph-italia-components/dist/style.css";
+import type { ChartColorScheme, ChartConfigType } from "graph-italia-components";
+import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
 import { useForm } from "react-hook-form";
 import {
   forwardRef,
@@ -289,7 +289,11 @@ function EditKpiGroupPage() {
         >
           {t("header.actions.back.label")}
         </button>
-        <div className="flex gap-4">{name || "Edit KPI Group"}</div>
+        <h1 className="text-xl font-bold">
+          {id
+            ? t("header.pageTitle.edit", { defaultValue: "Modifica gruppo KPI" })
+            : t("header.pageTitle.new", { defaultValue: "Nuovo gruppo KPI" })}
+        </h1>
         <button
           type="button"
           onClick={saveHandler}
@@ -406,10 +410,19 @@ function EditKpiGroupPage() {
           </div>
 
           {/* Right: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg ]">
+          <section
+            aria-labelledby="kpi-preview-heading"
+            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg ]"
+          >
 
             <div>
-              <h1 className="text-2xl font-bold">{name}</h1>
+              <h2
+                id="kpi-preview-heading"
+                className="text-2xl font-bold"
+              >
+                {t("header.preview.heading", { defaultValue: "Anteprima" })}
+                {name ? `: ${name}` : ""}
+              </h2>
               <div className="text-base-content/80">
                 {description ? (
                   <div
@@ -498,7 +511,7 @@ function EditKpiGroupPage() {
                 </div>
               </div>
             </EditStepComponent>
-          </div>
+          </section>
         </div>
       </div>
 

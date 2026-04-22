@@ -192,7 +192,7 @@ export default function EditOrgsPage() {
       <div className="w-full flex justify-between items-center gap-2 bg-base-300 py-4 px-8 rounded-lg mb-6">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <FaBuilding className="text-primary" />
+            <FaBuilding className="text-primary" aria-hidden="true" />
             {t("title", "Organizations")}
           </h1>
           <p className="text-sm opacity-70">
@@ -200,7 +200,7 @@ export default function EditOrgsPage() {
           </p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
-          <FaPlus /> {t("createBtn", "New Organization")}
+          <FaPlus aria-hidden="true" /> {t("createBtn", "New Organization")}
         </button>
       </div>
 
@@ -215,44 +215,72 @@ export default function EditOrgsPage() {
               {t("noOrgs", "No organizations found.")}
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
-              {orgs.map((org) => (
-                <div
-                  key={org.id}
-                  className={`card card-compact border transition-all cursor-pointer ${
-                    selectedOrgId === org.id ? "bg-primary text-primary-content border-primary" : "bg-base-100 hover:bg-base-200 border-base-200"
-                  }`}
-                  onClick={() => setSelectedOrgId(org.id)}
-                >
-                  <div className="card-body flex-row items-center justify-between">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      {selectedOrgId === org.id ? <FaChevronDown /> : <FaChevronRight />}
-                      <span className="font-bold truncate">{org.name}</span>
-                    </div>
-                    <button
-                      className={`btn btn-ghost btn-xs ${selectedOrgId === org.id ? "text-primary-content" : "text-error"}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPendingDeleteOrgId(org.id);
-                      }}
+            <ul className="flex flex-col gap-2 list-none p-0 m-0">
+              {orgs.map((org) => {
+                const isSelected = selectedOrgId === org.id;
+                return (
+                  <li key={org.id}>
+                    <div
+                      className={`card card-compact border transition-all ${
+                        isSelected
+                          ? "bg-primary text-primary-content border-primary"
+                          : "bg-base-100 hover:bg-base-200 border-base-200"
+                      }`}
                     >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      <div className="card-body flex-row items-center justify-between gap-2">
+                        <button
+                          type="button"
+                          aria-expanded={isSelected}
+                          aria-controls={`org-panel-${org.id}`}
+                          onClick={() => setSelectedOrgId(org.id)}
+                          className="flex items-center gap-3 overflow-hidden flex-grow text-left bg-transparent border-0 p-0 cursor-pointer"
+                        >
+                          {isSelected ? (
+                            <FaChevronDown aria-hidden="true" />
+                          ) : (
+                            <FaChevronRight aria-hidden="true" />
+                          )}
+                          <span className="font-bold truncate">{org.name}</span>
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={t("actions.deleteOrg", {
+                            name: org.name,
+                            defaultValue: `Elimina organizzazione ${org.name}`,
+                          })}
+                          className={`btn btn-ghost btn-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${isSelected ? "text-primary-content" : "text-error"}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPendingDeleteOrgId(org.id);
+                          }}
+                        >
+                          <FaTrash aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
 
         {/* Member & Project Management */}
         <div className="lg:col-span-2">
           {selectedOrgId ? (
-            <div className="card bg-base-100 shadow-xl border border-base-200">
+            <section
+              id={`org-panel-${selectedOrgId}`}
+              role="region"
+              aria-label={t("panelLabel", {
+                name: orgs.find((o) => o.id === selectedOrgId)?.name ?? "",
+                defaultValue: `Dettagli organizzazione ${orgs.find((o) => o.id === selectedOrgId)?.name ?? ""}`,
+              })}
+              className="card bg-base-100 shadow-xl border border-base-200"
+            >
               <div className="card-body">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
                   <h2 className="card-title flex items-center gap-2">
-                    <FaBuilding className="text-primary" />
+                    <FaBuilding className="text-primary" aria-hidden="true" />
                     {orgs.find((o) => o.id === selectedOrgId)?.name}
                   </h2>
                   <div className="tabs tabs-boxed">
@@ -260,7 +288,7 @@ export default function EditOrgsPage() {
                       className={`tab ${activeTab === "members" ? "tab-active" : ""}`}
                       onClick={() => setActiveTab("members")}
                     >
-                      <FaUsers className="mr-2" /> {t("tabs.members", "Members")}
+                      <FaUsers className="mr-2" aria-hidden="true" /> {t("tabs.members", "Members")}
                     </button>
                     <button
                       className={`tab ${activeTab === "projects" ? "tab-active" : ""}`}
@@ -269,7 +297,7 @@ export default function EditOrgsPage() {
                         fetchPersonalProjects();
                       }}
                     >
-                      <FaFolderTree className="mr-2" /> {t("tabs.projects", "Projects")}
+                      <FaFolderTree className="mr-2" aria-hidden="true" /> {t("tabs.projects", "Projects")}
                     </button>
                   </div>
                 </div>
@@ -279,7 +307,7 @@ export default function EditOrgsPage() {
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">{t("membersTitle", "Members")}</h3>
                       <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowAddMemberModal(true)}>
-                        <FaUserPlus /> {t("addMemberBtn", "Add Member")}
+                        <FaUserPlus aria-hidden="true" /> {t("addMemberBtn", "Add Member")}
                       </button>
                     </div>
 
@@ -323,10 +351,15 @@ export default function EditOrgsPage() {
                                   </td>
                                   <td className="text-right">
                                     <button
-                                      className="btn btn-ghost btn-xs text-error"
+                                      type="button"
+                                      aria-label={t("actions.removeMember", {
+                                        email: member.user?.email || member.userId,
+                                        defaultValue: `Rimuovi membro ${member.user?.email || member.userId}`,
+                                      })}
+                                      className="btn btn-ghost btn-xs text-error focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
                                       onClick={() => setPendingRemoveUserId(member.userId)}
                                     >
-                                      <FaTrash />
+                                      <FaTrash aria-hidden="true" />
                                     </button>
                                   </td>
                                 </tr>
@@ -342,7 +375,7 @@ export default function EditOrgsPage() {
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">{t("projectsTitle", "Organization Projects")}</h3>
                       <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowTransferModal(true)}>
-                        <FaRightLeft /> {t("transferProjectBtn", "Transfer Project")}
+                        <FaRightLeft aria-hidden="true" /> {t("transferProjectBtn", "Transfer Project")}
                       </button>
                     </div>
 
@@ -390,11 +423,11 @@ export default function EditOrgsPage() {
                   </>
                 )}
               </div>
-            </div>
+            </section>
 
           ) : (
             <div className="h-full flex flex-col items-center justify-center bg-base-200/50 rounded-2xl border-2 border-dashed border-base-300 min-h-[400px]">
-              <FaBuilding size={48} className="opacity-20 mb-4" />
+              <FaBuilding size={48} className="opacity-20 mb-4" aria-hidden="true" />
               <p className="opacity-50 font-medium">{t("selectPrompt", "Select an organization to manage its members.")}</p>
             </div>
           )}

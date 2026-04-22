@@ -11,7 +11,7 @@ export default function Landing() {
 
   **Last Updated:** February 2, 2026
 
-  At **Dataviz**, we respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we handle your information when you use our web application.
+  At **Graph Italia**, we respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we handle your information when you use our web application.
 
   ## 1\. Information We Collect
 
@@ -50,7 +50,7 @@ export default function Landing() {
 
   We do not sell, trade, or rent your personal information to third parties.
 
-  Data is only processed by our **infrastructure providers** (such as our database and hosting servers) for the exclusive purpose of running the Dataviz application. These providers are bound by strict data processing agreements to ensure your data remains secure.
+  Data is only processed by our **infrastructure providers** (such as our database and hosting servers) for the exclusive purpose of running the Graph Italia application. These providers are bound by strict data processing agreements to ensure your data remains secure.
 
   ## 6\. Your Rights Under GDPR
 

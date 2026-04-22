@@ -17,9 +17,9 @@ export default function HeaderCompleta() {
   const { settings, setTheme, setLanguage } = useSettingsStore();
   const theme = settings?.preferredTheme;
   const language = settings?.preferredLanguage ?? "it";
-  const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
-  const dropdownToolsRef = useRef<HTMLLIElement>(null);
+  const dropdownRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   const handleLogout = async () => {
     try {
@@ -35,8 +35,11 @@ export default function HeaderCompleta() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      if (dropdownToolsRef.current && !dropdownToolsRef.current.contains(target)) {
-        setDropdownToolsOpen(false);
+      const clickedInside = Object.values(dropdownRefs.current).some(
+        (el) => el && el.contains(target),
+      );
+      if (!clickedInside) {
+        setOpenDropdown(null);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -60,14 +63,6 @@ export default function HeaderCompleta() {
 
 
           <div className="flex items-center gap-6 text-accent-content">
-            {/* Theme switcher – desktop only */}
-            <div className="hidden sm:block">
-              <ThemeSwitcherComponent
-                currentTheme={theme as "light" | "dark"}
-                handleChange={setTheme}
-              />
-            </div>
-
             <LanguageSwitcher
               currentLanguage={language}
               handleChange={setLanguage}
@@ -102,7 +97,7 @@ export default function HeaderCompleta() {
               <span className="block text-[1.75rem] font-semibold leading-tight text-primary-content ">
                 {t(`center.brand.title`)}
               </span>
-              <p className="text-sm font-normal text-primary-content/80 m-0 mt-0.5">
+              <p className="text-sm font-normal text-primary-content m-0 mt-0.5">
                 {t(`center.brand.tagline`)}
               </p>
             </div>
@@ -118,7 +113,7 @@ export default function HeaderCompleta() {
               <ul className="flex items-center list-none m-0 p-0" aria-label={t(`center.social.label`)}>
                 <li>
                   <a
-                    href="https://github.com/italia/dataviz"
+                    href="https://github.com/italia/graph-italia"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center w-10 h-10 text-primary-content hover:text-primary-content transition-colors duration-150"
@@ -173,17 +168,17 @@ export default function HeaderCompleta() {
               {MENU.map((item) => {
                 if ("subMenu" in item) {
                   return (
-                    <li key={item.name} className="relative" ref={dropdownToolsRef}>
+                    <li key={item.name} className="relative" ref={(el) => { dropdownRefs.current[item.name] = el; }}>
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-4 py-2 text-sm text-primary-content/90 hover:text-primary-content hover:bg-primary-content/10 transition-colors duration-150 bg-transparent border-none cursor-pointer"
-                        aria-expanded={dropdownToolsOpen}
+                        aria-expanded={openDropdown === item.name}
                         aria-haspopup="true"
-                        onClick={() => setDropdownToolsOpen((v) => !v)}
+                        onClick={() => setOpenDropdown((v) => v === item.name ? null : item.name)}
                       >
                         {item.translationKey ? translateMenu(item.translationKey) : item.name}
                         <svg
-                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${dropdownToolsOpen ? "rotate-180" : ""}`}
+                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${openDropdown === item.name ? "rotate-180" : ""}`}
                           aria-hidden="true"
                           viewBox="0 0 24 24"
                         >
@@ -192,7 +187,7 @@ export default function HeaderCompleta() {
                       </button>
 
                       <ul
-                        className={`absolute top-full left-0 z-[1000] min-w-48 py-2 bg-base-100 text-base-content rounded shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] list-none m-0 p-0 ${dropdownToolsOpen ? "block" : "hidden"}`}
+                        className={`absolute top-full left-0 z-[1000] min-w-48 py-2 bg-base-100 text-base-content rounded shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] list-none m-0 p-0 ${openDropdown === item.name ? "block" : "hidden"}`}
                       >
                         {item.subMenu.map((sub: MenuSubItem) => (
                           <li key={sub.name}>

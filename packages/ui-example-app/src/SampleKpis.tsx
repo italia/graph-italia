@@ -4,7 +4,7 @@ import {
   ColorSchemeProvider,
   type FieldDataType,
   type KpiItemType,
-} from "dataviz-components";
+} from "graph-italia-components";
 import { generateFakeKpis } from "./lib/utils";
 
 function App() {

@@ -1,11 +1,11 @@
 import { useMachine } from "@xstate/react";
-import type { ChartColorScheme } from "dataviz-components";
+import type { ChartColorScheme } from "graph-italia-components";
 import {
   ColorSchemeProvider,
   RenderChart,
   type MatrixType,
-} from "dataviz-components";
-import "dataviz-components/dist/style.css";
+} from "graph-italia-components";
+import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
@@ -68,6 +68,7 @@ function EditChartPage() {
   );
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<string>("");
   useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
   // After the initial load completes, reset any dirty flag that child components
@@ -159,15 +160,18 @@ function EditChartPage() {
     };
 
     setIsSaving(true);
+    setSaveStatus("");
     try {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
         setHasUnsavedChanges(false);
         toast.success(t(`save.success.label`));
+        setSaveStatus(t(`save.success.label`));
       }
     } catch (error) {
       console.error("Error saving chart:", error);
       toast.error(t(`save.error.label`));
+      setSaveStatus(t(`save.error.label`));
     } finally {
       setIsSaving(false);
     }
@@ -203,6 +207,10 @@ function EditChartPage() {
         </title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
+      {/* Live region for save status — announced without requiring focus (WCAG 4.1.3) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {saveStatus}
+      </div>
       <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
         <button
           type="button"
@@ -211,9 +219,11 @@ function EditChartPage() {
         >
           {t(`header.actions.back.label`)}
         </button>
-        <div className="flex gap-4">
-          {`Edit Chart`}
-        </div>
+        <h1 className="text-xl font-bold">
+          {paramId
+            ? t(`header.pageTitle.edit`)
+            : t(`header.pageTitle.new`)}
+        </h1>
         <div className="flex-shrink-0">
           <button
             type="button"
@@ -376,10 +386,19 @@ function EditChartPage() {
           </div>
 
           {/* Right column: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg">
+          <section
+            aria-labelledby="chart-preview-heading"
+            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg"
+          >
             <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>
-                <h1 className="text-2xl font-bold">{chartName}</h1>
+                <h2
+                  id="chart-preview-heading"
+                  className="text-2xl font-bold"
+                >
+                  {t(`header.preview.heading`)}
+                  {chartName ? `: ${chartName}` : ""}
+                </h2>
                 <div className="text-base-content/80">
                   {chartDescription ? (
                     <div
@@ -403,8 +422,11 @@ function EditChartPage() {
                         setPreviewScheme(value)
                       }
                     />
-                    <div
-                      className="overflow-auto min-h-[380px] relative rounded-lg"
+                    <figure
+                      role="figure"
+                      aria-labelledby="chart-preview-heading"
+                      aria-describedby="chart-preview-description"
+                      className="overflow-auto min-h-[380px] relative rounded-lg m-0"
                       style={{
                         backgroundColor:
                           previewScheme === "dark" ? "#1a1a2e" : "#F5FAFF",
@@ -419,7 +441,18 @@ function EditChartPage() {
                           dataSource={null}
                         />
                       </ColorSchemeProvider>
-                    </div>
+                      <figcaption
+                        id="chart-preview-description"
+                        className="sr-only"
+                      >
+                        {t(`body.preview.chartA11y`, {
+                          type: chart,
+                          name: chartName || t(`header.preview.untitled`),
+                          description: chartDescription || "",
+                          defaultValue: `Grafico di tipo {{type}}: {{name}}. {{description}}`,
+                        })}
+                      </figcaption>
+                    </figure>
                   </>
                 ) : (
                   <p className="italic text-base-content"></p>
@@ -469,7 +502,7 @@ function EditChartPage() {
                 )}
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </Layout>

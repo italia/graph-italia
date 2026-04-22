@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Dataviz — Data Sources",
-    "_postman_id": "dataviz-datasources",
+    "name": "Graph Italia — Data Sources",
+    "_postman_id": "graph-italia-datasources",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {

@@ -41,10 +41,10 @@ bun seeds/seed-users.ts
 
 This is a Bun workspace monorepo with four packages:
 
-- **`packages/components`** — Standalone React component library (`dataviz-components`) published to npm. Contains `RenderChart`, `ChartWrapper`, `DataTable`, `KpiItem`, `ColorSchemeProvider`. Built with Rollup (ESM + CJS output). Consumers must supply React, ECharts, etc. as peer deps.
+- **`packages/components`** — Standalone React component library (`graph-italia-components`) published to npm. Contains `RenderChart`, `ChartWrapper`, `DataTable`, `KpiItem`, `ColorSchemeProvider`. Built with Rollup (ESM + CJS output). Consumers must supply React, ECharts, etc. as peer deps.
 - **`packages/server`** — Hono + Bun backend API with PostgreSQL via Prisma. Handles auth, charts, dashboards, datasources, KPI groups, organizations, projects, and API keys.
 - **`packages/webapp`** — React 19 + Vite SPA. The main user-facing application for building and viewing charts/dashboards.
-- **`packages/ui-example-app`** — Minimal Vite demo app showing how to consume `dataviz-components`.
+- **`packages/ui-example-app`** — Minimal Vite demo app showing how to consume `graph-italia-components`.
 
 ### Data flow
 1. Users authenticate via the server (JWT stored in session storage).

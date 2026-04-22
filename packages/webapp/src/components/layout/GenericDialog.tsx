@@ -85,12 +85,9 @@ export default function GenericDialog({
       aria-labelledby="modal-title"
       aria-describedby={description ? "modal-description" : undefined}>
       <div className="modal-box relative" onClick={(e) => e.stopPropagation()}>
-        {/* Close button (X) at top right - Italian Design guideline */}
-        <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
-          onClick={() => cancelCb()}
-          aria-label="Close modal">✕</button>
-
-        {/* Title with h2 for accessibility - Italian Design guideline */}
+        {/* Title with h2 for accessibility - Italian Design guideline.
+            DOM order: title first so screen readers announce the modal
+            purpose before the close affordance (WCAG 1.3.2). */}
         <h2 id="modal-title" className="font-bold text-xl pr-8">
           {title}
         </h2>
@@ -104,6 +101,14 @@ export default function GenericDialog({
             {description}
           </p>
         )}
+
+        {/* Close button (X) — visually top-right via absolute positioning,
+            but placed after the title in the DOM. */}
+        <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
+          onClick={() => cancelCb()}
+          aria-label="Close modal">
+          <span aria-hidden="true">✕</span>
+        </button>
 
         {/* Modal content */}
         <div className="py-4">{children}</div>

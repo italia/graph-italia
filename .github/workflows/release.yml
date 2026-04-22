@@ -64,10 +64,10 @@ jobs:
         include:
           - component: webapp
             dockerfile: packages/webapp/Dockerfile
-            image: dataviz-webapp
+            image: graph-italia-webapp
           - component: server
             dockerfile: packages/server/Dockerfile.app
-            image: dataviz-srv
+            image: graph-italia-srv
     permissions:
       contents: read
       packages: write
@@ -122,9 +122,9 @@ jobs:
 
       - name: 📦 Package and push Helm chart
         run: |
-          helm package ./charts/dataviz --version ${{ needs.prepare.outputs.version }}
+          helm package ./charts/graph-italia --version ${{ needs.prepare.outputs.version }}
           echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          helm push dataviz-${{ needs.prepare.outputs.version }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
+          helm push graph-italia-${{ needs.prepare.outputs.version }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
 
   deploy-production:
     name: 🚀 Deploy to Production
@@ -162,24 +162,24 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CA_CERT }}" | base64 -d > /tmp/ca.crt
-          kubectl config set-cluster dataviz-cluster \
+          kubectl config set-cluster graph-italia-cluster \
             --server=${{ secrets.KUBE_SERVER }} \
             --certificate-authority=/tmp/ca.crt \
             --embed-certs=true
           kubectl config set-credentials github-actions \
             --token=${{ secrets.KUBE_TOKEN }}
-          kubectl config set-context dataviz \
-            --cluster=dataviz-cluster \
+          kubectl config set-context graph-italia \
+            --cluster=graph-italia-cluster \
             --user=github-actions \
-            --namespace=dataviz
-          kubectl config use-context dataviz
+            --namespace=graph-italia
+          kubectl config use-context graph-italia
 
       - name: 🎯 Deploy to Kubernetes
         run: |
-          helm upgrade --install dataviz \
-            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
+          helm upgrade --install graph-italia \
+            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/graph-italia \
             --version ${{ needs.prepare.outputs.version }} \
-            --namespace dataviz \
+            --namespace graph-italia \
             --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
@@ -189,9 +189,9 @@ jobs:
 
       - name: ✅ Verify deployment
         run: |
-          kubectl rollout status deployment/dataviz-webapp -n dataviz
-          kubectl rollout status deployment/dataviz-server -n dataviz
-          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz"
+          kubectl rollout status deployment/graph-italia-webapp -n graph-italia
+          kubectl rollout status deployment/graph-italia-server -n graph-italia
+          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to graph-italia"
 
   publish-npm:
     name: 📦 Publish npm package
@@ -284,24 +284,24 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CA_CERT }}" | base64 -d > /tmp/ca.crt
-          kubectl config set-cluster dataviz-cluster \
+          kubectl config set-cluster graph-italia-cluster \
             --server=${{ secrets.KUBE_SERVER }} \
             --certificate-authority=/tmp/ca.crt \
             --embed-certs=true
           kubectl config set-credentials github-actions \
             --token=${{ secrets.KUBE_TOKEN }}
-          kubectl config set-context dataviz-test \
-            --cluster=dataviz-cluster \
+          kubectl config set-context graph-italia-test \
+            --cluster=graph-italia-cluster \
             --user=github-actions \
-            --namespace=dataviz-test
-          kubectl config use-context dataviz-test
+            --namespace=graph-italia-test
+          kubectl config use-context graph-italia-test
 
-      - name: 🎯 Deploy to dataviz-test
+      - name: 🎯 Deploy to graph-italia-test
         run: |
-          helm upgrade --install dataviz-test \
-            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
+          helm upgrade --install graph-italia-test \
+            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/graph-italia \
             --version ${{ needs.prepare.outputs.version }} \
-            --namespace dataviz-test \
+            --namespace graph-italia-test \
             --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
@@ -311,6 +311,6 @@ jobs:
 
       - name: ✅ Verify deployment
         run: |
-          kubectl rollout status deployment/dataviz-test-webapp -n dataviz-test
-          kubectl rollout status deployment/dataviz-test-server -n dataviz-test
-          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz-test"
+          kubectl rollout status deployment/graph-italia-test-webapp -n graph-italia-test
+          kubectl rollout status deployment/graph-italia-test-server -n graph-italia-test
+          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to graph-italia-test"

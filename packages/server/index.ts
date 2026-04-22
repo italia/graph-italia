@@ -70,14 +70,14 @@ app.use(
 const publicCors = cors({
 	origin: "*",
 	allowMethods: ["GET", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization","x-project-id"],
+	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
 });
 
 // app.use(`/*`, publicCors);
-app.use(`/charts/show/*`, publicCors);
-app.use(`/dashboards/show/*`, publicCors);
-// app.use(`${ROUTES_PREFIX}/charts/show/*`, publicCors);
-// app.use(`${ROUTES_PREFIX}/dashboards/show/*`, publicCors);
+// app.use(`/charts/show/*`, publicCors);
+// app.use(`/dashboards/show/*`, publicCors);
+app.use(`/charts/*`, publicCors);
+app.use(`/dashboards/*`, publicCors);
 
 
 if (HOST.indexOf("localhost") !== -1) {
@@ -157,9 +157,9 @@ app.route("/projects", projectRoutes);
 app.get("/openapi.json", openAPIRouteHandler(app, {
 	documentation: {
 		info: {
-			title: "Dataviz API",
+			title: "Graph Italia API",
 			version: "1.0.0",
-			description: "API documentation for the Dataviz application"
+			description: "API documentation for the Graph Italia application"
 		},
 		components: {
 			securitySchemes: {
@@ -186,11 +186,11 @@ app.get("/openapi.json", openAPIRouteHandler(app, {
 				description: "Local server",
 			},
 			{
-				url: "http://dataviz-test.innovazione.gov.it",
+				url: "https://graph-test.developers.italia.it",
 				description: "Staging server",
 			},
 			{
-				url: "http://dataviz.innovazione.gov.it",
+				url: "https://graph.developers.italia.it",
 				description: "Production server",
 			},
 

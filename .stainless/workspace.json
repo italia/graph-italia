@@ -1,13 +1,13 @@
 {
-  "project": "dataviz-api-sdk",
+  "project": "graph-italia-api-sdk",
   "openapi_spec": "openapi.json",
   "stainless_config": "stainless.yml",
   "targets": {
     "openapi": {
-      "output_path": "../sdks/dataviz-api-sdk-openapi"
+      "output_path": "../sdks/graph-italia-api-sdk-openapi"
     },
     "typescript": {
-      "output_path": "../sdks/dataviz-api-sdk-typescript"
+      "output_path": "../sdks/graph-italia-api-sdk-typescript"
     }
   }
 }

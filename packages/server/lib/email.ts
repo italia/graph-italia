@@ -7,7 +7,7 @@ const resend = new Resend(RESEND_API_KEY);
 const SENDER_EMAIL = process.env.SENDER_EMAIL || "";
 const HOST = process.env.HOST_URL || "/";
 const APP_URL = process.env.APP_URL || "/";
-const COPY = "Dataviz";
+const COPY = "Graph Italia";
 
 async function sendMail(addresses: string[], html: string, subject: string = "Activate Account") {
   const startTime = performance.now();
@@ -19,7 +19,7 @@ async function sendMail(addresses: string[], html: string, subject: string = "Ac
       subject,
       html,
       headers: {
-        "X-Entity-Ref-ID": `dataviz-${Date.now()}`, // Prevents threading in Gmail
+        "X-Entity-Ref-ID": `graph-italia-${Date.now()}`, // Prevents threading in Gmail
       },
     });
 

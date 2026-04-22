@@ -1,4 +1,4 @@
-import { ColorSchemeProvider, RenderChart } from "dataviz-components";
+import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
 import Layout from "../../components/layout";

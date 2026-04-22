@@ -1,4 +1,4 @@
-import { type FieldDataType } from "dataviz-components";
+import { type FieldDataType } from "graph-italia-components";
 import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
@@ -18,9 +18,10 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useAriaSort } from "../hooks/useAriaSort";
+import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 
-import { RenderChart } from "dataviz-components";
+import { RenderChart } from "graph-italia-components";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -61,6 +62,7 @@ export default function ChartTable({
   } | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
+  usePaginationSelectKeyboard(tableRef);
 
   const handleSort = useCallback(
     (
@@ -233,7 +235,8 @@ export default function ChartTable({
         <div className="flex gap-2">
           <button
             type="button"
-            aria-label="embed"
+            aria-label={t("actions.embed", { defaultValue: "Codice embed" })}
+            title={t("actions.embed", { defaultValue: "Codice embed" })}
             className="btn btn-ghost btn-xs btn-square"
             onClick={() =>
               setShow(
@@ -246,7 +249,8 @@ export default function ChartTable({
 
           <button
             type="button"
-            aria-label="copy link"
+            aria-label={t("actions.copyLink", { defaultValue: "Copia link" })}
+            title={t("actions.copyLink", { defaultValue: "Copia link" })}
             className="btn btn-ghost btn-xs btn-square"
             onClick={handleCopy(
               `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
@@ -264,7 +268,8 @@ export default function ChartTable({
         <div className="flex gap-2">
           <button
             type="button"
-            aria-label="preview"
+            aria-label={t("actions.preview", { defaultValue: "Anteprima" })}
+            title={t("actions.preview", { defaultValue: "Anteprima" })}
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => setData(row)}
           >
@@ -278,7 +283,8 @@ export default function ChartTable({
                   ? ROUTES.editKpi(row.id)
                   : ROUTES.editChart(row.id)
             }
-            aria-label="edit"
+            aria-label={t("actions.edit", { defaultValue: "Modifica" })}
+            title={t("actions.edit", { defaultValue: "Modifica" })}
             className="btn btn-ghost btn-xs btn-square"
           >
             <FaPenToSquare
@@ -291,14 +297,16 @@ export default function ChartTable({
             href={`${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="view"
+            aria-label={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
+            title={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
             className="btn btn-ghost btn-xs btn-square"
           >
             <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
           <button
             type="button"
-            aria-label="delete"
+            aria-label={t("actions.delete", { defaultValue: "Elimina" })}
+            title={t("actions.delete", { defaultValue: "Elimina" })}
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => handleDeleteChart(row.id ?? "")}
           >
@@ -319,16 +327,18 @@ export default function ChartTable({
       </div>
 
       {list && (
-        <DataTable
-          onRowClicked={(row) => handleRowClick(row)}
-          onSort={handleSort}
-          columns={columns}
-          data={list as FieldDataTypeWithPreview[]}
-          theme={currentTheme}
-          pagination
-          highlightOnHover
-          noDataComponent={t(`noDataComponent`)}
-        />
+        <div ref={tableRef}>
+          <DataTable
+            onRowClicked={(row) => handleRowClick(row)}
+            onSort={handleSort}
+            columns={columns}
+            data={list as FieldDataTypeWithPreview[]}
+            theme={currentTheme}
+            pagination
+            highlightOnHover
+            noDataComponent={t(`noDataComponent`)}
+          />
+        </div>
       )}
 
       <Dialog

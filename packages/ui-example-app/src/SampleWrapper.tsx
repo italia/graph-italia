@@ -1,4 +1,4 @@
-import { ColorSchemeProvider, ChartWrapper, type FieldDataType } from "dataviz-components";
+import { ColorSchemeProvider, ChartWrapper, type FieldDataType } from "graph-italia-components";
 
 function App() {
   const sampleData: FieldDataType = {

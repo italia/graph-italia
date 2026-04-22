@@ -128,7 +128,7 @@
                         "policyAcknologment": {
                             "label": {
                                 "main": "I accept the <privacyLink>privacy policy</privacyLink> agreement.",
-                                "small": "Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
+                                "small": "Privacy at a Glance: We value your data. Graph Italia uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
                             },
                             "errors": {
                                 "mustAccept": "You must accept the policy agreement"
@@ -188,7 +188,7 @@
                 },
                 "center": {
                     "brand": {
-                        "title": "Dataviz",
+                        "title": "Graph Italia",
                         "tagline": "Share your charts"
                     },
                     "social": {
@@ -210,7 +210,7 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Dataviz"
+                    "title": "Graph Italia"
                 },
                 "actions": {
                     "login": {
@@ -229,7 +229,7 @@
             },
             "footer": {
                 "brand": {
-                    "title": "Dataviz",
+                    "title": "Graph Italia",
                     "tagline": "Share your charts"
                 },
                 "links": {

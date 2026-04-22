@@ -207,51 +207,51 @@ export const httpRequestsInFlight = new Gauge(
 
 // Application metrics
 export const activeUsers = new Gauge(
-  'dataviz_active_sessions',
+  'graph_italia_active_sessions',
   'Number of active user sessions',
   []
 );
 
 export const chartsCreated = new Counter(
-  'dataviz_charts_created_total',
+  'graph_italia_charts_created_total',
   'Total number of charts created',
   []
 );
 
 export const dashboardsCreated = new Counter(
-  'dataviz_dashboards_created_total',
+  'graph_italia_dashboards_created_total',
   'Total number of dashboards created',
   []
 );
 
 export const emailsSent = new Counter(
-  'dataviz_emails_sent_total',
+  'graph_italia_emails_sent_total',
   'Total number of emails sent',
   ['type']
 );
 
 export const aiRequests = new Counter(
-  'dataviz_ai_requests_total',
+  'graph_italia_ai_requests_total',
   'Total number of AI suggestion requests',
   ['status']
 );
 
 export const aiRequestDuration = new Histogram(
-  'dataviz_ai_request_duration_seconds',
+  'graph_italia_ai_request_duration_seconds',
   'AI request duration in seconds',
   ['model'],
   [0.5, 1, 2, 5, 10, 15, 20, 30, 45, 60]
 );
 
 export const dbQueryDuration = new Histogram(
-  'dataviz_db_query_duration_seconds',
+  'graph_italia_db_query_duration_seconds',
   'Database query duration in seconds',
   ['operation'],
   [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5]
 );
 
 export const dbQueryTotal = new Counter(
-  'dataviz_db_queries_total',
+  'graph_italia_db_queries_total',
   'Total number of database queries',
   ['operation', 'status']
 );

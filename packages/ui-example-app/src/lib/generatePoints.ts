@@ -1,4 +1,4 @@
-import type { PointData } from "dataviz-components";
+import type { PointData } from "graph-italia-components";
 // Approximate Bounding Boxes
 // const ITALY_BOUNDS = {
 //   minLon: 6.6,

@@ -1,4 +1,4 @@
-import type { KpiItemType } from "dataviz-components";
+import type { KpiItemType } from "graph-italia-components";
 
 export function getRandomInRange(
   min: number,

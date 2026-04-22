@@ -31,6 +31,14 @@
                 }
             },
             "header": {
+                "pageTitle": {
+                    "new": "Nuovo grafico",
+                    "edit": "Modifica grafico"
+                },
+                "preview": {
+                    "heading": "Anteprima",
+                    "untitled": "Grafico senza titolo"
+                },
                 "actions": {
                     "back": {
                         "label": "Torna alla lista"
@@ -81,7 +89,8 @@
                     }
                 },
                 "preview": {
-                    "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima"
+                    "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima",
+                    "chartA11y": "Grafico di tipo {{type}}: {{name}}. {{description}}"
                 }
             }
         },
@@ -97,6 +106,14 @@
                 }
             },
             "header": {
+                "pageTitle": {
+                    "new": "Nuova dashboard",
+                    "edit": "Modifica dashboard"
+                },
+                "preview": {
+                    "heading": "Anteprima",
+                    "untitled": "Dashboard senza titolo"
+                },
                 "actions": {
                     "back": {
                         "label": "Torna alla lista"
@@ -436,11 +453,13 @@
             }
         },
         "header": {
-            "title": "Area privata",
-            "charts": "Grafici",
-            "noCharts": "Benvenuto",
-            "dashboards": "Dashboard",
-            "noDashboards": "Non ci sono ancora Dashboard"
+            "title": "Area Privata",
+            "charts": "I miei grafici",
+            "noCharts": "I miei grafici",
+            "chartsEmpty": "Non hai ancora creato grafici. Usa \"Crea nuovo\" per iniziare.",
+            "dashboards": "Le mie dashboard",
+            "noDashboards": "Le mie dashboard",
+            "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare."
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
@@ -622,7 +641,6 @@
             "transferProjectDesc": "Seleziona uno dei tuoi progetti personali da trasferire a questa organizzazione.",
             "transfer": "Trasferisci",
             "cancel": "Annulla",
-
             "create": "Crea",
             "add": "Invita",
             "delete": "Elimina",

@@ -1,6 +1,6 @@
 /**
  * Slim Header – una sola fascia blu (solo quando l'utente È loggato).
- * Brand Dataviz, menu nav, lingua, nome utente / Esci.
+ * Brand Graph Italia, menu nav, lingua, nome utente / Esci.
  */
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,9 +19,9 @@ export default function SlimHeader() {
   const { t: translateMenu } = useTranslation("menu");
 
   const { user, clearUser } = useUserStore();
-  const [dropdownToolsAperto, setDropdownToolsAperto] = useState(false);
+  const [dropdownAperto, setDropdownAperto] = useState<string | null>(null);
   const [menuMobileAperto, setMenuMobileAperto] = useState(false);
-  const dropdownToolsRef = useRef<HTMLLIElement>(null);
+  const dropdownRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   const { settings, setTheme } = useSettingsStore();
   const theme = settings?.preferredTheme;
@@ -40,11 +40,12 @@ export default function SlimHeader() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      if (
-        dropdownToolsRef.current &&
-        !dropdownToolsRef.current.contains(target)
-      ) {
-        setDropdownToolsAperto(false);
+      const refs = dropdownRefs.current;
+      const clickedInside = Object.values(refs).some(
+        (el) => el && el.contains(target),
+      );
+      if (!clickedInside) {
+        setDropdownAperto(null);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -80,14 +81,14 @@ export default function SlimHeader() {
                         <li
                           key={item.name}
                           className="it-slim-only-nav-item it-slim-only-nav-dropdown"
-                          ref={dropdownToolsRef}
+                          ref={(el) => { dropdownRefs.current[item.name] = el; }}
                         >
                           <button
                             type="button"
                             className="it-slim-only-nav-link"
-                            aria-expanded={dropdownToolsAperto}
+                            aria-expanded={dropdownAperto === item.name}
                             aria-haspopup="true"
-                            onClick={() => setDropdownToolsAperto((v) => !v)}
+                            onClick={() => setDropdownAperto((v) => v === item.name ? null : item.name)}
                           >
                             {item.translationKey
                               ? translateMenu(item.translationKey)
@@ -102,7 +103,7 @@ export default function SlimHeader() {
                             </svg>
                           </button>
                           <ul
-                            className={`it-slim-only-dropdown-menu${dropdownToolsAperto ? " show" : ""}`}
+                            className={`it-slim-only-dropdown-menu${dropdownAperto === item.name ? " show" : ""}`}
                             role="menu"
                           >
                             {item.subMenu.map((sub: MenuSubItem) => (

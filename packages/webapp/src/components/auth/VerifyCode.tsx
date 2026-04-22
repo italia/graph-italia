@@ -70,9 +70,9 @@ export default function VerifyCodeComponent({
       <div className="mx-auto w-full  min-w-sm max-w-lg card bg-base-100 shadow-sm border border-base-200">
         <div className="card-body p-8">
           <div>
-            <h2 className="text-2xl font-bold leading-9 tracking-tight text-content">
+            <h1 className="text-2xl font-bold leading-9 tracking-tight text-content">
               {t(`header.label`)}
-            </h2>
+            </h1>
             <p> {t(`header.description`)}</p>
           </div>
 

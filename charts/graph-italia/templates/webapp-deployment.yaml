@@ -1,0 +1,92 @@
+{{- if .Values.webapp.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "graph-italia.fullname" . }}-webapp
+  labels:
+    {{- include "graph-italia.labels" . | nindent 4 }}
+    component: webapp
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "graph-italia.selectorLabels" . | nindent 6 }}
+      component: webapp
+  template:
+    metadata:
+      labels:
+        {{- include "graph-italia.selectorLabels" . | nindent 8 }}
+        component: webapp
+      annotations:
+        checksum/image-pull-secret: {{ if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}{{ .Values.imagePullSecret.token | sha256sum }}{{ else }}""{{ end }}
+        {{- if .Values.webapp.prometheus.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.webapp.prometheus.port | default 8080 }}"
+        prometheus.io/path: "{{ .Values.webapp.prometheus.path | default "/nginx_status" }}"
+        {{- end }}
+        {{- /* Additional annotations */}}
+        {{- with .Values.webapp.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
+      imagePullSecrets:
+        - name: {{ include "graph-italia.fullname" . }}-image-pull-secret
+      {{- end }}
+      {{- if .Values.webapp.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.webapp.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.webapp.tolerations }}
+      tolerations:
+        {{- toYaml .Values.webapp.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.webapp.affinity }}
+      affinity:
+        {{- toYaml .Values.webapp.affinity | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.webapp.securityContext | nindent 8 }}
+      volumes:
+        - name: webapp-config
+          configMap:
+            name: {{ include "graph-italia.fullname" . }}-webapp-config
+        {{- if .Values.webapp.nginxConfig }}
+        - name: nginx-config
+          configMap:
+            name: {{ include "graph-italia.fullname" . }}-nginx-config
+        {{- end }}
+        {{- if .Values.webapp.volumes }}
+        {{- toYaml .Values.webapp.volumes | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: webapp
+          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}/{{ .Values.webapp.image.repository }}:{{ .Values.webapp.image.tag }}"
+          imagePullPolicy: {{ .Values.webapp.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.webapp.containerSecurityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.webapp.containerPort | default 80 }}
+              protocol: TCP
+          volumeMounts:
+            - name: webapp-config
+              mountPath: /usr/share/nginx/html/config.json
+              subPath: config.json
+              readOnly: true
+            {{- if .Values.webapp.nginxConfig }}
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+            {{- end }}
+            {{- if .Values.webapp.volumeMounts }}
+            {{- toYaml .Values.webapp.volumeMounts | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.webapp.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.webapp.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.webapp.readinessProbe | nindent 12 }}
+{{- end }}

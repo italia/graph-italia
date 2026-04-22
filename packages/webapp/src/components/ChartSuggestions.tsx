@@ -10,7 +10,7 @@ import {
   FaRegListAlt,
 } from "react-icons/fa";
 import { applySuggestion } from "../lib/transform";
-import { DataTable } from "dataviz-components";
+import { DataTable } from "graph-italia-components";
 
 export default function ChartsSuggestions({ data }: { data: any }) {
   const [hints, setHints] = useState<AISuggestion[] | []>([]);

@@ -41,7 +41,7 @@ function Home() {
         <div className='mx-auto max-w-6xl pb-24 lg:pb-32'>
 
           <div ref={formRef} />
-          <h4 className="text-4xl">{t("title")}</h4>
+          <h1 className="text-4xl">{t("title")}</h1>
           <div className="my-4">
             {t("description")}: <br />
             <a
@@ -69,7 +69,7 @@ function Home() {
           )}
           <div className="divider my-6" />
 
-          <h5 className="mb-4 text-2xl font-semibold">Esempi disponibili</h5>
+          <h2 className="mb-4 text-2xl font-semibold">Esempi disponibili</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {examples.map((example) => (
               <div
@@ -77,9 +77,9 @@ function Home() {
                 className="card border border-base-200 bg-base-100 shadow-md"
               >
                 <div className="card-body gap-2">
-                  <h2 className="card-title text-base leading-snug">
+                  <h3 className="card-title text-base leading-snug">
                     {example.title}
-                  </h2>
+                  </h3>
                   <p className="line-clamp-3 text-sm text-base-content/70">
                     {example.description}
                   </p>

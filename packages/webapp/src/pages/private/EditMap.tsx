@@ -1,10 +1,10 @@
 import { useMachine } from "@xstate/react";
-import type { ChartColorScheme } from "dataviz-components";
+import type { ChartColorScheme } from "graph-italia-components";
 import {
   ColorSchemeProvider,
   RenderChart,
-} from "dataviz-components";
-import "dataviz-components/dist/style.css";
+} from "graph-italia-components";
+import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
@@ -195,9 +195,11 @@ export default function EditMapPage() {
         >
           {t(`header.actions.back.label`)}
         </button>
-        <div className="flex gap-4">
-          <h3>Map Editor</h3>
-        </div>
+        <h1 className="text-xl font-bold">
+          {paramId
+            ? t(`header.pageTitle.edit`, { defaultValue: "Modifica mappa" })
+            : t(`header.pageTitle.new`, { defaultValue: "Nuova mappa" })}
+        </h1>
         <div className="flex-shrink-0">
           <button
             type="button"
@@ -354,10 +356,19 @@ export default function EditMapPage() {
           </div>
 
           {/* Right column: Preview */}
-          <div className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg">
+          <section
+            aria-labelledby="map-preview-heading"
+            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg"
+          >
             <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>
-                <h1 className="text-2xl font-bold">{chartName}</h1>
+                <h2
+                  id="map-preview-heading"
+                  className="text-2xl font-bold"
+                >
+                  {t(`header.preview.heading`, { defaultValue: "Anteprima" })}
+                  {chartName ? `: ${chartName}` : ""}
+                </h2>
                 <div className="text-base-content/80">
                   {chartDescription ? (
                     <div
@@ -439,7 +450,7 @@ export default function EditMapPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </Layout>

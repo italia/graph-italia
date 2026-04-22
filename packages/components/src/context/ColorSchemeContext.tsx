@@ -9,7 +9,7 @@ interface ColorSchemeContextValue {
 
 const ColorSchemeContext = createContext<ColorSchemeContextValue>({
   scheme: "light",
-  resolvedTheme: "dataviz-light",
+  resolvedTheme: "graph-italia-light",
 });
 
 export function useColorScheme(): ChartColorScheme {
@@ -35,7 +35,7 @@ function isCustomThemeObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
-export const POST_MESSAGE_TYPE = "DATAVIZ_THEME";
+export const POST_MESSAGE_TYPE = "GRAPH_ITALIA_THEME";
 
 /**
  * Provider per il color scheme dei chart.
@@ -47,7 +47,7 @@ export const POST_MESSAGE_TYPE = "DATAVIZ_THEME";
  *   4. Auto-detect da `prefers-color-scheme` del browser
  *
  * postMessage protocol:
- *   { type: "DATAVIZ_THEME", theme: "dark" | "light" | { ...echartsThemeObject } }
+ *   { type: "GRAPH_ITALIA_THEME", theme: "dark" | "light" | { ...echartsThemeObject } }
  */
 export function ColorSchemeProvider({
   scheme,

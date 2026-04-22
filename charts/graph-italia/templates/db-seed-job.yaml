@@ -1,0 +1,86 @@
+{{- if and .Values.server.enabled .Values.dbSeed.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "graph-italia.fullname" . }}-db-seed-{{ .Release.Revision }}
+  labels:
+    {{- include "graph-italia.labels" . | nindent 4 }}
+    component: db-seed
+  annotations:
+    # Run after migration but before deployment
+    "helm.sh/hook": pre-upgrade,pre-install
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: {{ .Values.dbSeed.ttlSecondsAfterFinished | default 300 }}
+  backoffLimit: {{ .Values.dbSeed.backoffLimit | default 3 }}
+  template:
+    metadata:
+      labels:
+        {{- include "graph-italia.selectorLabels" . | nindent 8 }}
+        component: db-seed
+    spec:
+      {{- if and .Values.imagePullSecret.enabled .Values.imagePullSecret.token }}
+      imagePullSecrets:
+        - name: {{ include "graph-italia.fullname" . }}-image-pull-secret
+      {{- end }}
+      {{- if .Values.server.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.server.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.server.tolerations }}
+      tolerations:
+        {{- toYaml .Values.server.tolerations | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: seed
+          image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "🌱 Starting database seeding..."
+              cd /usr/src/app/packages/server
+              
+              # Run the seed script (idempotent - checks if users exist)
+              bun run seeds/seed-users.ts
+              
+              echo "✅ Database seeding completed successfully!"
+          env:
+            - name: DATABASE_URL
+              {{- if .Values.dbSeed.databaseUrlFromSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.dbSeed.databaseUrlFromSecret.secretName }}
+                  key: {{ .Values.dbSeed.databaseUrlFromSecret.key }}
+              {{- else }}
+              value: {{ .Values.server.env.DATABASE_URL | quote }}
+              {{- end }}
+            # Pass seed users as JSON for dynamic seeding
+            {{- if .Values.dbSeed.users }}
+            - name: SEED_USERS
+              value: {{ .Values.dbSeed.users | toJson | quote }}
+            {{- end }}
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+{{- end }}

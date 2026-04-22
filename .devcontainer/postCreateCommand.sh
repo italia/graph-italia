@@ -7,12 +7,12 @@ bun i -g prisma@latest
 
 
 if [ ! -e packages/server/.env ]; then
-    echo "Post Create Command: Setup .env in @dataviz/server"
+    echo "Post Create Command: Setup .env in @graph-italia/server"
     cp packages/server/sample.env packages/server/.env
 fi
 
 if [ ! -e packages/webapp/.env ]; then
-    echo "Post Create Command: Setup .env in @dataviz/webapp"
+    echo "Post Create Command: Setup .env in @graph-italia/webapp"
     cp packages/webapp/sample.env packages/webapp/.env
 fi
 

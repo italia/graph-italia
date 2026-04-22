@@ -42,7 +42,7 @@ export const useSettingsStore = create<SettingsState>()(
         clearSettings: () => set({ settings: null }),
       }),
       {
-        name: "dataviz-settings",
+        name: "graph-italia-settings",
         storage: createJSONStorage(() => localStorage),
         onRehydrateStorage: () => (state) => {
           if (state?.settings?.preferredLanguage) {

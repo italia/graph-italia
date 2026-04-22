@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { RenderChart, ColorSchemeProvider } from "dataviz-components";
+import { RenderChart, ColorSchemeProvider } from "graph-italia-components";
 import { useParams, useSearchParams } from "react-router-dom";
 
 import * as api from "../../lib/api";

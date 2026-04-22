@@ -128,7 +128,7 @@
                         "policyAcknologment": {
                             "label": {
                                 "main": "Accetto l'<privacyLink>informativa sulla privacy</privacyLink>.",
-                                "small": "Privacy in breve: i tuoi dati sono al sicuro. Dataviz utilizza un solo cookie strettamente necessario, lato server, per l'autenticazione. Non usiamo cookie di terze parti, tracker o strumenti di analisi. Conserviamo solo il tuo indirizzo email per gestire il tuo account e mantenere salvati i tuoi grafici. I tuoi dati rimangono tuoi."
+                                "small": "Privacy in breve: i tuoi dati sono al sicuro. Graph Italia utilizza un solo cookie strettamente necessario, lato server, per l'autenticazione. Non usiamo cookie di terze parti, tracker o strumenti di analisi. Conserviamo solo il tuo indirizzo email per gestire il tuo account e mantenere salvati i tuoi grafici. I tuoi dati rimangono tuoi."
                             },
                             "errors": {
                                 "mustAccept": "Devi accettare l'informativa sulla privacy"
@@ -188,7 +188,7 @@
                 },
                 "center": {
                     "brand": {
-                        "title": "Dataviz",
+                        "title": "Graph Italia",
                         "tagline": "Condividi i tuoi grafici"
                     },
                     "social": {
@@ -210,7 +210,7 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Dataviz"
+                    "title": "Graph Italia"
                 },
                 "actions": {
                     "login": {
@@ -229,7 +229,7 @@
             },
             "footer": {
                 "brand": {
-                    "title": "Dataviz",
+                    "title": "Graph Italia",
                     "tagline": ""
                 },
                 "links": {

@@ -8,11 +8,13 @@ function UploadCSV({
   setData: (d: MatrixType) => void;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
 
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setData(undefined);
     setError(null);
+    setStatus(null);
     const file = e?.target?.files?.[0] || null;
     if (!file) {
       setError("The file is empty");
@@ -30,6 +32,9 @@ function UploadCSV({
         const { data } = results;
         if (data) {
           setData(data);
+          setStatus(
+            `File "${file.name}" caricato: ${data.length} righe, ${data[0]?.length ?? 0} colonne.`,
+          );
         }
       },
       error: (err) => {
@@ -61,6 +66,11 @@ function UploadCSV({
             <span className="text-sm">{error}</span>
           </div>
         )}
+      </div>
+
+      {/* Status message announced to assistive tech without requiring focus */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {status}
       </div>
 
 

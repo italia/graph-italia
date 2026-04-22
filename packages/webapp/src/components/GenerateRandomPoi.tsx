@@ -1,4 +1,4 @@
-import type { PointData } from "dataviz-components";
+import type { PointData } from "graph-italia-components";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 

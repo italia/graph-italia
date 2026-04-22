@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAriaSort } from "../hooks/useAriaSort";
+import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
@@ -40,6 +41,7 @@ export default function DashboardTable({
   } | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
+  usePaginationSelectKeyboard(tableRef);
 
   const handleSort = useCallback(
     (column: TableColumn<FieldDataType>, direction: "asc" | "desc") => {
