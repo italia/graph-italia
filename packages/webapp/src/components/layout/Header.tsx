@@ -10,7 +10,7 @@ import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket } from "re
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 
 
-export default function SlimHeader() {
+export default function Header() {
   const { t } = useTranslation("components", {
     keyPrefix: "components.layout.slimHeader",
   });

@@ -5,7 +5,7 @@ import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import { useUserStore } from "../../lib/store/user_store";
 import { useSettingsStore } from "../../lib/store/settings_store";
-import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
+// import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
 
 export default function HeaderCompleta() {
@@ -14,8 +14,8 @@ export default function HeaderCompleta() {
   });
   const { t: translateMenu } = useTranslation("menu");
   const { user, clearUser } = useUserStore();
-  const { settings, setTheme, setLanguage } = useSettingsStore();
-  const theme = settings?.preferredTheme;
+  const { settings, setLanguage, /*setTheme*/ } = useSettingsStore();
+  // const theme = settings?.preferredTheme;
   const language = settings?.preferredLanguage ?? "it";
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
@@ -165,7 +165,7 @@ export default function HeaderCompleta() {
           {/* Desktop nav */}
           <nav className="hidden lg:flex w-full items-center justify-between" aria-label="Navigazione principale">
             <ul className="flex items-center list-none m-0 p-0">
-              {MENU.map((item) => {
+              {MENU.filter(i => !i.requireAuth).map((item) => {
                 if ("subMenu" in item) {
                   return (
                     <li key={item.name} className="relative" ref={(el) => { dropdownRefs.current[item.name] = el; }}>

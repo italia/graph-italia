@@ -170,7 +170,7 @@
         },
         "layout": {
             "sr": {
-                "label": "Vai al contenuto principale"
+                "label": "Go to the main content"
             },
             "fullHeader": {
                 "slim": {
@@ -195,7 +195,7 @@
                         "label": "Sources on",
                         "platforms": {
                             "github": {
-                                "ariaLabel": "GitHub (si apre in nuova finestra)"
+                                "ariaLabel": "GitHub (a new tab will be open)"
                             }
                         }
                     }

@@ -57,18 +57,22 @@
   default: false;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(25.33% 0.016 252.42);
-  --color-base-200: oklch(23.26% 0.014 253.1);
-  --color-base-300: oklch(21.15% 0.012 254.09);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(56% 0.2328 260.8) /*oklch(54% 0.245 262.881)*/;
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(48% 0.243 264.376);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(37% 0.044 257.287);
-  --color-accent-content: oklch(92% 0.004 286.32);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
+
+  --color-primary: #0066cc;
+  --color-primary-content: #ffffff;
+  --color-secondary: #023466;
+  --color-secondary-content: #fff;
+  --color-accent: #0158b3;
+  --color-accent-content: #fff;
+
+  --color-neutral: #2a2e37;
+  --color-neutral-content: #e3e3e3;
+
+  --color-base-100: #1f2126;
+  --color-base-200: #2c3035;
+  --color-base-300: #242526;
+  --color-base-content: #e3e3e3;
+
   --color-info: oklch(21% 0.034 264.665);
   --color-info-content: oklch(98% 0.003 247.858);
   --color-success: oklch(62% 0.194 149.214);
@@ -88,21 +92,21 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "bluscuro";
+  name: "oscuro";
   default: false;
-  prefersdark: false;
+  prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(37% 0.146 265.522);
-  --color-base-200: oklch(28% 0.091 267.935);
-  --color-base-300: oklch(42% 0.199 265.638);
+  --color-base-100: oklch(25.33% 0.016 252.42);
+  --color-base-200: oklch(23.26% 0.014 253.1);
+  --color-base-300: oklch(21.15% 0.012 254.09);
   --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(54% 0.245 262.881);
+  --color-primary: oklch(56% 0.2328 260.8) /*oklch(54% 0.245 262.881)*/;
   --color-primary-content: oklch(96% 0.018 272.314);
   --color-secondary: oklch(48% 0.243 264.376);
   --color-secondary-content: oklch(94% 0.028 342.258);
   --color-accent: oklch(37% 0.044 257.287);
   --color-accent-content: oklch(92% 0.004 286.32);
-  --color-neutral: oklch(28% 0.091 267.935);
+  --color-neutral: oklch(14% 0.005 285.823);
   --color-neutral-content: oklch(92% 0.004 286.32);
   --color-info: oklch(21% 0.034 264.665);
   --color-info-content: oklch(98% 0.003 247.858);

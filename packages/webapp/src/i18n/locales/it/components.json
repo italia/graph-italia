@@ -179,10 +179,10 @@
                     },
                     "actions": {
                         "login": {
-                            "label": "Login"
+                            "label": "Accedi"
                         },
                         "logout": {
-                            "label": "Logout"
+                            "label": "Esci"
                         }
                     }
                 },
