@@ -136,20 +136,26 @@ router.get(
 			if (!result) return c.json({ error: "Not Found" }, 404);
 			if (result.publish !== true) return c.json({ error: { message: "Unauthorized" } }, 401);
 
+
 			if (result.isRemote && result.remoteUrl) {
 				const diff = Date.now() - new Date(result.updatedAt).getTime();
 				if (diff > 1000 * 60 * 60 * 24) {
-					const response = await axios.get(`${result.remoteUrl}`);
-					let data: unknown;
-					if (response.headers["content-type"]?.includes("application/json")) {
-						data = response.data;
-					} else {
-						const csv = await parseCSV(response.data);
-						data = csv.data;
-					}
-					if (data) {
-						await db.updateChart(id, { isRemote: result.isRemote, remoteUrl: result.remoteUrl, data });
-						result = await db.findChartById(id);
+
+					try {
+						const response = await axios.get(`${result.remoteUrl}`);
+						let data: unknown;
+						if (response.headers["content-type"]?.includes("application/json")) {
+							data = response.data;
+						} else {
+							const csv = await parseCSV(response.data);
+							data = csv.data;
+						}
+						if (data) {
+							await db.updateChart(id, { isRemote: result.isRemote, remoteUrl: result.remoteUrl, data });
+							result = await db.findChartById(id);
+						}
+					} catch (_) {
+						logger.error("Error: fetching remote url failed");
 					}
 				}
 			}

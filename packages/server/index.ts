@@ -31,7 +31,7 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 	"http://127.0.0.1:3000",
 ];
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 
 // Build info for healthcheck (injected at build time)
 const BUILD_SHA = process.env.BUILD_SHA || "unknown";
@@ -76,11 +76,12 @@ const publicCors = cors({
 // app.use(`/*`, publicCors);
 // app.use(`/charts/show/*`, publicCors);
 // app.use(`/dashboards/show/*`, publicCors);
-app.use(`/charts/*`, publicCors);
-app.use(`/dashboards/*`, publicCors);
 
-
-if (HOST.indexOf("localhost") !== -1) {
+if (!isDev) {
+	app.use(`/charts/*`, publicCors);
+	app.use(`/dashboards/*`, publicCors);
+} else {
+	console.warn("CORS is enabled for all routes in development mode. Make sure to restrict this in production!");
 	// CORS CRUD (only in dev)
 	app.use(
 		"/*",

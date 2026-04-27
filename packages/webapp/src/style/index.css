@@ -87,41 +87,6 @@
   --noise: 0;
 }
 
-@plugin "daisyui/theme" {
-  name: "bluscuro";
-  default: false;
-  prefersdark: false;
-  color-scheme: "dark";
-  --color-base-100: oklch(37% 0.146 265.522);
-  --color-base-200: oklch(28% 0.091 267.935);
-  --color-base-300: oklch(42% 0.199 265.638);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(54% 0.245 262.881);
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(48% 0.243 264.376);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(37% 0.044 257.287);
-  --color-accent-content: oklch(92% 0.004 286.32);
-  --color-neutral: oklch(28% 0.091 267.935);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(21% 0.034 264.665);
-  --color-info-content: oklch(98% 0.003 247.858);
-  --color-success: oklch(62% 0.194 149.214);
-  --color-success-content: oklch(92% 0.004 286.32);
-  --color-warning: oklch(85% 0.199 91.936);
-  --color-warning-content: oklch(98% 0.003 247.858);
-  --color-error: oklch(58% 0.253 17.585);
-  --color-error-content: oklch(92% 0.004 286.32);
-  --radius-selector: 0.5rem;
-  --radius-field: 0.5rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.25rem;
-  --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
-  --noise: 0;
-}
-
 /* react-data-table-component: the library renders its own SVG arrow overlaid on
    a <select appearance:none>, but @tailwindcss/forms adds a second arrow via a
    background-image rule on every <select>. Remove that background on the rdt
