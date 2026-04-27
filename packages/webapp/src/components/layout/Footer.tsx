@@ -10,7 +10,10 @@ export default function Footer() {
   return (
     <footer className="footer bg-accent text-accent-content p-4">
       <div>
-        <p className="text-lg font-bold m-0">{brand}</p>
+        <div className="flex items-center">
+          <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`brand.title`)} />
+          <span className="font-semibold text-2xl">{t(`brand.title`)}</span>
+        </div>
         {tagline && <p className="m-0">{tagline}</p>}
       </div>
       <nav

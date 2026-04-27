@@ -77,29 +77,17 @@ export default function HeaderCompleta() {
           <a
             href={ROUTES.root}
             aria-label={t(`center.brand.title`)}
-            className="flex items-center gap-4 no-underline group"
+            className="flex items-center no-underline group"
           >
-            <svg
-              className="w-20 h-20 shrink-0 text-primary-content"
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-              />
-            </svg>
-            <div>
-              <span className="block text-[1.75rem] font-semibold leading-tight text-primary-content ">
+            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`center.brand.title`)} />
+
+            <div className="ml-[-8px]">
+              <span className="block text-[2rem] font-semibold leading-tight text-primary-content ">
                 {t(`center.brand.title`)}
               </span>
-              <p className="text-sm font-normal text-primary-content m-0 mt-0.5">
+              {/* <p className="text-sm font-normal text-primary-content m-0 mt-0.5">
                 {t(`center.brand.tagline`)}
-              </p>
+              </p> */}
             </div>
           </a>
 
@@ -247,7 +235,7 @@ export default function HeaderCompleta() {
           aria-hidden={!menuMobileOpen}
         >
           <ul className="list-none m-0 px-[18px] py-2">
-            {MENU.map((item) => {
+            {MENU.filter(i => !i.requireAuth).map((item) => {
               if ("subMenu" in item) {
                 return (
                   <li key={item.name} className="border-b border-primary-content/20">
