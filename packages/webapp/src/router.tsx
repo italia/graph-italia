@@ -71,6 +71,7 @@ export const ROUTES = {
 type TMenuItem = {
   name: string;
   link: string;
+  requireAuth?: boolean;
   translationKey?: `${typeof MENU_ITEMS_TRANSLATION_KEYS}.${string}.label`;
 };
 export type MenuSubItem = TMenuItem;
@@ -86,11 +87,13 @@ export const MENU: readonly MenuItem[] = [
   // },
   {
     name: "Examples",
+    requireAuth: false,
     translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.examples.label`,
     link: ROUTES.loadData,
   },
   {
     name: "Tools",
+    requireAuth: false,
     translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.label`,
     link: "",
     subMenu: [
@@ -113,6 +116,7 @@ export const MENU: readonly MenuItem[] = [
   },
   {
     name: "Settings",
+    requireAuth: true,
     translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.label`,
     link: "",
     subMenu: [

@@ -4,7 +4,7 @@ import { useSettingsStore } from "../../lib/store/settings_store";
 import { useUserStore } from "../../lib/store/user_store";
 import Footer from "./Footer";
 import FullHeader from "./FullHeader";
-import SlimHeader from "./Header";
+import Header from "./Header";
 
 function Layout({ children }: any) {
   const user = useUserStore((s) => s.user);
@@ -25,7 +25,7 @@ function Layout({ children }: any) {
       >
         {t(`sr.label`)}
       </a>
-      {user ? <SlimHeader /> : <FullHeader />}
+      {user ? <Header /> : <FullHeader />}
       <main id="main-content" className="flex-grow bg-base-200">
         {children}
       </main>
