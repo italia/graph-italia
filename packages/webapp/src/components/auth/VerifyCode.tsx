@@ -42,9 +42,15 @@ export default function VerifyCodeComponent({
     try {
       const result = await api.verify({ uid, code: value });
       setShowState(true);
-      const user = await api.getUser();
-      console.log(user);
-      setUser(user);
+
+      try {
+        console.log("get user");
+        const user = await api.getUser();
+        setUser(user);
+      } catch (e) {
+        console.log("get user error", e);
+      }
+
       return onCheckDone(result);
     } catch (error) {
       console.log("error", error);

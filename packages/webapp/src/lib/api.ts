@@ -193,7 +193,7 @@ export async function verify({ uid, code }: { uid: string; code: string }) {
     if (response.status === 200) {
       return true;
     }
-  } catch (error: any) {
+  } catch (error) {
     console.log("verify ERROR", error?.message);
     throw error;
   }
