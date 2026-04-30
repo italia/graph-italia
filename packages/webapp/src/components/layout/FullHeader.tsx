@@ -85,9 +85,9 @@ export default function HeaderCompleta() {
               <span className="block text-[2rem] font-semibold leading-tight text-primary-content ">
                 {t(`center.brand.title`)}
               </span>
-              {/* <p className="text-sm font-normal text-primary-content m-0 mt-0.5">
+              <p className="text-sm font-normal text-primary-content m-0 mt-0.5 ml-0.5">
                 {t(`center.brand.tagline`)}
-              </p> */}
+              </p>
             </div>
           </a>
 
