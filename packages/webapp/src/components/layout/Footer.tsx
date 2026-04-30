@@ -12,9 +12,15 @@ export default function Footer() {
       <div>
         <div className="flex items-center">
           <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`brand.title`)} />
-          <span className="font-semibold text-2xl">{t(`brand.title`)}</span>
+          <div>
+            <span className="block font-semibold text-2xl leading-tight">{t(`brand.title`)}</span>
+            {tagline && (
+              <p className="text-sm font-normal m-0 mt-0.5 ml-0.5">
+                {tagline}
+              </p>
+            )}
+          </div>
         </div>
-        {tagline && <p className="m-0">{tagline}</p>}
       </div>
       <nav
         aria-label={t(`navLabel`, { defaultValue: "Link del footer" })}
