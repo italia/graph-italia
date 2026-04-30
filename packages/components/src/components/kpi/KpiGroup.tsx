@@ -45,10 +45,16 @@ export default function KpiGroup({
       id={id}
       className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
       style={baseStyle}
+      role="list"
+      aria-label="Gruppo di KPI"
     >
       {items.map((item: KpiItemType, index: number) => (
-        <div className={`${resolvedTheme} dv-kpi-group-item`} key={`${index}-${item.title}`}>
-          <Kpi data={item} />
+        <div
+          className={`${resolvedTheme} dv-kpi-group-item`}
+          key={`${index}-${item.title}`}
+          role="listitem"
+        >
+          <Kpi data={item} poweredByLabel="" />
         </div>
       ))}
     </div>
