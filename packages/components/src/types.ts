@@ -150,4 +150,6 @@ export type InfosType = {
   labelDownloadImage?: string;
 
   chartFooterText?: string;
+
+  poweredByLabel?: string;
 };

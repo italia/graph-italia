@@ -18,6 +18,7 @@ import { DataTableContent } from "./DataTableContent";
 import { DataTableExport } from "./DataTableExport";
 import { DataTableToolbar } from "./DataTableToolbar";
 import ScrollButton from "./ScrollButton";
+import PoweredBy from "../PoweredBy";
 import {
   convertMatrixToTableData,
   createTableColumns,
@@ -39,6 +40,7 @@ export default function DataTable(props: DataTableProps) {
     enableColumnReorder = false,
     enableExportCsv = false,
     labels,
+    poweredByLabel,
   } = props;
 
   const resolvedLabels = {
@@ -179,6 +181,7 @@ export default function DataTable(props: DataTableProps) {
           visible={rightFade.visible}
         />
       )}
+      <PoweredBy label={poweredByLabel} />
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import React from "react";
 import type { KpiItemType } from "../../types";
+import { useResolvedTheme } from "../../context/ColorSchemeContext";
 
 export default function Kpi({ data }: { data: KpiItemType }) {
+  const resolvedTheme = useResolvedTheme();
+  const themeClass = typeof resolvedTheme === "string" ? resolvedTheme : "";
   let border_classes =
     "dv-kpi-primary-border-color-a9 dv-kpi-border dv-kpi-border-end-0 dv-kpi-border-top-0 dv-kpi-border-bottom-0 dv-kpi-border-4";
 
@@ -29,7 +32,7 @@ export default function Kpi({ data }: { data: KpiItemType }) {
   }
 
   return (
-    <div className="dv-kpi-item dv-kpi-bg">
+    <div className={`${themeClass} dv-kpi-item dv-kpi-bg`}>
       <div
         className={`dv-kpi-p-2 dv-kpi-ps-3 ${bgClass} ${border_classes}`}
         style={bgStyle}

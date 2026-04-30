@@ -1,7 +1,6 @@
 import {
   KpiItem,
   RenderChart,
-  ColorSchemeProvider,
   type FieldDataType,
   type KpiItemType,
 } from "graph-italia-components";
@@ -97,17 +96,11 @@ function App() {
 
   return (
     <div>
-      <ColorSchemeProvider >
-        <RenderChart {...data1} />
-      </ColorSchemeProvider>
+      <RenderChart {...data1} />
       <hr />
-      <ColorSchemeProvider >
-        <RenderChart {...data3} />
-      </ColorSchemeProvider>
+      <RenderChart {...data3} />
       <hr />
-      <ColorSchemeProvider >
-        <RenderChart {...data2} />
-      </ColorSchemeProvider>
+      <RenderChart {...data2} />
       <hr />
       <div className="dv-kpi-container">
         <div className="dv-kpi-row">

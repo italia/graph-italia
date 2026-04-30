@@ -1,4 +1,4 @@
-import { ColorSchemeProvider, ChartWrapper, type FieldDataType } from "graph-italia-components";
+import { ChartWrapper, type FieldDataType } from "graph-italia-components";
 
 function App() {
   const sampleData: FieldDataType = {
@@ -99,16 +99,14 @@ function App() {
   };
   return (
     <div>
-      <ColorSchemeProvider scheme="dark">
-        <ChartWrapper
-          id='jcdjdkwbcl'
-          data={sampleData}
-          info={info}
-          enableDownloadData={true}
-          enableDownloadImage={true}
-          shareFunction={() => console.log("Share function called")}
-        />
-      </ColorSchemeProvider>
+      <ChartWrapper
+        id='jcdjdkwbcl'
+        data={sampleData}
+        info={info}
+        enableDownloadData={true}
+        enableDownloadImage={true}
+        shareFunction={() => console.log("Share function called")}
+      />
     </div>
   );
 }

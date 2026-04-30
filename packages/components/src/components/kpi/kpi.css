@@ -22,7 +22,8 @@
   background-color: #F5FAFF !important;
 }
 
-.graph-italia-dark .dv-kpi-bg {
+.graph-italia-dark .dv-kpi-bg,
+.graph-italia-dark.dv-kpi-bg {
   background-color: #1a1a2e !important;
   color: #e0e0e0;
 }
@@ -270,4 +271,45 @@ hr + .dv-kpi-container {
     flex-basis: 100%;
     min-width: 0;
   }
+}
+
+/* ===========================================
+   Dark mode overrides
+   =========================================== */
+.graph-italia-dark .dv-kpi-bg-accent {
+  background-color: #1e293b !important;
+}
+
+.graph-italia-dark .dv-kpi-text-black {
+  color: #f3f4f6 !important;
+}
+
+.graph-italia-dark .dv-kpi-mid-caption--xlarge {
+  color: #f3f4f6;
+}
+
+.graph-italia-dark .dv-kpi-mid-caption--xxlarge,
+.graph-italia-dark .dv-kpi-primary-color-a9 {
+  color: #93c5fd !important;
+}
+
+.graph-italia-dark .dv-kpi-mid-caption {
+  color: #d1d5db;
+}
+
+.graph-italia-dark .dv-kpi-primary-border-color-a9,
+.graph-italia-dark .dv-kpi-primary-border-color-a9.dv-kpi-border {
+  border-color: #60a5fa !important;
+}
+
+.graph-italia-dark .dv-kpi-border {
+  border-color: #374151 !important;
+}
+
+.graph-italia-dark .dv-kpi-border-top {
+  border-top-color: #4b5563 !important;
+}
+
+.graph-italia-dark .dv-kpi-border-secondary {
+  border-color: #4b5563 !important;
 }
