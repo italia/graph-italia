@@ -222,53 +222,20 @@ router.post("/login",
 				return c.json({ error: { message: "Too many attempts. Try again later." } }, 429);
 			}
 
-			const existingUser = await db.findUserByEmail(email);
-
-			if (!existingUser) {
-				console.log("No user found with email", email);
-				logger.warn("Login attempt for non-existent user", {
-					email: email.replace(/(.{2}).*@/, "$1***@"),
-				});
-				return c.json({ error: { message: "Invalid login credentials." } }, 401);
-			}
-
-			//check if user is verifyed
-			if (!existingUser.verifyed) {
+			//check if user is verified
+			if (!existingUser.verified) {
 				console.log("User not verified", email);
 				logger.warn("Login attempt for unverified user", {
 					userId: existingUser.id,
 					email: email.replace(/(.{2}).*@/, "$1***@"),
 				});
-				return c.json(
-					{ error: { message: "Please verify your email before logging in." } },
-					401,
-				);
+
+				return c.json({ auth: true });
+			} catch (error) {
+				logger.error("Login failed", error instanceof Error ? error : undefined);
+				return c.json({ error: { message: "Login failed" } }, 500);
 			}
-
-			const validPassword = await bcrypt.compare(password, existingUser.password);
-			if (!validPassword) {
-				console.log("Invalid password for user", email);
-				logger.warn("Login failed - invalid password", {
-					userId: existingUser.id,
-					email: email.replace(/(.{2}).*@/, "$1***@"),
-				});
-				return c.json({ error: { message: "Invalid login credentials." } }, 401);
-			}
-
-			const { accessToken } = generateTokens(existingUser);
-			setAccessTokenCookie(c, accessToken);
-			console.log("User logged in successfully", email);
-			logger.info("User logged in successfully", {
-				userId: existingUser.id,
-				email: email.replace(/(.{2}).*@/, "$1***@"),
-			});
-
-			return c.json({ auth: true });
-		} catch (error) {
-			logger.error("Login failed", error instanceof Error ? error : undefined);
-			return c.json({ error: { message: "Login failed" } }, 500);
-		}
-	});
+		});
 
 // RECOVER ACCOUNT
 
@@ -442,13 +409,8 @@ router.post("/verify",
 		const user = c.get("user") as ParsedToken | null;
 
 
-		if (user && user.userId !== uid) {
-			logger.warn("Verification attempted with mismatched user", {
-				requestUserId: uid,
-				sessionUserId: user.userId,
-			});
-			return c.json({ error: "Invalid user activation." }, 400);
-		}
+		const userValue = await db.setVerified(dbUser.id);
+		await db.consumeCode(record.id);
 
 		const dbUser = await db.findUserById(uid);
 		if (!dbUser) {
@@ -523,7 +485,7 @@ router.get(
 			return c.json({ error: "Code invalid or expired." }, 400);
 		}
 
-		const userValue = await db.setVerifyed(dbUser.id);
+		const userValue = await db.setVerified(dbUser.id);
 		await db.consumeCode(record.id);
 		const { accessToken } = generateTokens(userValue);
 		setAccessTokenCookie(c, accessToken);
@@ -570,7 +532,7 @@ router.post(
 		await db.changePassword(uid, password);
 		await db.consumeCode(record.id);
 		// Ensure the account is active after a successful recovery
-		const userValue = await db.setVerifyed(uid);
+		const userValue = await db.setVerified(uid);
 
 		const { accessToken } = generateTokens(userValue);
 		setAccessTokenCookie(c, accessToken);

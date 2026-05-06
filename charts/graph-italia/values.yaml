@@ -62,10 +62,10 @@ dbSeed:
   users: []
     # - email: "admin@example.com"
     #   password: "secure-password-here"
-    #   verifyed: true
+    #   verified: true
     # - email: "user@example.com"
     #   password: "another-secure-password"
-    #   verifyed: true
+    #   verified: true
 
 webapp:
   enabled: true
