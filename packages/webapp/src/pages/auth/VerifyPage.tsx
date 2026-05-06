@@ -77,7 +77,7 @@ function AuthPage() {
               onAskAnotherCode={() => handleAskAnotherCode()}
             />
           )}
-          {isValid && (
+          {isValid && action !== "reset" && (
             <div role="alert" className="alert alert-success">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

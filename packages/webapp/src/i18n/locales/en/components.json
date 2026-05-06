@@ -84,6 +84,12 @@
                         },
                         "recoverPassword": {
                             "label": "Forgot password?"
+                        },
+                        "resend": {
+                            "label": "Didn't get the activation email? Resend it",
+                            "success": "Activation email sent. Check your inbox.",
+                            "tooMany": "Too many attempts. Try again later.",
+                            "error": "Could not send the email. Try again later."
                         }
                     }
                 },
