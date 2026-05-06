@@ -19,20 +19,22 @@ const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
 
 // Used only to verify requireUser rejects API key bearer tokens
-const READWRITE_KEY = "dv_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+const READWRITE_KEY = `dv_bbbbbbbb_${"b".repeat(64)}`;
 
-const USER_ID    = "user-1";
+const USER_ID = "user-1";
 const OTHER_USER = "user-2";
 const PROJECT_ID = "proj-1";
-const KEY_ID     = "apikey-1";
+const KEY_ID = "apikey-1";
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const API_KEY = {
 	id: KEY_ID,
-	key: "dv_stored_key_hidden",
+	prefix: "aaaaaaaa",
+	keyHash: "hash_placeholder",
 	role: "READONLY",
 	expire: 60,
+	revokedAt: null,
 	projectId: PROJECT_ID,
 	createdAt: new Date().toISOString(),
 	updatedAt: new Date().toISOString(),
@@ -41,6 +43,8 @@ const API_KEY = {
 const LOG = {
 	id: "log-1",
 	apiKeyId: KEY_ID,
+	keyPrefix: "aaaaaaaa",
+	projectName: "Test Project",
 	method: "GET",
 	endpoint: "/charts",
 	status: 200,
@@ -51,36 +55,49 @@ const LOG = {
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 mock.module("../lib/logger", () => ({
-	logger: { debug: mock(() => {}), info: mock(() => {}), warn: mock(() => {}), error: mock(() => {}) },
+	logger: { debug: mock(() => { }), info: mock(() => { }), warn: mock(() => { }), error: mock(() => { }) },
 	httpLogger: mock(async (_c: unknown, next: () => Promise<void>) => next()),
-	logStartup: mock(() => {}),
+	logStartup: mock(() => { }),
 }));
 
 mock.module("../lib/db/apiKeyDb", () => ({
 	findApiKeyByRawKey: mock(async (key: string) => {
-		if (key === READWRITE_KEY) return { id: "key-rw", key: READWRITE_KEY, role: "READWRITE", expire: 60, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
+		if (key === READWRITE_KEY) {
+			return {
+				id: "key-rw",
+				prefix: "bbbbbbbb",
+				keyHash: "hash_rw",
+				role: "READWRITE",
+				expire: 60,
+				revokedAt: null,
+				projectId: PROJECT_ID,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			};
+		}
 		return null;
 	}),
-	createApiLog: mock(async () => undefined),
-}));
-
-// requireAuth middleware imports directly from projectDb, so it must be
-// mocked at the submodule path too — the aggregated `lib/db` mock is not
-// reached for these calls.
-mock.module("../lib/db/projectDb", () => ({
-	getDefaultProjectId:  mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
-	canUserModifyProject: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
+	revokeApiKey: mock(async (id: string) => ({ ...API_KEY, id, revokedAt: new Date().toISOString() })),
+	reinstateApiKey: mock(async (id: string) => ({ ...API_KEY, id, revokedAt: null })),
 }));
 
 mock.module("../lib/db", () => ({
 	default: {
-		getDefaultProjectId:    mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
-		findApiKeysByUserId:    mock(async () => [API_KEY]),
-		findApiKeyById:         mock(async (id: string) => id === KEY_ID ? API_KEY : null),
-		createApiKey:           mock(async (projectId: string, role: string, expire: number) => ({ ...API_KEY, projectId, role, expire })),
-		deleteApiKey:           mock(async () => undefined),
-		canUserModifyProject:   mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
-		findLogsByApiKey:       mock(async () => [LOG]),
+		getDefaultProjectId: mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
+		findApiKeysByUserId: mock(async () => [API_KEY]),
+		findApiKeyById: mock(async (id: string) => id === KEY_ID ? API_KEY : null),
+		createApiKey: mock(async (projectId: string, role: string, expire: number) => ({
+			...API_KEY,
+			projectId,
+			role,
+			expire,
+			rawKey: `dv_aaaaaaaa_${"a".repeat(64)}`,
+		})),
+		deleteApiKey: mock(async () => undefined),
+		canUserModifyProject: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
+		findLogsByApiKey: mock(async () => [LOG]),
+		revokeApiKey: mock(async (id: string) => ({ ...API_KEY, id, revokedAt: new Date().toISOString() })),
+		reinstateApiKey: mock(async (id: string) => ({ ...API_KEY, id, revokedAt: null })),
 	},
 }));
 
@@ -206,5 +223,50 @@ describe("GET /api-keys/:id/logs — usage logs", () => {
 	test("no credentials returns 401", async () => {
 		const res = await app.request(`/api-keys/${KEY_ID}/logs`);
 		expect(res.status).toBe(401);
+	});
+});
+
+describe("PATCH /api-keys/:id/revoke", () => {
+	test("owner revokes key (200)", async () => {
+		const res = await app.request(`/api-keys/${KEY_ID}/revoke`, { method: "PATCH", headers: userHeaders() });
+		expect(res.status).toBe(200);
+		const body = await res.json() as Record<string, unknown>;
+		expect(body.id).toBe(KEY_ID);
+		expect(body.revokedAt).not.toBeNull();
+	});
+
+	test("non-owner user is rejected (401)", async () => {
+		const res = await app.request(`/api-keys/${KEY_ID}/revoke`, { method: "PATCH", headers: userHeaders(OTHER_USER) });
+		expect(res.status).toBe(401);
+	});
+
+	test("nonexistent key returns 404", async () => {
+		const res = await app.request("/api-keys/nonexistent/revoke", { method: "PATCH", headers: userHeaders() });
+		expect(res.status).toBe(404);
+	});
+
+	test("no credentials returns 401", async () => {
+		const res = await app.request(`/api-keys/${KEY_ID}/revoke`, { method: "PATCH" });
+		expect(res.status).toBe(401);
+	});
+});
+
+describe("PATCH /api-keys/:id/reinstate", () => {
+	test("owner reinstates key (200)", async () => {
+		const res = await app.request(`/api-keys/${KEY_ID}/reinstate`, { method: "PATCH", headers: userHeaders() });
+		expect(res.status).toBe(200);
+		const body = await res.json() as Record<string, unknown>;
+		expect(body.id).toBe(KEY_ID);
+		expect(body.revokedAt).toBeNull();
+	});
+
+	test("non-owner user is rejected (401)", async () => {
+		const res = await app.request(`/api-keys/${KEY_ID}/reinstate`, { method: "PATCH", headers: userHeaders(OTHER_USER) });
+		expect(res.status).toBe(401);
+	});
+
+	test("nonexistent key returns 404", async () => {
+		const res = await app.request("/api-keys/nonexistent/reinstate", { method: "PATCH", headers: userHeaders() });
+		expect(res.status).toBe(404);
 	});
 });

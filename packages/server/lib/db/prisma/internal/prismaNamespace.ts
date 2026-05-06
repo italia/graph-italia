@@ -392,7 +392,7 @@ export const ModelName = {
   User: 'User',
   ApiKey: 'ApiKey',
   ApiLog: 'ApiLog',
-  Code: 'Code',
+  VerificationCode: 'VerificationCode',
   DataSource: 'DataSource',
   Chart: 'Chart',
   SourceLink: 'SourceLink',
@@ -413,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "project" | "projectMember" | "orgProject" | "org" | "membership" | "user" | "apiKey" | "apiLog" | "code" | "dataSource" | "chart" | "sourceLink" | "dashboard" | "slot"
+    modelProps: "project" | "projectMember" | "orgProject" | "org" | "membership" | "user" | "apiKey" | "apiLog" | "verificationCode" | "dataSource" | "chart" | "sourceLink" | "dashboard" | "slot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1009,77 +1009,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Code: {
-      payload: Prisma.$CodePayload<ExtArgs>
-      fields: Prisma.CodeFieldRefs
+    VerificationCode: {
+      payload: Prisma.$VerificationCodePayload<ExtArgs>
+      fields: Prisma.VerificationCodeFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.CodeFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload> | null
+          args: Prisma.VerificationCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.CodeFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>
+          args: Prisma.VerificationCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>
         }
         findFirst: {
-          args: Prisma.CodeFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload> | null
+          args: Prisma.VerificationCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.CodeFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>
+          args: Prisma.VerificationCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>
         }
         findMany: {
-          args: Prisma.CodeFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>[]
+          args: Prisma.VerificationCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>[]
         }
         create: {
-          args: Prisma.CodeCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>
+          args: Prisma.VerificationCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>
         }
         createMany: {
-          args: Prisma.CodeCreateManyArgs<ExtArgs>
+          args: Prisma.VerificationCodeCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.CodeCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>[]
+          args: Prisma.VerificationCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>[]
         }
         delete: {
-          args: Prisma.CodeDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>
+          args: Prisma.VerificationCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>
         }
         update: {
-          args: Prisma.CodeUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>
+          args: Prisma.VerificationCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>
         }
         deleteMany: {
-          args: Prisma.CodeDeleteManyArgs<ExtArgs>
+          args: Prisma.VerificationCodeDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.CodeUpdateManyArgs<ExtArgs>
+          args: Prisma.VerificationCodeUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.CodeUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>[]
+          args: Prisma.VerificationCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>[]
         }
         upsert: {
-          args: Prisma.CodeUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodePayload>
+          args: Prisma.VerificationCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VerificationCodePayload>
         }
         aggregate: {
-          args: Prisma.CodeAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCode>
+          args: Prisma.VerificationCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVerificationCode>
         }
         groupBy: {
-          args: Prisma.CodeGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CodeGroupByOutputType>[]
+          args: Prisma.VerificationCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VerificationCodeGroupByOutputType>[]
         }
         count: {
-          args: Prisma.CodeCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CodeCountAggregateOutputType> | number
+          args: Prisma.VerificationCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VerificationCodeCountAggregateOutputType> | number
         }
       }
     }
@@ -1578,22 +1578,25 @@ export const ApiLogScalarFieldEnum = {
   status: 'status',
   responseTime: 'responseTime',
   timestamp: 'timestamp',
+  projectName: 'projectName',
   apiKeyId: 'apiKeyId'
 } as const
 
 export type ApiLogScalarFieldEnum = (typeof ApiLogScalarFieldEnum)[keyof typeof ApiLogScalarFieldEnum]
 
 
-export const CodeScalarFieldEnum = {
+export const VerificationCodeScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  type: 'type',
   expire: 'expire',
+  consumedAt: 'consumedAt',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type CodeScalarFieldEnum = (typeof CodeScalarFieldEnum)[keyof typeof CodeScalarFieldEnum]
+export type VerificationCodeScalarFieldEnum = (typeof VerificationCodeScalarFieldEnum)[keyof typeof VerificationCodeScalarFieldEnum]
 
 
 export const DataSourceScalarFieldEnum = {
@@ -1701,6 +1704,14 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -1708,14 +1719,6 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -1826,6 +1829,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CodeType'
+ */
+export type EnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType'>
+    
+
+
+/**
+ * Reference to a field of type 'CodeType[]'
+ */
+export type ListEnumCodeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CodeType[]'>
     
 
 
@@ -1959,7 +1976,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   apiKey?: Prisma.ApiKeyOmit
   apiLog?: Prisma.ApiLogOmit
-  code?: Prisma.CodeOmit
+  verificationCode?: Prisma.VerificationCodeOmit
   dataSource?: Prisma.DataSourceOmit
   chart?: Prisma.ChartOmit
   sourceLink?: Prisma.SourceLinkOmit
