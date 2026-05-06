@@ -1,7 +1,6 @@
 import * as bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import type { CodeType, User } from "./prisma/client";
-import type { UserCreateInput } from "./prisma/models";
 import generatePin from "../pin";
 import { prisma } from "./prisma";
 import { createDefaultProject } from "./projectDb";
@@ -18,9 +17,9 @@ export function findUserByEmail(email: string) {
 	});
 }
 
-export async function createUserByEmailAndPassword(user: UserCreateInput) {
-	user.password = bcrypt.hashSync(user.password, 12);
-	const created = await prisma.user.create({ data: user });
+export async function createUserByEmailAndPassword({ email, password }: { email: string; password: string }) {
+	const passwordHash = bcrypt.hashSync(password, 12);
+	const created = await prisma.user.create({ data: { email, passwordHash } });
 	await createDefaultProject(created.id, created.email);
 	return created;
 }
@@ -45,13 +44,13 @@ export function setVerified(id: string) {
 }
 
 export async function changePassword(id: string, newPassword: string) {
-	const password = bcrypt.hashSync(newPassword, 12);
+	const passwordHash = bcrypt.hashSync(newPassword, 12);
 	return prisma.user.update({
 		where: {
 			id,
 		},
 		data: {
-			password,
+			passwordHash,
 		},
 	});
 }
