@@ -205,8 +205,8 @@ router.post("/login",
 			return c.json({ error: { message: "Invalid login credentials." } }, 401);
 		}
 
-		//check if user is verifyed
-		if (!existingUser.verifyed) {
+		//check if user is verified
+		if (!existingUser.verified) {
 			console.log("User not verified", email);
 			logger.warn("Login attempt for unverified user", {
 				userId: existingUser.id,
@@ -339,7 +339,7 @@ router.post("/verify",
 		return c.json({ error: "Code invalid or expired." }, 400);
 	}
 
-	const userValue = await db.setVerifyed(dbUser.id);
+	const userValue = await db.setVerified(dbUser.id);
 	await db.consumeCode(record.id);
 
 	const { accessToken } = generateTokens(userValue);
@@ -398,7 +398,7 @@ router.get(
 			return c.json({ error: "Code invalid or expired." }, 400);
 		}
 
-		const userValue = await db.setVerifyed(dbUser.id);
+		const userValue = await db.setVerified(dbUser.id);
 		await db.consumeCode(record.id);
 		const { accessToken } = generateTokens(userValue);
 		setAccessTokenCookie(c, accessToken);
@@ -445,7 +445,7 @@ router.post(
 		await db.changePassword(uid, password);
 		await db.consumeCode(record.id);
 		// Ensure the account is active after a successful recovery
-		const userValue = await db.setVerifyed(uid);
+		const userValue = await db.setVerified(uid);
 
 		const { accessToken } = generateTokens(userValue);
 		setAccessTokenCookie(c, accessToken);

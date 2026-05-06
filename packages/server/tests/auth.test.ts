@@ -34,7 +34,7 @@ const DB_USER = {
 	id: USER_ID,
 	email: USER_EMAIL,
 	password: "hashed:correct",
-	verifyed: true,
+	verified: true,
 	role: "USER",
 	createdAt: new Date(),
 	updatedAt: new Date(),
@@ -44,7 +44,7 @@ const DB_USER_UNVERIFIED = {
 	...DB_USER,
 	id: UNVERIFIED_ID,
 	email: UNVERIFIED_EMAIL,
-	verifyed: false,
+	verified: false,
 };
 
 const ACTIVATION_RECORD = {
@@ -119,7 +119,7 @@ mock.module("../lib/db", () => ({
 			return null;
 		}),
 		consumeCode: mock(async () => {}),
-		setVerifyed: mock(async () => DB_USER),
+		setVerified: mock(async () => DB_USER),
 		destroyCodes: mock(async () => {}),
 		changePassword: mock(async () => {}),
 		getDefaultProjectId: mock(async () => null),

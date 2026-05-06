@@ -33,13 +33,13 @@ export function findUserById(id: User["id"]) {
 	});
 }
 
-export function setVerifyed(id: string) {
+export function setVerified(id: string) {
 	return prisma.user.update({
 		where: {
 			id,
 		},
 		data: {
-			verifyed: true,
+			verified: true,
 		},
 	});
 }
