@@ -1,12 +1,12 @@
+import type { Context } from "hono";
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import { createApiLog, findApiKeyByRawKey } from "./db/apiKeyDb";
+import type { ApiKeyRole } from "./db/prisma/enums";
+import { canUserModifyProject, getDefaultProjectId } from "./db/projectDb";
 import { verifyAccessToken } from "./jwt";
 import { logger } from "./logger";
-import { findApiKeyByRawKey, createApiLog } from "./db/apiKeyDb";
-import { getDefaultProjectId, canUserModifyProject } from "./db/projectDb";
-import type { Context } from "hono";
-import type { ApiKeyRole } from "./db/prisma/enums";
 
 // Middleware to check authentication and attach user to context
 export const checkAuth = createMiddleware(async (c: Context, next) => {
@@ -28,6 +28,9 @@ export const checkAuth = createMiddleware(async (c: Context, next) => {
 				const apiKey = await findApiKeyByRawKey(accessToken);
 				if (!apiKey) {
 					throw new HTTPException(401, { message: "Invalid API key" });
+				}
+				if (apiKey.revokedAt) {
+					throw new HTTPException(401, { message: "API key revoked" });
 				}
 				// Check expiry: expire field is in days from createdAt
 				const expiresAt = new Date(apiKey.createdAt);
@@ -134,12 +137,14 @@ export const requireApiKeyRole = (requiredRole: ApiKeyRole) =>
 export const apiKeyUsageLogger = createMiddleware(async (c, next) => {
 	const start = Date.now();
 	await next();
-	const apiKey = c.get("apiKey") as { id: string } | null | undefined;
+	const apiKey = c.get("apiKey") as { id: string; prefix: string; project?: { name: string } | null } | null | undefined;
 	if (!apiKey) return;
 	const responseTime = Date.now() - start;
 	try {
 		await createApiLog({
 			apiKeyId: apiKey.id,
+			keyPrefix: apiKey.prefix,
+			projectName: apiKey.project?.name ?? undefined,
 			method: c.req.method,
 			endpoint: c.req.path,
 			status: c.res.status,

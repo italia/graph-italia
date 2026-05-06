@@ -1,20 +1,13 @@
-import { Hono } from "hono";
 import * as bcrypt from "bcrypt";
+import { Hono } from "hono";
+import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
-import {
-	generateTokens,
-	setAccessTokenCookie,
-	clearAccessTokenCookie,
-} from "../lib/jwt";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
-import { checkAuth, requireUser } from "../lib/middlewares";
+import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
-import {
-	validator as zValidator,
-	resolver,
-	describeRoute,
-} from "hono-openapi";
+import { checkAuth, requireUser } from "../lib/middlewares";
+import type { ParsedToken } from "../types";
 
 const APP_URL = process.env.APP_URL || "/";
 
@@ -164,7 +157,7 @@ router.post("/register",
 			}
 
 			const user = await db.createUserByEmailAndPassword({ email, password });
-			const pin = await db.createCode(user.id);
+			const pin = await db.createCode(user.id, "ACTIVATION");
 
 			console.log("User registered, sending activation email", email);
 			logger.info("User registered, sending activation email", {
@@ -273,7 +266,7 @@ router.post("/recover",
 
 	const user = await db.findUserByEmail(email);
 	if (user) {
-		const pin = await db.createCode(user.id);
+		const pin = await db.createCode(user.id, "RECOVERY");
 		await sendResetPasswordEmail(user, pin);
 	}
 	// Always return success to prevent email enumeration
@@ -323,11 +316,11 @@ router.post("/verify",
 		return c.json({ error: "Invalid user activation." }, 401);
 	}
 
-	const user = c.get("user") as any;
-	if (user && user.id !== uid) {
+	const user = c.get("user") as ParsedToken | null;
+	if (user && user.userId !== uid) {
 		logger.warn("Verification attempted with mismatched user", {
 			requestUserId: uid,
-			sessionUserId: user.id,
+			sessionUserId: user.userId,
 		});
 		return c.json({ error: "Invalid user activation." }, 400);
 	}
@@ -340,19 +333,14 @@ router.post("/verify",
 		return c.json({ error: "User not found." }, 400);
 	}
 
-	const pin = await db.findCodeByUid(uid);
-	if (!pin) {
-		logger.warn("Verification failed - code not found", { userId: uid });
-		return c.json({ error: "Code invalid or expired." }, 400);
-	}
-
-	if (`${pin}`.trim() !== `${code}`.trim()) {
-		logger.warn("Verification failed - code mismatch", { userId: uid });
+	const record = await db.findCodeByUid(uid, "ACTIVATION");
+	if (!record || record.code.trim() !== code.trim()) {
+		logger.warn("Verification failed - code invalid or expired", { userId: uid });
 		return c.json({ error: "Code invalid or expired." }, 400);
 	}
 
 	const userValue = await db.setVerifyed(dbUser.id);
-	await db.destroyCodes(dbUser.id);
+	await db.consumeCode(record.id);
 
 	const { accessToken } = generateTokens(userValue);
 	setAccessTokenCookie(c, accessToken);
@@ -389,7 +377,7 @@ router.get(
 			return c.json({ error: "Invalid confirmation" }, 401);
 		}
 
-		const user = c.get("user") as any;
+		const user = c.get("user") as ParsedToken | null;
 		if (user && user.userId !== uid) {
 			logger.warn("Email confirmation attempted with mismatched user", {
 				requestUserId: uid,
@@ -404,14 +392,14 @@ router.get(
 			return c.json({ error: "User not found." }, 400);
 		}
 
-		const pin = await db.findCodeByUid(uid);
-		if (!pin || pin !== code) {
+		const record = await db.findCodeByUid(uid, "ACTIVATION");
+		if (!record || record.code.trim() !== code.trim()) {
 			logger.warn("Email confirmation failed - invalid code", { userId: uid });
 			return c.json({ error: "Code invalid or expired." }, 400);
 		}
 
 		const userValue = await db.setVerifyed(dbUser.id);
-		await db.destroyCodes(dbUser.id);
+		await db.consumeCode(record.id);
 		const { accessToken } = generateTokens(userValue);
 		setAccessTokenCookie(c, accessToken);
 
@@ -421,9 +409,53 @@ router.get(
 	},
 );
 
-// CHANGE PASSWORD
+// RESET PASSWORD (recovery flow: uid + code + new password)
 
+const resetPasswordSchema = z.object({
+	uid: z.string({ error: "uid is required" }),
+	code: z.string({ error: "code is required" }),
+	password: passwordSchema,
+});
 
+router.post(
+	"/reset-password",
+	describeRoute({
+		description: "Reset password using a recovery code sent by email.",
+		responses: {
+			200: { description: "Password reset and logged in", content: { "application/json": { schema: resolver(z.object({ auth: z.boolean() })) } } },
+			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	zValidator("json", resetPasswordSchema),
+	async (c) => {
+		const { uid, code, password } = c.req.valid("json");
+
+		const dbUser = await db.findUserById(uid);
+		if (!dbUser) {
+			logger.warn("Password reset for non-existent user", { userId: uid });
+			return c.json({ error: "Invalid request." }, 400);
+		}
+
+		const record = await db.findCodeByUid(uid, "RECOVERY");
+		if (!record || record.code.trim() !== code.trim()) {
+			logger.warn("Password reset failed - code invalid or expired", { userId: uid });
+			return c.json({ error: "Code invalid or expired." }, 400);
+		}
+
+		await db.changePassword(uid, password);
+		await db.consumeCode(record.id);
+		// Ensure the account is active after a successful recovery
+		const userValue = await db.setVerifyed(uid);
+
+		const { accessToken } = generateTokens(userValue);
+		setAccessTokenCookie(c, accessToken);
+
+		logger.info("Password reset successfully", { userId: uid });
+		return c.json({ auth: true });
+	},
+);
+
+// CHANGE PASSWORD (requires active session)
 
 const changePwdSchema = z.object({
 	password: passwordSchema,
@@ -442,12 +474,8 @@ router.put(
 	requireUser,
 	zValidator("json", changePwdSchema),
 	async (c) => {
-		const user = c.get("user") as any;
+		const user = c.get("user") as ParsedToken;
 		const { password } = c.req.valid("json");
-
-		if (!user || !password) {
-			return c.json({ error: "User and password are required." }, 400);
-		}
 
 		await db.changePassword(user.userId, password);
 		logger.info("Password changed successfully", { userId: user.userId });

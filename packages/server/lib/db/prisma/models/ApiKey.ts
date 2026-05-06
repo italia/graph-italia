@@ -412,9 +412,9 @@ export type ApiKeySumOrderByAggregateInput = {
   expire?: Prisma.SortOrder
 }
 
-export type ApiKeyScalarRelationFilter = {
-  is?: Prisma.ApiKeyWhereInput
-  isNot?: Prisma.ApiKeyWhereInput
+export type ApiKeyNullableScalarRelationFilter = {
+  is?: Prisma.ApiKeyWhereInput | null
+  isNot?: Prisma.ApiKeyWhereInput | null
 }
 
 export type ApiKeyCreateNestedManyWithoutProjectInput = {
@@ -477,10 +477,12 @@ export type ApiKeyCreateNestedOneWithoutLogsInput = {
   connect?: Prisma.ApiKeyWhereUniqueInput
 }
 
-export type ApiKeyUpdateOneRequiredWithoutLogsNestedInput = {
+export type ApiKeyUpdateOneWithoutLogsNestedInput = {
   create?: Prisma.XOR<Prisma.ApiKeyCreateWithoutLogsInput, Prisma.ApiKeyUncheckedCreateWithoutLogsInput>
   connectOrCreate?: Prisma.ApiKeyCreateOrConnectWithoutLogsInput
   upsert?: Prisma.ApiKeyUpsertWithoutLogsInput
+  disconnect?: Prisma.ApiKeyWhereInput | boolean
+  delete?: Prisma.ApiKeyWhereInput | boolean
   connect?: Prisma.ApiKeyWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ApiKeyUpdateToOneWithWhereWithoutLogsInput, Prisma.ApiKeyUpdateWithoutLogsInput>, Prisma.ApiKeyUncheckedUpdateWithoutLogsInput>
 }

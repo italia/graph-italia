@@ -43,6 +43,7 @@ export type ApiLogMinAggregateOutputType = {
   status: number | null
   responseTime: number | null
   timestamp: Date | null
+  projectName: string | null
   apiKeyId: string | null
 }
 
@@ -53,6 +54,7 @@ export type ApiLogMaxAggregateOutputType = {
   status: number | null
   responseTime: number | null
   timestamp: Date | null
+  projectName: string | null
   apiKeyId: string | null
 }
 
@@ -63,6 +65,7 @@ export type ApiLogCountAggregateOutputType = {
   status: number
   responseTime: number
   timestamp: number
+  projectName: number
   apiKeyId: number
   _all: number
 }
@@ -85,6 +88,7 @@ export type ApiLogMinAggregateInputType = {
   status?: true
   responseTime?: true
   timestamp?: true
+  projectName?: true
   apiKeyId?: true
 }
 
@@ -95,6 +99,7 @@ export type ApiLogMaxAggregateInputType = {
   status?: true
   responseTime?: true
   timestamp?: true
+  projectName?: true
   apiKeyId?: true
 }
 
@@ -105,6 +110,7 @@ export type ApiLogCountAggregateInputType = {
   status?: true
   responseTime?: true
   timestamp?: true
+  projectName?: true
   apiKeyId?: true
   _all?: true
 }
@@ -202,7 +208,8 @@ export type ApiLogGroupByOutputType = {
   status: number
   responseTime: number
   timestamp: Date
-  apiKeyId: string
+  projectName: string | null
+  apiKeyId: string | null
   _count: ApiLogCountAggregateOutputType | null
   _avg: ApiLogAvgAggregateOutputType | null
   _sum: ApiLogSumAggregateOutputType | null
@@ -235,8 +242,9 @@ export type ApiLogWhereInput = {
   status?: Prisma.IntFilter<"ApiLog"> | number
   responseTime?: Prisma.IntFilter<"ApiLog"> | number
   timestamp?: Prisma.DateTimeFilter<"ApiLog"> | Date | string
-  apiKeyId?: Prisma.StringFilter<"ApiLog"> | string
-  apiKey?: Prisma.XOR<Prisma.ApiKeyScalarRelationFilter, Prisma.ApiKeyWhereInput>
+  projectName?: Prisma.StringNullableFilter<"ApiLog"> | string | null
+  apiKeyId?: Prisma.StringNullableFilter<"ApiLog"> | string | null
+  apiKey?: Prisma.XOR<Prisma.ApiKeyNullableScalarRelationFilter, Prisma.ApiKeyWhereInput> | null
 }
 
 export type ApiLogOrderByWithRelationInput = {
@@ -246,7 +254,8 @@ export type ApiLogOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   responseTime?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
-  apiKeyId?: Prisma.SortOrder
+  projectName?: Prisma.SortOrderInput | Prisma.SortOrder
+  apiKeyId?: Prisma.SortOrderInput | Prisma.SortOrder
   apiKey?: Prisma.ApiKeyOrderByWithRelationInput
 }
 
@@ -260,8 +269,9 @@ export type ApiLogWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.IntFilter<"ApiLog"> | number
   responseTime?: Prisma.IntFilter<"ApiLog"> | number
   timestamp?: Prisma.DateTimeFilter<"ApiLog"> | Date | string
-  apiKeyId?: Prisma.StringFilter<"ApiLog"> | string
-  apiKey?: Prisma.XOR<Prisma.ApiKeyScalarRelationFilter, Prisma.ApiKeyWhereInput>
+  projectName?: Prisma.StringNullableFilter<"ApiLog"> | string | null
+  apiKeyId?: Prisma.StringNullableFilter<"ApiLog"> | string | null
+  apiKey?: Prisma.XOR<Prisma.ApiKeyNullableScalarRelationFilter, Prisma.ApiKeyWhereInput> | null
 }, "id">
 
 export type ApiLogOrderByWithAggregationInput = {
@@ -271,7 +281,8 @@ export type ApiLogOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   responseTime?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
-  apiKeyId?: Prisma.SortOrder
+  projectName?: Prisma.SortOrderInput | Prisma.SortOrder
+  apiKeyId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ApiLogCountOrderByAggregateInput
   _avg?: Prisma.ApiLogAvgOrderByAggregateInput
   _max?: Prisma.ApiLogMaxOrderByAggregateInput
@@ -289,7 +300,8 @@ export type ApiLogScalarWhereWithAggregatesInput = {
   status?: Prisma.IntWithAggregatesFilter<"ApiLog"> | number
   responseTime?: Prisma.IntWithAggregatesFilter<"ApiLog"> | number
   timestamp?: Prisma.DateTimeWithAggregatesFilter<"ApiLog"> | Date | string
-  apiKeyId?: Prisma.StringWithAggregatesFilter<"ApiLog"> | string
+  projectName?: Prisma.StringNullableWithAggregatesFilter<"ApiLog"> | string | null
+  apiKeyId?: Prisma.StringNullableWithAggregatesFilter<"ApiLog"> | string | null
 }
 
 export type ApiLogCreateInput = {
@@ -299,7 +311,8 @@ export type ApiLogCreateInput = {
   status: number
   responseTime: number
   timestamp?: Date | string
-  apiKey: Prisma.ApiKeyCreateNestedOneWithoutLogsInput
+  projectName?: string | null
+  apiKey?: Prisma.ApiKeyCreateNestedOneWithoutLogsInput
 }
 
 export type ApiLogUncheckedCreateInput = {
@@ -309,7 +322,8 @@ export type ApiLogUncheckedCreateInput = {
   status: number
   responseTime: number
   timestamp?: Date | string
-  apiKeyId: string
+  projectName?: string | null
+  apiKeyId?: string | null
 }
 
 export type ApiLogUpdateInput = {
@@ -319,7 +333,8 @@ export type ApiLogUpdateInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  apiKey?: Prisma.ApiKeyUpdateOneRequiredWithoutLogsNestedInput
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiKey?: Prisma.ApiKeyUpdateOneWithoutLogsNestedInput
 }
 
 export type ApiLogUncheckedUpdateInput = {
@@ -329,7 +344,8 @@ export type ApiLogUncheckedUpdateInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  apiKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApiLogCreateManyInput = {
@@ -339,7 +355,8 @@ export type ApiLogCreateManyInput = {
   status: number
   responseTime: number
   timestamp?: Date | string
-  apiKeyId: string
+  projectName?: string | null
+  apiKeyId?: string | null
 }
 
 export type ApiLogUpdateManyMutationInput = {
@@ -349,6 +366,7 @@ export type ApiLogUpdateManyMutationInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApiLogUncheckedUpdateManyInput = {
@@ -358,7 +376,8 @@ export type ApiLogUncheckedUpdateManyInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  apiKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApiLogListRelationFilter = {
@@ -378,6 +397,7 @@ export type ApiLogCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   responseTime?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  projectName?: Prisma.SortOrder
   apiKeyId?: Prisma.SortOrder
 }
 
@@ -393,6 +413,7 @@ export type ApiLogMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   responseTime?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  projectName?: Prisma.SortOrder
   apiKeyId?: Prisma.SortOrder
 }
 
@@ -403,6 +424,7 @@ export type ApiLogMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   responseTime?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  projectName?: Prisma.SortOrder
   apiKeyId?: Prisma.SortOrder
 }
 
@@ -453,6 +475,10 @@ export type ApiLogUncheckedUpdateManyWithoutApiKeyNestedInput = {
   deleteMany?: Prisma.ApiLogScalarWhereInput | Prisma.ApiLogScalarWhereInput[]
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type ApiLogCreateWithoutApiKeyInput = {
   id?: string
   method: string
@@ -460,6 +486,7 @@ export type ApiLogCreateWithoutApiKeyInput = {
   status: number
   responseTime: number
   timestamp?: Date | string
+  projectName?: string | null
 }
 
 export type ApiLogUncheckedCreateWithoutApiKeyInput = {
@@ -469,6 +496,7 @@ export type ApiLogUncheckedCreateWithoutApiKeyInput = {
   status: number
   responseTime: number
   timestamp?: Date | string
+  projectName?: string | null
 }
 
 export type ApiLogCreateOrConnectWithoutApiKeyInput = {
@@ -507,7 +535,8 @@ export type ApiLogScalarWhereInput = {
   status?: Prisma.IntFilter<"ApiLog"> | number
   responseTime?: Prisma.IntFilter<"ApiLog"> | number
   timestamp?: Prisma.DateTimeFilter<"ApiLog"> | Date | string
-  apiKeyId?: Prisma.StringFilter<"ApiLog"> | string
+  projectName?: Prisma.StringNullableFilter<"ApiLog"> | string | null
+  apiKeyId?: Prisma.StringNullableFilter<"ApiLog"> | string | null
 }
 
 export type ApiLogCreateManyApiKeyInput = {
@@ -517,6 +546,7 @@ export type ApiLogCreateManyApiKeyInput = {
   status: number
   responseTime: number
   timestamp?: Date | string
+  projectName?: string | null
 }
 
 export type ApiLogUpdateWithoutApiKeyInput = {
@@ -526,6 +556,7 @@ export type ApiLogUpdateWithoutApiKeyInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApiLogUncheckedUpdateWithoutApiKeyInput = {
@@ -535,6 +566,7 @@ export type ApiLogUncheckedUpdateWithoutApiKeyInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApiLogUncheckedUpdateManyWithoutApiKeyInput = {
@@ -544,6 +576,7 @@ export type ApiLogUncheckedUpdateManyWithoutApiKeyInput = {
   status?: Prisma.IntFieldUpdateOperationsInput | number
   responseTime?: Prisma.IntFieldUpdateOperationsInput | number
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  projectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -555,8 +588,9 @@ export type ApiLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   status?: boolean
   responseTime?: boolean
   timestamp?: boolean
+  projectName?: boolean
   apiKeyId?: boolean
-  apiKey?: boolean | Prisma.ApiKeyDefaultArgs<ExtArgs>
+  apiKey?: boolean | Prisma.ApiLog$apiKeyArgs<ExtArgs>
 }, ExtArgs["result"]["apiLog"]>
 
 export type ApiLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -566,8 +600,9 @@ export type ApiLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   responseTime?: boolean
   timestamp?: boolean
+  projectName?: boolean
   apiKeyId?: boolean
-  apiKey?: boolean | Prisma.ApiKeyDefaultArgs<ExtArgs>
+  apiKey?: boolean | Prisma.ApiLog$apiKeyArgs<ExtArgs>
 }, ExtArgs["result"]["apiLog"]>
 
 export type ApiLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -577,8 +612,9 @@ export type ApiLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   responseTime?: boolean
   timestamp?: boolean
+  projectName?: boolean
   apiKeyId?: boolean
-  apiKey?: boolean | Prisma.ApiKeyDefaultArgs<ExtArgs>
+  apiKey?: boolean | Prisma.ApiLog$apiKeyArgs<ExtArgs>
 }, ExtArgs["result"]["apiLog"]>
 
 export type ApiLogSelectScalar = {
@@ -588,24 +624,25 @@ export type ApiLogSelectScalar = {
   status?: boolean
   responseTime?: boolean
   timestamp?: boolean
+  projectName?: boolean
   apiKeyId?: boolean
 }
 
-export type ApiLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "method" | "endpoint" | "status" | "responseTime" | "timestamp" | "apiKeyId", ExtArgs["result"]["apiLog"]>
+export type ApiLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "method" | "endpoint" | "status" | "responseTime" | "timestamp" | "projectName" | "apiKeyId", ExtArgs["result"]["apiLog"]>
 export type ApiLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  apiKey?: boolean | Prisma.ApiKeyDefaultArgs<ExtArgs>
+  apiKey?: boolean | Prisma.ApiLog$apiKeyArgs<ExtArgs>
 }
 export type ApiLogIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  apiKey?: boolean | Prisma.ApiKeyDefaultArgs<ExtArgs>
+  apiKey?: boolean | Prisma.ApiLog$apiKeyArgs<ExtArgs>
 }
 export type ApiLogIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  apiKey?: boolean | Prisma.ApiKeyDefaultArgs<ExtArgs>
+  apiKey?: boolean | Prisma.ApiLog$apiKeyArgs<ExtArgs>
 }
 
 export type $ApiLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ApiLog"
   objects: {
-    apiKey: Prisma.$ApiKeyPayload<ExtArgs>
+    apiKey: Prisma.$ApiKeyPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -614,7 +651,8 @@ export type $ApiLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     status: number
     responseTime: number
     timestamp: Date
-    apiKeyId: string
+    projectName: string | null
+    apiKeyId: string | null
   }, ExtArgs["result"]["apiLog"]>
   composites: {}
 }
@@ -1009,7 +1047,7 @@ readonly fields: ApiLogFieldRefs;
  */
 export interface Prisma__ApiLogClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  apiKey<T extends Prisma.ApiKeyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ApiKeyDefaultArgs<ExtArgs>>): Prisma.Prisma__ApiKeyClient<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  apiKey<T extends Prisma.ApiLog$apiKeyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ApiLog$apiKeyArgs<ExtArgs>>): Prisma.Prisma__ApiKeyClient<runtime.Types.Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1045,6 +1083,7 @@ export interface ApiLogFieldRefs {
   readonly status: Prisma.FieldRef<"ApiLog", 'Int'>
   readonly responseTime: Prisma.FieldRef<"ApiLog", 'Int'>
   readonly timestamp: Prisma.FieldRef<"ApiLog", 'DateTime'>
+  readonly projectName: Prisma.FieldRef<"ApiLog", 'String'>
   readonly apiKeyId: Prisma.FieldRef<"ApiLog", 'String'>
 }
     
@@ -1439,6 +1478,25 @@ export type ApiLogDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many ApiLogs to delete.
    */
   limit?: number
+}
+
+/**
+ * ApiLog.apiKey
+ */
+export type ApiLog$apiKeyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApiKey
+   */
+  select?: Prisma.ApiKeySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApiKey
+   */
+  omit?: Prisma.ApiKeyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApiKeyInclude<ExtArgs> | null
+  where?: Prisma.ApiKeyWhereInput
 }
 
 /**

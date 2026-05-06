@@ -59,7 +59,7 @@ export const ModelName = {
   User: 'User',
   ApiKey: 'ApiKey',
   ApiLog: 'ApiLog',
-  Code: 'Code',
+  VerificationCode: 'VerificationCode',
   DataSource: 'DataSource',
   Chart: 'Chart',
   SourceLink: 'SourceLink',
@@ -169,22 +169,25 @@ export const ApiLogScalarFieldEnum = {
   status: 'status',
   responseTime: 'responseTime',
   timestamp: 'timestamp',
+  projectName: 'projectName',
   apiKeyId: 'apiKeyId'
 } as const
 
 export type ApiLogScalarFieldEnum = (typeof ApiLogScalarFieldEnum)[keyof typeof ApiLogScalarFieldEnum]
 
 
-export const CodeScalarFieldEnum = {
+export const VerificationCodeScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  type: 'type',
   expire: 'expire',
+  consumedAt: 'consumedAt',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type CodeScalarFieldEnum = (typeof CodeScalarFieldEnum)[keyof typeof CodeScalarFieldEnum]
+export type VerificationCodeScalarFieldEnum = (typeof VerificationCodeScalarFieldEnum)[keyof typeof VerificationCodeScalarFieldEnum]
 
 
 export const DataSourceScalarFieldEnum = {
@@ -292,6 +295,14 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -299,12 +310,4 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
