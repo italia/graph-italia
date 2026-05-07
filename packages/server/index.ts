@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
 import { rateLimiter } from "hono-rate-limiter";
 // Routes
+import adminRoutes from "./routes/admin.ts";
 import authRoutes from "./routes/auth.ts";
 import apiKeyRoutes from "./routes/apikeys.ts";
 import chartRoutes from "./routes/charts.ts";
@@ -169,6 +170,7 @@ app.get("/health/ready", async (c) => {
 });
 
 // API routes
+app.route("/admin", adminRoutes);
 app.route("/auth", authRoutes);
 app.route("/apikeys", apiKeyRoutes);
 

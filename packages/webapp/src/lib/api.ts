@@ -630,5 +630,44 @@ export async function updateProject(projectId: string, payload: { name: string }
   return null;
 }
 
+// ── Admin ────────────────────────────────────────────────────────────────────
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  verified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  _count: { ownedProjects: number; projectMember: number };
+  memberships: { org: { name: string } }[];
+}
+
+export async function adminGetUsers(): Promise<AdminUser[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/admin/users`);
+  if (response.status === 200) return response.data;
+  return [];
+}
+
+export async function adminDeleteUser(id: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/admin/users/${id}`);
+  return response.status === 200;
+}
+
+export async function adminActivateUser(id: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/activate`);
+  return response.status === 200;
+}
+
+export async function adminResendActivation(id: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/resend-activation`);
+  return response.status === 200;
+}
+
+export async function adminResetPassword(id: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/reset-password`);
+  return response.status === 200;
+}
+
 
 

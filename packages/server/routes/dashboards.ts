@@ -20,8 +20,8 @@ const detailSchema = z.object({
 const slotSchema = z.object({
 	chartId: z.string(),
 	settings: z.object({}).passthrough().optional(),
-	createdAt: z.coerce.date().default(() => new Date()),
-	updatedAt: z.coerce.date().default(() => new Date()),
+	createdAt: z.string().optional(),
+	updatedAt: z.string().optional(),
 });
 
 const dashboardSchema = z.object({

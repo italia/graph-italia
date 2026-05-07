@@ -12,6 +12,7 @@ const EXPIRE = "1d";
 export interface IAccessTokenPayload {
 	userId: User["id"];
 	name: User["email"];
+	role: User["role"];
 }
 export interface IRefreshTokenPayload {
 	userId: User["id"];
@@ -36,6 +37,7 @@ export function generateTokens(user: User) {
 	const accessTokenPayload: IAccessTokenPayload = {
 		userId: user.id,
 		name: user.email,
+		role: user.role,
 	};
 	const accessToken = generateAccessToken(accessTokenPayload);
 	return { accessToken };
