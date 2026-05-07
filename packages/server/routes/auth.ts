@@ -222,20 +222,38 @@ router.post("/login",
 				return c.json({ error: { message: "Too many attempts. Try again later." } }, 429);
 			}
 
-			//check if user is verified
+			const existingUser = await db.findUserByEmail(email);
+			if (!existingUser) {
+				return c.json({ error: { message: "Invalid credentials." } }, 401);
+			}
+
+			const passwordMatch = await bcrypt.compare(password, existingUser.password);
+			if (!passwordMatch) {
+				return c.json({ error: { message: "Invalid credentials." } }, 401);
+			}
+
 			if (!existingUser.verified) {
-				console.log("User not verified", email);
 				logger.warn("Login attempt for unverified user", {
 					userId: existingUser.id,
 					email: email.replace(/(.{2}).*@/, "$1***@"),
 				});
-
-				return c.json({ auth: true });
-			} catch (error) {
-				logger.error("Login failed", error instanceof Error ? error : undefined);
-				return c.json({ error: { message: "Login failed" } }, 500);
+				return c.json({ error: { message: "Please verify your email before logging in." } }, 401);
 			}
-		});
+
+			const { accessToken } = generateTokens(existingUser);
+			setAccessTokenCookie(c, accessToken);
+
+			logger.info("User logged in", {
+				userId: existingUser.id,
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+
+			return c.json({ auth: true });
+		} catch (error) {
+			logger.error("Login failed", error instanceof Error ? error : undefined);
+			return c.json({ error: { message: "Login failed" } }, 500);
+		}
+	});
 
 // RECOVER ACCOUNT
 
@@ -329,7 +347,7 @@ router.post("/resend",
 		const user = await db.findUserByEmail(email);
 		// Re-send only if the account exists AND is still unverified.
 		// Already-verified accounts must use /recover for password resets.
-		if (user && !user.verifyed) {
+		if (user && !user.verified) {
 			const pin = await db.createCode(user.id);
 			await sendActivationEmail(user, pin);
 		}
@@ -406,12 +424,6 @@ router.post("/verify",
 			return c.json({ error: "Too many attempts. Try again later." }, 429);
 		}
 
-		const user = c.get("user") as ParsedToken | null;
-
-
-		const userValue = await db.setVerified(dbUser.id);
-		await db.consumeCode(record.id);
-
 		const dbUser = await db.findUserById(uid);
 		if (!dbUser) {
 			logger.warn("Verification attempted for non-existent user", {
@@ -426,7 +438,7 @@ router.post("/verify",
 			return c.json({ error: "Code invalid or expired." }, 400);
 		}
 
-		const userValue = await db.setVerifyed(dbUser.id);
+		const userValue = await db.setVerified(dbUser.id);
 		await db.consumeCode(record.id);
 
 		const { accessToken } = generateTokens(userValue);
