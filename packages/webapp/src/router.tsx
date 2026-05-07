@@ -14,6 +14,8 @@ import PolicyPage from "./pages/gdpr";
 import PrivateAreaPage from "./pages/private";
 import EditApiKeysPage from "./pages/private/EditApiKeys";
 import EditOrgsPage from "./pages/private/EditOrgs";
+import GodModeOnPage from "./pages/private/GodModeOn";
+import AdminRoute from "./components/auth/AdminRoute";
 import QuickStartPage from "./pages/QuickStartPage";
 
 
@@ -52,6 +54,7 @@ export const ROUTES = {
   editDashboard: (id: string) => `/private/edit/dashboard/${id}`,
   editApiKeys: "/private/edit/apikeys",
   editOrgs: "/private/edit/orgs",
+  godModeOn: "/private/god-mode-on",
 
 
   // Display / embed
@@ -208,6 +211,14 @@ const routes = [
       <ProtectedRoute>
         <EditOrgsPage />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/private/god-mode-on",
+    element: (
+      <AdminRoute>
+        <GodModeOnPage />
+      </AdminRoute>
     ),
   },
   //PUBLIC PART

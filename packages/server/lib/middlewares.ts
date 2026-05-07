@@ -72,6 +72,18 @@ export const requireUser = createMiddleware(async (c, next) => {
 	}
 });
 
+// Middleware to require an authenticated user with the ADMIN role
+export const requireAdmin = createMiddleware(async (c, next) => {
+	const user = c.get("user") as { userId: string; role?: string } | null;
+	if (!user) {
+		throw new HTTPException(401, { message: "Unauthorized." });
+	}
+	if (user.role !== "ADMIN") {
+		throw new HTTPException(403, { message: "Forbidden. Admin access required." });
+	}
+	await next();
+});
+
 // Middleware to require either an authenticated user or a valid API key.
 // Resolves and sets "projectId" in context:
 //   - API key  → apiKey.projectId (already scoped at key creation)

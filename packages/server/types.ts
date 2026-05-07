@@ -34,6 +34,7 @@ export interface ParsedToken {
   exp: number;
   userId: string;
   name: string;
+  role: "USER" | "ADMIN";
 }
 
 /** Shared Hono context variables for routes that support both user and API key auth. */

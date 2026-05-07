@@ -9,6 +9,41 @@ export function getUsers() {
 	return prisma.user.findMany({});
 }
 
+export function getAllUsersForAdmin() {
+	return prisma.user.findMany({
+		select: {
+			id: true,
+			email: true,
+			role: true,
+			verified: true,
+			createdAt: true,
+			updatedAt: true,
+			_count: {
+				select: {
+					ownedProjects: true,
+					projectMember: true,
+				},
+			},
+			memberships: {
+				select: {
+					org: {
+						select: { name: true },
+					},
+				},
+			},
+		},
+		orderBy: { createdAt: "desc" },
+	});
+}
+
+export function deleteUserById(id: string) {
+	return prisma.user.delete({ where: { id } });
+}
+
+export function setUserRole(id: string, role: "USER" | "ADMIN") {
+	return prisma.user.update({ where: { id }, data: { role } });
+}
+
 export function findUserByEmail(email: string) {
 	return prisma.user.findUnique({
 		where: {
