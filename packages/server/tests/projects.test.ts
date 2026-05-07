@@ -60,6 +60,7 @@ mock.module("../lib/db", () => ({
 	default: {
 		findProjectsByUserId:  mock(async () => [PROJECT]),
 		findProjectById:       mock(async (id: string) => id === PROJECT_ID ? PROJECT : null),
+		createProject:         mock(async (_userId: string, name: string) => ({ ...PROJECT, name })),
 		createDefaultProject:  mock(async () => PROJECT),
 		updateProject:         mock(async (id: string, name: string) => ({ ...PROJECT, id, name })),
 		deleteProject:         mock(async () => undefined),

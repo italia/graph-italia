@@ -57,6 +57,11 @@ mock.module("../lib/db/apiKeyDb", () => ({
 	createApiLog: mock(async () => undefined),
 }));
 
+mock.module("../lib/email", () => ({
+	sendActivationEmail: mock(async () => undefined),
+	sendResetPasswordEmail: mock(async () => undefined),
+}));
+
 mock.module("../lib/db", () => ({
 	default: {
 		findOrgsByUserId: mock(async () => [ORG]),
@@ -73,6 +78,9 @@ mock.module("../lib/db", () => ({
 		addOrgMember:       mock(async (_orgId: string, userId: string) => ({ ...MEMBERSHIP, userId })),
 		updateOrgMemberRole: mock(async (_orgId: string, userId: string, role: string) => ({ ...MEMBERSHIP, userId, role })),
 		removeOrgMember:    mock(async () => undefined),
+		findUserByEmail:    mock(async (email: string) => email === "existing@example.com" ? { id: OTHER_USER, email } : null),
+		createUserByEmailAndPassword: mock(async ({ email }: { email: string }) => ({ id: "user-new", email })),
+		createCode:         mock(async () => "123456"),
 	},
 }));
 
@@ -206,13 +214,18 @@ describe("GET /orgs/:id/members — list members", () => {
 });
 
 describe("POST /orgs/:id/members — add member", () => {
-	test("ADMIN user adds member (201)", async () => {
-		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(), { userId: OTHER_USER, role: "USER" }) });
+	test("ADMIN user adds existing member by email (201)", async () => {
+		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(), { email: "existing@example.com", role: "USER" }) });
+		expect(res.status).toBe(201);
+	});
+
+	test("ADMIN user inviting unknown email creates account + adds (201)", async () => {
+		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(), { email: "newcomer@example.com", role: "USER" }) });
 		expect(res.status).toBe(201);
 	});
 
 	test("non-admin user is rejected (401)", async () => {
-		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(OTHER_USER), { userId: "user-3", role: "USER" }) });
+		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(OTHER_USER), { email: "x@example.com", role: "USER" }) });
 		expect(res.status).toBe(401);
 	});
 });

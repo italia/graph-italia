@@ -64,10 +64,18 @@ mock.module("../lib/db/apiKeyDb", () => ({
 	createApiLog: mock(async () => undefined),
 }));
 
+// requireAuth middleware imports directly from projectDb, so it must be
+// mocked at the submodule path too — the aggregated `lib/db` mock is not
+// reached for these calls.
+mock.module("../lib/db/projectDb", () => ({
+	getDefaultProjectId:  mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
+	canUserModifyProject: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
+}));
+
 mock.module("../lib/db", () => ({
 	default: {
-		getDefaultProjectId:   mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
-		findApiKeysByProjectId: mock(async () => [API_KEY]),
+		getDefaultProjectId:    mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
+		findApiKeysByUserId:    mock(async () => [API_KEY]),
 		findApiKeyById:         mock(async (id: string) => id === KEY_ID ? API_KEY : null),
 		createApiKey:           mock(async (projectId: string, role: string, expire: number) => ({ ...API_KEY, projectId, role, expire })),
 		deleteApiKey:           mock(async () => undefined),
