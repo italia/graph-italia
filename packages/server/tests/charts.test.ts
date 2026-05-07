@@ -18,12 +18,12 @@ type TestVariables = {
 const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
 
-const READONLY_KEY  = "dv_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-const READWRITE_KEY = "dv_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+const READONLY_KEY = `dv_aaaaaaaa_${"a".repeat(64)}`;
+const READWRITE_KEY = `dv_bbbbbbbb_${"b".repeat(64)}`;
 
 const PROJECT_ID = "proj-1";
-const USER_ID    = "user-1";
-const CHART_ID   = "chart-1";
+const USER_ID = "user-1";
+const CHART_ID = "chart-1";
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -47,30 +47,32 @@ const CHART = {
 
 mock.module("../lib/logger", () => ({
 	logger: {
-		debug: mock(() => {}),
-		info:  mock(() => {}),
-		warn:  mock(() => {}),
-		error: mock(() => {}),
+		debug: mock(() => { }),
+		info: mock(() => { }),
+		warn: mock(() => { }),
+		error: mock(() => { }),
 	},
-	httpLogger:  mock(async (_c: unknown, next: () => Promise<void>) => next()),
-	logStartup:  mock(() => {}),
+	httpLogger: mock(async (_c: unknown, next: () => Promise<void>) => next()),
+	logStartup: mock(() => { }),
 }));
 
 mock.module("../lib/db/apiKeyDb", () => ({
 	findApiKeyByRawKey: mock(async (key: string) => {
 		if (key === READONLY_KEY) {
-			return { id: "key-ro", key: READONLY_KEY,  role: "READONLY",  expire: 60, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
+			return { id: "key-ro", prefix: "aaaaaaaa", keyHash: "hash_ro", role: "READONLY", expire: 60, revokedAt: null, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
 		}
 		if (key === READWRITE_KEY) {
-			return { id: "key-rw", key: READWRITE_KEY, role: "READWRITE", expire: 60, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
+			return { id: "key-rw", prefix: "bbbbbbbb", keyHash: "hash_rw", role: "READWRITE", expire: 60, revokedAt: null, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
 		}
 		return null;
 	}),
+	revokeApiKey: mock(async () => undefined),
+	reinstateApiKey: mock(async () => undefined),
 	createApiLog: mock(async () => undefined),
 }));
 
 mock.module("../lib/db/projectDb", () => ({
-	getDefaultProjectId:  mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
+	getDefaultProjectId: mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
 	canUserModifyProject: mock(async (userId: string, projectId: string) =>
 		userId === USER_ID && projectId === PROJECT_ID,
 	),

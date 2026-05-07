@@ -1,10 +1,11 @@
 import axios from "axios";
 import { Hono } from "hono";
 import * as z from "zod";
+import { rateLimiter } from "hono-rate-limiter";
 import db from "../lib/db";
 import { checkAuth, requireAuth, canModify } from "../lib/middlewares";
 import { logger } from "../lib/logger";
-import type { AppVariables } from "../types";
+import type { AppVariables, ParsedToken } from "../types";
 import {
 	validator as zValidator,
 	resolver,
@@ -16,6 +17,15 @@ type Env = { Variables: AppVariables };
 const router = new Hono<Env>();
 
 router.use("*", checkAuth);
+
+// Limit chart creation to 20 per minute per authenticated user (or IP as fallback).
+// This is a backstop against runaway client-side loops, not a general throttle.
+const chartCreateLimiter = rateLimiter<Env>({
+	windowMs: 60 * 1000,
+	limit: 20,
+	keyGenerator: (c) => (c.get("user") as ParsedToken | null)?.userId ?? c.req.header("x-forwarded-for") ?? "unknown",
+	handler: (c) => c.json({ error: "Too many chart creations, please try again later." }, 429),
+});
 
 const detailSchema = z.object({
 	id: z.string({ error: "Id is required" }),
@@ -179,6 +189,7 @@ router.post(
 		},
 	}),
 	requireAuth,
+	chartCreateLimiter,
 	zValidator("json", createChartSchema),
 	async (c) => {
 		try {

@@ -15,23 +15,23 @@ type TestVariables = {
 const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
 
-const READONLY_KEY  = `dv_aaaaaaaa_${"a".repeat(64)}`;
+const READONLY_KEY = `dv_aaaaaaaa_${"a".repeat(64)}`;
 const READWRITE_KEY = `dv_bbbbbbbb_${"b".repeat(64)}`;
-const EXPIRED_KEY   = `dv_cccccccc_${"c".repeat(64)}`;
-const REVOKED_KEY   = `dv_dddddddd_${"d".repeat(64)}`;
-const UNKNOWN_KEY   = `dv_eeeeeeee_${"e".repeat(64)}`;
+const EXPIRED_KEY = `dv_cccccccc_${"c".repeat(64)}`;
+const REVOKED_KEY = `dv_dddddddd_${"d".repeat(64)}`;
+const UNKNOWN_KEY = `dv_eeeeeeee_${"e".repeat(64)}`;
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 mock.module("../lib/logger", () => ({
 	logger: {
-		debug: mock(() => {}),
-		info: mock(() => {}),
-		warn: mock(() => {}),
-		error: mock(() => {}),
+		debug: mock(() => { }),
+		info: mock(() => { }),
+		warn: mock(() => { }),
+		error: mock(() => { }),
 	},
 	httpLogger: mock(async (_c: unknown, next: () => Promise<void>) => next()),
-	logStartup: mock(() => {}),
+	logStartup: mock(() => { }),
 }));
 
 mock.module("../lib/db/apiKeyDb", () => ({
@@ -95,6 +95,8 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		}
 		return null;
 	}),
+	revokeApiKey: mock(async () => undefined),
+	reinstateApiKey: mock(async () => undefined),
 	createApiLog: mock(async () => undefined),
 }));
 

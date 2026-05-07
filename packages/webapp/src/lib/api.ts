@@ -1,6 +1,19 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
+// Prevents duplicate in-flight mutation requests for the same resource.
+// Key format: "<verb>:<resource>:<id>" e.g. "upsert:chart:abc" or "upsert:chart:new"
+const pendingMutations = new Set<string>();
+async function withMutationGuard<T>(key: string, fn: () => Promise<T>): Promise<T | null> {
+  if (pendingMutations.has(key)) return null;
+  pendingMutations.add(key);
+  try {
+    return await fn();
+  } finally {
+    pendingMutations.delete(key);
+  }
+}
+
 // Interceptor to inject the active project ID into all requests
 axios.interceptors.request.use((config) => {
   const projectId = localStorage.getItem("currentProjectId");
@@ -92,21 +105,19 @@ export async function showChart(id: string) {
   return null;
 }
 
-/** Upsert */
+/** Upsert — creates (POST→201) or updates (PUT→200). Concurrent calls for the same resource are dropped. */
 export async function upsertChart(payload: any, id?: string) {
-  const url = id
-    ? `${getServerUrlWithApi()}/charts/${id}`
-    : `${getServerUrlWithApi()}/charts/`;
-  const method = id ? "PUT" : "POST";
-
-  let response = await (method === "PUT"
-    ? axios.put(url, payload)
-    : axios.post(url, payload));
-  if (response.status === 200) {
-    return response.data;
-  }
-
-  return null;
+  const lockKey = id ? `upsert:chart:${id}` : "upsert:chart:new";
+  return withMutationGuard(lockKey, async () => {
+    const url = id
+      ? `${getServerUrlWithApi()}/charts/${id}`
+      : `${getServerUrlWithApi()}/charts/`;
+    const response = await (id ? axios.put(url, payload) : axios.post(url, payload));
+    if (response.status === 200 || response.status === 201) {
+      return response.data as { id: string };
+    }
+    return null;
+  });
 }
 
 /** Delete */
@@ -407,9 +418,11 @@ export async function saveKpiGroup({
 
 export interface ApiKey {
   id: string;
-  key?: string;
+  prefix: string;
+  rawKey?: string; // only present on creation response
   role: string;
   expire: number;
+  revokedAt: string | null;
   createdAt: string;
   updatedAt: string;
   projectId: string;
@@ -439,6 +452,18 @@ export async function createApiKey(payload: {
 export async function deleteApiKey(id: string): Promise<boolean> {
   const response = await axios.delete(`${getServerUrlWithApi()}/apikeys/${id}`);
   return response.status === 204;
+}
+
+export async function revokeApiKey(id: string): Promise<ApiKey | null> {
+  const response = await axios.patch(`${getServerUrlWithApi()}/apikeys/${id}/revoke`);
+  if (response.status === 200) return response.data;
+  return null;
+}
+
+export async function reinstateApiKey(id: string): Promise<ApiKey | null> {
+  const response = await axios.patch(`${getServerUrlWithApi()}/apikeys/${id}/reinstate`);
+  if (response.status === 200) return response.data;
+  return null;
 }
 
 export async function getApiKeyLogs(id: string, limit = 100) {

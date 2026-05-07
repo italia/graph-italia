@@ -131,9 +131,11 @@ model User {
 
 model ApiKey {
   id        String     @id @default(cuid())
-  key       String     @unique
+  prefix    String     @unique
+  keyHash   String     @unique
   role      ApiKeyRole @default(READONLY)
   expire    Int        @default(60)
+  revokedAt DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
