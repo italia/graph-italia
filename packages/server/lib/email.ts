@@ -3,7 +3,11 @@ import { Resend } from "resend";
 import { logger } from "./logger";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const resend = new Resend(RESEND_API_KEY);
+// The Resend SDK throws synchronously on construction when the key is empty.
+// In tests (and any local dev without email configured) we want imports of
+// this module to succeed without crashing; the actual send call below will
+// surface a clear error if the client is missing.
+const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 const SENDER_EMAIL = process.env.SENDER_EMAIL || "";
 const HOST = process.env.HOST_URL || "/";
 const APP_URL = process.env.APP_URL || "/";
@@ -11,6 +15,16 @@ const COPY = "Graph Italia";
 
 async function sendMail(addresses: string[], html: string, subject: string = "Activate Account") {
   const startTime = performance.now();
+
+  if (!resend) {
+    logger.warn('Email send skipped: RESEND_API_KEY not configured', {
+      email: {
+        to: addresses.map(e => e.replace(/(.{2}).*@/, '$1***@')),
+        subject,
+      },
+    });
+    return { data: null, error: { name: 'NoApiKey', message: 'RESEND_API_KEY not configured' } };
+  }
 
   try {
     const result = await resend.emails.send({
