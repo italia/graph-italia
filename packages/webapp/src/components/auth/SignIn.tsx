@@ -19,9 +19,12 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
     formState: { errors },
   } = useForm({});
   const [message, setMessage] = useState("");
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resendInfo, setResendInfo] = useState<string | null>(null);
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");
+    setResendInfo(null);
     const { email, password } = submittedData;
     try {
       const rememberMe = submittedData["remember-me"] ?? false;
@@ -42,8 +45,33 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
         (error as any).message ||
         error;
       setMessage(errorMessage);
+      // The server message for an unverified account is stable enough to key on.
+      // When matched, surface the "resend activation email" affordance.
+      if (
+        typeof errorMessage === "string" &&
+        /verify your email/i.test(errorMessage)
+      ) {
+        setUnverifiedEmail(email);
+      } else {
+        setUnverifiedEmail(null);
+      }
     }
   };
+
+  async function handleResend() {
+    if (!unverifiedEmail) return;
+    try {
+      await api.resendActivation(unverifiedEmail);
+      setResendInfo(t(`form.actions.resend.success`));
+    } catch (error) {
+      const status = (error as AxiosError).response?.status;
+      setResendInfo(
+        status === 429
+          ? t(`form.actions.resend.tooMany`)
+          : t(`form.actions.resend.error`),
+      );
+    }
+  }
 
   function handleRecoverFlow() {
     navigate("/recover-password");
@@ -112,6 +140,20 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                 </div>
 
                 {message && <p className="text-error">{message}</p>}
+                {unverifiedEmail && (
+                  <div className="text-sm">
+                    <button
+                      type="button"
+                      onClick={() => handleResend()}
+                      className="link font-semibold link-primary"
+                    >
+                      {t(`form.actions.resend.label`)}
+                    </button>
+                    {resendInfo && (
+                      <p className="mt-2 text-info">{resendInfo}</p>
+                    )}
+                  </div>
+                )}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}

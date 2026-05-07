@@ -25,7 +25,7 @@ const getUpdatePasswordSchema = (
     .refine((password) => /[0-9]/.test(password), {
       message: t(`form.fields.password.errors.number`),
     })
-    .refine((password) => /[!@#$%^&*]/.test(password), {
+    .refine((password) => /[^A-Za-z0-9]/.test(password), {
       message: t(`form.fields.password.errors.specialChar`),
     });
 
