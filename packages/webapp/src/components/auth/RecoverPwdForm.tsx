@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -13,29 +14,27 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
     handleSubmit,
     formState: { errors },
   } = useForm({});
-  const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async (submittedData: any) => {
-    setMessage("");
+    setErrorMessage("");
     const { email } = submittedData;
     try {
       const result = await api.recoverPasssword(email);
-      console.log("result", result);
       if (!result) {
-        setMessage(t(`form.actions.submit.messages.error`));
+        setErrorMessage(t(`form.actions.submit.messages.error`));
         return;
       }
-      setMessage(t(`form.actions.submit.messages.success`));
+      toast.success(t(`form.actions.submit.messages.success`));
       setTimeout(() => {
         onDone();
       }, 1000);
     } catch (error) {
-      console.error("Error:", error);
-      const errorMessage =
-        ((error as AxiosError).response?.data as any).error?.message ||
+      const msg =
+        ((error as AxiosError).response?.data as any)?.error?.message ||
         (error as any).message ||
-        error;
-      setMessage(errorMessage);
+        t(`form.actions.submit.messages.error`);
+      setErrorMessage(msg);
     }
   };
 
@@ -75,7 +74,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
                     )}
                   </div>
                 </div>
-                {message && <p className="text-success">{message}</p>}
+                {errorMessage && <p className="text-error">{errorMessage}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}
