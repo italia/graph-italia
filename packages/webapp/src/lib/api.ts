@@ -644,8 +644,9 @@ export interface AdminUser {
   verified: boolean;
   createdAt: string;
   updatedAt: string;
-  _count: { ownedProjects: number; projectMember: number };
-  memberships: { org: { name: string } }[];
+  ownedProjects: { id: string; name: string }[];
+  projectMember: { project: { id: string; name: string } }[];
+  memberships: { org: { name: string; projects: { project: { id: string; name: string } }[] } }[];
 }
 
 export async function adminGetUsers(): Promise<AdminUser[]> {

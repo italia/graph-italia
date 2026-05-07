@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { FaCircleCheck, FaEnvelope, FaKey, FaShield, FaTrash } from "react-icons/fa6";
+import { FaCircleCheck, FaCrown, FaEnvelope, FaKey, FaShield, FaTrash } from "react-icons/fa6";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import Layout from "../../components/layout/index.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
@@ -125,15 +125,33 @@ export default function GodModeOnPage() {
     },
     {
       name: "Projects",
-      selector: (row) => row._count.ownedProjects + row._count.projectMember,
+      selector: (row) => row.ownedProjects.length + row.projectMember.length,
       sortable: true,
-      maxWidth: "150px",
-      cell: (row) => (
-        <div className="flex gap-1 text-xs">
-          <span className="badge badge-ghost badge-sm" title="Owned">{row._count.ownedProjects} owned</span>
-          <span className="badge badge-ghost badge-sm" title="Member">{row._count.projectMember} member</span>
-        </div>
-      ),
+      cell: (row) => {
+        const seen = new Map<string, { id: string; name: string; isOwner: boolean }>();
+        for (const p of row.ownedProjects) seen.set(p.id, { ...p, isOwner: true });
+        for (const { project: p } of row.projectMember) {
+          if (!seen.has(p.id)) seen.set(p.id, { ...p, isOwner: false });
+        }
+        for (const { org } of row.memberships) {
+          for (const { project: p } of org.projects) {
+            if (!seen.has(p.id)) seen.set(p.id, { ...p, isOwner: false });
+          }
+        }
+        const all = Array.from(seen.values());
+        return all.length === 0 ? (
+          <span className="text-xs opacity-40">—</span>
+        ) : (
+          <div className="flex flex-wrap gap-1 py-1">
+            {all.map((p) => (
+              <span key={p.id} className="badge badge-outline badge-xs flex items-center gap-1" title={p.isOwner ? "Owner" : "Member"}>
+                {p.isOwner && <FaCrown className="text-warning" size={9} />}
+                {p.name}
+              </span>
+            ))}
+          </div>
+        );
+      },
     },
     {
       name: "Orgs",
