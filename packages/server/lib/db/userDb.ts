@@ -18,25 +18,16 @@ export function getAllUsersForAdmin() {
 			verified: true,
 			createdAt: true,
 			updatedAt: true,
-			ownedProjects: {
-				select: { id: true, name: true },
-			},
-			projectMember: {
+			_count: {
 				select: {
-					project: { select: { id: true, name: true } },
+					ownedProjects: true,
+					projectMember: true,
 				},
 			},
 			memberships: {
 				select: {
 					org: {
-						select: {
-							name: true,
-							projects: {
-								select: {
-									project: { select: { id: true, name: true } },
-								},
-							},
-						},
+						select: { name: true },
 					},
 				},
 			},

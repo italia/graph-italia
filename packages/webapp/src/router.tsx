@@ -14,7 +14,6 @@ import PolicyPage from "./pages/gdpr";
 import PrivateAreaPage from "./pages/private";
 import EditApiKeysPage from "./pages/private/EditApiKeys";
 import EditOrgsPage from "./pages/private/EditOrgs";
-import EditSettingsPage from "./pages/private/EditSettings";
 import GodModeOnPage from "./pages/private/GodModeOn";
 import AdminRoute from "./components/auth/AdminRoute";
 import QuickStartPage from "./pages/QuickStartPage";
@@ -55,7 +54,10 @@ export const ROUTES = {
   editDashboard: (id: string) => `/private/edit/dashboard/${id}`,
   editApiKeys: "/private/edit/apikeys",
   editOrgs: "/private/edit/orgs",
+<<<<<<< HEAD
   editSettings: "/private/edit/settings",
+=======
+>>>>>>> a1b4d28 (feat:(admin) added admin panel)
   godModeOn: "/private/god-mode-on",
 
 
@@ -217,14 +219,6 @@ const routes = [
     element: (
       <ProtectedRoute>
         <EditOrgsPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/private/edit/settings",
-    element: (
-      <ProtectedRoute>
-        <EditSettingsPage />
       </ProtectedRoute>
     ),
   },
