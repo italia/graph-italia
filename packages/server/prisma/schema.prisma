@@ -30,6 +30,11 @@ enum ProjectRole {
   ADMIN
 }
 
+enum CodeType {
+  ACTIVATION
+  RECOVERY
+}
+
 // ─── Project ────────────────────────────────────────────────────────────────
 
 model Project {
@@ -39,7 +44,7 @@ model Project {
   updatedAt DateTime @updatedAt
 
   // The user who created the project — has full control (can delete, manage members)
-  owner   User   @relation("ProjectOwner", fields: [ownerId], references: [id])
+  owner   User   @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
 
   members ProjectMember[]
@@ -109,26 +114,28 @@ model User {
   id       String  @id @default(cuid())
   email    String  @unique
   password String
-  verifyed Boolean @default(false)
+  verified Boolean @default(false)
   role     Role    @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  meberships    Membership[]
+  memberships   Membership[]
   projectMember ProjectMember[]
   ownedProjects Project[]       @relation("ProjectOwner")
 
-  Code Code[]
+  codes VerificationCode[]
 }
 
 // ─── API Keys ───────────────────────────────────────────────────────────────
 
 model ApiKey {
   id        String     @id @default(cuid())
-  key       String     @unique
+  prefix    String     @unique
+  keyHash   String     @unique
   role      ApiKeyRole @default(READONLY)
   expire    Int        @default(60)
+  revokedAt DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
@@ -145,23 +152,28 @@ model ApiLog {
   status       Int
   responseTime Int
   timestamp    DateTime @default(now())
+  projectName  String?
 
-  apiKeyId String
-  apiKey   ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  apiKeyId String?
+  apiKey   ApiKey? @relation(fields: [apiKeyId], references: [id], onDelete: SetNull)
 }
 
 // ─── Verification Codes ─────────────────────────────────────────────────────
 
-model Code {
-  id     String @id @default(cuid())
-  code   String
-  expire Int    @default(60)
+model VerificationCode {
+  id         String    @id @default(cuid())
+  code       String
+  type       CodeType  @default(ACTIVATION)
+  expire     Int       @default(60)
+  consumedAt DateTime?
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId, type])
 }
 
 // ─── Data & Charts ──────────────────────────────────────────────────────────

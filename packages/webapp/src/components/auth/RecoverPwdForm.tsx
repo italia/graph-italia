@@ -75,7 +75,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
                     )}
                   </div>
                 </div>
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-success">{message}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}

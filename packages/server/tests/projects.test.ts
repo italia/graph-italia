@@ -19,12 +19,12 @@ const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
 
 // API key — used only to verify requireUser rejects it
-const READWRITE_KEY = "dv_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+const READWRITE_KEY = `dv_bbbbbbbb_${"b".repeat(64)}`;
 
-const USER_ID    = "user-1";
+const USER_ID = "user-1";
 const OTHER_USER = "user-2";
 const PROJECT_ID = "proj-1";
-const ORG_ID     = "org-1";
+const ORG_ID = "org-1";
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -43,34 +43,36 @@ const PROJECT = {
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 mock.module("../lib/logger", () => ({
-	logger: { debug: mock(() => {}), info: mock(() => {}), warn: mock(() => {}), error: mock(() => {}) },
+	logger: { debug: mock(() => { }), info: mock(() => { }), warn: mock(() => { }), error: mock(() => { }) },
 	httpLogger: mock(async (_c: unknown, next: () => Promise<void>) => next()),
-	logStartup: mock(() => {}),
+	logStartup: mock(() => { }),
 }));
 
 mock.module("../lib/db/apiKeyDb", () => ({
 	findApiKeyByRawKey: mock(async (key: string) => {
-		if (key === READWRITE_KEY) return { id: "key-rw", key: READWRITE_KEY, role: "READWRITE", expire: 60, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
+		if (key === READWRITE_KEY) return { id: "key-rw", prefix: "bbbbbbbb", keyHash: "hash_rw", role: "READWRITE", expire: 60, revokedAt: null, projectId: PROJECT_ID, createdAt: new Date(), updatedAt: new Date() };
 		return null;
 	}),
+	revokeApiKey: mock(async () => undefined),
+	reinstateApiKey: mock(async () => undefined),
 	createApiLog: mock(async () => undefined),
 }));
 
 mock.module("../lib/db", () => ({
 	default: {
-		findProjectsByUserId:  mock(async () => [PROJECT]),
-		findProjectById:       mock(async (id: string) => id === PROJECT_ID ? PROJECT : null),
-		createDefaultProject:  mock(async () => PROJECT),
-		updateProject:         mock(async (id: string, name: string) => ({ ...PROJECT, id, name })),
-		deleteProject:         mock(async () => undefined),
-		isProjectOwner:        mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
-		canUserModifyProject:  mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
-		findProjectMembers:    mock(async () => [MEMBER]),
-		addProjectMember:      mock(async (_projectId: string, userId: string) => ({ ...MEMBER, userId })),
-		removeProjectMember:   mock(async () => undefined),
+		findProjectsByUserId: mock(async () => [PROJECT]),
+		findProjectById: mock(async (id: string) => id === PROJECT_ID ? PROJECT : null),
+		createProject: mock(async () => PROJECT),
+		updateProject: mock(async (id: string, name: string) => ({ ...PROJECT, id, name })),
+		deleteProject: mock(async () => undefined),
+		isProjectOwner: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
+		canUserModifyProject: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
+		findProjectMembers: mock(async () => [MEMBER]),
+		addProjectMember: mock(async (_projectId: string, userId: string) => ({ ...MEMBER, userId })),
+		removeProjectMember: mock(async () => undefined),
 		updateProjectMemberRole: mock(async (_projectId: string, userId: string, role: string) => ({ ...MEMBER, userId, role })),
 		associateOrgWithProject: mock(async () => ({ projectId: PROJECT_ID, orgId: ORG_ID })),
-		removeOrgFromProject:    mock(async () => undefined),
+		removeOrgFromProject: mock(async () => undefined),
 	},
 }));
 

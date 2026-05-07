@@ -117,9 +117,11 @@ async function ensureProjectSchemaObjects(): Promise<void> {
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "ApiKey" (
       "id" TEXT NOT NULL,
-      "key" TEXT NOT NULL,
+      "prefix" TEXT NOT NULL,
+      "keyHash" TEXT NOT NULL,
       "role" "ApiKeyRole" NOT NULL DEFAULT 'READONLY',
       "expire" INTEGER NOT NULL DEFAULT 60,
+      "revokedAt" TIMESTAMP(3),
       "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" TIMESTAMP(3) NOT NULL,
       "projectId" TEXT,
@@ -127,7 +129,8 @@ async function ensureProjectSchemaObjects(): Promise<void> {
     );
   `);
 
-  await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "ApiKey_key_key" ON "ApiKey"("key");`);
+  await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "ApiKey_prefix_key" ON "ApiKey"("prefix");`);
+  await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "ApiKey_keyHash_key" ON "ApiKey"("keyHash");`);
 
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "ApiLog" (

@@ -39,3 +39,11 @@ export const ProjectRole = {
 } as const
 
 export type ProjectRole = (typeof ProjectRole)[keyof typeof ProjectRole]
+
+
+export const CodeType = {
+  ACTIVATION: 'ACTIVATION',
+  RECOVERY: 'RECOVERY'
+} as const
+
+export type CodeType = (typeof CodeType)[keyof typeof CodeType]

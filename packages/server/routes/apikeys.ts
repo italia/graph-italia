@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
+import { reinstateApiKey, revokeApiKey } from "../lib/db/apiKeyDb";
 import { logger } from "../lib/logger";
 import { checkAuth, requireAuth, requireUser } from "../lib/middlewares";
 import type { ParsedToken } from "../types";
@@ -17,8 +18,10 @@ const errSchema = z.object({ error: z.string() });
 
 const apiKeySchema = z.object({
   id: z.string(),
+  prefix: z.string(),
   role: z.enum(["READONLY", "READWRITE"]),
   expire: z.number(),
+  revokedAt: z.string().nullable(),
   projectId: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -31,7 +34,8 @@ const apiLogSchema = z.object({
   status: z.number(),
   responseTime: z.number(),
   timestamp: z.string(),
-  apiKeyId: z.string(),
+  apiKeyId: z.string().nullable(),
+  projectName: z.string().nullable(),
 });
 
 const detailSchema = z.object({ id: z.string() });
@@ -126,6 +130,68 @@ router.delete(
       return c.body(null, 204);
     } catch (e) {
       logger.error("ApiKey delete error", e instanceof Error ? e : undefined);
+      return c.json({ error: "Internal error" }, 500);
+    }
+  },
+);
+
+// ─── Revoke / Reinstate ───────────────────────────────────────────────────────
+
+router.patch(
+  "/:id/revoke",
+  describeRoute({
+    description: "Revoke an API key, disabling it without deleting it.",
+    responses: {
+      200: { description: "Revoked API key", content: { "application/json": { schema: resolver(apiKeySchema) } } },
+      401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errSchema) } } },
+      404: { description: "Not Found", content: { "application/json": { schema: resolver(errSchema) } } },
+      500: { description: "Internal error", content: { "application/json": { schema: resolver(errSchema) } } },
+    },
+  }),
+  zValidator("param", detailSchema),
+  async (c) => {
+    try {
+      const user = c.get("user") as ParsedToken;
+      const { id } = c.req.valid("param");
+      const apiKey = await db.findApiKeyById(id);
+      if (!apiKey) return c.json({ error: "Not Found" }, 404);
+      const allowed = await db.canUserModifyProject(user.userId, apiKey.projectId);
+      if (!allowed) return c.json({ error: "Not Authorized" }, 401);
+      const updated = await revokeApiKey(id);
+      logger.info("ApiKey revoked", { id, userId: user.userId });
+      return c.json(updated);
+    } catch (e) {
+      logger.error("ApiKey revoke error", e instanceof Error ? e : undefined);
+      return c.json({ error: "Internal error" }, 500);
+    }
+  },
+);
+
+router.patch(
+  "/:id/reinstate",
+  describeRoute({
+    description: "Reinstate a previously revoked API key.",
+    responses: {
+      200: { description: "Reinstated API key", content: { "application/json": { schema: resolver(apiKeySchema) } } },
+      401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errSchema) } } },
+      404: { description: "Not Found", content: { "application/json": { schema: resolver(errSchema) } } },
+      500: { description: "Internal error", content: { "application/json": { schema: resolver(errSchema) } } },
+    },
+  }),
+  zValidator("param", detailSchema),
+  async (c) => {
+    try {
+      const user = c.get("user") as ParsedToken;
+      const { id } = c.req.valid("param");
+      const apiKey = await db.findApiKeyById(id);
+      if (!apiKey) return c.json({ error: "Not Found" }, 404);
+      const allowed = await db.canUserModifyProject(user.userId, apiKey.projectId);
+      if (!allowed) return c.json({ error: "Not Authorized" }, 401);
+      const updated = await reinstateApiKey(id);
+      logger.info("ApiKey reinstated", { id, userId: user.userId });
+      return c.json(updated);
+    } catch (e) {
+      logger.error("ApiKey reinstate error", e instanceof Error ? e : undefined);
       return c.json({ error: "Internal error" }, 500);
     }
   },

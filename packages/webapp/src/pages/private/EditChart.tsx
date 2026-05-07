@@ -167,6 +167,11 @@ function EditChartPage() {
         setHasUnsavedChanges(false);
         toast.success(t(`save.success.label`));
         setSaveStatus(t(`save.success.label`));
+        // After creating a brand-new chart navigate to its permanent URL so that
+        // every subsequent save issues PUT instead of POST.
+        if (!paramId && result.id) {
+          navigate(ROUTES.editChart(result.id), { replace: true });
+        }
       }
     } catch (error) {
       console.error("Error saving chart:", error);

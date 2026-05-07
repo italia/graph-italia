@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
+import { rateLimiter } from "hono-rate-limiter";
 // Routes
 import authRoutes from "./routes/auth.ts";
 import apiKeyRoutes from "./routes/apikeys.ts";
@@ -55,6 +56,30 @@ app.use("*", httpLogger);
 
 // API key usage tracking (logs requests authenticated via API key)
 app.use("*", apiKeyUsageLogger);
+
+// Rate limiting — keyed by client IP (x-forwarded-for when behind a proxy)
+const clientIp = (c: { req: { header: (name: string) => string | undefined } }) =>
+	c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+	c.req.header("x-real-ip") ??
+	"unknown";
+
+// Global: 200 requests per minute
+app.use("*", rateLimiter({
+	windowMs: 60 * 1000,
+	limit: 200,
+	standardHeaders: "draft-6",
+	keyGenerator: clientIp,
+	handler: (c) => c.json({ error: "Too many requests, please try again later." }, 429),
+}));
+
+// Auth routes: 10 requests per minute (brute-force protection)
+app.use("/auth/*", rateLimiter({
+	windowMs: 60 * 1000,
+	limit: 10,
+	standardHeaders: "draft-6",
+	keyGenerator: clientIp,
+	handler: (c) => c.json({ error: "Too many requests, please try again later." }, 429),
+}));
 
 // CSRF protection
 app.use(

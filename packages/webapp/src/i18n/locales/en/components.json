@@ -247,6 +247,9 @@
                     },
                     "privacy": {
                         "label": "Privacy policy"
+                    },
+                    "accessibility": {
+                        "label": "Accessibility statement"
                     }
                 }
             }

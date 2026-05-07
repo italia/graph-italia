@@ -8,7 +8,7 @@ interface SeedUser {
   id?: string;          // Optional: for updating existing users
   email: string;
   password: string;
-  verifyed?: boolean;
+  verified?: boolean;
   role?: Role;
 }
 
@@ -17,7 +17,7 @@ const DEFAULT_USERS: SeedUser[] = [
   {
     email: "lp@lp.lp",
     password: "lp@lp.lp",
-    verifyed: true,
+    verified: true,
     role: "USER"
   },
 
@@ -44,7 +44,7 @@ function getUsersToSeed(): SeedUser[] {
           id: u.id,
           email: u.email,
           password: u.password,
-          verifyed: u.verifyed ?? true,
+          verified: u.verified ?? true,
           role: u.role ?? "USER"
         }));
       }
@@ -78,7 +78,7 @@ async function upsertUsers(users: SeedUser[]) {
         const updateData: any = {
           email: item.email,
           password: hashedPassword,
-          verifyed: item.verifyed ?? true,
+          verified: item.verified ?? true,
         };
         if (item.role) updateData.role = item.role;
 
@@ -115,7 +115,7 @@ async function upsertUsers(users: SeedUser[]) {
     const createData: any = {
       email: item.email,
       password: hashedPassword,
-      verifyed: item.verifyed ?? true,
+      verified: item.verified ?? true,
     };
 
     // Add role only if the field exists in the schema (backward compatible)
@@ -153,9 +153,9 @@ export default async function main() {
 
   // Ensure all users are verified
   for (const user of users) {
-    if (!user.verifyed) {
+    if (!user.verified) {
       console.log(`✅ Verifying user: ${user.email}`);
-      await db.setVerifyed(user.id);
+      await db.setVerified(user.id);
     }
   }
 

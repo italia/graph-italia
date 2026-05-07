@@ -247,6 +247,9 @@
                     },
                     "privacy": {
                         "label": "Informativa sulla Privacy"
+                    },
+                    "accessibility": {
+                        "label": "Dichiarazione di accessibilità"
                     }
                 }
             }

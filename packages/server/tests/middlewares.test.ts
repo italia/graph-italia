@@ -15,22 +15,23 @@ type TestVariables = {
 const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
 
-const READONLY_KEY = "dv_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-const READWRITE_KEY = "dv_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-const EXPIRED_KEY = "dv_cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
-const UNKNOWN_KEY = "dv_unknown";
+const READONLY_KEY = `dv_aaaaaaaa_${"a".repeat(64)}`;
+const READWRITE_KEY = `dv_bbbbbbbb_${"b".repeat(64)}`;
+const EXPIRED_KEY = `dv_cccccccc_${"c".repeat(64)}`;
+const REVOKED_KEY = `dv_dddddddd_${"d".repeat(64)}`;
+const UNKNOWN_KEY = `dv_eeeeeeee_${"e".repeat(64)}`;
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 mock.module("../lib/logger", () => ({
 	logger: {
-		debug: mock(() => {}),
-		info: mock(() => {}),
-		warn: mock(() => {}),
-		error: mock(() => {}),
+		debug: mock(() => { }),
+		info: mock(() => { }),
+		warn: mock(() => { }),
+		error: mock(() => { }),
 	},
 	httpLogger: mock(async (_c: unknown, next: () => Promise<void>) => next()),
-	logStartup: mock(() => {}),
+	logStartup: mock(() => { }),
 }));
 
 mock.module("../lib/db/apiKeyDb", () => ({
@@ -38,9 +39,12 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		if (key === READONLY_KEY) {
 			return {
 				id: "key-readonly",
-				key: READONLY_KEY,
+				prefix: "aaaaaaaa",
+				keyHash: "hash_readonly",
 				role: "READONLY",
 				expire: 60,
+				revokedAt: null,
+				project: null,
 				projectId: "proj-1",
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -49,9 +53,12 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		if (key === READWRITE_KEY) {
 			return {
 				id: "key-readwrite",
-				key: READWRITE_KEY,
+				prefix: "bbbbbbbb",
+				keyHash: "hash_readwrite",
 				role: "READWRITE",
 				expire: 60,
+				revokedAt: null,
+				project: null,
 				projectId: "proj-1",
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -60,16 +67,36 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		if (key === EXPIRED_KEY) {
 			return {
 				id: "key-expired",
-				key: EXPIRED_KEY,
+				prefix: "cccccccc",
+				keyHash: "hash_expired",
 				role: "READONLY",
 				expire: 1,
 				// 2 days ago → expired
+				revokedAt: null,
+				project: null,
+				projectId: "proj-1",
 				createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+				updatedAt: new Date(),
+			};
+		}
+		if (key === REVOKED_KEY) {
+			return {
+				id: "key-revoked",
+				prefix: "dddddddd",
+				keyHash: "hash_revoked",
+				role: "READONLY",
+				expire: 60,
+				revokedAt: new Date(),
+				project: null,
+				projectId: "proj-1",
+				createdAt: new Date(),
 				updatedAt: new Date(),
 			};
 		}
 		return null;
 	}),
+	revokeApiKey: mock(async () => undefined),
+	reinstateApiKey: mock(async () => undefined),
 	createApiLog: mock(async () => undefined),
 }));
 
@@ -224,6 +251,13 @@ describe("Auth middleware — API key Bearer", () => {
 	test("expired API key returns 401", async () => {
 		const res = await app.request("/protected/apikey", {
 			headers: { Authorization: `Bearer ${EXPIRED_KEY}` },
+		});
+		expect(res.status).toBe(401);
+	});
+
+	test("revoked API key returns 401", async () => {
+		const res = await app.request("/protected/apikey", {
+			headers: { Authorization: `Bearer ${REVOKED_KEY}` },
 		});
 		expect(res.status).toBe(401);
 	});

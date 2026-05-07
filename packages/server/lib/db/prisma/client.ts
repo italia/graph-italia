@@ -80,10 +80,10 @@ export type ApiKey = Prisma.ApiKeyModel
  */
 export type ApiLog = Prisma.ApiLogModel
 /**
- * Model Code
+ * Model VerificationCode
  * 
  */
-export type Code = Prisma.CodeModel
+export type VerificationCode = Prisma.VerificationCodeModel
 /**
  * Model DataSource
  * 

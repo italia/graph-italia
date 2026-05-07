@@ -19,12 +19,12 @@ const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
 
 // API key — used only to verify requireUser rejects it
-const READWRITE_KEY = "dv_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+const READWRITE_KEY = `dv_bbbbbbbb_${"b".repeat(64)}`;
 
-const USER_ID     = "user-1";
-const OTHER_USER  = "user-2";
-const ORG_ID      = "org-1";
-const OTHER_ORG   = "org-other"; // user-1 is NOT a member of this org
+const USER_ID = "user-1";
+const OTHER_USER = "user-2";
+const ORG_ID = "org-1";
+const OTHER_ORG = "org-other"; // user-1 is NOT a member of this org
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -44,35 +44,45 @@ const ORG_OTHER = { ...ORG, id: OTHER_ORG, members: [] };
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 mock.module("../lib/logger", () => ({
-	logger: { debug: mock(() => {}), info: mock(() => {}), warn: mock(() => {}), error: mock(() => {}) },
+	logger: { debug: mock(() => { }), info: mock(() => { }), warn: mock(() => { }), error: mock(() => { }) },
 	httpLogger: mock(async (_c: unknown, next: () => Promise<void>) => next()),
-	logStartup: mock(() => {}),
+	logStartup: mock(() => { }),
 }));
 
 mock.module("../lib/db/apiKeyDb", () => ({
 	findApiKeyByRawKey: mock(async (key: string) => {
-		if (key === READWRITE_KEY) return { id: "key-rw", key: READWRITE_KEY, role: "READWRITE", expire: 60, projectId: "proj-1", createdAt: new Date(), updatedAt: new Date() };
+		if (key === READWRITE_KEY) return { id: "key-rw", prefix: "bbbbbbbb", keyHash: "hash_rw", role: "READWRITE", expire: 60, revokedAt: null, projectId: "proj-1", createdAt: new Date(), updatedAt: new Date() };
 		return null;
 	}),
+	revokeApiKey: mock(async () => undefined),
+	reinstateApiKey: mock(async () => undefined),
 	createApiLog: mock(async () => undefined),
+}));
+
+mock.module("../lib/email", () => ({
+	sendActivationEmail: mock(async () => undefined),
+	sendResetPasswordEmail: mock(async () => undefined),
 }));
 
 mock.module("../lib/db", () => ({
 	default: {
 		findOrgsByUserId: mock(async () => [ORG]),
 		findOrgById: mock(async (id: string) => {
-			if (id === ORG_ID)    return ORG;
+			if (id === ORG_ID) return ORG;
 			if (id === OTHER_ORG) return ORG_OTHER;
 			return null;
 		}),
-		createOrg:          mock(async (name: string, userId: string) => ({ ...ORG, name, members: [{ ...MEMBERSHIP, userId }] })),
-		updateOrg:          mock(async (id: string, name: string) => ({ ...ORG, id, name })),
-		deleteOrg:          mock(async () => undefined),
-		isOrgAdmin:         mock(async (userId: string, orgId: string) => userId === USER_ID && orgId === ORG_ID),
-		findMembership:     mock(async (userId: string, orgId: string) => userId === USER_ID && orgId === ORG_ID ? MEMBERSHIP : null),
-		addOrgMember:       mock(async (_orgId: string, userId: string) => ({ ...MEMBERSHIP, userId })),
+		createOrg: mock(async (name: string, userId: string) => ({ ...ORG, name, members: [{ ...MEMBERSHIP, userId }] })),
+		updateOrg: mock(async (id: string, name: string) => ({ ...ORG, id, name })),
+		deleteOrg: mock(async () => undefined),
+		isOrgAdmin: mock(async (userId: string, orgId: string) => userId === USER_ID && orgId === ORG_ID),
+		findMembership: mock(async (userId: string, orgId: string) => userId === USER_ID && orgId === ORG_ID ? MEMBERSHIP : null),
+		addOrgMember: mock(async (_orgId: string, userId: string) => ({ ...MEMBERSHIP, userId })),
 		updateOrgMemberRole: mock(async (_orgId: string, userId: string, role: string) => ({ ...MEMBERSHIP, userId, role })),
-		removeOrgMember:    mock(async () => undefined),
+		removeOrgMember: mock(async () => undefined),
+		findUserByEmail: mock(async () => ({ id: OTHER_USER, email: "other@test.com" })),
+		createUserByEmailAndPassword: mock(async () => ({ id: OTHER_USER, email: "new@test.com" })),
+		createCode: mock(async () => "123456"),
 	},
 }));
 
@@ -207,12 +217,12 @@ describe("GET /orgs/:id/members — list members", () => {
 
 describe("POST /orgs/:id/members — add member", () => {
 	test("ADMIN user adds member (201)", async () => {
-		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(), { userId: OTHER_USER, role: "USER" }) });
+		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(), { email: "other@test.com", role: "USER" }) });
 		expect(res.status).toBe(201);
 	});
 
 	test("non-admin user is rejected (401)", async () => {
-		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(OTHER_USER), { userId: "user-3", role: "USER" }) });
+		const res = await app.request(`/orgs/${ORG_ID}/members`, { method: "POST", ...withJson(userHeaders(OTHER_USER), { email: "new@test.com", role: "USER" }) });
 		expect(res.status).toBe(401);
 	});
 });

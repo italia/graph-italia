@@ -128,7 +128,7 @@ erDiagram
         string id PK
         string email UK
         string password
-        boolean verifyed
+        boolean verified
         Role role
         datetime createdAt
         datetime updatedAt
@@ -645,14 +645,14 @@ dbSeed:
     # Crea nuovo utente (skip se email esiste già)
     - email: "admin@example.com"
       password: "SecurePassword123!"
-      verifyed: true
+      verified: true
       role: "ADMIN"
 
     # Aggiorna utente esistente (richiede id)
     - id: "existing-user-id"
       email: "updated@example.com"
       password: "NewPassword!"
-      verifyed: true
+      verified: true
 ```
 
 **Primo deployment:**
@@ -684,7 +684,7 @@ dbSeed:
   users:
     - email: "admin@example.com"
       password: "password"
-      verifyed: true
+      verified: true
       role: "ADMIN"
 ```
 
@@ -1317,7 +1317,7 @@ Se hai bisogno di creare o verificare utenti manualmente senza passare dal seed 
 kubectl run -n graph-italia db-check --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "SELECT id, email, role, verifyed FROM \"User\";"
+  -c "SELECT id, email, role, verified FROM \"User\";"
 ```
 
 #### Creare un nuovo utente
@@ -1335,7 +1335,7 @@ Poi crea l'utente:
 kubectl run -n graph-italia db-create-user --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "INSERT INTO \"User\" (id, email, password, verifyed, role, \"createdAt\", \"updatedAt\")
+  -c "INSERT INTO \"User\" (id, email, password, verified, role, \"createdAt\", \"updatedAt\")
       VALUES ('user-001', 'email@example.com', '\$2b\$10\$HASH...', true, 'USER', NOW(), NOW());"
 ```
 
@@ -1345,7 +1345,7 @@ kubectl run -n graph-italia db-create-user --rm -it --restart=Never \
 kubectl run -n graph-italia db-verify-user --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "UPDATE \"User\" SET verifyed = true WHERE email = 'email@example.com';"
+  -c "UPDATE \"User\" SET verified = true WHERE email = 'email@example.com';"
 ```
 
 #### Promuovere utente ad ADMIN
@@ -1373,7 +1373,7 @@ kubectl run -n graph-italia db-delete-user --rm -it --restart=Never \
 | Problema | Soluzione |
 |----------|-----------|
 | Utente non riceve email di verifica | Verificare `RESEND_API_KEY` e `SENDER_EMAIL` nel deployment |
-| Login fallisce con "Invalid credentials" | Verificare che l'utente sia `verifyed = true` |
+| Login fallisce con "Invalid credentials" | Verificare che l'utente sia `verified = true` |
 | Migration job fallisce | Controllare i logs con `kubectl logs -n graph-italia -l component=db-migration` |
 | Seed job fallisce | Controllare i logs con `kubectl logs -n graph-italia -l component=db-seed` |
 

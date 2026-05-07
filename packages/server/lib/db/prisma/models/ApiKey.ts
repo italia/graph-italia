@@ -36,9 +36,11 @@ export type ApiKeySumAggregateOutputType = {
 
 export type ApiKeyMinAggregateOutputType = {
   id: string | null
-  key: string | null
+  prefix: string | null
+  keyHash: string | null
   role: $Enums.ApiKeyRole | null
   expire: number | null
+  revokedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   projectId: string | null
@@ -46,9 +48,11 @@ export type ApiKeyMinAggregateOutputType = {
 
 export type ApiKeyMaxAggregateOutputType = {
   id: string | null
-  key: string | null
+  prefix: string | null
+  keyHash: string | null
   role: $Enums.ApiKeyRole | null
   expire: number | null
+  revokedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   projectId: string | null
@@ -56,9 +60,11 @@ export type ApiKeyMaxAggregateOutputType = {
 
 export type ApiKeyCountAggregateOutputType = {
   id: number
-  key: number
+  prefix: number
+  keyHash: number
   role: number
   expire: number
+  revokedAt: number
   createdAt: number
   updatedAt: number
   projectId: number
@@ -76,9 +82,11 @@ export type ApiKeySumAggregateInputType = {
 
 export type ApiKeyMinAggregateInputType = {
   id?: true
-  key?: true
+  prefix?: true
+  keyHash?: true
   role?: true
   expire?: true
+  revokedAt?: true
   createdAt?: true
   updatedAt?: true
   projectId?: true
@@ -86,9 +94,11 @@ export type ApiKeyMinAggregateInputType = {
 
 export type ApiKeyMaxAggregateInputType = {
   id?: true
-  key?: true
+  prefix?: true
+  keyHash?: true
   role?: true
   expire?: true
+  revokedAt?: true
   createdAt?: true
   updatedAt?: true
   projectId?: true
@@ -96,9 +106,11 @@ export type ApiKeyMaxAggregateInputType = {
 
 export type ApiKeyCountAggregateInputType = {
   id?: true
-  key?: true
+  prefix?: true
+  keyHash?: true
   role?: true
   expire?: true
+  revokedAt?: true
   createdAt?: true
   updatedAt?: true
   projectId?: true
@@ -193,9 +205,11 @@ export type ApiKeyGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type ApiKeyGroupByOutputType = {
   id: string
-  key: string
+  prefix: string
+  keyHash: string
   role: $Enums.ApiKeyRole
   expire: number
+  revokedAt: Date | null
   createdAt: Date
   updatedAt: Date
   projectId: string
@@ -226,9 +240,11 @@ export type ApiKeyWhereInput = {
   OR?: Prisma.ApiKeyWhereInput[]
   NOT?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   id?: Prisma.StringFilter<"ApiKey"> | string
-  key?: Prisma.StringFilter<"ApiKey"> | string
+  prefix?: Prisma.StringFilter<"ApiKey"> | string
+  keyHash?: Prisma.StringFilter<"ApiKey"> | string
   role?: Prisma.EnumApiKeyRoleFilter<"ApiKey"> | $Enums.ApiKeyRole
   expire?: Prisma.IntFilter<"ApiKey"> | number
+  revokedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
   projectId?: Prisma.StringFilter<"ApiKey"> | string
@@ -238,9 +254,11 @@ export type ApiKeyWhereInput = {
 
 export type ApiKeyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  key?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
+  keyHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   expire?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
@@ -250,24 +268,28 @@ export type ApiKeyOrderByWithRelationInput = {
 
 export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  key?: string
+  prefix?: string
+  keyHash?: string
   AND?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   OR?: Prisma.ApiKeyWhereInput[]
   NOT?: Prisma.ApiKeyWhereInput | Prisma.ApiKeyWhereInput[]
   role?: Prisma.EnumApiKeyRoleFilter<"ApiKey"> | $Enums.ApiKeyRole
   expire?: Prisma.IntFilter<"ApiKey"> | number
+  revokedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
   projectId?: Prisma.StringFilter<"ApiKey"> | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   logs?: Prisma.ApiLogListRelationFilter
-}, "id" | "key">
+}, "id" | "prefix" | "keyHash">
 
 export type ApiKeyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  key?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
+  keyHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   expire?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
@@ -283,9 +305,11 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
   OR?: Prisma.ApiKeyScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ApiKeyScalarWhereWithAggregatesInput | Prisma.ApiKeyScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
-  key?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
+  prefix?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
+  keyHash?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
   role?: Prisma.EnumApiKeyRoleWithAggregatesFilter<"ApiKey"> | $Enums.ApiKeyRole
   expire?: Prisma.IntWithAggregatesFilter<"ApiKey"> | number
+  revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
   projectId?: Prisma.StringWithAggregatesFilter<"ApiKey"> | string
@@ -293,9 +317,11 @@ export type ApiKeyScalarWhereWithAggregatesInput = {
 
 export type ApiKeyCreateInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutApiKeysInput
@@ -304,9 +330,11 @@ export type ApiKeyCreateInput = {
 
 export type ApiKeyUncheckedCreateInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   projectId: string
@@ -315,9 +343,11 @@ export type ApiKeyUncheckedCreateInput = {
 
 export type ApiKeyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutApiKeysNestedInput
@@ -326,9 +356,11 @@ export type ApiKeyUpdateInput = {
 
 export type ApiKeyUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -337,9 +369,11 @@ export type ApiKeyUncheckedUpdateInput = {
 
 export type ApiKeyCreateManyInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   projectId: string
@@ -347,18 +381,22 @@ export type ApiKeyCreateManyInput = {
 
 export type ApiKeyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApiKeyUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -376,9 +414,11 @@ export type ApiKeyOrderByRelationAggregateInput = {
 
 export type ApiKeyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  key?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
+  keyHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   expire?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
@@ -390,9 +430,11 @@ export type ApiKeyAvgOrderByAggregateInput = {
 
 export type ApiKeyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  key?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
+  keyHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   expire?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
@@ -400,9 +442,11 @@ export type ApiKeyMaxOrderByAggregateInput = {
 
 export type ApiKeyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  key?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
+  keyHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   expire?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
@@ -412,9 +456,9 @@ export type ApiKeySumOrderByAggregateInput = {
   expire?: Prisma.SortOrder
 }
 
-export type ApiKeyScalarRelationFilter = {
-  is?: Prisma.ApiKeyWhereInput
-  isNot?: Prisma.ApiKeyWhereInput
+export type ApiKeyNullableScalarRelationFilter = {
+  is?: Prisma.ApiKeyWhereInput | null
+  isNot?: Prisma.ApiKeyWhereInput | null
 }
 
 export type ApiKeyCreateNestedManyWithoutProjectInput = {
@@ -471,25 +515,33 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type ApiKeyCreateNestedOneWithoutLogsInput = {
   create?: Prisma.XOR<Prisma.ApiKeyCreateWithoutLogsInput, Prisma.ApiKeyUncheckedCreateWithoutLogsInput>
   connectOrCreate?: Prisma.ApiKeyCreateOrConnectWithoutLogsInput
   connect?: Prisma.ApiKeyWhereUniqueInput
 }
 
-export type ApiKeyUpdateOneRequiredWithoutLogsNestedInput = {
+export type ApiKeyUpdateOneWithoutLogsNestedInput = {
   create?: Prisma.XOR<Prisma.ApiKeyCreateWithoutLogsInput, Prisma.ApiKeyUncheckedCreateWithoutLogsInput>
   connectOrCreate?: Prisma.ApiKeyCreateOrConnectWithoutLogsInput
   upsert?: Prisma.ApiKeyUpsertWithoutLogsInput
+  disconnect?: Prisma.ApiKeyWhereInput | boolean
+  delete?: Prisma.ApiKeyWhereInput | boolean
   connect?: Prisma.ApiKeyWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ApiKeyUpdateToOneWithWhereWithoutLogsInput, Prisma.ApiKeyUpdateWithoutLogsInput>, Prisma.ApiKeyUncheckedUpdateWithoutLogsInput>
 }
 
 export type ApiKeyCreateWithoutProjectInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   logs?: Prisma.ApiLogCreateNestedManyWithoutApiKeyInput
@@ -497,9 +549,11 @@ export type ApiKeyCreateWithoutProjectInput = {
 
 export type ApiKeyUncheckedCreateWithoutProjectInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   logs?: Prisma.ApiLogUncheckedCreateNestedManyWithoutApiKeyInput
@@ -536,9 +590,11 @@ export type ApiKeyScalarWhereInput = {
   OR?: Prisma.ApiKeyScalarWhereInput[]
   NOT?: Prisma.ApiKeyScalarWhereInput | Prisma.ApiKeyScalarWhereInput[]
   id?: Prisma.StringFilter<"ApiKey"> | string
-  key?: Prisma.StringFilter<"ApiKey"> | string
+  prefix?: Prisma.StringFilter<"ApiKey"> | string
+  keyHash?: Prisma.StringFilter<"ApiKey"> | string
   role?: Prisma.EnumApiKeyRoleFilter<"ApiKey"> | $Enums.ApiKeyRole
   expire?: Prisma.IntFilter<"ApiKey"> | number
+  revokedAt?: Prisma.DateTimeNullableFilter<"ApiKey"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ApiKey"> | Date | string
   projectId?: Prisma.StringFilter<"ApiKey"> | string
@@ -546,9 +602,11 @@ export type ApiKeyScalarWhereInput = {
 
 export type ApiKeyCreateWithoutLogsInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutApiKeysInput
@@ -556,9 +614,11 @@ export type ApiKeyCreateWithoutLogsInput = {
 
 export type ApiKeyUncheckedCreateWithoutLogsInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   projectId: string
@@ -582,9 +642,11 @@ export type ApiKeyUpdateToOneWithWhereWithoutLogsInput = {
 
 export type ApiKeyUpdateWithoutLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutApiKeysNestedInput
@@ -592,9 +654,11 @@ export type ApiKeyUpdateWithoutLogsInput = {
 
 export type ApiKeyUncheckedUpdateWithoutLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -602,18 +666,22 @@ export type ApiKeyUncheckedUpdateWithoutLogsInput = {
 
 export type ApiKeyCreateManyProjectInput = {
   id?: string
-  key: string
+  prefix: string
+  keyHash: string
   role?: $Enums.ApiKeyRole
   expire?: number
+  revokedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ApiKeyUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logs?: Prisma.ApiLogUpdateManyWithoutApiKeyNestedInput
@@ -621,9 +689,11 @@ export type ApiKeyUpdateWithoutProjectInput = {
 
 export type ApiKeyUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   logs?: Prisma.ApiLogUncheckedUpdateManyWithoutApiKeyNestedInput
@@ -631,9 +701,11 @@ export type ApiKeyUncheckedUpdateWithoutProjectInput = {
 
 export type ApiKeyUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  key?: Prisma.StringFieldUpdateOperationsInput | string
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  keyHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumApiKeyRoleFieldUpdateOperationsInput | $Enums.ApiKeyRole
   expire?: Prisma.IntFieldUpdateOperationsInput | number
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -671,9 +743,11 @@ export type ApiKeyCountOutputTypeCountLogsArgs<ExtArgs extends runtime.Types.Ext
 
 export type ApiKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  key?: boolean
+  prefix?: boolean
+  keyHash?: boolean
   role?: boolean
   expire?: boolean
+  revokedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   projectId?: boolean
@@ -684,9 +758,11 @@ export type ApiKeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 
 export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  key?: boolean
+  prefix?: boolean
+  keyHash?: boolean
   role?: boolean
   expire?: boolean
+  revokedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   projectId?: boolean
@@ -695,9 +771,11 @@ export type ApiKeySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
 
 export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  key?: boolean
+  prefix?: boolean
+  keyHash?: boolean
   role?: boolean
   expire?: boolean
+  revokedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   projectId?: boolean
@@ -706,15 +784,17 @@ export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 
 export type ApiKeySelectScalar = {
   id?: boolean
-  key?: boolean
+  prefix?: boolean
+  keyHash?: boolean
   role?: boolean
   expire?: boolean
+  revokedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   projectId?: boolean
 }
 
-export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "role" | "expire" | "createdAt" | "updatedAt" | "projectId", ExtArgs["result"]["apiKey"]>
+export type ApiKeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "prefix" | "keyHash" | "role" | "expire" | "revokedAt" | "createdAt" | "updatedAt" | "projectId", ExtArgs["result"]["apiKey"]>
 export type ApiKeyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   logs?: boolean | Prisma.ApiKey$logsArgs<ExtArgs>
@@ -735,9 +815,11 @@ export type $ApiKeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    key: string
+    prefix: string
+    keyHash: string
     role: $Enums.ApiKeyRole
     expire: number
+    revokedAt: Date | null
     createdAt: Date
     updatedAt: Date
     projectId: string
@@ -1167,9 +1249,11 @@ export interface Prisma__ApiKeyClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface ApiKeyFieldRefs {
   readonly id: Prisma.FieldRef<"ApiKey", 'String'>
-  readonly key: Prisma.FieldRef<"ApiKey", 'String'>
+  readonly prefix: Prisma.FieldRef<"ApiKey", 'String'>
+  readonly keyHash: Prisma.FieldRef<"ApiKey", 'String'>
   readonly role: Prisma.FieldRef<"ApiKey", 'ApiKeyRole'>
   readonly expire: Prisma.FieldRef<"ApiKey", 'Int'>
+  readonly revokedAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ApiKey", 'DateTime'>
   readonly projectId: Prisma.FieldRef<"ApiKey", 'String'>

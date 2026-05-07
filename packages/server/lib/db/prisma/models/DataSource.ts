@@ -513,10 +513,6 @@ export type DataSourceUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.DataSourceScalarWhereInput | Prisma.DataSourceScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type DataSourceCreateNestedOneWithoutSourceLinkInput = {
   create?: Prisma.XOR<Prisma.DataSourceCreateWithoutSourceLinkInput, Prisma.DataSourceUncheckedCreateWithoutSourceLinkInput>
   connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutSourceLinkInput
