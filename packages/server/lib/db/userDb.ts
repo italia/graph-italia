@@ -19,7 +19,7 @@ export function findUserByEmail(email: string) {
 
 export async function createUserByEmailAndPassword({ email, password }: { email: string; password: string }) {
 	const passwordHash = bcrypt.hashSync(password, 12);
-	const created = await prisma.user.create({ data: { email, passwordHash } });
+	const created = await prisma.user.create({ data: { email, password: passwordHash } });
 	await createDefaultProject(created.id, created.email);
 	return created;
 }
@@ -50,7 +50,7 @@ export async function changePassword(id: string, newPassword: string) {
 			id,
 		},
 		data: {
-			passwordHash,
+			password: passwordHash,
 		},
 	});
 }
