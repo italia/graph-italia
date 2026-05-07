@@ -473,10 +473,6 @@ export type EnumCodeTypeFieldUpdateOperationsInput = {
   set?: $Enums.CodeType
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type VerificationCodeCreateWithoutUserInput = {
   id?: string
   code: string

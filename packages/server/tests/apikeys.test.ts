@@ -79,6 +79,12 @@ mock.module("../lib/db/apiKeyDb", () => ({
 	}),
 	revokeApiKey: mock(async (id: string) => ({ ...API_KEY, id, revokedAt: new Date().toISOString() })),
 	reinstateApiKey: mock(async (id: string) => ({ ...API_KEY, id, revokedAt: null })),
+	createApiLog: mock(async () => undefined),
+}));
+
+mock.module("../lib/db/projectDb", () => ({
+	getDefaultProjectId:  mock(async (userId: string) => userId === USER_ID ? PROJECT_ID : null),
+	canUserModifyProject: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
 }));
 
 mock.module("../lib/db", () => ({

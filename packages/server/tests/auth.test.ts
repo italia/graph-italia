@@ -96,6 +96,9 @@ mock.module("bcrypt", () => ({
 
 mock.module("../lib/db/apiKeyDb", () => ({
 	findApiKeyByRawKey: mock(async () => null),
+	revokeApiKey:       mock(async () => undefined),
+	reinstateApiKey:    mock(async () => undefined),
+	createApiLog:       mock(async () => undefined),
 }));
 
 mock.module("../lib/db", () => ({

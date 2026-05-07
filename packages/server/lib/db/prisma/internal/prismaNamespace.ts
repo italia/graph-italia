@@ -1560,9 +1560,11 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ApiKeyScalarFieldEnum = {
   id: 'id',
-  key: 'key',
+  prefix: 'prefix',
+  keyHash: 'keyHash',
   role: 'role',
   expire: 'expire',
+  revokedAt: 'revokedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   projectId: 'projectId'
