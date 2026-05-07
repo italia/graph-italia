@@ -1,19 +1,20 @@
 /**
- * Restore backed-up data into the new project-based schema.
+ * Restore backed-up data into the database after a reset.
  *
  * Source files (seeds/data/):
- *   User.json      — all users
- *   Chart.json     — charts with userId
- *   Dashboard.json — dashboards with userId
- *   Slot.json      — slots referencing dashboardId + chartId
+ *   User.json          — users
+ *   Org.json           — organisations
+ *   Project.json       — projects
+ *   ProjectMember.json — project memberships
+ *   Membership.json    — org memberships
+ *   OrgProject.json    — org ↔ project associations
+ *   Chart.json         — charts (already carry projectId)
+ *   Dashboard.json     — dashboards (already carry projectId)
+ *   Slot.json          — dashboard ↔ chart slots
  *
- * What this script does:
- *   1. Re-create all users (preserving ids and hashed passwords)
- *   2. For each user that owns charts or dashboards, create one "Default Project"
- *      and add the user as ADMIN member of that project
- *   3. Restore charts pointing to their owner's project
- *   4. Restore dashboards pointing to their owner's project
- *   5. Restore slots (unchanged, they only reference chart/dashboard ids)
+ * Restore order respects FK constraints:
+ *   User / Org → Project → ProjectMember / Membership / OrgProject
+ *   → Chart / Dashboard → Slot
  *
  * Run with:
  *   bun run seeds/restore-previous-data.ts
@@ -27,19 +28,57 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = join(__dirname, "data");
 
-// ─── Load backups ────────────────────────────────────────────────────────────
+// ─── Types matching the backup JSON files ────────────────────────────────────
 
-interface BackedUpUser {
+interface BUser {
   id: string;
   email: string;
   password: string;
-  verifyed: boolean;
+  verified: boolean;
   role: "USER" | "ADMIN";
   createdAt: string;
   updatedAt: string;
 }
 
-interface BackedUpChart {
+interface BOrg {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BProject {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BProjectMember {
+  userId: string;
+  projectId: string;
+  role: "USER" | "ADMIN";
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BMembership {
+  userId: string;
+  orgId: string;
+  role: "USER" | "ADMIN";
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BOrgProject {
+  orgId: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface BChart {
   id: string;
   name: string | null;
   description: string | null;
@@ -50,23 +89,22 @@ interface BackedUpChart {
   publish: boolean;
   remoteUrl: string | null;
   isRemote: boolean;
-  preview: string | null;
-  userId: string;
+  projectId: string;
   createdAt: string;
   updatedAt: string;
 }
 
-interface BackedUpDashboard {
+interface BDashboard {
   id: string;
   name: string | null;
   description: string | null;
   publish: boolean;
-  userId: string;
+  projectId: string;
   createdAt: string;
   updatedAt: string;
 }
 
-interface BackedUpSlot {
+interface BSlot {
   dashboardId: string;
   chartId: string;
   settings: unknown;
@@ -76,25 +114,46 @@ interface BackedUpSlot {
   updatedAt: string;
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
 function load<T>(filename: string): T[] {
-  const raw = readFileSync(join(dataDir, filename), "utf-8");
-  return JSON.parse(raw) as T[];
+  const path = join(dataDir, filename);
+  try {
+    return JSON.parse(readFileSync(path, "utf-8")) as T[];
+  } catch {
+    console.warn(`  ⚠️  ${filename} not found — skipping`);
+    return [];
+  }
+}
+
+function d(iso: string) {
+  return new Date(iso);
 }
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 async function restore() {
-  console.log("🚀 Starting data restore...\n");
+  console.log("🚀 Starting data restore…\n");
 
-  const users = load<BackedUpUser>("User.json");
-  const charts = load<BackedUpChart>("Chart.json");
-  const dashboards = load<BackedUpDashboard>("Dashboard.json");
-  const slots = load<BackedUpSlot>("Slot.json");
+  const users       = load<BUser>("User.json");
+  const orgs        = load<BOrg>("Org.json");
+  const projects    = load<BProject>("Project.json");
+  const members     = load<BProjectMember>("ProjectMember.json");
+  const memberships = load<BMembership>("Membership.json");
+  const orgProjects = load<BOrgProject>("OrgProject.json");
+  const charts      = load<BChart>("Chart.json");
+  const dashboards  = load<BDashboard>("Dashboard.json");
+  const slots       = load<BSlot>("Slot.json");
 
-  console.log(`Loaded: ${users.length} users, ${charts.length} charts, ${dashboards.length} dashboards, ${slots.length} slots\n`);
+  console.log(
+    `Loaded: ${users.length} users, ${orgs.length} orgs, ` +
+    `${projects.length} projects, ${members.length} project-members, ` +
+    `${memberships.length} org-memberships, ${orgProjects.length} org-projects, ` +
+    `${charts.length} charts, ${dashboards.length} dashboards, ${slots.length} slots\n`
+  );
 
-  // ── Step 1: users ──────────────────────────────────────────────────────────
-  console.log("👤 Restoring users...");
+  // ── Step 1: Users ──────────────────────────────────────────────────────────
+  console.log("👤 Restoring users…");
   for (const u of users) {
     await prisma.user.upsert({
       where: { id: u.id },
@@ -103,62 +162,120 @@ async function restore() {
         id: u.id,
         email: u.email,
         password: u.password,
-        verifyed: u.verifyed,
+        verified: u.verified,
         role: u.role,
-        createdAt: new Date(u.createdAt),
-        updatedAt: new Date(u.updatedAt),
+        createdAt: d(u.createdAt),
+        updatedAt: d(u.updatedAt),
       },
     });
   }
-  console.log(`  ✅ ${users.length} users restored\n`);
+  console.log(`  ✅ ${users.length} users\n`);
 
-  // ── Step 2: one project per user that owns content ─────────────────────────
-  // Collect unique ownerIds from both tables
-  const ownerIds = new Set([
-    ...charts.map((c) => c.userId),
-    ...dashboards.map((d) => d.userId),
-  ]);
-
-  // Map userId → projectId so we can reference it when inserting content
-  const userProjectMap = new Map<string, string>();
-
-  console.log(`📁 Creating projects for ${ownerIds.size} user(s)...`);
-  for (const userId of ownerIds) {
-    const user = users.find((u) => u.id === userId);
-    const label = user ? user.email : userId;
-
-    const project = await prisma.project.create({
-      data: {
-        name: "Default Project",
-        ownerId: userId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
-    await prisma.projectMember.create({
-      data: {
-        userId,
-        projectId: project.id,
-        role: "ADMIN",
-      },
-    });
-
-    userProjectMap.set(userId, project.id);
-    console.log(`  ✅ Project ${project.id} → ${label}`);
+  // ── Step 2: Orgs ───────────────────────────────────────────────────────────
+  if (orgs.length) {
+    console.log("🏢 Restoring orgs…");
+    for (const o of orgs) {
+      await prisma.org.upsert({
+        where: { id: o.id },
+        update: {},
+        create: {
+          id: o.id,
+          name: o.name,
+          createdAt: d(o.createdAt),
+          updatedAt: d(o.updatedAt),
+        },
+      });
+    }
+    console.log(`  ✅ ${orgs.length} orgs\n`);
   }
-  console.log();
 
-  // ── Step 3: charts ─────────────────────────────────────────────────────────
-  console.log("📊 Restoring charts...");
+  // ── Step 3: Projects ───────────────────────────────────────────────────────
+  console.log("📁 Restoring projects…");
+  for (const p of projects) {
+    await prisma.project.upsert({
+      where: { id: p.id },
+      update: {},
+      create: {
+        id: p.id,
+        name: p.name,
+        ownerId: p.ownerId,
+        createdAt: d(p.createdAt),
+        updatedAt: d(p.updatedAt),
+      },
+    });
+  }
+  console.log(`  ✅ ${projects.length} projects\n`);
+
+  // ── Step 4: Project members ────────────────────────────────────────────────
+  if (members.length) {
+    console.log("👥 Restoring project members…");
+    for (const m of members) {
+      await prisma.projectMember.upsert({
+        where: { userId_projectId: { userId: m.userId, projectId: m.projectId } },
+        update: {},
+        create: {
+          userId: m.userId,
+          projectId: m.projectId,
+          role: m.role,
+          createdAt: d(m.createdAt),
+          updatedAt: d(m.updatedAt),
+        },
+      });
+    }
+    console.log(`  ✅ ${members.length} project-members\n`);
+  }
+
+  // ── Step 5: Org memberships ────────────────────────────────────────────────
+  if (memberships.length) {
+    console.log("🔗 Restoring org memberships…");
+    for (const m of memberships) {
+      await prisma.membership.upsert({
+        where: { userId_orgId: { userId: m.userId, orgId: m.orgId } },
+        update: {},
+        create: {
+          userId: m.userId,
+          orgId: m.orgId,
+          role: m.role,
+          createdAt: d(m.createdAt),
+          updatedAt: d(m.updatedAt),
+        },
+      });
+    }
+    console.log(`  ✅ ${memberships.length} org-memberships\n`);
+  }
+
+  // ── Step 6: Org ↔ project associations ────────────────────────────────────
+  if (orgProjects.length) {
+    console.log("🔀 Restoring org-project links…");
+    for (const op of orgProjects) {
+      await prisma.orgProject.upsert({
+        where: { orgId_projectId: { orgId: op.orgId, projectId: op.projectId } },
+        update: {},
+        create: {
+          orgId: op.orgId,
+          projectId: op.projectId,
+          createdAt: d(op.createdAt),
+          updatedAt: d(op.updatedAt),
+        },
+      });
+    }
+    console.log(`  ✅ ${orgProjects.length} org-project links\n`);
+  }
+
+  // ── Step 7: Charts ─────────────────────────────────────────────────────────
+  console.log("📊 Restoring charts…");
+  let skipped = 0;
+  const projectIds = new Set(projects.map((p) => p.id));
   for (const c of charts) {
-    const projectId = userProjectMap.get(c.userId);
-    if (!projectId) {
-      console.warn(`  ⚠️  Chart ${c.id} — no project found for userId ${c.userId}, skipping`);
+    if (!projectIds.has(c.projectId)) {
+      console.warn(`  ⚠️  Chart ${c.id} — unknown projectId ${c.projectId}, skipping`);
+      skipped++;
       continue;
     }
-    await prisma.chart.create({
-      data: {
+    await prisma.chart.upsert({
+      where: { id: c.id },
+      update: {},
+      create: {
         id: c.id,
         name: c.name,
         description: c.description,
@@ -169,52 +286,70 @@ async function restore() {
         publish: c.publish,
         remoteUrl: c.remoteUrl,
         isRemote: c.isRemote,
-        projectId,
-        createdAt: new Date(c.createdAt),
-        updatedAt: new Date(c.updatedAt),
+        projectId: c.projectId,
+        createdAt: d(c.createdAt),
+        updatedAt: d(c.updatedAt),
       },
     });
   }
-  console.log(`  ✅ ${charts.length} charts restored\n`);
+  console.log(`  ✅ ${charts.length - skipped} charts restored${skipped ? `, ${skipped} skipped` : ""}\n`);
 
-  // ── Step 4: dashboards ─────────────────────────────────────────────────────
-  console.log("📋 Restoring dashboards...");
-  for (const d of dashboards) {
-    const projectId = userProjectMap.get(d.userId);
-    if (!projectId) {
-      console.warn(`  ⚠️  Dashboard ${d.id} — no project found for userId ${d.userId}, skipping`);
+  // ── Step 8: Dashboards ─────────────────────────────────────────────────────
+  console.log("📋 Restoring dashboards…");
+  skipped = 0;
+  for (const dd of dashboards) {
+    if (!projectIds.has(dd.projectId)) {
+      console.warn(`  ⚠️  Dashboard ${dd.id} — unknown projectId ${dd.projectId}, skipping`);
+      skipped++;
       continue;
     }
-    await prisma.dashboard.create({
-      data: {
-        id: d.id,
-        name: d.name,
-        description: d.description,
-        publish: d.publish,
-        projectId,
-        createdAt: new Date(d.createdAt),
-        updatedAt: new Date(d.updatedAt),
+    await prisma.dashboard.upsert({
+      where: { id: dd.id },
+      update: {},
+      create: {
+        id: dd.id,
+        name: dd.name,
+        description: dd.description,
+        publish: dd.publish,
+        projectId: dd.projectId,
+        createdAt: d(dd.createdAt),
+        updatedAt: d(dd.updatedAt),
       },
     });
   }
-  console.log(`  ✅ ${dashboards.length} dashboards restored\n`);
+  console.log(`  ✅ ${dashboards.length - skipped} dashboards restored${skipped ? `, ${skipped} skipped` : ""}\n`);
 
-  // ── Step 5: slots ──────────────────────────────────────────────────────────
-  console.log("🔲 Restoring slots...");
+  // ── Step 9: Slots ──────────────────────────────────────────────────────────
+  console.log("🔲 Restoring slots…");
+  skipped = 0;
+  const chartIds     = new Set(charts.map((c) => c.id));
+  const dashboardIds = new Set(dashboards.map((d) => d.id));
   for (const s of slots) {
-    await prisma.slot.create({
-      data: {
+    if (!dashboardIds.has(s.dashboardId)) {
+      console.warn(`  ⚠️  Slot (${s.dashboardId}/${s.chartId}) — unknown dashboardId, skipping`);
+      skipped++;
+      continue;
+    }
+    if (!chartIds.has(s.chartId)) {
+      console.warn(`  ⚠️  Slot (${s.dashboardId}/${s.chartId}) — unknown chartId, skipping`);
+      skipped++;
+      continue;
+    }
+    await prisma.slot.upsert({
+      where: { dashboardId_chartId: { dashboardId: s.dashboardId, chartId: s.chartId } },
+      update: {},
+      create: {
         dashboardId: s.dashboardId,
         chartId: s.chartId,
         settings: s.settings ?? undefined,
         name: s.name,
         description: s.description,
-        createdAt: new Date(s.createdAt),
-        updatedAt: new Date(s.updatedAt),
+        createdAt: d(s.createdAt),
+        updatedAt: d(s.updatedAt),
       },
     });
   }
-  console.log(`  ✅ ${slots.length} slots restored\n`);
+  console.log(`  ✅ ${slots.length - skipped} slots restored${skipped ? `, ${skipped} skipped` : ""}\n`);
 
   console.log("🎉 Restore complete!");
 }
