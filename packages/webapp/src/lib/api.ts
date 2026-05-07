@@ -214,16 +214,13 @@ export async function changePasssword({ password }: { password: string }) {
   }
 }
 
-export async function activate() {
-  try {
-    const response = await axios.post(`${getServerUrlWithApi()}/auth/init`);
-    if (response.status === 200) {
-      return true;
-    }
-  } catch (error: any) {
-    console.log("changePasssword ERROR", error?.message);
-    throw error;
+/** reset password via recovery code (uid + pin from email + new password) */
+export async function resetPassword({ uid, code, password }: { uid: string; code: string; password: string }) {
+  const response = await axios.post(`${getServerUrlWithApi()}/auth/reset-password`, { uid, code, password });
+  if (response.status === 200) {
+    return true;
   }
+  return false;
 }
 /** ask pin code */
 export async function recoverPasssword(email: string) {
