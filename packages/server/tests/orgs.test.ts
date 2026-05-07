@@ -54,6 +54,7 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		if (key === READWRITE_KEY) return { id: "key-rw", key: READWRITE_KEY, role: "READWRITE", expire: 60, projectId: "proj-1", createdAt: new Date(), updatedAt: new Date() };
 		return null;
 	}),
+	createApiLog: mock(async () => undefined),
 }));
 
 mock.module("../lib/db", () => ({

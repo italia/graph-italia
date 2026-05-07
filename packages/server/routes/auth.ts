@@ -9,6 +9,7 @@ import {
 } from "../lib/jwt";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 import { checkAuth, requireUser } from "../lib/middlewares";
+import { rateLimit, tryConsume } from "../lib/rateLimit";
 import { logger } from "../lib/logger";
 import {
 	validator as zValidator,
@@ -43,7 +44,7 @@ const passwordSchema = z
 	.refine((password) => /[0-9]/.test(password), {
 		message: "Must contain a number",
 	})
-	.refine((password) => /[!@#$%^&*]/.test(password), {
+	.refine((password) => /[^A-Za-z0-9]/.test(password), {
 		message: "Must contain at least one special character",
 	});
 
@@ -190,18 +191,44 @@ const loginSchema = z.object({
 
 const loginSuccessSchema = z.object({ auth: z.boolean() });
 
+// Per-IP guard sized for office NATs (many users behind the same address).
+// The real brute-force protection is the per-email throttle below.
+const loginIpRateLimit = rateLimit({
+	name: "auth:login:ip",
+	windowMs: 15 * 60 * 1000,
+	max: 500,
+});
+
 router.post("/login",
 	describeRoute({
 		description: "Authenticate with email and password. Sets an access_token cookie on success.",
 		responses: {
 			200: { description: "Logged in", content: { "application/json": { schema: resolver(loginSuccessSchema) } } },
 			401: { description: "Invalid credentials or unverified email", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
+	loginIpRateLimit,
 	zValidator("json", loginSchema), async (c) => {
 	try {
 		const { email, password } = c.req.valid("json");
+
+		// Per-account guard: caps attempts for the same email even if the
+		// attacker rotates IPs.
+		const perEmail = tryConsume("auth:login:email", email.toLowerCase(), {
+			windowMs: 15 * 60 * 1000,
+			max: 10,
+		});
+		if (!perEmail.ok) {
+			c.header("Retry-After", `${perEmail.retryAfterSec}`);
+			logger.warn("Login rate-limited by email", {
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+				retryAfterSec: perEmail.retryAfterSec,
+			});
+			return c.json({ error: { message: "Too many attempts. Try again later." } }, 429);
+		}
+
 		const existingUser = await db.findUserByEmail(email);
 
 		if (!existingUser) {
@@ -256,13 +283,23 @@ const recoverSchema = z.object({
 	email: z.email({ error: "Invalid email address" }),
 });
 
+// Sized for office NATs. Per-email throttle (below) is the real guard
+// against flooding any single mailbox.
+const recoverIpRateLimit = rateLimit({
+	name: "auth:recover:ip",
+	windowMs: 60 * 60 * 1000,
+	max: 100,
+});
+
 router.post("/recover",
 	describeRoute({
 		description: "Request a password reset email. Always returns success to prevent email enumeration.",
 		responses: {
 			200: { description: "Recovery email sent (or silently ignored)", content: { "application/json": { schema: resolver(z.boolean()) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
+	recoverIpRateLimit,
 	zValidator("json", recoverSchema), async (c) => {
 	clearAccessTokenCookie(c);
 	const { email } = c.req.valid("json");
@@ -271,10 +308,70 @@ router.post("/recover",
 		email: email.replace(/(.{2}).*@/, "$1***@"),
 	});
 
+	// Throttle per-mailbox so an attacker can't flood a target inbox
+	// even by varying the source IP. Sized to tolerate a confused user
+	// repeatedly clicking "forgot password".
+	const perEmail = tryConsume("auth:recover:email", email.toLowerCase(), {
+		windowMs: 60 * 60 * 1000,
+		max: 10,
+	});
+	if (!perEmail.ok) {
+		// Silent success — keep the email-enumeration guarantee identical
+		// to the normal path.
+		return c.json(true, 200);
+	}
+
 	const user = await db.findUserByEmail(email);
 	if (user) {
 		const pin = await db.createCode(user.id);
 		await sendResetPasswordEmail(user, pin);
+	}
+	// Always return success to prevent email enumeration
+	return c.json(true, 200);
+});
+
+// RESEND ACTIVATION EMAIL
+
+const resendSchema = z.object({
+	email: z.email({ error: "Invalid email address" }),
+});
+
+const resendIpRateLimit = rateLimit({
+	name: "auth:resend:ip",
+	windowMs: 60 * 60 * 1000,
+	max: 100,
+});
+
+router.post("/resend",
+	describeRoute({
+		description: "Re-send the activation email to an unverified user. Always returns success to prevent email enumeration.",
+		responses: {
+			200: { description: "Activation email sent (or silently ignored)", content: { "application/json": { schema: resolver(z.boolean()) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	resendIpRateLimit,
+	zValidator("json", resendSchema), async (c) => {
+	const { email } = c.req.valid("json");
+
+	logger.info("Activation resend requested", {
+		email: email.replace(/(.{2}).*@/, "$1***@"),
+	});
+
+	const perEmail = tryConsume("auth:resend:email", email.toLowerCase(), {
+		windowMs: 60 * 60 * 1000,
+		max: 5,
+	});
+	if (!perEmail.ok) {
+		return c.json(true, 200);
+	}
+
+	const user = await db.findUserByEmail(email);
+	// Re-send only if the account exists AND is still unverified.
+	// Already-verified accounts must use /recover for password resets.
+	if (user && !user.verifyed) {
+		const pin = await db.createCode(user.id);
+		await sendActivationEmail(user, pin);
 	}
 	// Always return success to prevent email enumeration
 	return c.json(true, 200);
@@ -307,6 +404,15 @@ const verifySchema = z.object({
 
 const authSuccessSchema = z.object({ auth: z.boolean() });
 
+// PIN is a 6-digit code (10^6 combinations). The per-uid throttle
+// below is the real anti-brute-force guard; per-IP is sized for
+// office NATs so legit users aren't blocked.
+const verifyIpRateLimit = rateLimit({
+	name: "auth:verify:ip",
+	windowMs: 15 * 60 * 1000,
+	max: 300,
+});
+
 router.post("/verify",
 	describeRoute({
 		description: "Verify a user account using the PIN sent to their email.",
@@ -314,13 +420,30 @@ router.post("/verify",
 			200: { description: "Verified and logged in", content: { "application/json": { schema: resolver(authSuccessSchema) } } },
 			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
+	verifyIpRateLimit,
 	zValidator("json", verifySchema), async (c) => {
 	const { uid, code } = c.req.valid("json");
 
 	if (!uid || !code) {
 		return c.json({ error: "Invalid user activation." }, 401);
+	}
+
+	// Per-uid throttle defends against PIN guessing for a specific account
+	// even when the attacker rotates IPs.
+	const perUid = tryConsume("auth:verify:uid", uid, {
+		windowMs: 15 * 60 * 1000,
+		max: 10,
+	});
+	if (!perUid.ok) {
+		c.header("Retry-After", `${perUid.retryAfterSec}`);
+		logger.warn("Verify rate-limited by uid", {
+			userId: uid,
+			retryAfterSec: perUid.retryAfterSec,
+		});
+		return c.json({ error: "Too many attempts. Try again later." }, 429);
 	}
 
 	const user = c.get("user") as any;

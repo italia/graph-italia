@@ -239,6 +239,19 @@ export async function recoverPasssword(email: string) {
     throw error;
   }
 }
+
+/** re-send activation email for an unverified account */
+export async function resendActivation(email: string) {
+  try {
+    const response = await axios.post(`${getServerUrlWithApi()}/auth/resend`, {
+      email,
+    });
+    return response.status === 200;
+  } catch (error: any) {
+    console.log("resendActivation ERROR", error?.message);
+    throw error;
+  }
+}
 /** logout */
 export function logout() {
   return axios.get(`${getServerUrlWithApi()}/auth/logout`);
