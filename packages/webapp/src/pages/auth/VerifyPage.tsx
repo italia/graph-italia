@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import ChangePasswordForm from "../../components/auth/ChangePasswordForm";
+import ResetPasswordForm from "../../components/auth/ResetPasswordForm";
 import VerifyCode from "../../components/auth/VerifyCode";
 import Layout from "../../components/layout";
-import { activate } from "../../lib/api";
 import { HOME_ROUTE } from "../../router";
 
 function AuthPage() {
@@ -37,13 +36,8 @@ function AuthPage() {
 
   async function handleResult(result: boolean) {
     setResult(result);
-    try {
-      if (action === "init") {
-        await activate();
-        redirectHome();
-      }
-    } catch (e) {
-      console.error(e);
+    if (result) {
+      redirectHome();
     }
   }
 
@@ -53,23 +47,39 @@ function AuthPage() {
         <div className="flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
           <div className="text-sm leading-6">
             <p>{t(`body.errors.invalidParam.label`)}</p>
-            <a
-              href="#"
+            <button
+              type="button"
               onClick={() => handleAskAnotherCode()}
               className="link font-semibold link-primary"
             >
               {t(`body.errors.invalidParam.actions.recoverPassword.label`)}
-            </a>
+            </button>
           </div>
         </div>
       </Layout>
     );
 
+  // Password reset flow: collect code + new password in one step, calling POST /auth/reset-password
+  if (action === "reset") {
+    return (
+      <Layout>
+        <div className="flex min-h-full justify-center items-center px-4 sm:px-6 lg:px-8">
+          <ResetPasswordForm
+            uid={uid}
+            code={code}
+            onDone={() => redirectHome()}
+          />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Registration activation flow: verify the PIN via POST /auth/verify, then redirect home
   return (
     <Layout>
       <div className="flex min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
         <div>
-          {!(isValid && action) && (
+          {!isValid && (
             <VerifyCode
               uid={uid}
               code={code}
@@ -84,6 +94,7 @@ function AuthPage() {
                 className="h-6 w-6 shrink-0 stroke-current"
                 fill="none"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -97,12 +108,7 @@ function AuthPage() {
               </span>
             </div>
           )}
-          {isValid && action === "reset" && (
-            <div>
-              <ChangePasswordForm onDone={() => redirectHome()} />
-            </div>
-          )}
-          {isValid && action === "init" && (
+          {isValid && (
             <div>
               <p>
                 <Trans
@@ -112,7 +118,7 @@ function AuthPage() {
                       <a
                         href={HOME_ROUTE}
                         className="link font-semibold link-primary"
-                      ></a>
+                      >home</a>
                     ),
                   }}
                 />
