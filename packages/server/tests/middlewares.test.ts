@@ -70,6 +70,7 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		}
 		return null;
 	}),
+	createApiLog: mock(async () => undefined),
 }));
 
 // ─── Test App ─────────────────────────────────────────────────────────────────

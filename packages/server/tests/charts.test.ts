@@ -66,6 +66,7 @@ mock.module("../lib/db/apiKeyDb", () => ({
 		}
 		return null;
 	}),
+	createApiLog: mock(async () => undefined),
 }));
 
 mock.module("../lib/db/projectDb", () => ({
