@@ -622,6 +622,11 @@ export async function transferProjectToOrg(projectId: string, orgId: string): Pr
   return response.status === 201;
 }
 
+export async function revokeOrgFromProject(projectId: string, orgId: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/projects/${projectId}/orgs/${orgId}`);
+  return response.status === 204;
+}
+
 export async function updateProject(projectId: string, payload: { name: string }): Promise<Project | null> {
   const response = await axios.put(`${getServerUrlWithApi()}/projects/${projectId}`, payload);
   if (response.status === 200) {

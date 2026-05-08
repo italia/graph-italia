@@ -8,9 +8,16 @@ import Loading from "../../components/layout/Loading.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import * as api from "../../lib/api.ts";
 import type { Organization, OrganizationMember } from "../../lib/api.ts";
+import { useUserStore } from "../../lib/store/user_store.ts";
 
 export default function EditOrgsPage() {
   const { t } = useTranslation("pages", { keyPrefix: "orgs" });
+  const { user } = useUserStore();
+
+  const isAdminOf = (orgId: string) =>
+    orgs.find((o) => o.id === orgId)?.members?.some(
+      (m) => m.userId === user?.userId && m.role === "ADMIN"
+    ) ?? false;
   const [orgs, setOrgs] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -37,6 +44,7 @@ export default function EditOrgsPage() {
   // Delete/Remove state
   const [pendingDeleteOrgId, setPendingDeleteOrgId] = useState<string | null>(null);
   const [pendingRemoveUserId, setPendingRemoveUserId] = useState<string | null>(null);
+  const [pendingRevokeProjectId, setPendingRevokeProjectId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"members" | "projects">("members");
 
 
@@ -167,6 +175,18 @@ export default function EditOrgsPage() {
     }
   };
 
+  const handleRevokeProjectFromOrg = async () => {
+    if (!selectedOrgId || !pendingRevokeProjectId) return;
+    try {
+      await api.revokeOrgFromProject(pendingRevokeProjectId, selectedOrgId);
+      setProjects((prev) => prev.filter((p) => p.id !== pendingRevokeProjectId));
+    } catch (error) {
+      console.error("Failed to revoke project from org:", error);
+    } finally {
+      setPendingRevokeProjectId(null);
+    }
+  };
+
   const handleTransferProject = async () => {
     if (!selectedOrgId || !selectedProjectIdToTransfer) return;
     setIsTransferring(true);
@@ -221,11 +241,10 @@ export default function EditOrgsPage() {
                 return (
                   <li key={org.id}>
                     <div
-                      className={`card card-compact border transition-all ${
-                        isSelected
-                          ? "bg-primary text-primary-content border-primary"
-                          : "bg-base-100 hover:bg-base-200 border-base-200"
-                      }`}
+                      className={`card card-compact border transition-all ${isSelected
+                        ? "bg-primary text-primary-content border-primary"
+                        : "bg-base-100 hover:bg-base-200 border-base-200"
+                        }`}
                     >
                       <div className="card-body flex-row items-center justify-between gap-2">
                         <button
@@ -242,20 +261,22 @@ export default function EditOrgsPage() {
                           )}
                           <span className="font-bold truncate">{org.name}</span>
                         </button>
-                        <button
-                          type="button"
-                          aria-label={t("actions.deleteOrg", {
-                            name: org.name,
-                            defaultValue: `Elimina organizzazione ${org.name}`,
-                          })}
-                          className={`btn btn-ghost btn-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${isSelected ? "text-primary-content" : "text-error"}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPendingDeleteOrgId(org.id);
-                          }}
-                        >
-                          <FaTrash aria-hidden="true" />
-                        </button>
+                        {isAdminOf(org.id) && (
+                          <button
+                            type="button"
+                            aria-label={t("actions.deleteOrg", {
+                              name: org.name,
+                              defaultValue: `Elimina organizzazione ${org.name}`,
+                            })}
+                            className="btn btn-outline btn-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error text-primary-content"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPendingDeleteOrgId(org.id);
+                            }}
+                          >
+                            <FaTrash aria-hidden="true" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </li>
@@ -306,9 +327,11 @@ export default function EditOrgsPage() {
                   <>
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">{t("membersTitle", "Members")}</h3>
-                      <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowAddMemberModal(true)}>
-                        <FaUserPlus aria-hidden="true" /> {t("addMemberBtn", "Add Member")}
-                      </button>
+                      {selectedOrgId && isAdminOf(selectedOrgId) && (
+                        <button type="button" className="btn btn-sm btn-outline btn-primary" onClick={() => setShowAddMemberModal(true)}>
+                          <FaUserPlus aria-hidden="true" /> {t("addMemberBtn", "Add Member")}
+                        </button>
+                      )}
                     </div>
 
                     {membersLoading ? (
@@ -340,27 +363,33 @@ export default function EditOrgsPage() {
                                     </div>
                                   </td>
                                   <td>
-                                    <select
-                                      className="select select-ghost select-xs font-bold"
-                                      value={member.role}
-                                      onChange={(e) => handleUpdateMemberRole(member.userId, e.target.value as any)}
-                                    >
-                                      <option value="USER">USER</option>
-                                      <option value="ADMIN">ADMIN</option>
-                                    </select>
+                                    {selectedOrgId && isAdminOf(selectedOrgId) ? (
+                                      <select
+                                        className="select select-ghost select-xs font-bold"
+                                        value={member.role}
+                                        onChange={(e) => handleUpdateMemberRole(member.userId, e.target.value as "USER" | "ADMIN")}
+                                      >
+                                        <option value="USER">USER</option>
+                                        <option value="ADMIN">ADMIN</option>
+                                      </select>
+                                    ) : (
+                                      <span className="text-xs font-bold opacity-70">{member.role}</span>
+                                    )}
                                   </td>
                                   <td className="text-right">
-                                    <button
-                                      type="button"
-                                      aria-label={t("actions.removeMember", {
-                                        email: member.user?.email || member.userId,
-                                        defaultValue: `Rimuovi membro ${member.user?.email || member.userId}`,
-                                      })}
-                                      className="btn btn-ghost btn-xs text-error focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
-                                      onClick={() => setPendingRemoveUserId(member.userId)}
-                                    >
-                                      <FaTrash aria-hidden="true" />
-                                    </button>
+                                    {selectedOrgId && isAdminOf(selectedOrgId) && (
+                                      <button
+                                        type="button"
+                                        aria-label={t("actions.removeMember", {
+                                          email: member.user?.email || member.userId,
+                                          defaultValue: `Rimuovi membro ${member.user?.email || member.userId}`,
+                                        })}
+                                        className="btn btn-outline btn-xs"
+                                        onClick={() => setPendingRemoveUserId(member.userId)}
+                                      >
+                                        <FaTrash aria-hidden="true" />
+                                      </button>
+                                    )}
                                   </td>
                                 </tr>
                               ))
@@ -374,7 +403,7 @@ export default function EditOrgsPage() {
                   <>
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">{t("projectsTitle", "Organization Projects")}</h3>
-                      <button className="btn btn-sm btn-outline btn-primary" onClick={() => setShowTransferModal(true)}>
+                      <button type="button" className="btn btn-sm btn-outline btn-primary" onClick={() => { fetchPersonalProjects(); setShowTransferModal(true); }}>
                         <FaRightLeft aria-hidden="true" /> {t("transferProjectBtn", "Transfer Project")}
                       </button>
                     </div>
@@ -410,7 +439,16 @@ export default function EditOrgsPage() {
                                     </div>
                                   </td>
                                   <td className="text-right">
-                                    {/* Placeholder for future project-specific actions inside orgs */}
+                                    {project.ownerId === user?.userId && (
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline btn-xs"
+                                        title={t("actions.revokeProject", "Revoke org access")}
+                                        onClick={() => setPendingRevokeProjectId(project.id)}
+                                      >
+                                        <FaRightLeft aria-hidden="true" />
+                                      </button>
+                                    )}
                                   </td>
                                 </tr>
                               ))
@@ -557,6 +595,22 @@ export default function EditOrgsPage() {
             </select>
           </div>
           {isTransferring && <span className="loading loading-spinner mx-auto block"></span>}
+        </div>
+      </GenericDialog>
+
+      {/* Revoke Project Confirmation */}
+      <GenericDialog
+        toggle={!!pendingRevokeProjectId}
+        title={t("modal.revokeProjectTitle", "Revoke Org Access")}
+        description={t("modal.revokeProjectDesc", "This will remove the project from this organization and return it to personal ownership. Are you sure?")}
+        labels={{ cancel: t("modal.cancel", "Cancel"), confirm: t("modal.revoke", "Revoke") }}
+        confirmCb={handleRevokeProjectFromOrg}
+        cancelCb={() => setPendingRevokeProjectId(null)}
+      >
+        <div className="py-2">
+          <p className="text-sm opacity-70">
+            {t("modal.revokeProjectName", "Project")}: <span className="font-semibold">{projects.find((p) => p.id === pendingRevokeProjectId)?.name}</span>
+          </p>
         </div>
       </GenericDialog>
 
