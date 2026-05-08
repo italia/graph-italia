@@ -138,7 +138,7 @@ export default function Header() {
                           <li key={sub.name}>
                             <a
                               href={sub.link}
-                              className="block px-4 py-2 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary"
+                              className="block px-4 py-2 text-sm text-base-content no-underline  hover:bg-base-200 hover: text-base-content"
                               onClick={() => setOpenDropdown(null)}
                             >
                               {sub.translationKey
@@ -224,7 +224,7 @@ export default function Header() {
                         <li key={sub.name}>
                           <a
                             href={sub.link}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-base-content no-underline hover:bg-primary/10 hover:text-primary transition-colors duration-150"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-base-content no-underline  hover:bg-base-200 hover: text-base-content transition-colors duration-150"
                             onClick={() => setDropdownUserOpen(false)}
                           >
                             {sub.name === "API Keys" ? <FaKey className="w-4 h-4 opacity-70" /> : <FaUsers className="w-4 h-4 opacity-70" />}
@@ -238,10 +238,10 @@ export default function Header() {
                     </>
                   )}
 
-                  <li>
+                  {/* <li>
                     <button
                       type="button"
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-base-content bg-transparent border-none cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors duration-150 text-left"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-base-content bg-transparent border-none cursor-pointer  hover:bg-base-200 hover: text-base-content transition-colors duration-150 text-left"
                       onClick={() => setDropdownUserOpen(false)}
                     >
                       <FaEnvelope className="w-4 h-4 opacity-70" />
@@ -257,13 +257,13 @@ export default function Header() {
                       <FaTrash className="w-4 h-4 opacity-70" />
                       {t(`actions.requestAccountDeletion.label`)}
                     </button>
-                  </li>
+                  </li> */}
 
                   <div className="divider my-0 opacity-20"></div>
                   <li>
                     <button
                       type="button"
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-base-content font-medium bg-transparent border-none cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors duration-150 text-left"
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-base-content font-medium bg-transparent border-none cursor-pointer hover:bg-base-200 hover: text-base-content transition-colors duration-150 text-left"
                       onClick={() => { setDropdownUserOpen(false); handleLogout(); }}
                     >
                       <FaArrowRightFromBracket className="w-4 h-4 opacity-70" />

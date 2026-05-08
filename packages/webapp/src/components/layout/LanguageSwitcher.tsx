@@ -52,9 +52,8 @@ export default function LanguageSwitcher(props: {
               <li key={code}>
                 <button
                   type="button"
-                  className={`w-full text-left px-4 py-2 text-sm bg-transparent border-none cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors duration-150 ${
-                    currentLanguage === code ? "font-semibold text-primary" : ""
-                  }`}
+                  className={`w-full text-left px-4 py-2 text-sm bg-transparent border-none cursor-pointer  hover:bg-base-200 hover: text-base-content transition-colors duration-150 ${currentLanguage === code ? "font-semibold text-primary" : ""
+                    }`}
                   onClick={() => {
                     handleChange(code);
                     setOpen(false);

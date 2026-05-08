@@ -32,6 +32,9 @@
                     },
                     "orgs": {
                         "label": "Organizzazioni"
+                    },
+                    "accountSettings": {
+                        "label": "Modifica password"
                     }
                 }
             }
