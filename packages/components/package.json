@@ -1,7 +1,7 @@
 {
   "name": "graph-italia-components",
   "description": "A simple React component library.",
-  "version": "0.3.23",
+  "version": "0.3.24",
   "keywords": [
     "react",
     "typescript",
@@ -64,6 +64,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-error-boundary": "^6.0.0",
+    "react-grid-layout": "^2.2.2",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1"
   }

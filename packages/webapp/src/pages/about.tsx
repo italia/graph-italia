@@ -31,15 +31,42 @@ interface StackItem {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const SNIPPET = `import { GraphItaliaProvider, RenderChart } from 'graph-italia-components';
+const CHART_SNIPPET = `import { ChartProvider } from 'graph-italia-components';
 
-<GraphItaliaProvider
-  apiKey="YOUR_PROJECT_API_KEY"
+// Renders a single chart by ID — fetches config and data automatically
+<ChartProvider
+  apiKey="dv_your_project_key"
   endpoint="https://your-server-api.com"
->
-  {/* The component fetches config and data from the server automatically */}
-  <RenderChart chartId="unique-chart-id-123" />
-</GraphItaliaProvider>`;
+  chartId="unique-chart-id-123"
+/>
+
+// With full wrapper UI (tabs, data table, download) and dark-mode detection
+<ChartProvider
+  apiKey="dv_your_project_key"
+  endpoint="https://your-server-api.com"
+  chartId="unique-chart-id-123"
+  withWrapper
+  detectUserPrefColorsSchema
+/>`;
+
+const DASHBOARD_SNIPPET = `import { DashboardGridProvider } from 'graph-italia-components';
+
+// Renders a full dashboard grid by ID — all slots fetched automatically
+<DashboardGridProvider
+  apiKey="dv_your_project_key"
+  endpoint="https://your-server-api.com"
+  dashboardId="unique-dashboard-id-123"
+/>
+
+// With heading, custom row height and system colour-scheme detection
+<DashboardGridProvider
+  apiKey="dv_your_project_key"
+  endpoint="https://your-server-api.com"
+  dashboardId="unique-dashboard-id-123"
+  showHeading
+  rowHeight={400}
+  detectUserPrefColorsSchema
+/>`;
 
 const NPM_INSTALL = "npm install graph-italia-components";
 
@@ -361,12 +388,20 @@ export default function AboutPage() {
                 ))}
               </ol>
 
-              <CodeBlock
-                code={SNIPPET}
-                copyLabel={t("integration.copy")}
-                copiedLabel={t("integration.copied")}
-                note={t("integration.codeNote")}
-              />
+              <div className="space-y-6">
+                <CodeBlock
+                  code={CHART_SNIPPET}
+                  copyLabel={t("integration.copy")}
+                  copiedLabel={t("integration.copied")}
+                  note="ChartProvider — single chart embed"
+                />
+                {/* <CodeBlock
+                  code={DASHBOARD_SNIPPET}
+                  copyLabel={t("integration.copy")}
+                  copiedLabel={t("integration.copied")}
+                  note="DashboardGridProvider — full dashboard grid embed"
+                /> */}
+              </div>
             </div>
           </div>
         </section>
@@ -392,11 +427,10 @@ export default function AboutPage() {
               {levels.map((level, i) => (
                 <div
                   key={level.badge}
-                  className={`flex flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md ${
-                    i === 1
+                  className={`flex flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md ${i === 1
                       ? "border-primary/40 bg-primary/5 ring-1 ring-primary/20"
                       : "border-base-300 bg-base-100"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="badge badge-primary badge-outline text-xs font-bold">
