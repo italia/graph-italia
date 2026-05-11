@@ -61,7 +61,7 @@ description:
     features:
       - permette di creare e condividere grafici
 legal:
-  license: MIT
+  license: GPL-3.0-only
 maintenance:
   type: internal
   contacts:

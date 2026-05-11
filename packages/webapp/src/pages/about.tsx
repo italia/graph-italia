@@ -1,154 +1,202 @@
-import { Trans, useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Layout from "../components/layout";
 import { useUserStore } from "../lib/store/user_store";
 import { HOME_ROUTE } from "../router";
 
-export default function Landing() {
-  const { t } = useTranslation("homepage");
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-  const { user } = useUserStore();
+interface FeatureItem {
+  emoji: string;
+  title: string;
+  description: string;
+}
 
-  const features = [
-    {
-      name: t("contentBlock.features.easyToUse.title"),
-      description: t("contentBlock.features.easyToUse.content"),
-      icon: "upload",
-    },
-    {
-      name: t("contentBlock.features.customization.title"),
-      description: t("contentBlock.features.customization.content"),
-      icon: "chart",
-    },
-    {
-      name: t("contentBlock.features.saveAndShare.title"),
-      description: t("contentBlock.features.saveAndShare.content"),
-      icon: "save",
-    },
-  ];
+interface StepItem {
+  title: string;
+  body: string;
+}
 
-  const FeatureIcon = ({ name }: { name: string }) => {
-    const c = "text-primary";
-    switch (name) {
-      case "upload":
-        return (
-          <svg
-            className={`w-8 h-8 ${c}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-            />
-          </svg>
-        );
-      case "chart":
-        return (
-          <svg
-            className={`w-8 h-8 ${c}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-            />
-          </svg>
-        );
-      case "filter":
-        return (
-          <svg
-            className={`w-8 h-8 ${c}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-            />
-          </svg>
-        );
-      case "palette":
-        return (
-          <svg
-            className={`w-8 h-8 ${c}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.38 3.39a15.995 15.995 0 004.769-2.95m-4.69-4.688a15.99 15.99 0 014.69 4.688"
-            />
-          </svg>
-        );
-      case "save":
-        return (
-          <svg
-            className={`w-8 h-8 ${c}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
-            />
-          </svg>
-        );
-      case "share":
-        return (
-          <svg
-            className={`w-8 h-8 ${c}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
-            />
-          </svg>
-        );
-      default:
-        return null;
-    }
+interface LevelItem {
+  badge: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface StackItem {
+  layer: string;
+  items: string[];
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const SNIPPET = `import { GraphItaliaProvider, RenderChart } from 'graph-italia-components';
+
+<GraphItaliaProvider
+  apiKey="YOUR_PROJECT_API_KEY"
+  endpoint="https://your-server-api.com"
+>
+  {/* The component fetches config and data from the server automatically */}
+  <RenderChart chartId="unique-chart-id-123" />
+</GraphItaliaProvider>`;
+
+const NPM_INSTALL = "npm install graph-italia-components";
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+    </svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-xs font-bold uppercase tracking-[0.15em] text-primary">
+      {children}
+    </span>
+  );
+}
+
+function SectionHeading({
+  id,
+  children,
+}: {
+  id?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <h2
+      id={id}
+      className="mt-3 text-3xl font-extrabold tracking-tight text-base-content sm:text-4xl [text-wrap:balance]"
+    >
+      {children}
+    </h2>
+  );
+}
+
+function Divider() {
+  return <div className="h-px w-full bg-base-content/10" aria-hidden="true" />;
+}
+
+function CodeBlock({
+  code,
+  copyLabel,
+  copiedLabel,
+  note,
+}: {
+  code: string;
+  copyLabel: string;
+  copiedLabel: string;
+  note: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = () => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   return (
+    <div className="rounded-2xl bg-neutral overflow-hidden shadow-lg">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-content/10">
+        <div className="flex gap-1.5" aria-hidden="true">
+          <span className="h-3 w-3 rounded-full bg-error/50" />
+          <span className="h-3 w-3 rounded-full bg-warning/50" />
+          <span className="h-3 w-3 rounded-full bg-success/50" />
+        </div>
+        <button
+          type="button"
+          onClick={copy}
+          className="btn btn-ghost btn-xs gap-1.5 text-neutral-content/50 hover:text-neutral-content"
+          aria-label={copyLabel}
+        >
+          {copied ? (
+            <>
+              <CheckIcon className="w-4 h-4 text-success" />
+              <span className="text-success">{copiedLabel}</span>
+            </>
+          ) : (
+            <>
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+                />
+              </svg>
+              {copyLabel}
+            </>
+          )}
+        </button>
+      </div>
+      <pre className="p-5 text-xs leading-relaxed text-neutral-content/80 overflow-x-auto font-mono whitespace-pre">
+        {code}
+      </pre>
+      <p className="px-5 pb-4 text-xs text-neutral-content/40 italic">{note}</p>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function AboutPage() {
+  const { user } = useUserStore();
+  const { t } = useTranslation("about");
+
+  const features = t("features.items", { returnObjects: true }) as FeatureItem[];
+  const steps = t("integration.steps", { returnObjects: true }) as StepItem[];
+  const levels = t("adoption.levels", { returnObjects: true }) as LevelItem[];
+  const stack = t("architecture.stack", { returnObjects: true }) as StackItem[];
+  const badges = t("hero.badges", { returnObjects: true }) as string[];
+
+  return (
     <Layout>
-      <div className="landing relative isolate min-h-[80vh] z-0">
-        {/* Sfondo a quadrati – stessa sfumatura di Quick Start (radiale da top-right) */}
+      <div className="relative isolate z-0 overflow-x-hidden">
+        {/* Grid background */}
         <svg
           aria-hidden="true"
-          className="landing__bg absolute inset-0 z-[-1] h-full w-full stroke-base-content/20 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+          className="pointer-events-none absolute inset-0 z-[-1] h-full w-full stroke-base-content/10 [mask-image:radial-gradient(100%_60%_at_top_center,white,transparent)]"
         >
           <defs>
             <pattern
+              id="about-grid"
               x="50%"
               y={-1}
-              id="landing-grid"
               width={200}
               height={200}
               patternUnits="userSpaceOnUse"
@@ -156,223 +204,360 @@ export default function Landing() {
               <path d="M100 200V.5M.5 .5H200" fill="none" />
             </pattern>
           </defs>
-          <svg
-            x="50%"
-            y={-1}
-            className="overflow-visible fill-base-200"
-            aria-hidden="true"
-          >
-            <path
-              d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
-              strokeWidth={0}
-            />
-          </svg>
           <rect
-            fill="url(#landing-grid)"
+            fill="url(#about-grid)"
             width="100%"
             height="100%"
             strokeWidth={0}
           />
         </svg>
 
-        {/* Sezione Hero – più alta e UI fantasiosa, sfondo/mask invariati */}
+        {/* ══════════════════════════════════════════════════════════════════
+            HERO
+           ══════════════════════════════════════════════════════════════════ */}
         <section
-          className="landing__hero relative isolate min-h-[70vh] flex flex-col justify-center pt-20 pb-32 lg:min-h-[75vh] lg:pt-28 lg:pb-40"
+          className="relative flex flex-col justify-center pt-20 pb-28 lg:pt-32 lg:pb-40"
           aria-label="Hero"
         >
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 w-full">
-            <div className="text-center">
-              <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                <span
-                  className="relative inline-flex h-2 w-2 rounded-full bg-primary"
-                  aria-hidden="true"
-                />
-                {t("hero.chip")}
-              </p>
-              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight [text-wrap:balance]">
-                <Trans
-                  t={t}
-                  i18nKey="hero.title"
-                  components={{
-                    block: <span className="block" />,
-                    gradient: (
-                      <span className="mt-1 block py-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-[1.4]" />
-                    ),
-                    withBlock: <span className="block mt-1" />,
-                    brand: (
-                      <span className="inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text py-0.5 font-semibold tracking-wide text-transparent" />
-                    ),
-                  }}
-                />
-              </h1>
-              <p className="mt-8 text-lg leading-8 text-base-content/70 max-w-2xl mx-auto sm:text-xl">
-                {t("hero.description")}
-              </p>
-              <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-                <a
-                  href={user ? HOME_ROUTE : "/login"}
-                  className="btn btn-primary"
-                >
-                  {t("hero.ctas.getStarted")}
-                </a>
-                <a href="/quickstart" className="btn btn-outline">
-                  {t("hero.ctas.quickStart")}
-                </a>
-              </div>
-              <ul
-                className="mt-16 flex items-center justify-center gap-8 text-sm text-base-content/70 list-none p-0"
-                aria-label={t("hero.featuresLabel", {
-                  defaultValue: "Caratteristiche principali",
-                })}
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+            <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8">
+              <span
+                className="relative flex h-2 w-2 rounded-full bg-primary"
+                aria-hidden="true"
+              />
+              {t("hero.chip")}
+            </p>
+
+            <h1 className="text-4xl font-extrabold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl leading-tight [text-wrap:balance]">
+              {t("hero.headline1")}{" "}
+              <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent py-1 inline-block">
+                {t("hero.headlineGradient")}
+              </span>{" "}
+              {t("hero.headline2")}
+            </h1>
+
+            <p className="mt-6 text-lg leading-8 text-base-content/65 max-w-3xl mx-auto sm:text-xl [text-wrap:balance]">
+              {t("hero.subheadline")}
+            </p>
+
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary btn-lg gap-2"
               >
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-primary/80"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                    />
-                  </svg>
-                  CSV upload
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 shrink-0 text-primary/80"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-                    />
-                  </svg>
-                  Charts &amp; maps
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg
-                    className="h-5 w-5 text-primary/80"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
-                    />
-                  </svg>
-                  Publish &amp; embed
-                </li>
-              </ul>
+                <GitHubIcon className="w-5 h-5" />
+                {t("hero.ctas.github")}
+              </a>
+              <a href="/quickstart" className="btn btn-outline btn-lg">
+                {t("hero.ctas.docs")}
+              </a>
             </div>
+
+            <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-base-content/55 list-none p-0">
+              {badges.map((label) => (
+                <li key={label} className="flex items-center gap-2">
+                  <CheckIcon className="h-4 w-4 text-primary/70 shrink-0" />
+                  {label}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        {/* Divisore tra Hero e Features */}
-        <div
-          className="landing__divider h-px w-full mx-auto bg-base-content/20"
-          aria-hidden="true"
-        />
+        <Divider />
 
-        {/* Sezione Everything you need – senza blur per scroll fluido */}
+        {/* ══════════════════════════════════════════════════════════════════
+            VALUE PROPOSITION
+           ══════════════════════════════════════════════════════════════════ */}
         <section
-          className="landing__features relative overflow-hidden py-16 lg:py-24"
-          aria-labelledby="features-heading"
+          className="py-16 lg:py-24 bg-base-200/60"
+          aria-labelledby="why-heading"
         >
-          <div
-            className="absolute inset-0 bg-gradient-to-b from-base-200 via-base-100 to-base-200"
-            aria-hidden="true"
-          />
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+            <SectionLabel>{t("why.label")}</SectionLabel>
+            <SectionHeading id="why-heading">{t("why.title")}</SectionHeading>
+            <p className="mt-6 text-lg leading-relaxed text-base-content/65 [text-wrap:balance]">
+              {t("why.body")}
+            </p>
+          </div>
+        </section>
 
-          <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="inline-block text-sm font-medium text-primary uppercase tracking-wider mb-3">
-                {t("contentBlock.tag")}
-              </span>
-              <h2
-                id="features-heading"
-                className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl"
-              >
-                {t("contentBlock.title")}
-              </h2>
-              {/* <p className="mt-4 text-lg leading-8 text-base-content/70">
-                Start visualizing your data with Graph Italia today. Graph Italia makes
-                data visualization quick, simple, and powerful. Try it and see
-                how easily you can create, edit, and publish stunning charts in
-                minutes.
-              </p> */}
+        <Divider />
+
+        {/* ══════════════════════════════════════════════════════════════════
+            FEATURES
+           ══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 lg:py-24" aria-labelledby="features-heading">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <SectionLabel>{t("features.label")}</SectionLabel>
+              <SectionHeading id="features-heading">
+                {t("features.title")}
+              </SectionHeading>
+              <p className="mt-4 text-lg text-base-content/65 max-w-2xl mx-auto">
+                {t("features.subtitle")}
+              </p>
             </div>
 
-            <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature) => (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((f) => (
                 <article
-                  key={feature.name}
-                  className="landing__feature-card relative flex flex-col rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm"
+                  key={f.title}
+                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <FeatureIcon name={feature.icon} />
-                  </div>
-                  <h3 className="text-lg font-semibold text-base-content">
-                    {feature.name}
+                  <span className="text-3xl mb-4 select-none" aria-hidden="true">
+                    {f.emoji}
+                  </span>
+                  <h3 className="text-base font-semibold text-base-content">
+                    {f.title}
                   </h3>
-                  <p className="mt-2 flex-grow text-base leading-relaxed text-base-content/70">
-                    {feature.description}
+                  <p className="mt-2 flex-grow text-sm leading-relaxed text-base-content/65">
+                    {f.description}
                   </p>
-                  <div
-                    className="mt-4 h-px w-12 rounded-full bg-primary/30"
-                    aria-hidden="true"
-                  />
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Divisore tra Features e CTA */}
-        {/* <div
-          className="landing__divider h-px w-full bg-base-200"
-          aria-hidden="true"
-        /> */}
+        <Divider />
 
-        {/* Sezione Ready to create your first chart */}
-        {/* <section
-          className="landing__cta relative bg-base-100/80 py-16 lg:py-20"
-          aria-label="Call to action"
+        {/* ══════════════════════════════════════════════════════════════════
+            API INTEGRATION
+           ══════════════════════════════════════════════════════════════════ */}
+        <section
+          className="py-16 lg:py-24 bg-base-200/60"
+          aria-labelledby="integration-heading"
         >
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
-              Ready to create your first chart?
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <SectionLabel>{t("integration.label")}</SectionLabel>
+              <SectionHeading id="integration-heading">
+                {t("integration.title")}
+              </SectionHeading>
+              <p className="mt-4 text-lg text-base-content/65 max-w-2xl mx-auto">
+                {t("integration.subtitle")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+              <ol className="space-y-8 list-none p-0">
+                {steps.map((step, i) => (
+                  <li key={step.title} className="flex gap-5">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-content font-bold text-sm">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-base-content">
+                        {step.title}
+                      </h3>
+                      <p className="mt-1 text-sm text-base-content/65 leading-relaxed">
+                        {step.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+
+              <CodeBlock
+                code={SNIPPET}
+                copyLabel={t("integration.copy")}
+                copiedLabel={t("integration.copied")}
+                note={t("integration.codeNote")}
+              />
+            </div>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* ══════════════════════════════════════════════════════════════════
+            OPEN SOURCE / ADOPTION LEVELS
+           ══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 lg:py-24" aria-labelledby="adoption-heading">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <SectionLabel>{t("adoption.label")}</SectionLabel>
+              <SectionHeading id="adoption-heading">
+                {t("adoption.title")}
+              </SectionHeading>
+              <p className="mt-4 text-lg text-base-content/65 max-w-2xl mx-auto">
+                {t("adoption.subtitle")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {levels.map((level, i) => (
+                <div
+                  key={level.badge}
+                  className={`flex flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md ${
+                    i === 1
+                      ? "border-primary/40 bg-primary/5 ring-1 ring-primary/20"
+                      : "border-base-300 bg-base-100"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="badge badge-primary badge-outline text-xs font-bold">
+                      {level.badge}
+                    </span>
+                    <span className="text-2xl select-none" aria-hidden="true">
+                      {level.icon}
+                    </span>
+                  </div>
+                  <h3 className="text-base font-semibold text-base-content mb-2">
+                    {level.title}
+                  </h3>
+                  <p className="text-sm text-base-content/65 leading-relaxed flex-grow">
+                    {level.description}
+                  </p>
+                  {i === 0 && (
+                    <code className="mt-5 block rounded-lg bg-base-300 px-4 py-3 text-xs font-mono text-base-content/80 select-all break-all">
+                      {NPM_INSTALL}
+                    </code>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 text-center">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary btn-lg gap-2"
+              >
+                <GitHubIcon className="w-5 h-5" />
+                {t("adoption.cta")}
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* ══════════════════════════════════════════════════════════════════
+            ARCHITECTURE
+           ══════════════════════════════════════════════════════════════════ */}
+        <section
+          className="py-16 lg:py-24 bg-base-200/60"
+          aria-labelledby="arch-heading"
+        >
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10">
+              <SectionLabel>{t("architecture.label")}</SectionLabel>
+              <SectionHeading id="arch-heading">
+                {t("architecture.title")}
+              </SectionHeading>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              {stack.map((s) => (
+                <div
+                  key={s.layer}
+                  className="rounded-2xl border border-base-300 bg-base-100 p-6"
+                >
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-base-content/50 mb-4">
+                    {s.layer}
+                  </h3>
+                  <ul className="space-y-2 list-none p-0">
+                    {s.items.map((item) => (
+                      <li key={item}>
+                        <span className="badge badge-ghost badge-sm font-mono">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* ══════════════════════════════════════════════════════════════════
+            CTA BAND
+           ══════════════════════════════════════════════════════════════════ */}
+        <section className="py-16 lg:py-20" aria-label="Call to action">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-2xl font-extrabold tracking-tight text-base-content sm:text-3xl">
+              {t("cta.title")}
             </h2>
-            <p className="mt-4 text-lg text-base-content/70 max-w-xl mx-auto">
-              Follow the step-by-step quick start guide or log in and get
-              started.
+            <p className="mt-4 text-lg text-base-content/65 max-w-xl mx-auto">
+              {t("cta.subtitle")}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <a href="/quickstart" className="btn btn-primary btn-lg">
-                Go to Quick start guide
+                {t("cta.primary")}
               </a>
               <a
                 href={user ? HOME_ROUTE : "/login"}
                 className="btn btn-outline btn-lg"
               >
-                {user ? "Go to my charts" : "Log in"}
+                {user ? t("cta.secondaryUser") : t("cta.secondaryGuest")}
               </a>
             </div>
           </div>
-        </section> */}
+        </section>
+
+        <Divider />
+
+        {/* ══════════════════════════════════════════════════════════════════
+            FOOTER BAND
+           ══════════════════════════════════════════════════════════════════ */}
+        <section
+          className="py-10 bg-base-300/30"
+          aria-label="About this project"
+        >
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <p className="text-xl font-bold text-base-content">
+              {t("aboutFooter.title")}
+            </p>
+            <p className="text-sm text-base-content/50">
+              {t("aboutFooter.copyright")}
+            </p>
+            <p className="text-sm text-base-content/50">
+              {t("aboutFooter.license")}{" "}
+              <a
+                href="https://www.gnu.org/licenses/gpl-3.0.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link link-primary"
+              >
+                {t("aboutFooter.licenseName")}
+              </a>
+              .
+            </p>
+            <nav
+              className="flex flex-wrap items-center justify-center gap-2 pt-2"
+              aria-label="Project links"
+            >
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-ghost btn-sm gap-1.5"
+              >
+                <GitHubIcon className="w-4 h-4" />
+                {t("aboutFooter.links.github")}
+              </a>
+              <a href="/quickstart" className="btn btn-ghost btn-sm">
+                {t("aboutFooter.links.docs")}
+              </a>
+              <a
+                href="https://github.com/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-ghost btn-sm"
+              >
+                {t("aboutFooter.links.issues")}
+              </a>
+            </nav>
+          </div>
+        </section>
       </div>
     </Layout>
   );

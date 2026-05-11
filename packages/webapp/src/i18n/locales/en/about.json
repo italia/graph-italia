@@ -1,0 +1,138 @@
+{
+  "hero": {
+    "chip": "Open Source · GPL-3.0",
+    "headline1": "Accessible, Open-Source",
+    "headlineGradient": "Data Visualization",
+    "headline2": "for the Web.",
+    "subheadline": "Transform raw data into beautiful, compliant, and easily embeddable charts and dashboards. Graph Italia is the complete, open-source toolkit designed to bridge the gap between non-technical content creators and modern web integration.",
+    "ctas": {
+      "github": "View GitHub Repository",
+      "docs": "Read the Documentation"
+    },
+    "badges": [
+      "CSV & JSON Upload",
+      "Charts & Maps",
+      "Publish & Embed",
+      "API Keys",
+      "Accessibility First"
+    ]
+  },
+  "why": {
+    "label": "Why Graph Italia?",
+    "title": "Born from real institutional needs.",
+    "body": "Born from the need to display transparent, accessible, and responsive data on Italian institutional websites, Graph Italia guarantees design best practices out-of-the-box. Whether you are a developer looking for a robust React charting library, or an organization needing a complete platform to manage and publish dashboards, Graph Italia adapts to your needs."
+  },
+  "features": {
+    "label": "Feature Summary",
+    "title": "Everything you need, in one place.",
+    "subtitle": "Graph Italia isn't just a charting library — it's a complete workflow for data publishing.",
+    "items": [
+      {
+        "emoji": "📊",
+        "title": "Versatile Chart Types",
+        "description": "Bar, Line, Pie charts, GeoJSON geographic maps, interactive Cluster maps, KPI indicators, and dynamic Data Tables — all accessible and responsive."
+      },
+      {
+        "emoji": "💾",
+        "title": "Smart Data Ingestion",
+        "description": "Upload local CSV/JSON files or connect to remote URLs. Graph Italia automatically caches remote data and refreshes it every 24 hours to keep your sites fast."
+      },
+      {
+        "emoji": "🖱️",
+        "title": "No-Code Visual Builder",
+        "description": "Non-technical users can map data columns, customize colors, configure legends, and build drag-and-drop dashboard layouts — no code required."
+      },
+      {
+        "emoji": "🔒",
+        "title": "Secure & Organized",
+        "description": "Built-in authentication and project isolation. Organize charts and dashboards into Projects with role-based access and per-project API keys."
+      },
+      {
+        "emoji": "♿",
+        "title": "Accessibility First",
+        "description": "Built as a wrapper around Apache ECharts and OpenLayers, our components strictly adhere to web accessibility standards and UI/UX best practices."
+      },
+      {
+        "emoji": "🌍",
+        "title": "Open Source",
+        "description": "Released under GNU GPL v3. Built to be shared, adapted, and reused by other organizations, agencies, and developers worldwide."
+      }
+    ]
+  },
+  "integration": {
+    "label": "Seamless Integration via API Keys",
+    "title": "Integrate in three steps.",
+    "subtitle": "The core mission of Graph Italia is to let you easily embed your creations into your own websites with a secure, project-based API key system.",
+    "steps": [
+      {
+        "title": "Create & Configure",
+        "body": "Upload your data and design charts or dashboards using our visual Web App."
+      },
+      {
+        "title": "Generate Your Keys",
+        "body": "Inside your Project settings, generate a secure API Key. It acts as a read-only bearer token — your data is safely exposed only where you want it."
+      },
+      {
+        "title": "Embed with a few lines of code",
+        "body": "Use our React component library. Pass the API key and Chart ID — the component fetches and renders the accessible chart automatically."
+      }
+    ],
+    "codeNote": "You can also embed using traditional <iframe> methods for non-React websites.",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "adoption": {
+    "label": "Open Source & Built for Reuse",
+    "title": "Pick your adoption level.",
+    "subtitle": "Graph Italia is a monorepo released under the GNU GPL v3 license. We offer multiple ways to adopt it depending on your technical needs.",
+    "subtitleStrong": "monorepo released under the GNU GPL v3 license",
+    "levels": [
+      {
+        "badge": "Level 1",
+        "icon": "📦",
+        "title": "Just the React Library",
+        "description": "Don't need the backend? Install our pure UI React components directly via NPM. Bring your own data and use our accessible wrappers for ECharts and OpenLayers."
+      },
+      {
+        "badge": "Level 2",
+        "icon": "🐳",
+        "title": "Docker Compose (Full Stack)",
+        "description": "Want the entire platform? We provide optimized Dockerfiles for frontend and backend. Spin up your own internal instance in minutes with PostgreSQL."
+      },
+      {
+        "badge": "Level 3",
+        "icon": "☸️",
+        "title": "Enterprise Kubernetes (Helm)",
+        "description": "Ready for production at scale? Our complete Helm Chart deploys to Kubernetes with built-in DB migration hooks, user seeding, and Prometheus/Grafana monitoring."
+      }
+    ],
+    "cta": "Explore the Monorepo on GitHub →"
+  },
+  "architecture": {
+    "label": "The Architecture",
+    "title": "Modern, blazing-fast, powered by Bun.",
+    "stack": [
+      { "layer": "Web App",    "items": ["React 19", "Vite", "TailwindCSS v4", "Zustand"] },
+      { "layer": "Server / API", "items": ["Hono", "Bun runtime", "PostgreSQL", "Prisma ORM"] },
+      { "layer": "Components", "items": ["Rollup", "Apache ECharts 5", "OpenLayers 10", "TypeScript"] }
+    ]
+  },
+  "cta": {
+    "title": "Ready to create your first chart?",
+    "subtitle": "Follow the step-by-step quick start guide or log in and get started in minutes.",
+    "primary": "Go to Quick Start Guide",
+    "secondaryUser": "Go to my charts",
+    "secondaryGuest": "Log in"
+  },
+  "aboutFooter": {
+    "title": "Graph Italia",
+    "copyright": "Copyright © 2023–present · Presidenza del Consiglio dei Ministri",
+    "license": "Released under the",
+    "licenseName": "GNU General Public License v3",
+    "links": {
+      "github": "GitHub",
+      "docs": "Documentation",
+      "issues": "Report an Issue"
+    }
+  }
+}
