@@ -1475,4 +1475,4 @@ Il sistema supporta un workflow completo: dall'upload dati, alla configurazione 
 
 Copyright© 2023-present - Presidenza del Consiglio dei Ministri
 
-The source code is released under the BSD license (SPDX code: BSD-3-Clause)
+The source code is released under the GNU General Public License v3 (SPDX code: GPL-3.0-only)
