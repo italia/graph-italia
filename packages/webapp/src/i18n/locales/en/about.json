@@ -112,9 +112,33 @@
     "label": "The Architecture",
     "title": "Modern, blazing-fast, powered by Bun.",
     "stack": [
-      { "layer": "Web App",    "items": ["React 19", "Vite", "TailwindCSS v4", "Zustand"] },
-      { "layer": "Server / API", "items": ["Hono", "Bun runtime", "PostgreSQL", "Prisma ORM"] },
-      { "layer": "Components", "items": ["Rollup", "Apache ECharts 5", "OpenLayers 10", "TypeScript"] }
+      {
+        "layer": "Web App",
+        "items": [
+          "React 19",
+          "Vite",
+          "TailwindCSS v4",
+          "Zustand"
+        ]
+      },
+      {
+        "layer": "Server / API",
+        "items": [
+          "Hono",
+          "Bun runtime",
+          "PostgreSQL",
+          "Prisma ORM"
+        ]
+      },
+      {
+        "layer": "Components",
+        "items": [
+          "Rollup",
+          "Apache ECharts 5",
+          "OpenLayers 10",
+          "TypeScript"
+        ]
+      }
     ]
   },
   "cta": {

@@ -428,8 +428,8 @@ export default function AboutPage() {
                 <div
                   key={level.badge}
                   className={`flex flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md ${i === 1
-                      ? "border-primary/40 bg-primary/5 ring-1 ring-primary/20"
-                      : "border-base-300 bg-base-100"
+                    ? "border-primary/40 bg-primary/5 ring-1 ring-primary/20"
+                    : "border-base-300 bg-base-100"
                     }`}
                 >
                   <div className="flex items-center justify-between mb-4">

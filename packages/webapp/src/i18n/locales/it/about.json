@@ -1,8 +1,8 @@
 {
   "hero": {
     "chip": "Open Source · GPL-3.0",
-    "headline1": "Visualizzazione Dati Accessibile",
-    "headlineGradient": "e Open-Source",
+    "headline1": "Visualizzazione Dati OpenSource",
+    "headlineGradient": "e Accessibile",
     "headline2": "per il Web.",
     "subheadline": "Trasforma dati grezzi in grafici e dashboard bellissimi, conformi e facilmente integrabili. Graph Italia è il toolkit open-source completo pensato per colmare il divario tra creatori di contenuto non tecnici e l'integrazione web moderna.",
     "ctas": {
@@ -112,9 +112,33 @@
     "label": "L'Architettura",
     "title": "Moderno, velocissimo, alimentato da Bun.",
     "stack": [
-      { "layer": "Web App",    "items": ["React 19", "Vite", "TailwindCSS v4", "Zustand"] },
-      { "layer": "Server / API", "items": ["Hono", "Bun runtime", "PostgreSQL", "Prisma ORM"] },
-      { "layer": "Componenti", "items": ["Rollup", "Apache ECharts 5", "OpenLayers 10", "TypeScript"] }
+      {
+        "layer": "Web App",
+        "items": [
+          "React 19",
+          "Vite",
+          "TailwindCSS v4",
+          "Zustand"
+        ]
+      },
+      {
+        "layer": "Server / API",
+        "items": [
+          "Hono",
+          "Bun runtime",
+          "PostgreSQL",
+          "Prisma ORM"
+        ]
+      },
+      {
+        "layer": "Componenti",
+        "items": [
+          "Rollup",
+          "Apache ECharts 5",
+          "OpenLayers 10",
+          "TypeScript"
+        ]
+      }
     ]
   },
   "cta": {
