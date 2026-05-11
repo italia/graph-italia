@@ -1,3 +1,4 @@
+import ChartProvider from "./context/ChartProvider";
 import ChartWrapper from "./components/chartwrapper/ChartWrapper";
 import DataTable from "./components/dataTable/DataTable";
 import KpiItem from "./components/kpi/KpiItem";
@@ -13,6 +14,10 @@ export type { ChartProviderProps } from "./context/ChartProvider";
 export type { DashboardGridProviderProps } from "./context/DashboardGridProvider";
 export type { DashboardProviderProps } from "./context/DashboardProvider";
 export type { ChartColorScheme, EchartsThemeValue } from "./themes";
+export type { ChartProviderProps } from "./context/ChartProvider";
+export type { DashboardProviderProps } from "./context/DashboardProvider";
+export type { DashboardProviderGridProps } from "./context/DashboardGridProvider";
+export type { DashboardData, DashboardSlot, RenderDashboardProps } from "./components/RenderDashboard";
 
 export * from "./types";
 export {
