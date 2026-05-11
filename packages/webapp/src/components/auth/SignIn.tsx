@@ -175,7 +175,9 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
               </form>
             </div>
 
-            {/*<div>
+            {/*
+             */}
+            <div>
               <div>
                 <button
                   type="button"
@@ -202,7 +204,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   OIDC {api.redirectToLoginOidc()}
                 </button>
               </div>
-            </div>*/}
+            </div>
 
             <div className="mt-10">
               <div className="relative">
