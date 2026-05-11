@@ -150,6 +150,176 @@ Il sistema supporta due ruoli:
 - **`ApiKey`**: Chiavi utilizzabili come bearers tokens per accedere tramite api ai grafici e le Dashboard
 - **`Slot`**: Collegamento tra Dashboard e Chart con configurazioni personalizzate per ogni slot
 
+#### Schema modelli prisma.
+
+```mermaid
+erDiagram
+    User {
+        String id PK
+        String email
+        String password
+        Boolean verified
+        Role role
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Project {
+        String id PK
+        String name
+        String ownerId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    ProjectMember {
+        String userId FK
+        String projectId FK
+        ProjectRole role
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Org {
+        String id PK
+        String name
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Membership {
+        String userId FK
+        String orgId FK
+        OrgRole role
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    OrgProject {
+        String orgId FK
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    ApiKey {
+        String id PK
+        String prefix
+        String keyHash
+        ApiKeyRole role
+        Int expire
+        DateTime revokedAt
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    ApiLog {
+        String id PK
+        String method
+        String endpoint
+        Int status
+        Int responseTime
+        DateTime timestamp
+        String projectName
+        String apiKeyId FK
+    }
+
+    VerificationCode {
+        String id PK
+        String code
+        CodeType type
+        Int expire
+        DateTime consumedAt
+        String userId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    DataSource {
+        String id PK
+        String name
+        String description
+        Json data
+        Json rules
+        Boolean publish
+        Boolean isTrasposed
+        String remoteUrl
+        Boolean isRemote
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Chart {
+        String id PK
+        String name
+        String description
+        String chart
+        Json config
+        Json data
+        Json dataSource
+        Boolean publish
+        String remoteUrl
+        Boolean isRemote
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    SourceLink {
+        String dataSourceId FK
+        String chartId FK
+        Json config
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Dashboard {
+        String id PK
+        String name
+        String description
+        Boolean publish
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Slot {
+        String dashboardId FK
+        String chartId FK
+        Json settings
+        String name
+        String description
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    User ||--o{ Project : "owns"
+    User ||--o{ ProjectMember : "member of"
+    User ||--o{ Membership : "belongs to"
+    User ||--o{ VerificationCode : "has"
+
+    Project ||--o{ ProjectMember : "has"
+    Project ||--o{ OrgProject : "linked to"
+    Project ||--o{ Chart : "contains"
+    Project ||--o{ Dashboard : "contains"
+    Project ||--o{ DataSource : "contains"
+    Project ||--o{ ApiKey : "has"
+
+    Org ||--o{ Membership : "has"
+    Org ||--o{ OrgProject : "linked to"
+
+    ApiKey ||--o{ ApiLog : "logs"
+
+    Chart ||--o{ Slot : "placed in"
+    Chart ||--o{ SourceLink : "linked to"
+
+    Dashboard ||--o{ Slot : "contains"
+
+    DataSource ||--o{ SourceLink : "linked to"
+```
+
 #### Documentazione API
 
 - `GET /openapi.json` - Specifica OpenAPI 3.0
