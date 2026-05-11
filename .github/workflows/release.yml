@@ -64,16 +64,16 @@ jobs:
         include:
           - component: webapp
             dockerfile: packages/webapp/Dockerfile
-            image: dataviz-webapp
+            image: graph-italia-webapp
           - component: server
             dockerfile: packages/server/Dockerfile.app
-            image: dataviz-srv
+            image: graph-italia-srv
     permissions:
       contents: read
       packages: write
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🔧 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -113,18 +113,18 @@ jobs:
       packages: write
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: ⚓ Setup Helm
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
         with:
           version: "3.14.0"
 
       - name: 📦 Package and push Helm chart
         run: |
-          helm package ./charts/dataviz --version ${{ needs.prepare.outputs.version }}
+          helm package ./charts/graph-italia --version ${{ needs.prepare.outputs.version }}
           echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          helm push dataviz-${{ needs.prepare.outputs.version }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
+          helm push graph-italia-${{ needs.prepare.outputs.version }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
 
   deploy-production:
     name: 🚀 Deploy to Production
@@ -138,7 +138,7 @@ jobs:
       name: production
     steps:
       - name: ⚓ Setup Helm
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
         with:
           version: "3.14.0"
 
@@ -162,24 +162,24 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CA_CERT }}" | base64 -d > /tmp/ca.crt
-          kubectl config set-cluster dataviz-cluster \
+          kubectl config set-cluster graph-italia-cluster \
             --server=${{ secrets.KUBE_SERVER }} \
             --certificate-authority=/tmp/ca.crt \
             --embed-certs=true
           kubectl config set-credentials github-actions \
             --token=${{ secrets.KUBE_TOKEN }}
-          kubectl config set-context dataviz \
-            --cluster=dataviz-cluster \
+          kubectl config set-context graph-italia \
+            --cluster=graph-italia-cluster \
             --user=github-actions \
-            --namespace=dataviz
-          kubectl config use-context dataviz
+            --namespace=graph-italia
+          kubectl config use-context graph-italia
 
       - name: 🎯 Deploy to Kubernetes
         run: |
-          helm upgrade --install dataviz \
-            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
+          helm upgrade --install graph-italia \
+            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/graph-italia \
             --version ${{ needs.prepare.outputs.version }} \
-            --namespace dataviz \
+            --namespace graph-italia \
             --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
@@ -189,9 +189,64 @@ jobs:
 
       - name: ✅ Verify deployment
         run: |
-          kubectl rollout status deployment/dataviz-webapp -n dataviz
-          kubectl rollout status deployment/dataviz-server -n dataviz
-          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz"
+          kubectl rollout status deployment/graph-italia-webapp -n graph-italia
+          kubectl rollout status deployment/graph-italia-server -n graph-italia
+          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to graph-italia"
+
+  publish-npm:
+    name: 📦 Publish npm package
+    runs-on: arc-runner-italia
+    needs: [prepare]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v5
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: 📦 Install dependencies
+        working-directory: packages/components
+        run: bun install --frozen-lockfile || bun install
+
+      - name: 🏗️ Build library
+        working-directory: packages/components
+        run: bun run build
+
+      - name: 🔍 Check if version already published
+        id: check
+        working-directory: packages/components
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version 2>/dev/null; then
+            echo "already_published=true" >> $GITHUB_OUTPUT
+            echo "⚠️ ${PACKAGE_NAME}@${PACKAGE_VERSION} is already published, skipping."
+          else
+            echo "already_published=false" >> $GITHUB_OUTPUT
+            echo "📦 ${PACKAGE_NAME}@${PACKAGE_VERSION} will be published."
+          fi
+
+      - name: 🚀 Publish to npm
+        if: steps.check.outputs.already_published == 'false'
+        working-directory: packages/components
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: ✅ Published
+        if: steps.check.outputs.already_published == 'false'
+        run: echo "✅ Published ${{ steps.check.outputs.name }}@${{ steps.check.outputs.version }} to npm"
 
   deploy-test:
     name: 🧪 Deploy to Test Environment
@@ -205,7 +260,7 @@ jobs:
       packages: read
     steps:
       - name: ⚓ Setup Helm
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
         with:
           version: "3.14.0"
 
@@ -229,24 +284,24 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CA_CERT }}" | base64 -d > /tmp/ca.crt
-          kubectl config set-cluster dataviz-cluster \
+          kubectl config set-cluster graph-italia-cluster \
             --server=${{ secrets.KUBE_SERVER }} \
             --certificate-authority=/tmp/ca.crt \
             --embed-certs=true
           kubectl config set-credentials github-actions \
             --token=${{ secrets.KUBE_TOKEN }}
-          kubectl config set-context dataviz-test \
-            --cluster=dataviz-cluster \
+          kubectl config set-context graph-italia-test \
+            --cluster=graph-italia-cluster \
             --user=github-actions \
-            --namespace=dataviz-test
-          kubectl config use-context dataviz-test
+            --namespace=graph-italia-test
+          kubectl config use-context graph-italia-test
 
-      - name: 🎯 Deploy to dataviz-test
+      - name: 🎯 Deploy to graph-italia-test
         run: |
-          helm upgrade --install dataviz-test \
-            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/dataviz \
+          helm upgrade --install graph-italia-test \
+            oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/graph-italia \
             --version ${{ needs.prepare.outputs.version }} \
-            --namespace dataviz-test \
+            --namespace graph-italia-test \
             --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
@@ -256,6 +311,6 @@ jobs:
 
       - name: ✅ Verify deployment
         run: |
-          kubectl rollout status deployment/dataviz-test-webapp -n dataviz-test
-          kubectl rollout status deployment/dataviz-test-server -n dataviz-test
-          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to dataviz-test"
+          kubectl rollout status deployment/graph-italia-test-webapp -n graph-italia-test
+          kubectl rollout status deployment/graph-italia-test-server -n graph-italia-test
+          echo "✅ Deployed version ${{ needs.prepare.outputs.version }} to graph-italia-test"

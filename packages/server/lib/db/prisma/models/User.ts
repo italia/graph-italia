@@ -28,7 +28,7 @@ export type UserMinAggregateOutputType = {
   id: string | null
   email: string | null
   password: string | null
-  verifyed: boolean | null
+  verified: boolean | null
   role: $Enums.Role | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -38,7 +38,7 @@ export type UserMaxAggregateOutputType = {
   id: string | null
   email: string | null
   password: string | null
-  verifyed: boolean | null
+  verified: boolean | null
   role: $Enums.Role | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -48,7 +48,7 @@ export type UserCountAggregateOutputType = {
   id: number
   email: number
   password: number
-  verifyed: number
+  verified: number
   role: number
   createdAt: number
   updatedAt: number
@@ -60,7 +60,7 @@ export type UserMinAggregateInputType = {
   id?: true
   email?: true
   password?: true
-  verifyed?: true
+  verified?: true
   role?: true
   createdAt?: true
   updatedAt?: true
@@ -70,7 +70,7 @@ export type UserMaxAggregateInputType = {
   id?: true
   email?: true
   password?: true
-  verifyed?: true
+  verified?: true
   role?: true
   createdAt?: true
   updatedAt?: true
@@ -80,7 +80,7 @@ export type UserCountAggregateInputType = {
   id?: true
   email?: true
   password?: true
-  verifyed?: true
+  verified?: true
   role?: true
   createdAt?: true
   updatedAt?: true
@@ -163,7 +163,7 @@ export type UserGroupByOutputType = {
   id: string
   email: string
   password: string
-  verifyed: boolean
+  verified: boolean
   role: $Enums.Role
   createdAt: Date
   updatedAt: Date
@@ -194,28 +194,28 @@ export type UserWhereInput = {
   id?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
   password?: Prisma.StringFilter<"User"> | string
-  verifyed?: Prisma.BoolFilter<"User"> | boolean
+  verified?: Prisma.BoolFilter<"User"> | boolean
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  Chart?: Prisma.ChartListRelationFilter
-  Dashboard?: Prisma.DashboardListRelationFilter
-  DataSource?: Prisma.DataSourceListRelationFilter
-  Code?: Prisma.CodeListRelationFilter
+  memberships?: Prisma.MembershipListRelationFilter
+  projectMember?: Prisma.ProjectMemberListRelationFilter
+  ownedProjects?: Prisma.ProjectListRelationFilter
+  codes?: Prisma.VerificationCodeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  verifyed?: Prisma.SortOrder
+  verified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  Chart?: Prisma.ChartOrderByRelationAggregateInput
-  Dashboard?: Prisma.DashboardOrderByRelationAggregateInput
-  DataSource?: Prisma.DataSourceOrderByRelationAggregateInput
-  Code?: Prisma.CodeOrderByRelationAggregateInput
+  memberships?: Prisma.MembershipOrderByRelationAggregateInput
+  projectMember?: Prisma.ProjectMemberOrderByRelationAggregateInput
+  ownedProjects?: Prisma.ProjectOrderByRelationAggregateInput
+  codes?: Prisma.VerificationCodeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -225,21 +225,21 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   password?: Prisma.StringFilter<"User"> | string
-  verifyed?: Prisma.BoolFilter<"User"> | boolean
+  verified?: Prisma.BoolFilter<"User"> | boolean
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  Chart?: Prisma.ChartListRelationFilter
-  Dashboard?: Prisma.DashboardListRelationFilter
-  DataSource?: Prisma.DataSourceListRelationFilter
-  Code?: Prisma.CodeListRelationFilter
+  memberships?: Prisma.MembershipListRelationFilter
+  projectMember?: Prisma.ProjectMemberListRelationFilter
+  ownedProjects?: Prisma.ProjectListRelationFilter
+  codes?: Prisma.VerificationCodeListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  verifyed?: Prisma.SortOrder
+  verified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -255,7 +255,7 @@ export type UserScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
-  verifyed?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  verified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -265,63 +265,63 @@ export type UserCreateInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartCreateNestedManyWithoutUserInput
-  Dashboard?: Prisma.DashboardCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  codes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartUncheckedCreateNestedManyWithoutUserInput
-  Dashboard?: Prisma.DashboardUncheckedCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceUncheckedCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  codes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUpdateManyWithoutUserNestedInput
-  Dashboard?: Prisma.DashboardUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  codes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUncheckedUpdateManyWithoutUserNestedInput
-  Dashboard?: Prisma.DashboardUncheckedUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUncheckedUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  codes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -331,7 +331,7 @@ export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -341,17 +341,22 @@ export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
 }
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  verifyed?: Prisma.SortOrder
+  verified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -361,7 +366,7 @@ export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  verifyed?: Prisma.SortOrder
+  verified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -371,19 +376,52 @@ export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  verifyed?: Prisma.SortOrder
+  verified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserCreateNestedOneWithoutOwnedProjectsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedProjectsInput
+  connect?: Prisma.UserWhereUniqueInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type UserUpdateOneRequiredWithoutOwnedProjectsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedProjectsInput
+  upsert?: Prisma.UserUpsertWithoutOwnedProjectsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOwnedProjectsInput, Prisma.UserUpdateWithoutOwnedProjectsInput>, Prisma.UserUncheckedUpdateWithoutOwnedProjectsInput>
+}
+
+export type UserCreateNestedOneWithoutProjectMemberInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProjectMemberInput, Prisma.UserUncheckedCreateWithoutProjectMemberInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectMemberInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProjectMemberNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProjectMemberInput, Prisma.UserUncheckedCreateWithoutProjectMemberInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectMemberInput
+  upsert?: Prisma.UserUpsertWithoutProjectMemberInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProjectMemberInput, Prisma.UserUpdateWithoutProjectMemberInput>, Prisma.UserUncheckedUpdateWithoutProjectMemberInput>
+}
+
+export type UserCreateNestedOneWithoutMembershipsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMembershipsInput, Prisma.UserUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMembershipsInput, Prisma.UserUncheckedCreateWithoutMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMembershipsInput
+  upsert?: Prisma.UserUpsertWithoutMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMembershipsInput, Prisma.UserUpdateWithoutMembershipsInput>, Prisma.UserUncheckedUpdateWithoutMembershipsInput>
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -394,336 +432,290 @@ export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type UserCreateNestedOneWithoutCodeInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutCodeInput, Prisma.UserUncheckedCreateWithoutCodeInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCodeInput
+export type UserCreateNestedOneWithoutCodesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCodesInput, Prisma.UserUncheckedCreateWithoutCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCodesInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutCodeNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutCodeInput, Prisma.UserUncheckedCreateWithoutCodeInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCodeInput
-  upsert?: Prisma.UserUpsertWithoutCodeInput
+export type UserUpdateOneRequiredWithoutCodesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCodesInput, Prisma.UserUncheckedCreateWithoutCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCodesInput
+  upsert?: Prisma.UserUpsertWithoutCodesInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCodeInput, Prisma.UserUpdateWithoutCodeInput>, Prisma.UserUncheckedUpdateWithoutCodeInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCodesInput, Prisma.UserUpdateWithoutCodesInput>, Prisma.UserUncheckedUpdateWithoutCodesInput>
 }
 
-export type UserCreateNestedOneWithoutDataSourceInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutDataSourceInput, Prisma.UserUncheckedCreateWithoutDataSourceInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDataSourceInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutDataSourceNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutDataSourceInput, Prisma.UserUncheckedCreateWithoutDataSourceInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDataSourceInput
-  upsert?: Prisma.UserUpsertWithoutDataSourceInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDataSourceInput, Prisma.UserUpdateWithoutDataSourceInput>, Prisma.UserUncheckedUpdateWithoutDataSourceInput>
-}
-
-export type UserCreateNestedOneWithoutChartInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutChartInput, Prisma.UserUncheckedCreateWithoutChartInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChartInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutChartNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutChartInput, Prisma.UserUncheckedCreateWithoutChartInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChartInput
-  upsert?: Prisma.UserUpsertWithoutChartInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChartInput, Prisma.UserUpdateWithoutChartInput>, Prisma.UserUncheckedUpdateWithoutChartInput>
-}
-
-export type UserCreateNestedOneWithoutDashboardInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutDashboardInput, Prisma.UserUncheckedCreateWithoutDashboardInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDashboardInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutDashboardNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutDashboardInput, Prisma.UserUncheckedCreateWithoutDashboardInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDashboardInput
-  upsert?: Prisma.UserUpsertWithoutDashboardInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDashboardInput, Prisma.UserUpdateWithoutDashboardInput>, Prisma.UserUncheckedUpdateWithoutDashboardInput>
-}
-
-export type UserCreateWithoutCodeInput = {
+export type UserCreateWithoutOwnedProjectsInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartCreateNestedManyWithoutUserInput
-  Dashboard?: Prisma.DashboardCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  codes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutCodeInput = {
+export type UserUncheckedCreateWithoutOwnedProjectsInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartUncheckedCreateNestedManyWithoutUserInput
-  Dashboard?: Prisma.DashboardUncheckedCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  codes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutCodeInput = {
+export type UserCreateOrConnectWithoutOwnedProjectsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutCodeInput, Prisma.UserUncheckedCreateWithoutCodeInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
 }
 
-export type UserUpsertWithoutCodeInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutCodeInput, Prisma.UserUncheckedUpdateWithoutCodeInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutCodeInput, Prisma.UserUncheckedCreateWithoutCodeInput>
+export type UserUpsertWithoutOwnedProjectsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOwnedProjectsInput, Prisma.UserUncheckedUpdateWithoutOwnedProjectsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOwnedProjectsInput, Prisma.UserUncheckedCreateWithoutOwnedProjectsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutCodeInput = {
+export type UserUpdateToOneWithWhereWithoutOwnedProjectsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutCodeInput, Prisma.UserUncheckedUpdateWithoutCodeInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOwnedProjectsInput, Prisma.UserUncheckedUpdateWithoutOwnedProjectsInput>
 }
 
-export type UserUpdateWithoutCodeInput = {
+export type UserUpdateWithoutOwnedProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUpdateManyWithoutUserNestedInput
-  Dashboard?: Prisma.DashboardUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  codes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutCodeInput = {
+export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUncheckedUpdateManyWithoutUserNestedInput
-  Dashboard?: Prisma.DashboardUncheckedUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  codes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutDataSourceInput = {
+export type UserCreateWithoutProjectMemberInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartCreateNestedManyWithoutUserInput
-  Dashboard?: Prisma.DashboardCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  codes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutDataSourceInput = {
+export type UserUncheckedCreateWithoutProjectMemberInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartUncheckedCreateNestedManyWithoutUserInput
-  Dashboard?: Prisma.DashboardUncheckedCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  codes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutDataSourceInput = {
+export type UserCreateOrConnectWithoutProjectMemberInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutDataSourceInput, Prisma.UserUncheckedCreateWithoutDataSourceInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProjectMemberInput, Prisma.UserUncheckedCreateWithoutProjectMemberInput>
 }
 
-export type UserUpsertWithoutDataSourceInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutDataSourceInput, Prisma.UserUncheckedUpdateWithoutDataSourceInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutDataSourceInput, Prisma.UserUncheckedCreateWithoutDataSourceInput>
+export type UserUpsertWithoutProjectMemberInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProjectMemberInput, Prisma.UserUncheckedUpdateWithoutProjectMemberInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProjectMemberInput, Prisma.UserUncheckedCreateWithoutProjectMemberInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutDataSourceInput = {
+export type UserUpdateToOneWithWhereWithoutProjectMemberInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutDataSourceInput, Prisma.UserUncheckedUpdateWithoutDataSourceInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProjectMemberInput, Prisma.UserUncheckedUpdateWithoutProjectMemberInput>
 }
 
-export type UserUpdateWithoutDataSourceInput = {
+export type UserUpdateWithoutProjectMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUpdateManyWithoutUserNestedInput
-  Dashboard?: Prisma.DashboardUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  codes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutDataSourceInput = {
+export type UserUncheckedUpdateWithoutProjectMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUncheckedUpdateManyWithoutUserNestedInput
-  Dashboard?: Prisma.DashboardUncheckedUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  codes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutChartInput = {
+export type UserCreateWithoutMembershipsInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Dashboard?: Prisma.DashboardCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
+  codes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutChartInput = {
+export type UserUncheckedCreateWithoutMembershipsInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Dashboard?: Prisma.DashboardUncheckedCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceUncheckedCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeUncheckedCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
+  codes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutChartInput = {
+export type UserCreateOrConnectWithoutMembershipsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutChartInput, Prisma.UserUncheckedCreateWithoutChartInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMembershipsInput, Prisma.UserUncheckedCreateWithoutMembershipsInput>
 }
 
-export type UserUpsertWithoutChartInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutChartInput, Prisma.UserUncheckedUpdateWithoutChartInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutChartInput, Prisma.UserUncheckedCreateWithoutChartInput>
+export type UserUpsertWithoutMembershipsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMembershipsInput, Prisma.UserUncheckedUpdateWithoutMembershipsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMembershipsInput, Prisma.UserUncheckedCreateWithoutMembershipsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutChartInput = {
+export type UserUpdateToOneWithWhereWithoutMembershipsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutChartInput, Prisma.UserUncheckedUpdateWithoutChartInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMembershipsInput, Prisma.UserUncheckedUpdateWithoutMembershipsInput>
 }
 
-export type UserUpdateWithoutChartInput = {
+export type UserUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Dashboard?: Prisma.DashboardUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
+  codes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutChartInput = {
+export type UserUncheckedUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Dashboard?: Prisma.DashboardUncheckedUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUncheckedUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUncheckedUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+  codes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutDashboardInput = {
+export type UserCreateWithoutCodesInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectCreateNestedManyWithoutOwnerInput
 }
 
-export type UserUncheckedCreateWithoutDashboardInput = {
+export type UserUncheckedCreateWithoutCodesInput = {
   id?: string
   email: string
   password: string
-  verifyed?: boolean
+  verified?: boolean
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  Chart?: Prisma.ChartUncheckedCreateNestedManyWithoutUserInput
-  DataSource?: Prisma.DataSourceUncheckedCreateNestedManyWithoutUserInput
-  Code?: Prisma.CodeUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  projectMember?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+  ownedProjects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOwnerInput
 }
 
-export type UserCreateOrConnectWithoutDashboardInput = {
+export type UserCreateOrConnectWithoutCodesInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutDashboardInput, Prisma.UserUncheckedCreateWithoutDashboardInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCodesInput, Prisma.UserUncheckedCreateWithoutCodesInput>
 }
 
-export type UserUpsertWithoutDashboardInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutDashboardInput, Prisma.UserUncheckedUpdateWithoutDashboardInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutDashboardInput, Prisma.UserUncheckedCreateWithoutDashboardInput>
+export type UserUpsertWithoutCodesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCodesInput, Prisma.UserUncheckedUpdateWithoutCodesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCodesInput, Prisma.UserUncheckedCreateWithoutCodesInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutDashboardInput = {
+export type UserUpdateToOneWithWhereWithoutCodesInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutDashboardInput, Prisma.UserUncheckedUpdateWithoutDashboardInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCodesInput, Prisma.UserUncheckedUpdateWithoutCodesInput>
 }
 
-export type UserUpdateWithoutDashboardInput = {
+export type UserUpdateWithoutCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUpdateManyWithoutOwnerNestedInput
 }
 
-export type UserUncheckedUpdateWithoutDashboardInput = {
+export type UserUncheckedUpdateWithoutCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  verifyed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  Chart?: Prisma.ChartUncheckedUpdateManyWithoutUserNestedInput
-  DataSource?: Prisma.DataSourceUncheckedUpdateManyWithoutUserNestedInput
-  Code?: Prisma.CodeUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  projectMember?: Prisma.ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+  ownedProjects?: Prisma.ProjectUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 
@@ -732,17 +724,17 @@ export type UserUncheckedUpdateWithoutDashboardInput = {
  */
 
 export type UserCountOutputType = {
-  Chart: number
-  Dashboard: number
-  DataSource: number
-  Code: number
+  memberships: number
+  projectMember: number
+  ownedProjects: number
+  codes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  Chart?: boolean | UserCountOutputTypeCountChartArgs
-  Dashboard?: boolean | UserCountOutputTypeCountDashboardArgs
-  DataSource?: boolean | UserCountOutputTypeCountDataSourceArgs
-  Code?: boolean | UserCountOutputTypeCountCodeArgs
+  memberships?: boolean | UserCountOutputTypeCountMembershipsArgs
+  projectMember?: boolean | UserCountOutputTypeCountProjectMemberArgs
+  ownedProjects?: boolean | UserCountOutputTypeCountOwnedProjectsArgs
+  codes?: boolean | UserCountOutputTypeCountCodesArgs
 }
 
 /**
@@ -758,29 +750,29 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountChartArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ChartWhereInput
+export type UserCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountDashboardArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DashboardWhereInput
+export type UserCountOutputTypeCountProjectMemberArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectMemberWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountDataSourceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DataSourceWhereInput
+export type UserCountOutputTypeCountOwnedProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountCodeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.CodeWhereInput
+export type UserCountOutputTypeCountCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationCodeWhereInput
 }
 
 
@@ -788,14 +780,14 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   email?: boolean
   password?: boolean
-  verifyed?: boolean
+  verified?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  Chart?: boolean | Prisma.User$ChartArgs<ExtArgs>
-  Dashboard?: boolean | Prisma.User$DashboardArgs<ExtArgs>
-  DataSource?: boolean | Prisma.User$DataSourceArgs<ExtArgs>
-  Code?: boolean | Prisma.User$CodeArgs<ExtArgs>
+  memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
+  projectMember?: boolean | Prisma.User$projectMemberArgs<ExtArgs>
+  ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
+  codes?: boolean | Prisma.User$codesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -803,7 +795,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   email?: boolean
   password?: boolean
-  verifyed?: boolean
+  verified?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -813,7 +805,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   email?: boolean
   password?: boolean
-  verifyed?: boolean
+  verified?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -823,18 +815,18 @@ export type UserSelectScalar = {
   id?: boolean
   email?: boolean
   password?: boolean
-  verifyed?: boolean
+  verified?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "verifyed" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "verified" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  Chart?: boolean | Prisma.User$ChartArgs<ExtArgs>
-  Dashboard?: boolean | Prisma.User$DashboardArgs<ExtArgs>
-  DataSource?: boolean | Prisma.User$DataSourceArgs<ExtArgs>
-  Code?: boolean | Prisma.User$CodeArgs<ExtArgs>
+  memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
+  projectMember?: boolean | Prisma.User$projectMemberArgs<ExtArgs>
+  ownedProjects?: boolean | Prisma.User$ownedProjectsArgs<ExtArgs>
+  codes?: boolean | Prisma.User$codesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -843,16 +835,16 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    Chart: Prisma.$ChartPayload<ExtArgs>[]
-    Dashboard: Prisma.$DashboardPayload<ExtArgs>[]
-    DataSource: Prisma.$DataSourcePayload<ExtArgs>[]
-    Code: Prisma.$CodePayload<ExtArgs>[]
+    memberships: Prisma.$MembershipPayload<ExtArgs>[]
+    projectMember: Prisma.$ProjectMemberPayload<ExtArgs>[]
+    ownedProjects: Prisma.$ProjectPayload<ExtArgs>[]
+    codes: Prisma.$VerificationCodePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
     password: string
-    verifyed: boolean
+    verified: boolean
     role: $Enums.Role
     createdAt: Date
     updatedAt: Date
@@ -1250,10 +1242,10 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  Chart<T extends Prisma.User$ChartArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ChartArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  Dashboard<T extends Prisma.User$DashboardArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$DashboardArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DashboardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  DataSource<T extends Prisma.User$DataSourceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$DataSourceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  Code<T extends Prisma.User$CodeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$CodeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  memberships<T extends Prisma.User$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projectMember<T extends Prisma.User$projectMemberArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$projectMemberArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ownedProjects<T extends Prisma.User$ownedProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  codes<T extends Prisma.User$codesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$codesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1286,7 +1278,7 @@ export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
-  readonly verifyed: Prisma.FieldRef<"User", 'Boolean'>
+  readonly verified: Prisma.FieldRef<"User", 'Boolean'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -1678,99 +1670,99 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User.Chart
+ * User.memberships
  */
-export type User$ChartArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$membershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Chart
+   * Select specific fields to fetch from the Membership
    */
-  select?: Prisma.ChartSelect<ExtArgs> | null
+  select?: Prisma.MembershipSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Chart
+   * Omit specific fields from the Membership
    */
-  omit?: Prisma.ChartOmit<ExtArgs> | null
+  omit?: Prisma.MembershipOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ChartInclude<ExtArgs> | null
-  where?: Prisma.ChartWhereInput
-  orderBy?: Prisma.ChartOrderByWithRelationInput | Prisma.ChartOrderByWithRelationInput[]
-  cursor?: Prisma.ChartWhereUniqueInput
+  include?: Prisma.MembershipInclude<ExtArgs> | null
+  where?: Prisma.MembershipWhereInput
+  orderBy?: Prisma.MembershipOrderByWithRelationInput | Prisma.MembershipOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ChartScalarFieldEnum | Prisma.ChartScalarFieldEnum[]
+  distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
 }
 
 /**
- * User.Dashboard
+ * User.projectMember
  */
-export type User$DashboardArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$projectMemberArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Dashboard
+   * Select specific fields to fetch from the ProjectMember
    */
-  select?: Prisma.DashboardSelect<ExtArgs> | null
+  select?: Prisma.ProjectMemberSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Dashboard
+   * Omit specific fields from the ProjectMember
    */
-  omit?: Prisma.DashboardOmit<ExtArgs> | null
+  omit?: Prisma.ProjectMemberOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.DashboardInclude<ExtArgs> | null
-  where?: Prisma.DashboardWhereInput
-  orderBy?: Prisma.DashboardOrderByWithRelationInput | Prisma.DashboardOrderByWithRelationInput[]
-  cursor?: Prisma.DashboardWhereUniqueInput
+  include?: Prisma.ProjectMemberInclude<ExtArgs> | null
+  where?: Prisma.ProjectMemberWhereInput
+  orderBy?: Prisma.ProjectMemberOrderByWithRelationInput | Prisma.ProjectMemberOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectMemberWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.DashboardScalarFieldEnum | Prisma.DashboardScalarFieldEnum[]
+  distinct?: Prisma.ProjectMemberScalarFieldEnum | Prisma.ProjectMemberScalarFieldEnum[]
 }
 
 /**
- * User.DataSource
+ * User.ownedProjects
  */
-export type User$DataSourceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$ownedProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the DataSource
+   * Select specific fields to fetch from the Project
    */
-  select?: Prisma.DataSourceSelect<ExtArgs> | null
+  select?: Prisma.ProjectSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the DataSource
+   * Omit specific fields from the Project
    */
-  omit?: Prisma.DataSourceOmit<ExtArgs> | null
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.DataSourceInclude<ExtArgs> | null
-  where?: Prisma.DataSourceWhereInput
-  orderBy?: Prisma.DataSourceOrderByWithRelationInput | Prisma.DataSourceOrderByWithRelationInput[]
-  cursor?: Prisma.DataSourceWhereUniqueInput
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.DataSourceScalarFieldEnum | Prisma.DataSourceScalarFieldEnum[]
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
 }
 
 /**
- * User.Code
+ * User.codes
  */
-export type User$CodeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$codesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Code
+   * Select specific fields to fetch from the VerificationCode
    */
-  select?: Prisma.CodeSelect<ExtArgs> | null
+  select?: Prisma.VerificationCodeSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Code
+   * Omit specific fields from the VerificationCode
    */
-  omit?: Prisma.CodeOmit<ExtArgs> | null
+  omit?: Prisma.VerificationCodeOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.CodeInclude<ExtArgs> | null
-  where?: Prisma.CodeWhereInput
-  orderBy?: Prisma.CodeOrderByWithRelationInput | Prisma.CodeOrderByWithRelationInput[]
-  cursor?: Prisma.CodeWhereUniqueInput
+  include?: Prisma.VerificationCodeInclude<ExtArgs> | null
+  where?: Prisma.VerificationCodeWhereInput
+  orderBy?: Prisma.VerificationCodeOrderByWithRelationInput | Prisma.VerificationCodeOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationCodeWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.CodeScalarFieldEnum | Prisma.CodeScalarFieldEnum[]
+  distinct?: Prisma.VerificationCodeScalarFieldEnum | Prisma.VerificationCodeScalarFieldEnum[]
 }
 
 /**

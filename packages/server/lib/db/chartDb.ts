@@ -1,62 +1,29 @@
 import { prisma } from "./prisma";
-import type { Chart, Prisma, User } from "./prisma/client";
-
-export function findAllCharts() {
-  return prisma.chart.findMany({
-    where: {},
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-}
+import type { Chart, Prisma } from "./prisma/client";
 
 export function findChartById(id: Chart["id"]) {
-  return prisma.chart.findUnique({
-    where: {
-      id,
-    },
-  });
+  return prisma.chart.findUnique({ where: { id } });
 }
 
-export function findChartsByUSerId(id: User["id"]) {
+export function findChartsByProjectId(projectId: string) {
   return prisma.chart.findMany({
-    where: {
-      userId: id,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
+    where: { projectId },
+    orderBy: { updatedAt: "desc" },
   });
 }
 
-export function createChart(data: Prisma.ChartCreateInput) {
+export function createChart(data: Prisma.ChartUncheckedCreateInput) {
   return prisma.chart.create({ data });
 }
 
 export function publishChart(id: Chart["id"], publish: boolean) {
-  return prisma.chart.update({
-    where: {
-      id,
-    },
-    data: {
-      publish,
-    },
-  });
+  return prisma.chart.update({ where: { id }, data: { publish } });
 }
 
 export function updateChart(id: Chart["id"], data: Prisma.ChartUpdateInput) {
-  return prisma.chart.update({
-    where: {
-      id,
-    },
-    data,
-  });
+  return prisma.chart.update({ where: { id }, data });
 }
 
 export function deleteChart(id: Chart["id"]) {
-  return prisma.chart.delete({
-    where: {
-      id,
-    },
-  });
+  return prisma.chart.delete({ where: { id } });
 }

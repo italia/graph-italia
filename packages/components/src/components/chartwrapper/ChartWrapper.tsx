@@ -4,6 +4,7 @@ import { dataToCSV, downloadCSV, downloadPng } from "../../lib/downloadUtils";
 import { FieldDataType, InfosType } from "../../types";
 import DataTable from "../dataTable/DataTable";
 import RenderChart from "../RenderChart";
+import PoweredBy from "../PoweredBy";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import "./chartWrapper.css";
 import {
@@ -60,6 +61,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     title = data.name || "",
     subTitle = data.description || "",
     chartFooterText = "",
+    poweredByLabel,
   } = info;
 
   const tabs = [labelTabChart, labelTabData, labelTabInfo];
@@ -153,6 +155,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
                 hFactor={hFactor}
                 rowHeight={chartAreaRowHeight}
                 getInstance={setEchartInstance}
+                poweredByLabel=""
               />
             </div>
             {chartFooterText && (
@@ -169,7 +172,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             aria-hidden={activeTab !== 1}
             className={`cw-tabpanel ${activeTab === 1 ? "is-active" : ""}`}
           >
-            <DataTable id={id} data={data.data as any[]} />
+            <DataTable id={id} data={data.data as any[]} poweredByLabel="" />
           </div>
 
           <div
@@ -269,6 +272,8 @@ export default function ChartWrapper(props: ChartWrapperProps) {
           )}
         </div>
       </div>
+
+      <PoweredBy label={poweredByLabel} />
     </div>
   );
 }

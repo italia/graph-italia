@@ -1,5 +1,5 @@
 {
-  "name": "dataviz",
+  "name": "graph-italia",
   "module": "index.ts",
   "devDependencies": {
     "bun-types": "^1.3.9"
@@ -7,12 +7,12 @@
   "private": "false",
   "scripts": {
     "dev": "bun run dev:webapp & bun run dev:server",
-    "dev:webapp": "bun run --elide-lines=0 --filter dataviz-webapp dev",
-    "dev:server": "bun run --elide-lines=0 --filter dataviz-server dev",
-    "dev:components": "bun run --elide-lines=0 --filter dataviz-components dev",
+    "dev:webapp": "bun run --elide-lines=0 --filter graph-italia-webapp dev",
+    "dev:server": "bun run --elide-lines=0 --filter graph-italia-server dev",
+    "dev:components": "bun run --elide-lines=0 --filter graph-italia-components dev",
     "build": "bun run --filter '*' build",
-    "build:webapp": "bun run --elide-lines=0 --filter dataviz-webapp build",
-    "build:components": "bun run --elide-lines=0 --filter dataviz-components build",
+    "build:webapp": "bun run --elide-lines=0 --filter graph-italia-webapp build",
+    "build:components": "bun run --elide-lines=0 --filter graph-italia-components build",
     "clean": "rm -rf node_modules packages/app/node_modules packages/server/node_modules bun.lockb packages/app/bun.lockb packages/bserver/bun.lockb",
     "seed": "bun run packages/server/seeds/seed-users"
   },

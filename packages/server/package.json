@@ -1,12 +1,14 @@
 {
-  "name": "dataviz-server",
-  "version": "0.2.01",
+  "name": "graph-italia-server",
+  "version": "0.2.02",
   "module": "index.ts",
   "type": "module",
   "scripts": {
     "start": "bun index.ts",
     "dev": "bun --hot index.ts",
-    "dev:seed": "ts-node --esm ./seeds/seed-users.ts"
+    "test": "bun test",
+    "dev:seed": "ts-node --esm ./seeds/seed-users.ts",
+    "restore:data": "bun run seeds/restore-previous-data.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -41,6 +43,7 @@
     "helmet": "^8.1.0",
     "hono": "^4.10.8",
     "hono-openapi": "^1.1.2",
+    "hono-rate-limiter": "^0.5.3",
     "jose": "6.1.3",
     "jsonwebtoken": "^9.0.2",
     "oidc-provider": "9.6.1",

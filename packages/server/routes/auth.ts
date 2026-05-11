@@ -8,13 +8,12 @@ import {
 import * as z from "zod";
 import db from "../lib/db";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
-import {
-	clearAccessTokenCookie,
-	generateTokens,
-	setAccessTokenCookie,
-} from "../lib/jwt-hono";
+
+import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
-import { checkAuth, requireUser } from "../lib/middlewares-hono";
+import { checkAuth, requireUser } from "../lib/middlewares";
+import { rateLimit, tryConsume } from "../lib/rateLimit";
+import type { ParsedToken } from "../types";
 
 const APP_URL = process.env.APP_URL || "/";
 
@@ -105,7 +104,7 @@ const passwordSchema = z
 	.refine((password) => /[0-9]/.test(password), {
 		message: "Must contain a number",
 	})
-	.refine((password) => /[!@#$%^&*]/.test(password), {
+	.refine((password) => /[^A-Za-z0-9]/.test(password), {
 		message: "Must contain at least one special character",
 	});
 
@@ -226,7 +225,7 @@ router.post("/register",
 			}
 
 			const user = await db.createUserByEmailAndPassword({ email, password });
-			const pin = await db.createCode(user.id);
+			const pin = await db.createCode(user.id, "ACTIVATION");
 
 			console.log("User registered, sending activation email", email);
 			logger.info("User registered, sending activation email", {
@@ -250,56 +249,78 @@ const loginSchema = z.object({
 	password: z.string({ error: "Password is required" }),
 });
 
-router.post("/login", zValidator("json", loginSchema), async (c) => {
-	try {
-		const { email, password } = c.req.valid("json");
-		const existingUser = await db.findUserByEmail(email);
+const loginSuccessSchema = z.object({ auth: z.boolean() });
 
-		if (!existingUser) {
-			console.log("No user found with email", email);
-			logger.warn("Login attempt for non-existent user", {
-				email: email.replace(/(.{2}).*@/, "$1***@"),
-			});
-			return c.json({ error: { message: "Invalid login credentials." } }, 401);
-		}
-
-		//check if user is verifyed
-		if (!existingUser.verifyed) {
-			console.log("User not verified", email);
-			logger.warn("Login attempt for unverified user", {
-				userId: existingUser.id,
-				email: email.replace(/(.{2}).*@/, "$1***@"),
-			});
-			return c.json(
-				{ error: { message: "Please verify your email before logging in." } },
-				401,
-			);
-		}
-
-		const validPassword = await bcrypt.compare(password, existingUser.password);
-		if (!validPassword) {
-			console.log("Invalid password for user", email);
-			logger.warn("Login failed - invalid password", {
-				userId: existingUser.id,
-				email: email.replace(/(.{2}).*@/, "$1***@"),
-			});
-			return c.json({ error: { message: "Invalid login credentials." } }, 401);
-		}
-
-		const { accessToken } = generateTokens(existingUser);
-		setAccessTokenCookie(c, accessToken);
-		console.log("User logged in successfully", email);
-		logger.info("User logged in successfully", {
-			userId: existingUser.id,
-			email: email.replace(/(.{2}).*@/, "$1***@"),
-		});
-
-		return c.json({ auth: true });
-	} catch (error) {
-		logger.error("Login failed", error instanceof Error ? error : undefined);
-		return c.json({ error: { message: "Login failed" } }, 500);
-	}
+// Per-IP guard sized for office NATs (many users behind the same address).
+// The real brute-force protection is the per-email throttle below.
+const loginIpRateLimit = rateLimit({
+	name: "auth:login:ip",
+	windowMs: 15 * 60 * 1000,
+	max: 500,
 });
+
+router.post("/login",
+	describeRoute({
+		description: "Authenticate with email and password. Sets an access_token cookie on success.",
+		responses: {
+			200: { description: "Logged in", content: { "application/json": { schema: resolver(loginSuccessSchema) } } },
+			401: { description: "Invalid credentials or unverified email", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	loginIpRateLimit,
+	zValidator("json", loginSchema), async (c) => {
+		try {
+			const { email, password } = c.req.valid("json");
+
+			// Per-account guard: caps attempts for the same email even if the
+			// attacker rotates IPs.
+			const perEmail = tryConsume("auth:login:email", email.toLowerCase(), {
+				windowMs: 15 * 60 * 1000,
+				max: 10,
+			});
+			if (!perEmail.ok) {
+				c.header("Retry-After", `${perEmail.retryAfterSec}`);
+				logger.warn("Login rate-limited by email", {
+					email: email.replace(/(.{2}).*@/, "$1***@"),
+					retryAfterSec: perEmail.retryAfterSec,
+				});
+				return c.json({ error: { message: "Too many attempts. Try again later." } }, 429);
+			}
+
+			const existingUser = await db.findUserByEmail(email);
+			if (!existingUser) {
+				return c.json({ error: { message: "Invalid credentials." } }, 401);
+			}
+
+			const passwordMatch = await bcrypt.compare(password, existingUser.password);
+			if (!passwordMatch) {
+				return c.json({ error: { message: "Invalid credentials." } }, 401);
+			}
+
+			if (!existingUser.verified) {
+				logger.warn("Login attempt for unverified user", {
+					userId: existingUser.id,
+					email: email.replace(/(.{2}).*@/, "$1***@"),
+				});
+				return c.json({ error: { message: "Please verify your email before logging in." } }, 401);
+			}
+
+			const { accessToken } = generateTokens(existingUser);
+			setAccessTokenCookie(c, accessToken);
+
+			logger.info("User logged in", {
+				userId: existingUser.id,
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+
+			return c.json({ auth: true });
+		} catch (error) {
+			logger.error("Login failed", error instanceof Error ? error : undefined);
+			return c.json({ error: { message: "Login failed" } }, 500);
+		}
+	});
 
 // RECOVER ACCOUNT
 
@@ -307,31 +328,115 @@ const recoverSchema = z.object({
 	email: z.email({ error: "Invalid email address" }),
 });
 
-router.post("/recover", zValidator("json", recoverSchema), async (c) => {
-	clearAccessTokenCookie(c);
-	const { email } = c.req.valid("json");
+// Sized for office NATs. Per-email throttle (below) is the real guard
+// against flooding any single mailbox.
+const recoverIpRateLimit = rateLimit({
+	name: "auth:recover:ip",
+	windowMs: 60 * 60 * 1000,
+	max: 100,
+});
 
-	logger.info("Password recovery requested", {
-		email: email.replace(/(.{2}).*@/, "$1***@"),
+router.post("/recover",
+	describeRoute({
+		description: "Request a password reset email. Always returns success to prevent email enumeration.",
+		responses: {
+			200: { description: "Recovery email sent (or silently ignored)", content: { "application/json": { schema: resolver(z.boolean()) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	recoverIpRateLimit,
+	zValidator("json", recoverSchema), async (c) => {
+		clearAccessTokenCookie(c);
+		const { email } = c.req.valid("json");
+
+		logger.info("Password recovery requested", {
+			email: email.replace(/(.{2}).*@/, "$1***@"),
+		});
+
+		// Throttle per-mailbox so an attacker can't flood a target inbox
+		// even by varying the source IP. Sized to tolerate a confused user
+		// repeatedly clicking "forgot password".
+		const perEmail = tryConsume("auth:recover:email", email.toLowerCase(), {
+			windowMs: 60 * 60 * 1000,
+			max: 10,
+		});
+		if (!perEmail.ok) {
+			// Silent success — keep the email-enumeration guarantee identical
+			// to the normal path.
+			return c.json(true, 200);
+		}
+
+		const user = await db.findUserByEmail(email);
+		if (user) {
+			const pin = await db.createCode(user.id, "RECOVERY");
+			await sendResetPasswordEmail(user, pin);
+		}
+		// Always return success to prevent email enumeration
+		return c.json(true, 200);
 	});
 
-	const user = await db.findUserByEmail(email);
-	if (user) {
-		const pin = await db.createCode(user.id);
-		await sendResetPasswordEmail(user, pin);
-	}
-	// Always return success to prevent email enumeration
-	return c.json(true, 200);
+// RESEND ACTIVATION EMAIL
+
+const resendSchema = z.object({
+	email: z.email({ error: "Invalid email address" }),
 });
+
+const resendIpRateLimit = rateLimit({
+	name: "auth:resend:ip",
+	windowMs: 60 * 60 * 1000,
+	max: 100,
+});
+
+router.post("/resend",
+	describeRoute({
+		description: "Re-send the activation email to an unverified user. Always returns success to prevent email enumeration.",
+		responses: {
+			200: { description: "Activation email sent (or silently ignored)", content: { "application/json": { schema: resolver(z.boolean()) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	resendIpRateLimit,
+	zValidator("json", resendSchema), async (c) => {
+		const { email } = c.req.valid("json");
+
+		logger.info("Activation resend requested", {
+			email: email.replace(/(.{2}).*@/, "$1***@"),
+		});
+
+		const perEmail = tryConsume("auth:resend:email", email.toLowerCase(), {
+			windowMs: 60 * 60 * 1000,
+			max: 5,
+		});
+		if (!perEmail.ok) {
+			return c.json(true, 200);
+		}
+
+		const user = await db.findUserByEmail(email);
+		// Re-send only if the account exists AND is still unverified.
+		// Already-verified accounts must use /recover for password resets.
+		if (user && !user.verified) {
+			const pin = await db.createCode(user.id);
+			await sendActivationEmail(user, pin);
+		}
+		// Always return success to prevent email enumeration
+		return c.json(true, 200);
+	});
 
 // LOGOUT
 
-router.get("/logout", (c) => {
-	const user = c.get("user") as any;
-	logger.info("User logged out", { userId: user?.userId });
-	clearAccessTokenCookie(c);
-	return c.json(true, 200);
-});
+router.get("/logout",
+	describeRoute({
+		description: "Clear the access_token cookie and log the user out.",
+		responses: {
+			200: { description: "Logged out", content: { "application/json": { schema: resolver(z.boolean()) } } },
+		},
+	}),
+	(c) => {
+		const user = c.get("user") as any;
+		logger.info("User logged out", { userId: user?.userId });
+		clearAccessTokenCookie(c);
+		return c.json(true, 200);
+	});
 
 // VERIFY CODE
 
@@ -342,51 +447,74 @@ const verifySchema = z.object({
 	code: z.string({ error: "code is required" }),
 });
 
-router.post("/verify", zValidator("json", verifySchema), async (c) => {
-	const { uid, code } = c.req.valid("json");
+const authSuccessSchema = z.object({ auth: z.boolean() });
 
-	if (!uid || !code) {
-		return c.json({ error: "Invalid user activation." }, 401);
-	}
-
-	const user = c.get("user") as any;
-	if (user && user.id !== uid) {
-		logger.warn("Verification attempted with mismatched user", {
-			requestUserId: uid,
-			sessionUserId: user.id,
-		});
-		return c.json({ error: "Invalid user activation." }, 400);
-	}
-
-	const dbUser = await db.findUserById(uid);
-	if (!dbUser) {
-		logger.warn("Verification attempted for non-existent user", {
-			userId: uid,
-		});
-		return c.json({ error: "User not found." }, 400);
-	}
-
-	const pin = await db.findCodeByUid(uid);
-	if (!pin) {
-		logger.warn("Verification failed - code not found", { userId: uid });
-		return c.json({ error: "Code invalid or expired." }, 400);
-	}
-
-	if (`${pin}`.trim() !== `${code}`.trim()) {
-		logger.warn("Verification failed - code mismatch", { userId: uid });
-		return c.json({ error: "Code invalid or expired." }, 400);
-	}
-
-	const userValue = await db.setVerifyed(dbUser.id);
-	await db.destroyCodes(dbUser.id);
-
-	const { accessToken } = generateTokens(userValue);
-	setAccessTokenCookie(c, accessToken);
-
-	logger.info("User verified successfully", { userId: uid });
-
-	return c.json({ auth: true });
+// PIN is a 6-digit code (10^6 combinations). The per-uid throttle
+// below is the real anti-brute-force guard; per-IP is sized for
+// office NATs so legit users aren't blocked.
+const verifyIpRateLimit = rateLimit({
+	name: "auth:verify:ip",
+	windowMs: 15 * 60 * 1000,
+	max: 300,
 });
+
+router.post("/verify",
+	describeRoute({
+		description: "Verify a user account using the PIN sent to their email.",
+		responses: {
+			200: { description: "Verified and logged in", content: { "application/json": { schema: resolver(authSuccessSchema) } } },
+			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	verifyIpRateLimit,
+	zValidator("json", verifySchema), async (c) => {
+		const { uid, code } = c.req.valid("json");
+
+		if (!uid || !code) {
+			return c.json({ error: "Invalid user activation." }, 401);
+		}
+
+		// Per-uid throttle defends against PIN guessing for a specific account
+		// even when the attacker rotates IPs.
+		const perUid = tryConsume("auth:verify:uid", uid, {
+			windowMs: 15 * 60 * 1000,
+			max: 10,
+		});
+		if (!perUid.ok) {
+			c.header("Retry-After", `${perUid.retryAfterSec}`);
+			logger.warn("Verify rate-limited by uid", {
+				userId: uid,
+				retryAfterSec: perUid.retryAfterSec,
+			});
+			return c.json({ error: "Too many attempts. Try again later." }, 429);
+		}
+
+		const dbUser = await db.findUserById(uid);
+		if (!dbUser) {
+			logger.warn("Verification attempted for non-existent user", {
+				userId: uid,
+			});
+			return c.json({ error: "User not found." }, 400);
+		}
+
+		const record = await db.findCodeByUid(uid, "ACTIVATION");
+		if (!record || record.code.trim() !== code.trim()) {
+			logger.warn("Verification failed - code invalid or expired", { userId: uid });
+			return c.json({ error: "Code invalid or expired." }, 400);
+		}
+
+		const userValue = await db.setVerified(dbUser.id);
+		await db.consumeCode(record.id);
+
+		const { accessToken } = generateTokens(userValue);
+		setAccessTokenCookie(c, accessToken);
+
+		logger.info("User verified successfully", { userId: uid });
+
+		return c.json({ auth: true });
+	});
 
 // CONFIRM EMAIL
 
@@ -399,6 +527,14 @@ const confirmSchema = z.object({
 
 router.get(
 	"/confirm/:uid/:code",
+	describeRoute({
+		description: "Confirm email via link (redirects to app on success).",
+		responses: {
+			302: { description: "Redirect to app after successful confirmation" },
+			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
 	zValidator("param", confirmSchema),
 	async (c) => {
 		const { uid, code } = c.req.valid("param");
@@ -407,7 +543,7 @@ router.get(
 			return c.json({ error: "Invalid confirmation" }, 401);
 		}
 
-		const user = c.get("user") as any;
+		const user = c.get("user") as ParsedToken | null;
 		if (user && user.userId !== uid) {
 			logger.warn("Email confirmation attempted with mismatched user", {
 				requestUserId: uid,
@@ -422,14 +558,14 @@ router.get(
 			return c.json({ error: "User not found." }, 400);
 		}
 
-		const pin = await db.findCodeByUid(uid);
-		if (!pin || pin !== code) {
+		const record = await db.findCodeByUid(uid, "ACTIVATION");
+		if (!record || record.code.trim() !== code.trim()) {
 			logger.warn("Email confirmation failed - invalid code", { userId: uid });
 			return c.json({ error: "Code invalid or expired." }, 400);
 		}
 
-		const userValue = await db.setVerifyed(dbUser.id);
-		await db.destroyCodes(dbUser.id);
+		const userValue = await db.setVerified(dbUser.id);
+		await db.consumeCode(record.id);
 		const { accessToken } = generateTokens(userValue);
 		setAccessTokenCookie(c, accessToken);
 
@@ -439,9 +575,53 @@ router.get(
 	},
 );
 
-// CHANGE PASSWORD
+// RESET PASSWORD (recovery flow: uid + code + new password)
 
+const resetPasswordSchema = z.object({
+	uid: z.string({ error: "uid is required" }),
+	code: z.string({ error: "code is required" }),
+	password: passwordSchema,
+});
 
+router.post(
+	"/reset-password",
+	describeRoute({
+		description: "Reset password using a recovery code sent by email.",
+		responses: {
+			200: { description: "Password reset and logged in", content: { "application/json": { schema: resolver(z.object({ auth: z.boolean() })) } } },
+			400: { description: "Invalid or expired code", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	zValidator("json", resetPasswordSchema),
+	async (c) => {
+		const { uid, code, password } = c.req.valid("json");
+
+		const dbUser = await db.findUserById(uid);
+		if (!dbUser) {
+			logger.warn("Password reset for non-existent user", { userId: uid });
+			return c.json({ error: "Invalid request." }, 400);
+		}
+
+		const record = await db.findCodeByUid(uid, "RECOVERY");
+		if (!record || record.code.trim() !== code.trim()) {
+			logger.warn("Password reset failed - code invalid or expired", { userId: uid });
+			return c.json({ error: "Code invalid or expired." }, 400);
+		}
+
+		await db.changePassword(uid, password);
+		await db.consumeCode(record.id);
+		// Ensure the account is active after a successful recovery
+		const userValue = await db.setVerified(uid);
+
+		const { accessToken } = generateTokens(userValue);
+		setAccessTokenCookie(c, accessToken);
+
+		logger.info("Password reset successfully", { userId: uid });
+		return c.json({ auth: true });
+	},
+);
+
+// CHANGE PASSWORD (requires active session)
 
 const changePwdSchema = z.object({
 	password: passwordSchema,
@@ -449,15 +629,19 @@ const changePwdSchema = z.object({
 
 router.put(
 	"/pwd",
+	describeRoute({
+		description: "Change the current user's password. Requires an active session.",
+		responses: {
+			204: { description: "Password changed successfully" },
+			400: { description: "Missing user or password", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
 	requireUser,
 	zValidator("json", changePwdSchema),
 	async (c) => {
-		const user = c.get("user") as any;
+		const user = c.get("user") as ParsedToken;
 		const { password } = c.req.valid("json");
-
-		if (!user || !password) {
-			return c.json({ error: "User and password are required." }, 400);
-		}
 
 		await db.changePassword(user.userId, password);
 		logger.info("Password changed successfully", { userId: user.userId });

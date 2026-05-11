@@ -3,10 +3,10 @@ import DataTable from "../../components/DataMngTable";
 import GenerateRandomPoi from "../../components/GenerateRandomPoi";
 import Layout from "../../components/layout";
 import { downloadJSON } from "../../lib/downloadUtils";
-import useStoreState from "../../lib/storeState";
+import useStoreState from "../../lib/store/storeState";
 
-import type { FieldDataType } from "dataviz-components";
-import { RenderChart } from "dataviz-components";
+import type { FieldDataType } from "graph-italia-components";
+import { RenderChart } from "graph-italia-components";
 import { useTranslation } from "react-i18next";
 
 export default function GeneratePoiPage() {

@@ -1,0 +1,44 @@
+{{- if .Values.monitoring.alertmanagerConfig.enabled }}
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ include "graph-italia.fullname" . }}-notifications
+  namespace: monitoring
+  labels:
+    {{- include "graph-italia.labels" . | nindent 4 }}
+    alertmanagerConfig: main
+spec:
+  receivers:
+    - name: graph-italia-email
+      emailConfigs:
+        - to: {{ .Values.monitoring.alertmanagerConfig.emailTo | quote }}
+          from: {{ .Values.monitoring.alertmanagerConfig.emailFrom | default "" | quote }}
+          smarthost: {{ .Values.monitoring.alertmanagerConfig.smarthost | default "smtp.eu.mailgun.org:587" | quote }}
+          authUsername: {{ .Values.monitoring.alertmanagerConfig.authUsername | default "" | quote }}
+          authPassword:
+            name: {{ .Values.monitoring.alertmanagerConfig.authPasswordSecret | default "alertmanager-smtp-secret" }}
+            key: {{ .Values.monitoring.alertmanagerConfig.authPasswordKey | default "password" }}
+          requireTLS: true
+          headers:
+            - key: Subject
+              value: '[{{ "{{ .Status | toUpper }}" }}] Graph Italia: {{ "{{ .CommonLabels.alertname }}" }}'
+  route:
+    receiver: graph-italia-email
+    groupBy:
+      - alertname
+      - namespace
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 4h
+    matchers:
+      - matchType: "=~"
+        name: alertname
+        value: "GraphItalia.*"
+    routes:
+      - matchers:
+          - matchType: "="
+            name: severity
+            value: critical
+        receiver: graph-italia-email
+        repeatInterval: 1h
+{{- end }}

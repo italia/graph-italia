@@ -1,0 +1,29 @@
+{{- /*
+  Grafana Dashboard ConfigMap
+  
+  This template creates a ConfigMap containing the Grafana dashboard JSON.
+  The dashboard can be automatically discovered by Grafana's sidecar if configured.
+  
+  Usage Options:
+  1. Automatic (via Helm): Enable monitoring.grafanaDashboard.enabled in values.yaml
+  2. Manual Import: Import charts/graph-italia/dashboards/graph-italia-dashboard.json directly into Grafana
+  
+  See charts/graph-italia/dashboards/README.md for details.
+*/ -}}
+{{- if .Values.monitoring.grafanaDashboard.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "graph-italia.fullname" . }}-dashboard
+  labels:
+    {{- include "graph-italia.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.grafanaDashboard.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if .Values.monitoring.grafanaDashboard.namespace }}
+  namespace: {{ .Values.monitoring.grafanaDashboard.namespace }}
+  {{- end }}
+data:
+  graph-italia-dashboard.json: |-
+{{ .Files.Get "dashboards/graph-italia-dashboard.json" | indent 4 }}
+{{- end }}

@@ -1,0 +1,61 @@
+{
+  "info": {
+    "name": "Graph Italia — API Keys",
+    "_postman_id": "graph-italia-apikeys",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{api_key}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3003/api" },
+    { "key": "api_key",  "value": "dv_replace_with_your_key" }
+  ],
+  "item": [
+    {
+      "name": "List API keys",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{base_url}}/apikeys", "host": ["{{base_url}}"], "path": ["apikeys"] },
+        "description": "Requires user JWT auth (not API key auth)."
+      }
+    },
+    {
+      "name": "Create API key",
+      "request": {
+        "method": "POST",
+        "url": { "raw": "{{base_url}}/apikeys", "host": ["{{base_url}}"], "path": ["apikeys"] },
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"role\": \"READWRITE\",\n  \"expire\": 90,\n  \"projectId\": \"{{project_id}}\"\n}"
+        },
+        "description": "The raw key is returned once. Store it immediately — it cannot be retrieved again."
+      }
+    },
+    {
+      "name": "Get API key logs",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/apikeys/{{apikey_id}}/logs?limit=100",
+          "host": ["{{base_url}}"],
+          "path": ["apikeys", "{{apikey_id}}", "logs"],
+          "query": [{ "key": "limit", "value": "100" }]
+        }
+      }
+    },
+    {
+      "name": "Delete API key",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/apikeys/{{apikey_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["apikeys", "{{apikey_id}}"]
+        }
+      }
+    }
+  ]
+}

@@ -14,38 +14,47 @@ export default function KpiGroup({
   rowHeight?: number;
 }) {
   const { id, config } = data;
-  const dataSource: KpiItemType[] = data.dataSource as KpiItemType[];
-  const { direction } = config;
+  const dataSource: KpiItemType[] = data.dataSource as KpiItemType[] || data.data as any[] || [];
+  const { direction, background } = config;
   const isVertical = direction === "vertical";
   const kpiGroupClass = isVertical
     ? "dv-kpi-group-vertical"
     : "dv-kpi-group-horizontal";
 
-  const baseStyle = {
+  const baseStyle: React.CSSProperties = {
     maxWidth: "100%",
     maxHeight: "100%",
   };
-  let divStyle = {};
 
   if (rowHeight) {
-    divStyle = {
-      ...baseStyle,
-      minHeight: rowHeight * hFactor,
-    };
+    baseStyle.minHeight = rowHeight * hFactor;
   }
 
+  // When accent background is set at group level, propagate to items
+  const items: KpiItemType[] = background === "accent"
+    ? dataSource.map((item) => ({
+        ...item,
+        background_color: item.background_color || "accent",
+      }))
+    : dataSource;
+
   const resolvedTheme = useResolvedTheme();
-  // const background = data.config.background || "#F2F7FC";
 
   return (
     <div
       id={id}
       className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
-      style={{ ...divStyle, backgroundColor: "transparent" }}
+      style={baseStyle}
+      role="list"
+      aria-label="Gruppo di KPI"
     >
-      {dataSource.map((item: KpiItemType, index: number) => (
-        <div className={`${resolvedTheme} dv-kpi-group-item`} key={`${index}-${item.title}`}>
-          <Kpi data={item} />
+      {items.map((item: KpiItemType, index: number) => (
+        <div
+          className={`${resolvedTheme} dv-kpi-group-item`}
+          key={`${index}-${item.title}`}
+          role="listitem"
+        >
+          <Kpi data={item} poweredByLabel="" />
         </div>
       ))}
     </div>

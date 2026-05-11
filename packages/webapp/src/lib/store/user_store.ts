@@ -11,6 +11,7 @@ export interface User {
   name: string;
   token: string;
   userId: string;
+  role: "USER" | "ADMIN";
 }
 
 interface UserState {

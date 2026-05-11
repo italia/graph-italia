@@ -1,17 +1,24 @@
 import { Hono } from "hono";
+import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
 // Routes
+import adminRoutes from "./routes/admin.ts";
+import apiKeyRoutes from "./routes/apikeys.ts";
 import authRoutes from "./routes/auth.ts";
 import chartRoutes from "./routes/charts.ts";
 import dashRoutes from "./routes/dashboards.ts";
+import dataSourceRoutes from "./routes/datasources.ts";
 import suggestionsRoutes from "./routes/hints.ts";
 import kpiGroupRoutes from "./routes/kpi-group.ts";
 import oidcRoutes from "./routes/oidc.ts";
+import orgRoutes from "./routes/orgs.ts";
+import projectRoutes from "./routes/projects.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
+import { apiKeyUsageLogger } from "./lib/middlewares.ts";
 
 import { Scalar } from "@scalar/hono-api-reference";
 import { openAPIRouteHandler } from "hono-openapi";
@@ -27,7 +34,7 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 	"http://127.0.0.1:3000",
 ];
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.NODE_ENV === "development";
 
 // Build info for healthcheck (injected at build time)
 const BUILD_SHA = process.env.BUILD_SHA || "unknown";
@@ -81,6 +88,33 @@ app.use("*", metricsMiddleware);
 // Structured JSON logging (skips healthchecks)
 app.use("*", httpLogger);
 
+// API key usage tracking (logs requests authenticated via API key)
+app.use("*", apiKeyUsageLogger);
+
+// Rate limiting — keyed by client IP (x-forwarded-for when behind a proxy)
+const clientIp = (c: { req: { header: (name: string) => string | undefined } }) =>
+	c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+	c.req.header("x-real-ip") ??
+	"unknown";
+
+// Global: 200 requests per minute
+app.use("*", rateLimiter({
+	windowMs: 60 * 1000,
+	limit: 200,
+	standardHeaders: "draft-6",
+	keyGenerator: clientIp,
+	handler: (c) => c.json({ error: "Too many requests, please try again later." }, 429),
+}));
+
+// Auth routes: 10 requests per minute (brute-force protection)
+app.use("/auth/*", rateLimiter({
+	windowMs: 60 * 1000,
+	limit: 10,
+	standardHeaders: "draft-6",
+	keyGenerator: clientIp,
+	handler: (c) => c.json({ error: "Too many requests, please try again later." }, 429),
+}));
+
 // CSRF protection
 app.use("*", async (c, next) => {
 	if (c.req.path.includes('/auth/oidc')) {
@@ -93,15 +127,31 @@ app.use("*", async (c, next) => {
 	})
 });
 
-// CORS (only in dev)
-if (isDev) {
+
+// CORS — only for public chart/dashboard show and embed endpoints
+const publicCors = cors({
+	origin: "*",
+	allowMethods: ["GET", "OPTIONS"],
+	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
+});
+
+// app.use(`/*`, publicCors);
+// app.use(`/charts/show/*`, publicCors);
+// app.use(`/dashboards/show/*`, publicCors);
+
+if (!isDev) {
+	app.use(`/charts/*`, publicCors);
+	app.use(`/dashboards/*`, publicCors);
+} else {
+	console.warn("CORS is enabled for all routes in development mode. Make sure to restrict this in production!");
+	// CORS CRUD (only in dev)
 	app.use(
 		"/*",
 		cors({
 			origin: whitelist,
 			credentials: true,
 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization"],
+			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
 		}),
 	);
 }
@@ -113,6 +163,7 @@ if (isDev) {
 // Health check endpoint (minimal response for k8s liveness probes)
 app.get("/", (c) => c.json({
 	status: "ok",
+	isDev: isDev,
 	version: {
 		sha: BUILD_SHA,
 		buildTime: BUILD_TIME
@@ -130,6 +181,8 @@ app.get("/health/ready", async (c) => {
 
 		return c.json({
 			status: "ready",
+			isDev: isDev,
+			routes_prefix: ROUTES_PREFIX,
 			database: "connected",
 			version: {
 				sha: BUILD_SHA,
@@ -152,21 +205,25 @@ app.get("/health/ready", async (c) => {
 	}
 });
 
-
-
 // API routes
+app.route("/admin", adminRoutes);
 app.route("/auth", authRoutes);
+app.route("/apikeys", apiKeyRoutes);
+
 app.route("/charts", chartRoutes);
 app.route("/charts/kpi-group", kpiGroupRoutes);
 app.route("/dashboards", dashRoutes);
+app.route("/datasources", dataSourceRoutes);
 app.route("/hints", suggestionsRoutes);
+app.route("/orgs", orgRoutes);
+app.route("/projects", projectRoutes);
 
 app.get("/openapi.json", openAPIRouteHandler(app, {
 	documentation: {
 		info: {
-			title: "Dataviz API",
+			title: "Graph Italia API",
 			version: "1.0.0",
-			description: "API documentation for the Dataviz application"
+			description: "API documentation for the Graph Italia application"
 		},
 		components: {
 			securitySchemes: {
@@ -193,11 +250,11 @@ app.get("/openapi.json", openAPIRouteHandler(app, {
 				description: "Local server",
 			},
 			{
-				url: "http://dataviz-test.innovazione.gov.it",
+				url: "https://graph-test.developers.italia.it",
 				description: "Staging server",
 			},
 			{
-				url: "http://dataviz.innovazione.gov.it",
+				url: "https://graph.developers.italia.it",
 				description: "Production server",
 			},
 

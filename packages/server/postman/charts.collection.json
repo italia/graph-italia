@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "Graph Italia — Charts",
+    "_postman_id": "graph-italia-charts",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{api_key}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3003/api" },
+    { "key": "api_key",  "value": "dv_replace_with_your_key" }
+  ],
+  "item": [
+    {
+      "name": "List charts",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{base_url}}/charts", "host": ["{{base_url}}"], "path": ["charts"] },
+        "description": "Returns all charts for the project scoped to the API key."
+      }
+    },
+    {
+      "name": "Get chart by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/charts/{{chart_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["charts", "{{chart_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Get chart (public show)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/charts/show/{{chart_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["charts", "show", "{{chart_id}}"]
+        },
+        "description": "Public endpoint — no auth required. Only works if the chart is published."
+      },
+      "auth": { "type": "noauth" }
+    },
+    {
+      "name": "Create chart",
+      "request": {
+        "method": "POST",
+        "url": { "raw": "{{base_url}}/charts", "host": ["{{base_url}}"], "path": ["charts"] },
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"My Bar Chart\",\n  \"description\": \"A sample bar chart\",\n  \"chart\": \"bar\",\n  \"config\": {},\n  \"data\": [],\n  \"publish\": false\n}"
+        }
+      }
+    },
+    {
+      "name": "Update chart",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "{{base_url}}/charts/{{chart_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["charts", "{{chart_id}}"]
+        },
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Chart Name\",\n  \"publish\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Toggle publish",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{base_url}}/charts/publish/{{chart_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["charts", "publish", "{{chart_id}}"]
+        },
+        "description": "Toggles the published state of the chart."
+      }
+    },
+    {
+      "name": "Delete chart",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/charts/{{chart_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["charts", "{{chart_id}}"]
+        }
+      }
+    }
+  ]
+}

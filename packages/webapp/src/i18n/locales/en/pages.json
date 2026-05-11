@@ -31,6 +31,14 @@
                 }
             },
             "header": {
+                "pageTitle": {
+                    "new": "New chart",
+                    "edit": "Edit chart"
+                },
+                "preview": {
+                    "heading": "Preview",
+                    "untitled": "Untitled chart"
+                },
                 "actions": {
                     "back": {
                         "label": "Back to list"
@@ -75,7 +83,68 @@
                         "description": "Import data from CSV, JSON files or from a remote source",
                         "actions": {
                             "useData": {
-                                "label": "Use thi data"
+                                "label": "Use this data"
+                            }
+                        }
+                    }
+                },
+                "preview": {
+                    "loadDataMessage": "Load your data to display the data preview",
+                    "chartA11y": "Chart of type {{type}}: {{name}}. {{description}}"
+                }
+            }
+        },
+        "editDashboard": {
+            "head": {
+                "title": {
+                    "label": "Edit dashboard"
+                },
+                "meta": {
+                    "description": {
+                        "content": "Edit dashboard"
+                    }
+                }
+            },
+            "header": {
+                "pageTitle": {
+                    "new": "New dashboard",
+                    "edit": "Edit dashboard"
+                },
+                "preview": {
+                    "heading": "Preview",
+                    "untitled": "Untitled dashboard"
+                },
+                "actions": {
+                    "back": {
+                        "label": "Back to list"
+                    },
+                    "save": {
+                        "default": "Save",
+                        "isSaving": "Saving..."
+                    }
+                }
+            },
+            "body": {
+                "options": {
+                    "setup": {
+                        "title": "Setup Info",
+                        "description": "Name, description and visibility of the dashboard",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Dashboard Visibility",
+                                    "values": {
+                                        "private": "Private",
+                                        "public": "Public"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Dashboard Title"
+                                },
+                                "description": {
+                                    "label": "Dashboard Description",
+                                    "placeholder": "Add a description"
+                                }
                             }
                         }
                     }
@@ -83,9 +152,66 @@
                 "preview": {
                     "loadDataMessage": "Load your data to display the data preview"
                 }
+            },
+            "slots": {
+                "title": "Edit dashboard slots",
+                "description": "Create a slot and assign it to a chart",
+                "actions": {
+                    "addSlot": {
+                        "label": "Add Slot"
+                    },
+                    "viewChart": {
+                        "label": "View Chart"
+                    }
+                }
+            },
+            "bottom": {
+                "actions": {
+                    "addChart": {
+                        "label": "Add Chart"
+                    }
+                }
+            },
+            "components": {
+                "chartSelection": {
+                    "form": {
+                        "fields": {
+                            "selectChart": {
+                                "label": "Select a chart",
+                                "options": {
+                                    "noValue": "--Select a chart--"
+                                }
+                            }
+                        }
+                    }
+                },
+                "slotToolbar": {
+                    "width": {
+                        "label": "Width"
+                    },
+                    "height": {
+                        "label": "Height"
+                    },
+                    "actions": {
+                        "change": {
+                            "label": "Change",
+                            "title": "Assign Chart"
+                        },
+                        "remove": {
+                            "label": "Remove",
+                            "title": "Remove Slot"
+                        }
+                    }
+                }
             }
         },
         "editKpiGroup": {
+            "unsavedChanges": "You have unsaved changes",
+            "head": {
+                "title": {
+                    "label": "Edit KPI Group"
+                }
+            },
             "components": {
                 "kpiConfigForm": {
                     "form": {
@@ -143,7 +269,11 @@
                                 "label": "Colors (comma separated)"
                             },
                             "background": {
-                                "label": "Background"
+                                "label": "Background",
+                                "values": {
+                                    "theme": "Default theme",
+                                    "accent": "Accent"
+                                }
                             }
                         }
                     }
@@ -218,7 +348,9 @@
                     },
                     "save": {
                         "default": "Save",
-                        "isSaving": "Saving"
+                        "isSaving": "Saving",
+                        "success": "Saved successfully",
+                        "error": "Error saving"
                     },
                     "reset": {
                         "default": "Reset",
@@ -227,12 +359,44 @@
                 }
             },
             "body": {
+                "options": {
+                    "setup": {
+                        "title": "Info",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Visibility",
+                                    "values": {
+                                        "public": "Public",
+                                        "private": "Private"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Name"
+                                },
+                                "description": {
+                                    "label": "Description",
+                                    "placeholder": "Enter a description..."
+                                }
+                            }
+                        }
+                    },
+                    "configuration": {
+                        "title": "Configuration"
+                    }
+                },
                 "actions": {
                     "changeConfiguration": {
-                        "label": "Change configuration"
+                        "label": "Apply configuration"
                     },
                     "addKpi": {
                         "label": "Add KPI"
+                    },
+                    "cancelEdit": {
+                        "label": "Cancel"
+                    },
+                    "updateKpi": {
+                        "label": "Update KPI"
                     }
                 },
                 "messages": {
@@ -276,17 +440,38 @@
         "loadRemoteDataPage": {
             "title": "Load remote data",
             "description": "Here some Open Data sources of real data you can use here",
-            "link": "Dati Italia, Governo e servizi pubblici"
+            "link": "Dati Italia, Governo and public services"
         }
     },
     "home": {
+        "head": {
+            "title": "Home",
+            "meta": {
+                "description": {
+                    "content": "Creating chart"
+                }
+            }
+        },
         "header": {
-            "myCharts": "My Charts",
-            "noCharts": "Welcome"
+            "title": "Private Area",
+            "charts": "My charts",
+            "noCharts": "My charts",
+            "chartsEmpty": "You haven't created any chart yet. Use \"Create new\" to start.",
+            "dashboards": "My dashboards",
+            "noDashboards": "My dashboards",
+            "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start."
+        },
+        "projectSwitcher": {
+            "title": "Your Projects",
+            "personal": "Personal Projects",
+            "selectPrompt": "Select Project",
+            "newBtn": "New Project"
         },
         "body": {
             "actions": {
-                "label": "Create new",
+                "createNew": {
+                    "label": "Create new"
+                },
                 "actionItems": {
                     "createChart": {
                         "label": "Create Chart"
@@ -303,6 +488,37 @@
             }
         },
         "modals": {
+            "createNew": {
+                "title": "Create new",
+                "description": "What would you like to create?",
+                "labels": {
+                    "confirm": "Select an option above",
+                    "cancel": "Close"
+                }
+            },
+            "cancel": "Cancel",
+            "confirm": "Delete",
+            "createProject": {
+                "title": "Create New Project",
+                "description": "Projects help you organize your charts and dashboards.",
+                "confirm": "Create Project",
+                "form": {
+                    "name": {
+                        "label": "Project Name",
+                        "placeholder": "E.g. Marketing Dashboard"
+                    }
+                }
+            },
+            "renameProject": {
+                "title": "Rename Project",
+                "description": "Enter a new name for this project.",
+                "confirm": "Rename",
+                "form": {
+                    "name": {
+                        "label": "Project Name"
+                    }
+                }
+            },
             "createChart": {
                 "title": "Create new chart",
                 "description": "Name your chart to start editing it",
@@ -365,6 +581,95 @@
                     "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
                 }
             }
+        }
+    },
+    "apikeys": {
+        "title": "API Keys",
+        "description": "Manage your API keys for programmatic access.",
+        "createBtn": "Create New Key",
+        "noKeys": "No API keys found.",
+        "table": {
+            "id": "ID",
+            "role": "Role",
+            "project": "Project",
+            "orgs": "Organizations",
+            "owner": "Owner",
+            "created": "Created At",
+            "expires": "Expires",
+            "actions": "Actions"
+        },
+        "modal": {
+            "createTitle": "Create API Key",
+            "createDesc": "Configure your new API key.",
+            "successTitle": "Key Created Successfully",
+            "successDesc": "Copy this key now. You won't be able to see it again!",
+            "warning": "Once you close this window, the key will be hidden forever for security reasons.",
+            "close": "Close",
+            "cancel": "Cancel",
+            "create": "Create Key",
+            "deleteTitle": "Delete API Key",
+            "deleteDesc": "Are you sure you want to delete this API key? This action cannot be undone.",
+            "delete": "Delete"
+        },
+        "form": {
+            "role": "Role",
+            "project": "Project",
+            "selectProject": "Select a project",
+            "personal": "Personal",
+            "expire": "Expiration (minutes)"
+        }
+    },
+    "orgs": {
+        "title": "Organizations",
+        "description": "Manage your organizations and their members.",
+        "createBtn": "New Organization",
+        "listTitle": "Your Organizations",
+        "noOrgs": "No organizations found.",
+        "membersTitle": "Members",
+        "projectsTitle": "Organization Projects",
+        "addMemberBtn": "Add Member",
+        "transferProjectBtn": "Transfer Project",
+        "noMembers": "No members found in this organization.",
+        "noProjects": "No projects associated with this organization.",
+        "selectPrompt": "Select an organization to manage its members.",
+        "tabs": {
+            "members": "Members",
+            "projects": "Projects"
+        },
+        "table": {
+            "user": "User",
+            "role": "Role",
+            "actions": "Actions",
+            "projectName": "Project Name",
+            "projectId": "ID",
+            "owner": "Owner"
+        },
+        "unknownOwner": "Unknown",
+        "modal": {
+            "createOrgTitle": "Create New Organization",
+            "createOrgDesc": "Enter a name for your new organization.",
+            "addMemberTitle": "Add Member",
+            "addMemberDesc": "Invite a user to join this organization.",
+            "deleteOrgTitle": "Delete Organization",
+            "deleteOrgDesc": "Are you sure you want to delete this organization? This will remove all project associations.",
+            "removeMemberTitle": "Remove Member",
+            "removeMemberDesc": "Are you sure you want to remove this user from the organization?",
+            "transferProjectTitle": "Transfer Personal Project",
+            "transferProjectDesc": "Select one of your personal projects to transfer to this organization.",
+            "transfer": "Transfer",
+            "cancel": "Cancel",
+            "create": "Create",
+            "add": "Invite",
+            "delete": "Delete",
+            "remove": "Remove"
+        },
+        "form": {
+            "orgName": "Organization Name",
+            "email": "Email Address",
+            "role": "Role",
+            "project": "Project",
+            "selectProject": "Select a project",
+            "noPersonalProjects": "No personal projects found"
         }
     }
 }

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -30,10 +30,10 @@ jobs:
         run: bun install
 
       - name: Build component library
-        run: bun run --filter dataviz-components build
+        run: bun run --filter graph-italia-components build
 
       - name: Build UI example app
-        run: bun run --filter dataviz-uiexampleapp build
+        run: bun run --filter graph-italia-uiexampleapp build
         env:
           GITHUB_ACTIONS: "true"
           GITHUB_REPOSITORY: ${{ github.repository }}

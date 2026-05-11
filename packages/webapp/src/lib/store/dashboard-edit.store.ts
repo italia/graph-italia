@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { findDashboardById, updateSlots, type DashboardDetail } from '../api.ts';
+import { findDashboardById, updateDashboard, updateSlots, type DashboardDetail } from '../api.ts';
 
 type TChartRef = { id: string };
 type TItem = `item-${number}`;
@@ -23,6 +23,7 @@ interface DashboardEditSelectors {
   id?: string;
   name: string;
   description: string;
+  publish: boolean;
   layout: TLayoutItem[];
   charts: TChartMap;
   isLoading: boolean;
@@ -42,11 +43,15 @@ interface DashboardEditActions {
   save: () => Promise<boolean>;
   addItem: () => void;
   deleteItem: (id: string) => void;
+  updateItemSize: (id: string, w: number, h: number) => void;
   showAddModal: (i: string) => void;
   closeAddModal: () => void;
   setBreakpoint: (breakpoint: string) => void;
   setSelectedChart: (selectedChart?: TChartRef) => void;
   setLayout: (layout: TLayoutItem[]) => void;
+  setName: (name: string) => void;
+  setDescription: (description: string) => void;
+  setPublish: (publish: boolean) => void;
 }
 
 type DashboardEditState = DashboardEditSelectors & DashboardEditActions;
@@ -70,6 +75,7 @@ function* itemGenerator(
 const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   name: '',
   description: '',
+  publish: true,
   breakpoint: 'lg',
   layout: [],
   show: false,
@@ -80,6 +86,9 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   loaded: false,
   setBreakpoint: (breakpoint) => set({ breakpoint }),
   setSelectedChart: (selectedChart) => set({ selectedChart }),
+  setName: (name) => set({ name }),
+  setDescription: (description) => set({ description }),
+  setPublish: (publish) => set({ publish }),
   setLayout: (layout) => set({ layout }),
   addItem: () => {
     const { layout } = get();
@@ -87,14 +96,17 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
     const yMax = layout.reduce((acc, cur) => (cur.y > acc ? cur.y : acc), 0);
     const generator = itemGenerator(layout);
     const i = generator.next().value;
-    const l = { i, x: xMax, y: yMax, w: 4, h: 1 };
+    const l = { i, x: xMax, y: yMax, w: 1, h: 1 };
     const newLayout = [...layout, l] as typeof layout;
-
     set({
       show: true,
       lastCreated: i,
       layout: newLayout,
     });
+  },
+  updateItemSize: (id: string, w: number, h: number) => {
+    const { layout } = get();
+    set({ layout: layout.map((item) => item.i === id ? { ...item, w, h } : item) });
   },
   deleteItem: (id: string) => {
     console.log('delete', id);
@@ -145,13 +157,14 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
           {}
         );
 
-        const { name, description } = data;
+        const { name, description, publish } = data;
 
         set({
           charts,
           layout,
           name,
           description,
+          publish,
           isLoading: false,
           loaded: true,
           id,
@@ -168,14 +181,17 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
     }
   },
   save: async () => {
-    const { layout, charts, id } = get();
+
+    const { layout, charts, id, name, description, publish } = get();
+
+    await updateDashboard(id!, { name, description, publish });
+
     const body = {
       slots: layout.map((l) => ({
         chartId: charts[l.i]?.id,
         settings: { i: l.i, w: l.w, h: l.h, x: l.x, y: l.y },
       })),
     };
-
     return await updateSlots(id!, body).then((r) => Boolean(r));
   },
 }));

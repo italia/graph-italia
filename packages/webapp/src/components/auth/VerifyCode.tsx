@@ -42,9 +42,15 @@ export default function VerifyCodeComponent({
     try {
       const result = await api.verify({ uid, code: value });
       setShowState(true);
-      const user = await api.getUser();
-      console.log(user);
-      setUser(user);
+
+      try {
+        console.log("get user");
+        const user = await api.getUser();
+        setUser(user);
+      } catch (e) {
+        console.log("get user error", e);
+      }
+
       return onCheckDone(result);
     } catch (error) {
       console.log("error", error);
@@ -67,34 +73,36 @@ export default function VerifyCodeComponent({
 
   return (
     <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-      <div className="mx-auto w-full max-w-sm lg:w-96">
-        <div>
-          <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-content">
-            {t(`header.label`)}
-          </h2>
-          <p> {t(`header.description`)}</p>
-        </div>
-
-        <div className="mt-10">
+      <div className="mx-auto w-full  min-w-sm max-w-lg card bg-base-100 shadow-sm border border-base-200">
+        <div className="card-body p-8">
           <div>
-            <PinInput
-              values={values}
-              onChange={(_, __, values) => setValues(values)}
-              showState={showState}
-            />
-            {message && (
-              <div className="text-error mt-2 text-md">{message}</div>
-            )}
-            <div className="text-sm leading-6 my-4">
-              {t(`bottom.label`)}
-              &nbsp;
-              <button
-                type="button"
-                onClick={() => onAskAnotherCode()}
-                className="link font-semibold text-primary"
-              >
-                {t(`bottom.actions.sendAnotherCode.label`)}
-              </button>
+            <h1 className="text-2xl font-bold leading-9 tracking-tight text-content">
+              {t(`header.label`)}
+            </h1>
+            <p> {t(`header.description`)}</p>
+          </div>
+
+          <div className="mt-10">
+            <div>
+              <PinInput
+                values={values}
+                onChange={(_, __, values) => setValues(values)}
+                showState={showState}
+              />
+              {message && (
+                <div className="text-error mt-2 text-md">{message}</div>
+              )}
+              <div className="text-sm leading-6 my-4">
+                {t(`bottom.label`)}
+                &nbsp;
+                <button
+                  type="button"
+                  onClick={() => onAskAnotherCode()}
+                  className="link font-semibold text-primary"
+                >
+                  {t(`bottom.actions.sendAnotherCode.label`)}
+                </button>
+              </div>
             </div>
           </div>
         </div>

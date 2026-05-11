@@ -1,21 +1,30 @@
-# Dataviz
+# Graph Italia
 
-**Dataviz** è una piattaforma completa per la creazione, gestione e visualizzazione di grafici e dashboard interattive. Il sistema permette agli utenti di trasformare dati grezzi (CSV, URL remoti, o dati generati) in visualizzazioni professionali e interattive, con la possibilità di salvare, pubblicare e condividere i propri grafici.
+**Graph Italia** Permette agli utenti di trasformare dati (relativamente semplici) come CSV/JSON, locali o remoti (URL), in visualizzazioni grafiche accessibili, con l'obiettivo di semplificare la pubblicazione di questi grafici all'interno di propri siti web.
 
-## A cosa serve questa applicazione?
-
-**Dataviz** è progettato per semplificare il processo di creazione di visualizzazioni dati, rendendolo accessibile sia a utenti tecnici che non tecnici. Le principali funzionalità includono:
-
-- **Creazione Grafici**: Upload dati CSV o caricamento da URL remoti, selezione del tipo di grafico più appropriato (barre, linee, torta, mappe geografiche, KPI), e personalizzazione completa di colori, legende e stili
-- **Dashboard Interattive**: Creazione di dashboard personalizzate con layout drag-and-drop, combinando multipli grafici in un'unica vista
-- **Pubblicazione e Condivisione**: Pubblicazione pubblica di grafici e dashboard con URL dedicati per la condivisione o l'embed in altri siti web
-- **Persistenza e Gestione**: Salvataggio di grafici e dashboard nel database per accesso futuro e modifica
-- **Autenticazione Utenti**: Sistema di autenticazione completo con registrazione, verifica email e gestione password
-- **Suggerimenti AI**: Integrazione con OpenAI per suggerimenti automatici nella creazione di grafici
+Graph Italia è attualmente predisposto per più lingue (per adesso italiano e inglese) ed estendibile a piacere. Il codice è opensource, vedi la sezione di configurazione variabili e installazione per adottarlo e capire se fa al caso tuo.
 
 Il progetto è strutturato come **monorepo** per massimizzare la riusabilità dei componenti: la libreria React può essere utilizzata indipendentemente, mentre l'applicazione web completa offre un'interfaccia utente completa per tutte le funzionalità.
 
-**Dataviz** è sviluppato principalmente con **TypeScript**, **React**, e utilizza **Bun** come runtime e package manager.
+**Graph Italia** è sviluppato principalmente con **TypeScript**, **React**, e utilizza **Bun** come runtime e package manager.
+
+## Scope
+
+**Graph Italia** è un insieme di strumenti progettato per semplificare il processo di pubblicazione grafici all'interno di siti web, con lo scopo di facilitare utenti non tecnici nella pubblicazione di contenuti di questo tipo. Le principali funzionalità includono:
+
+- **Come è nato** Deriva da una esigenza interna di visualizzare dati e cruscotti su siti istituzionali che gestiamo, avendo cura di rispettare principi di accessibilità, identity e trasparenza che denotano i siti in questione.
+
+- **Come è Articolato** E' composto da diversi tool:
+  - una Libreria per la visualizzazione dei grafici, che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
+  - una componente Server che sovraintende alle Api per il controllo accesso e salvataggio dati nel db e rimpiazza il Plugin
+  - una Web App per permettere di creare grafici a partire dal caricamento di file dati formattati ad hoc, anche questa parte rimpiazza il Plugin.
+
+- **Creazione Grafici**: Upload file dati CSV (max 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
+- **Dashboards**: Creazione di dashboard a partire dai grafici creati, combinando più grafici in un'unica vista
+- **Integrazione e Condivisione**: E' possibile integrare i chart creati all'interno di siti web tramite l'utilizzo delle Api, e utilizzando apposite chiavi per ogni progetto. Ogni progetto può avere N grafici e Dashboard. E' presente anche la possibilità di flaggare i grafici come pubblici e visualizzarli ad un url corrispondente all'identificativo alfanumerico del grafico, ma per adesso questa funzionalità è disabilitatà sulla nostra istanza per motivi legali. Questa Modalità permette anche l'embedding di grafici e dashboard tramite l'utilizzo di iframes all'interno di terzi siti web.
+- **Persistenza e Gestione**: Vengono salvati soltanto i dati caricati e selezionati dagli utenti. Nel caso di url remoti viene mantenuta in cache l'ultima versione valida , mentre viene effettuata una nuova richiesta se i dati sono più vecchi di tot ore (24 attualmente), e i dati vengono sostituiti se la nuova chiamata ha successo.
+- **Autenticazione Utenti**: Sistema di autenticazione tramite registrazione email e password, funzionalità di recupero password tramite invio email, attivazione account post verifica email. In corso di integrazione login con SPID, CIE etc...
+- **Suggerimenti AI**:Funzionalità parcheggiata,e attualmente disabilitata: una volta caricati e filtrati i dati di interesse, è possibile richiederne un'analisi ad un llm con prompt opportuno che propone possibili grafici e opportune trasformazioni, aggragazioni dei dati attuali se necesario. La funzionalità è in attesa di verifica di approvazione dal reparto legal.
 
 ## Panoramica Generale
 
@@ -37,9 +46,11 @@ Il progetto utilizza **Bun workspaces** per gestire i pacchetti multipli. La con
 ## 1. Packages/Components - Libreria di Componenti
 
 ### Descrizione
-Libreria npm pubblicabile (`dataviz-components`) che fornisce componenti React per la visualizzazione di dati.
+
+Libreria npm pubblicabile (`graph-italia-components`) che fornisce componenti React per la visualizzazione di dati.
 
 ### Tecnologie
+
 - **Build**: Rollup (con supporto ESM e CommonJS)
 - **React**: v19.1.0
 - **ECharts**: v5.6.0 (per grafici)
@@ -49,7 +60,9 @@ Libreria npm pubblicabile (`dataviz-components`) che fornisce componenti React p
 ### Componenti Principali Esportati
 
 #### `RenderChart`
+
 Componente principale che renderizza diversi tipi di grafici basati sulla prop `chart`:
+
 - **`bar`** / **`line`**: Grafici a barre e linee (BasicChart)
 - **`pie`**: Grafici a torta (PieChart)
 - **`map`**: Mappe geografiche con GeoJSON (GeoMapChart)
@@ -57,10 +70,13 @@ Componente principale che renderizza diversi tipi di grafici basati sulla prop `
 - **`kpi`**: Indicatori KPI (KpiGroup)
 
 #### `ChartWrapper`
+
 Wrapper per i grafici con funzionalità aggiuntive (download, condivisione, ecc.)
 
 #### `DataTable`
+
 Tabella dati interattiva con:
+
 - Ordinamento
 - Filtri
 - Esportazione
@@ -68,9 +84,11 @@ Tabella dati interattiva con:
 - Scroll orizzontale
 
 #### `KpiItem`
+
 Componente per visualizzare indicatori chiave di performance (KPI)
 
 ### Struttura Build
+
 - **Input**: `src/index.ts`
 - **Output**:
   - `dist/index.js` (CommonJS)
@@ -78,7 +96,9 @@ Componente per visualizzare indicatori chiave di performance (KPI)
   - `dist/types/index.d.ts` (TypeScript definitions)
 
 ### Dipendenze Peer
+
 Le dipendenze sono dichiarate come `peerDependencies` per evitare duplicazioni:
+
 - React ^19.1.0, React-DOM ^19.1.0
 - ECharts ^5.6.0, echarts-for-react ^3.0.2
 - OpenLayers ^10.5.0
@@ -88,9 +108,11 @@ Le dipendenze sono dichiarate come `peerDependencies` per evitare duplicazioni:
 - @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities (drag-and-drop)
 
 ### Integrazione
+
 I pacchetti interni (`webapp` e `ui-example-app`) utilizzano il componente tramite:
+
 ```json
-"dataviz-components": "workspace:*"
+"graph-italia-components": "workspace:*"
 ```
 
 ---
@@ -98,9 +120,11 @@ I pacchetti interni (`webapp` e `ui-example-app`) utilizzano il componente trami
 ## 2. Packages/Server - Backend API
 
 ### Descrizione
+
 Server Hono che gestisce autenticazione, persistenza dati, e API per charts e dashboards.
 
 ### Tecnologie
+
 - **Runtime**: Bun
 - **Framework**: Hono (web framework ultraleggero)
 - **Database**: PostgreSQL (Azure) con Prisma ORM v7.0.1
@@ -128,7 +152,7 @@ erDiagram
         string id PK
         string email UK
         string password
-        boolean verifyed
+        boolean verified
         Role role
         datetime createdAt
         datetime updatedAt
@@ -206,6 +230,7 @@ erDiagram
 #### Ruoli Utente
 
 Il sistema supporta due ruoli:
+
 - **`USER`**: Utente standard (default)
 - **`ADMIN`**: Amministratore con privilegi estesi
 
@@ -219,46 +244,13 @@ Il sistema supporta due ruoli:
 - **`Code`**: Codici PIN temporanei per verifica account e reset password
 - **`SourceLink`**: Collegamento tra Chart e DataSource con configurazioni specifiche
 
-### API Routes
-
-#### `/auth`
-- `POST /register` - Registrazione nuovo utente
-- `POST /login` - Login con JWT cookie
-- `POST /recover` - Richiesta reset password
-- `POST /verify` - Verifica codice PIN
-- `GET /user` - Info utente corrente
-- `GET /logout` - Logout
-
-#### `/charts`
-- `GET /` - Lista charts dell'utente
-- `GET /:id` - Dettaglio chart
-- `GET /show/:id` - Visualizzazione pubblica (se pubblicato)
-- `POST /` - Crea nuovo chart
-- `PUT /:id` - Aggiorna chart
-- `DELETE /:id` - Elimina chart
-- `POST /publish/:id` - Pubblica/nascondi chart
-
-#### `/dashboards`
-- `GET /` - Lista dashboards dell'utente
-- `GET /:id` - Dettaglio dashboard con slots
-- `POST /` - Crea nuovo dashboard
-- `PUT /:id` - Aggiorna dashboard
-- `PUT /:id/slots` - Aggiorna slots del dashboard
-- `DELETE /:id` - Elimina dashboard
-
-#### `/charts/kpi-group`
-- `POST /` - Crea nuovo KPI Group
-- `GET /:id` - Dettaglio KPI Group
-- `PUT /:id` - Aggiorna KPI Group (config e dataSource)
-
-#### `/hints`
-- `POST /` - Suggerimenti AI per creazione grafici (richiede OpenAI)
-
 #### Documentazione API
+
 - `GET /openapi.json` - Specifica OpenAPI 3.0
 - `GET /docs` - Documentazione API interattiva (Scalar UI)
 
 ### Middleware
+
 - `checkAuth`: Verifica JWT token
 - `requireUser`: Richiede utente autenticato
 - `validateRequest`: Validazione con Zod
@@ -266,6 +258,7 @@ Il sistema supporta due ruoli:
 - `notFound`: 404 handler
 
 ### Funzionalità Avanzate
+
 - **Dati Remoti**: Aggiornamento automatico ogni 24h per charts remoti
 - **Sicurezza**: Helmet, CORS configurato, validazione input
 - **Email**: Invio email di attivazione e reset password
@@ -275,9 +268,11 @@ Il sistema supporta due ruoli:
 ## 3. Packages/Webapp - Applicazione Web Principale
 
 ### Descrizione
+
 Applicazione React completa per creare, modificare e visualizzare grafici e dashboard.
 
 ### Tecnologie
+
 - **Build Tool**: Vite
 - **Framework**: React v19.1.0 + React Router v6
 - **Styling**: TailwindCSS + DaisyUI
@@ -285,7 +280,7 @@ Applicazione React completa per creare, modificare e visualizzare grafici e dash
 - **Data Fetching**: SWR
 - **Form Handling**: React Hook Form + Zod
 - **Layout**: react-grid-layout (per dashboard drag-and-drop)
-- **Dipendenze**: Usa `dataviz-components` come workspace dependency
+- **Dipendenze**: Usa `graph-italia-components` come workspace dependency
 
 ### Funzionalità Principali
 
@@ -347,64 +342,34 @@ flowchart TD
    - Generazione preview immagine
 
 #### Dashboard
+
 - Creazione dashboard con layout drag-and-drop
 - Aggiunta multipli grafici (slots)
 - Personalizzazione posizione e dimensione
-- Visualizzazione pubblica e embed
 
 #### Autenticazione
+
 - Registrazione con verifica email
 - Login/logout
-- Reset password
-- Protezione route con `ProtectedRoute`
-
-#### Visualizzazione Pubblica
-- Pagine `/charts/:id/view` e `/dashboards/:id/view` per visualizzazione pubblica
-- Pagine `/charts/:id/embed` e `/dashboards/:id/embed` per embed esterno
+- Reset/change password
+- Protezione area privata con `ProtectedRoute`
 
 #### Utility Pages
+
 - `/load-data`: Caricamento dati da CSV/URL
 - `/generate-data`: Generazione dati di esempio
 - `/geo`: Utility per mappe geografiche
-
-### State Management
-
-#### Store Zustand
-- `storeState.ts`: Stato globale per chart corrente
-- `chartListStore.ts`: Lista charts salvati
-- `dashboard-edit.store.ts`: Stato editing dashboard
-- `dashboard-view.store.ts`: Stato visualizzazione dashboard
-- `user_store.ts`: Stato utente
-
-#### XState Machine
-- `stepMachine.ts`: Macchina a stati per il flusso di creazione chart
-
-```mermaid
-stateDiagram-v2
-    [*] --> idle: Inizializzazione
-    idle --> input: Crea nuovo chart
-    input --> config: Dati caricati
-    config --> done: Configurazione completata
-    done --> idle: Salvataggio completato
-    config --> input: Reset dati
-    done --> config: Modifica configurazione
-```
-
-### Routing
-Router configurato con React Router v6:
-- Route pubbliche: `/`, `/charts/:id/view`, `/dashboards/:id/view`, `/charts/:id/embed`, `/dashboards/:id/embed`
-- Route protette: `/`, `/edit/chart/:id?`, `/edit/kpi/:id?`, `/dashboards`, `/dashboards/:id/edit`
-- Route auth: `/login`, `/verify/:uid`, `/recover-password`, `/change-password`
-- Route utility: `/load-data`, `/generate-data`, `/geo`
 
 ---
 
 ## 4. Packages/UI-Example-App - App di Esempio
 
 ### Descrizione
-Applicazione React minimalista per dimostrare l'uso dei componenti `dataviz-components`.
+
+Applicazione React minimalista per dimostrare l'uso dei componenti `graph-italia-components`.
 
 ### Funzionalità
+
 - Esempi di utilizzo per ogni tipo di grafico
 - Componenti di esempio:
   - `SampleBarchart`
@@ -417,9 +382,11 @@ Applicazione React minimalista per dimostrare l'uso dei componenti `dataviz-comp
   - `SampleWrapper`
 
 ### Integrazione
-Usa `dataviz-components` tramite link locale:
+
+Usa `graph-italia-components` tramite link locale:
+
 ```json
-"dataviz-components": "link:dataviz-components"
+"graph-italia-components": "link:graph-italia-components"
 ```
 
 ---
@@ -460,16 +427,20 @@ graph LR
 ### Dipendenze Workspace
 
 1. **Webapp → Components**:
+
    ```json
-   "dataviz-components": "workspace:*"
+   "graph-italia-components": "workspace:*"
    ```
+
    - Webapp importa e usa i componenti React dalla libreria
    - Build separata: components viene buildato prima di webapp
 
 2. **UI-Example-App → Components**:
+
    ```json
-   "dataviz-components": "link:dataviz-components"
+   "graph-italia-components": "link:graph-italia-components"
    ```
+
    - Link locale per sviluppo
 
 3. **Server**:
@@ -479,6 +450,7 @@ graph LR
 ### Scripts di Build
 
 Dal `package.json` root:
+
 - `bun run dev`: Avvia webapp + server in parallelo
 - `bun run build`: Builda tutti i pacchetti
 - `bun run build:components`: Builda solo la libreria
@@ -489,6 +461,7 @@ Dal `package.json` root:
 ## Tipi di Grafici Supportati
 
 ### 1. BasicChart (bar/line)
+
 - Grafici a barre e linee
 - Supporto serie multiple
 - Stack opzionale
@@ -497,29 +470,34 @@ Dal `package.json` root:
 - Smooth curves
 
 ### 2. PieChart
+
 - Grafici a torta
 - Labels personalizzabili
 - Tooltip formattabili
 - Legenda configurabile
 
 ### 3. GeoMapChart
+
 - Mappe geografiche con GeoJSON
 - Visualizzazione dati su regioni geografiche
 - Colori basati su valori
 - Labels mappa opzionali
 
 ### 4. ClusterMap
+
 - Mappe a cluster di punti
 - Marker interattivi
 - Clustering automatico
 
 ### 5. KPI Group
+
 - Indicatori chiave di performance
 - Valori con percentuali
 - Indicatori di trend (flow)
 - Colori personalizzabili
 
 ### 6. DataTable
+
 - Tabelle dati interattive
 - Ordinamento colonne
 - Filtri
@@ -531,6 +509,7 @@ Dal `package.json` root:
 ## Configurazione e Deploy
 
 ### Variabili d'Ambiente Server
+
 - `HOST`: Host del server
 - `PORT`: Porta server (default: 3003)
 - `DOMAINS`: Domini CORS consentiti (comma-separated)
@@ -542,26 +521,27 @@ Dal `package.json` root:
 - `BUILD_TIME`: Timestamp della build (iniettato a build time, visibile in healthcheck)
 
 ### Docker
+
 - `packages/server/Dockerfile`: Immagine Docker per server
 - `packages/server/Dockerfile.app`: Immagine alternativa ottimizzata
 - `packages/webapp/Dockerfile`: Immagine Docker per webapp
 
 ### Helm Chart
 
-Il progetto include un Helm chart per il deployment su Kubernetes in `charts/dataviz/`.
+Il progetto include un Helm chart per il deployment su Kubernetes in `charts/graph-italia/`.
 
 #### Struttura Deployment
 
 ```mermaid
 graph TB
     subgraph "Kubernetes Cluster"
-        subgraph "Namespace: dataviz"
+        subgraph "Namespace: graph-italia"
             Ingress[Ingress<br/>nginx] --> Webapp[Webapp<br/>nginx + React]
             Ingress --> Server[Server<br/>Bun + Hono]
             Server --> DB[(PostgreSQL<br/>Azure)]
 
             subgraph "Helm Hooks"
-                Migration[Job: db-migration<br/>prisma db push]
+                Migration[Job: db-migration<br/>prisma migrate deploy]
                 Seed[Job: db-seed<br/>seed-users.ts]
             end
 
@@ -575,27 +555,29 @@ graph TB
 
 #### Componenti Helm
 
-| Componente | Descrizione |
-|------------|-------------|
-| `webapp-deployment` | Frontend React servito da nginx |
-| `server-deployment` | Backend API Bun/Hono |
-| `db-migration-job` | Hook pre-upgrade per `prisma db push` |
-| `db-seed-job` | Hook pre-upgrade per seeding utenti |
-| `ingress` | Routing HTTP/HTTPS con cert-manager |
+| Componente          | Descrizione                           |
+| ------------------- | ------------------------------------- |
+| `webapp-deployment` | Frontend React servito da nginx       |
+| `server-deployment` | Backend API Bun/Hono                  |
+| `db-migration-job`  | Hook pre-upgrade per migration Prisma |
+| `db-seed-job`       | Hook pre-upgrade per seeding utenti   |
+| `ingress`           | Routing HTTP/HTTPS con cert-manager   |
 
 ### Database Setup
 
 #### Sviluppo Locale
 
 1. Configurare connection string PostgreSQL in `.env`:
+
    ```bash
-   DATABASE_URL="postgresql://user:password@localhost:5432/dataviz"
+   DATABASE_URL="postgresql://user:password@localhost:5432/graph-italia"
    ```
 
 2. Applicare schema al database:
+
    ```bash
    cd packages/server
-   bunx prisma db push
+   bunx prisma migrate deploy
    ```
 
 3. (Opzionale) Seed utenti di test:
@@ -616,7 +598,7 @@ sequenceDiagram
     participant DB as PostgreSQL
 
     Helm->>Migration: pre-upgrade hook (weight: -5)
-    Migration->>DB: prisma db push
+    Migration->>DB: prisma migrate deploy
     DB-->>Migration: Schema synced
     Migration-->>Helm: Job completed
 
@@ -634,7 +616,10 @@ sequenceDiagram
 ```yaml
 dbMigration:
   enabled: true
-  acceptDataLoss: false  # MAI true in produzione!
+  mode: migrateDeploy
+  allowLegacyDbPushFallback: false
+  legacySchemaAutoMigrate: true
+  acceptDataLoss: false # Solo per fallback legacy con db push
 
 dbSeed:
   enabled: true
@@ -642,30 +627,30 @@ dbSeed:
     # Crea nuovo utente (skip se email esiste già)
     - email: "admin@example.com"
       password: "SecurePassword123!"
-      verifyed: true
+      verified: true
       role: "ADMIN"
 
     # Aggiorna utente esistente (richiede id)
     - id: "existing-user-id"
       email: "updated@example.com"
       password: "NewPassword!"
-      verifyed: true
+      verified: true
 ```
 
 **Primo deployment:**
 
 ```bash
 # Installazione iniziale con migration e seed
-helm upgrade --install dataviz oci://ghcr.io/italia/charts/dataviz \
-  -n dataviz -f values.yaml
+helm upgrade --install graph-italia oci://ghcr.io/italia/charts/graph-italia \
+  -n graph-italia -f values.yaml
 ```
 
 **Deployment successivi:**
 
 ```bash
 # Solo aggiornamento immagini (migration idempotente)
-helm upgrade dataviz oci://ghcr.io/italia/charts/dataviz \
-  -n dataviz -f values.yaml
+helm upgrade graph-italia oci://ghcr.io/italia/charts/graph-italia \
+  -n graph-italia -f values.yaml
 ```
 
 ### Gestione Utenti
@@ -681,7 +666,7 @@ dbSeed:
   users:
     - email: "admin@example.com"
       password: "password"
-      verifyed: true
+      verified: true
       role: "ADMIN"
 ```
 
@@ -696,8 +681,9 @@ Gli utenti possono registrarsi autonomamente tramite l'interfaccia web:
 5. Account attivato
 
 **Requisiti per email:**
+
 - Configurare `RESEND_API_KEY` con chiave valida
-- Configurare `SENDER_EMAIL` con dominio verificato su Resend (es. `noreply@dataviz.example.com`)
+- Configurare `SENDER_EMAIL` con dominio verificato su Resend (es. `noreply@graph-italia.example.com`)
 
 ---
 
@@ -730,10 +716,10 @@ gitGraph
 
 ### Branch Principali
 
-| Branch | Ambiente | Descrizione |
-|--------|----------|-------------|
-| `main` | **Production** | Branch stabile, ogni commit viene deployato in produzione |
-| `develop` | **Test/Staging** | Branch di integrazione, deploy automatico su ambiente di test |
+| Branch    | Ambiente         | Descrizione                                                                |
+| --------- | ---------------- | -------------------------------------------------------------------------- |
+| `main`    | **Production**   | Branch stabile, deploy in produzione solo tramite tag semantici (`v*.*.*`) |
+| `develop` | **Test/Staging** | Branch di integrazione, deploy automatico su ambiente di test              |
 
 ### Workflow per Nuove Funzionalità
 
@@ -746,13 +732,14 @@ flowchart LR
 
     subgraph "2️⃣ Testing"
         C --> D[Merge in develop]
-        D --> E[Deploy automatico<br/>su dataviz-test]
+        D --> E[Deploy automatico<br/>su graph-italia-test]
         E --> F{Test OK?}
     end
 
     subgraph "3️⃣ Produzione"
         F -->|Sì| G[Merge in main]
-        G --> H[Deploy automatico<br/>su dataviz]
+        G --> H[Crea tag v*.*.*]
+        H --> I[Deploy automatico<br/>su graph-italia]
     end
 
     F -->|No| B
@@ -794,8 +781,8 @@ git pull origin develop
 git merge feature/nome-funzionalita
 git push origin develop
 
-# ✅ CI/CD deploya automaticamente su dataviz-test
-# URL: https://dataviz-test.innovazione.gov.it
+# ✅ CI/CD deploya automaticamente su graph-italia-test
+# URL: https://graph-test.developers.italia.it
 ```
 
 #### 4. Promuovere in Produzione
@@ -803,26 +790,32 @@ git push origin develop
 Dopo aver verificato che tutto funziona su staging:
 
 ```bash
-# Merge in main per il deploy in produzione
+# Merge in main
 git checkout main
 git pull origin main
 git merge develop  # oppure: git merge feature/nome-funzionalita
 git push origin main
 
-# ✅ CI/CD deploya automaticamente su dataviz (produzione)
-# URL: https://dataviz.innovazione.gov.it
+# ⚠️ Il push su main NON deploya automaticamente in produzione
+# È necessario creare un tag per il deploy (vedi step 5)
 ```
 
-#### 5. (Opzionale) Creare un Tag di Release
+#### 5. Creare un Tag di Release (obbligatorio per deploy in prod)
 
-Per release ufficiali con versione semantica:
+Il deploy in produzione avviene **solo** tramite tag semantici:
 
 ```bash
 git checkout main
 git tag -a v1.2.0 -m "Release 1.2.0: descrizione"
 git push origin v1.2.0
 
-# Il tag triggera una build con versione 1.2.0 invece di 0.0.0-test.SHA
+# ✅ CI/CD deploya automaticamente su graph-italia (produzione)
+# URL: https://graph.developers.italia.it
+#
+# Il tag triggera:
+# - Build immagini Docker con versione 1.2.0
+# - Package Helm chart con versione 1.2.0
+# - Deploy automatico in produzione
 ```
 
 ### Flusso CI/CD Completo
@@ -835,18 +828,18 @@ flowchart TB
 
     subgraph "GitHub Actions"
         PR{È una PR?}
-        Branch{Quale branch?}
+        Branch{Quale branch/tag?}
 
         Build[🏗️ Build Images<br/>webapp + server]
         Helm[📦 Package Helm]
 
-        DeployTest[🧪 Deploy Test<br/>dataviz-test]
-        DeployProd[🚀 Deploy Prod<br/>dataviz]
+        DeployTest[🧪 Deploy Test<br/>graph-italia-test]
+        DeployProd[🚀 Deploy Prod<br/>graph-italia]
     end
 
     subgraph "Kubernetes"
-        Test[dataviz-test<br/>namespace]
-        Prod[dataviz<br/>namespace]
+        Test[graph-italia-test<br/>namespace]
+        Prod[graph-italia<br/>namespace]
     end
 
     Dev --> PR
@@ -855,12 +848,13 @@ flowchart TB
 
     PR -->|No| Branch
     Branch -->|develop| Build
-    Branch -->|main/tag| Build
+    Branch -->|main| Build
+    Branch -->|tag v*| Build
 
     Build --> Helm
 
     Helm -->|develop| DeployTest
-    Helm -->|main/tag| DeployProd
+    Helm -->|tag v*| DeployProd
 
     DeployTest --> Test
     DeployProd --> Prod
@@ -868,12 +862,14 @@ flowchart TB
 
 ### Riepilogo Deploy Automatici
 
-| Evento | Ambiente Target | Versione |
-|--------|-----------------|----------|
-| Push su `develop` | dataviz-test | `0.0.0-test.<sha>` |
-| Push su `main` | dataviz (prod) | `0.0.0-test.<sha>` |
-| Tag `v*.*.*` | dataviz (prod) | Versione dal tag |
-| Pull Request | Nessuno | Solo build di verifica |
+| Evento            | Ambiente Target      | Versione                       |
+| ----------------- | -------------------- | ------------------------------ |
+| Push su `develop` | graph-italia-test    | `0.0.0-dev.<sha>`              |
+| Push su `main`    | Nessuno (solo build) | `0.0.0-main.<sha>`             |
+| Tag `v*.*.*`      | graph-italia (prod)  | Versione dal tag (es. `1.2.0`) |
+| Pull Request      | Nessuno              | Solo build di verifica         |
+
+> **Nota**: Il deploy in produzione richiede sempre un tag semantico. I push su `main` eseguono solo la build per verificare che il codice sia pronto per il rilascio.
 
 ---
 
@@ -886,10 +882,12 @@ Il progetto utilizza **GitHub Actions** per l'integrazione continua e il deploym
 #### Workflow CI (`.github/workflows/ci.yml`)
 
 Eseguito automaticamente su:
+
 - Push su branch `main`
 - Pull Request
 
 **Processo CI**:
+
 ```mermaid
 graph LR
     Trigger[Push/PR] --> Checkout[Checkout Code]
@@ -902,6 +900,7 @@ graph LR
 ```
 
 **Steps**:
+
 1. Checkout del codice sorgente
 2. Setup Bun runtime (versione 1.1.27)
 3. Installazione dipendenze con lockfile frozen
@@ -910,6 +909,7 @@ graph LR
 #### Workflow Release (`.github/workflows/release.yml`)
 
 Eseguito su:
+
 - Push su branch `main` o `develop`
 - Tag con pattern `v*` (es. `v1.0.0`)
 - Pull Request su `main` (solo build, no push)
@@ -925,7 +925,7 @@ flowchart TB
     end
 
     subgraph Prepare["📋 Prepare"]
-        Version[Generate Version<br/>0.0.0-test.SHA / v1.0.0]
+        Version[Generate Version<br/>0.0.0-dev.SHA / 1.2.0]
     end
 
     subgraph Build["🏗️ Build Images"]
@@ -940,8 +940,8 @@ flowchart TB
     end
 
     subgraph Deploy["🚀 Deploy"]
-        DeployTest[Deploy Test<br/>dataviz-test namespace]
-        DeployProd[Deploy Production<br/>dataviz namespace]
+        DeployTest[Deploy Test<br/>graph-italia-test namespace]
+        DeployProd[Deploy Production<br/>graph-italia namespace]
     end
 
     Push --> Prepare
@@ -951,37 +951,40 @@ flowchart TB
     Prepare --> Build
     Build --> Package
 
-    Package --> DeployTest
-    DeployTest -->|main branch| DeployProd
+    Package -->|develop| DeployTest
+    Package -->|tag v*| DeployProd
 
-    BuildServer --> GHCR1[ghcr.io/italia/dataviz-srv]
-    BuildWebapp --> GHCR2[ghcr.io/italia/dataviz-webapp]
-    HelmPush --> GHCR3[ghcr.io/italia/charts/dataviz]
+    BuildServer --> GHCR1[ghcr.io/italia/graph-italia-srv]
+    BuildWebapp --> GHCR2[ghcr.io/italia/graph-italia-webapp]
+    HelmPush --> GHCR3[ghcr.io/italia/charts/graph-italia]
 ```
 
 **Jobs del Workflow**:
 
-| Job | Descrizione | Trigger |
-|-----|-------------|---------|
-| `prepare` | Genera versione semantica | Sempre |
-| `build-images` | Build Docker server + webapp | Sempre |
-| `package-helm` | Package e push Helm chart | Non PR |
-| `deploy-test` | Deploy su dataviz-test | Non PR |
-| `deploy-production` | Deploy su dataviz | Solo main + non PR |
+| Job                 | Descrizione                  | Trigger           |
+| ------------------- | ---------------------------- | ----------------- |
+| `prepare`           | Genera versione semantica    | Sempre            |
+| `build-images`      | Build Docker server + webapp | Sempre            |
+| `package-helm`      | Package e push Helm chart    | Non PR            |
+| `deploy-test`       | Deploy su graph-italia-test  | Solo develop      |
+| `deploy-production` | Deploy su graph-italia       | Solo tag `v*.*.*` |
 
 **Versioning**:
-- Branch `develop`: `0.0.0-test.<short-sha>`
-- Branch `main`: `0.0.0-test.<short-sha>`
+
+- Branch `develop`: `0.0.0-dev.<short-sha>`
+- Branch `main`: `0.0.0-main.<short-sha>` (solo build, no deploy)
 - Tag `v1.2.3`: `1.2.3`
 
 **Artefatti Prodotti**:
-- `ghcr.io/italia/dataviz-srv:<version>`
-- `ghcr.io/italia/dataviz-webapp:<version>`
-- `ghcr.io/italia/charts/dataviz:<version>`
+
+- `ghcr.io/italia/graph-italia-srv:<version>`
+- `ghcr.io/italia/graph-italia-webapp:<version>`
+- `ghcr.io/italia/charts/graph-italia:<version>`
 
 #### Workflow Pullfrog (`.github/workflows/pullfrog.yml`)
 
 Workflow per automazione AI-assisted tramite Pullfrog:
+
 - Eseguibile manualmente (`workflow_dispatch`)
 - Richiede `ANTHROPIC_API_KEY` come secret
 - Utilizzato per automazioni guidate da AI
@@ -1013,6 +1016,7 @@ graph TB
 **Script**: `rollup -c`
 
 **Processo**:
+
 - Input: `src/index.ts`
 - Output:
   - `dist/index.js` (CommonJS format)
@@ -1021,12 +1025,14 @@ graph TB
   - `dist/style.css` (CSS minificato)
 
 **Configurazione Rollup**:
+
 - Plugin TypeScript per compilazione
 - Plugin CSS per importazione e minificazione CSS
 - External peer dependencies (non bundle)
 - Source maps abilitati
 
 **Comando**:
+
 ```bash
 bun run build:components
 # o
@@ -1038,6 +1044,7 @@ cd packages/components && npm run build
 **Script**: `tsc && vite build`
 
 **Processo**:
+
 1. **TypeScript Compilation**: Verifica tipi e compila (`tsc`)
 2. **Vite Build**:
    - Bundle React app
@@ -1046,12 +1053,14 @@ cd packages/components && npm run build
    - Asset optimization (CSS, immagini)
 
 **Output**:
+
 - `dist/` directory con:
   - `index.html`
   - `assets/` (JS, CSS bundle)
   - Static files da `public/`
 
 **Comando**:
+
 ```bash
 bun run build:webapp
 # o
@@ -1063,6 +1072,7 @@ cd packages/webapp && npm run build
 **Script**: Nessun build esplicito (runtime TypeScript con Bun)
 
 **Processo**:
+
 - Bun esegue direttamente TypeScript (`bun index.ts`)
 - Prisma Client viene generato: `npx prisma generate`
 - Nessuna compilazione necessaria (Bun runtime)
@@ -1079,6 +1089,7 @@ graph LR
 ```
 
 **Stages Dockerfile.app**:
+
 1. **BASE**: Immagine base `oven/bun:1.3.1` con Node.js
 2. **INSTALL**: Installazione dipendenze in cache
 3. **PRERELEASE**: Copia file applicazione e node_modules
@@ -1087,16 +1098,19 @@ graph LR
 #### Build Completa Monorepo
 
 **Comando root**:
+
 ```bash
 bun run build
 ```
 
 Esegue `bun run --filter '*' build` che:
+
 - Identifica tutti i pacchetti con script `build`
 - Esegue build in ordine di dipendenze
 - Components viene buildato prima di Webapp (dipendenza workspace)
 
 **Ordine di Build**:
+
 1. `packages/components` (nessuna dipendenza interna)
 2. `packages/webapp` (dipende da components)
 3. `packages/server` (indipendente)
@@ -1107,12 +1121,14 @@ Esegue `bun run --filter '*' build` che:
 **Stato Attuale**: ❌ **Nessun test implementato**
 
 Il progetto **non include** framework di testing configurati:
+
 - ❌ Nessun test unitario
 - ❌ Nessun test di integrazione
 - ❌ Nessun test end-to-end
 - ❌ Nessun framework configurato (Jest, Vitest, Playwright, Cypress)
 
 **Evidenze**:
+
 - Nessun file `.test.ts`, `.spec.ts` nel codebase
 - Nessuna configurazione Jest/Vitest nei `package.json`
 - Rollup config esclude pattern di test (`**/__tests__/**`, `**/*.test.tsx`) ma non esistono
@@ -1156,26 +1172,26 @@ graph LR
 
     subgraph "Kubernetes Cluster"
         subgraph "Test Environment"
-            TestNS[dataviz-test namespace]
+            TestNS[graph-italia-test namespace]
             TestDB[(Azure PostgreSQL)]
         end
 
         subgraph "Production Environment"
-            ProdNS[dataviz namespace]
+            ProdNS[graph-italia namespace]
             ProdDB[(Azure PostgreSQL)]
         end
     end
 
-    CI -->|develop/main push| TestNS
-    CI -->|main push only| ProdNS
+    CI -->|develop push| TestNS
+    CI -->|tag v*| ProdNS
     TestNS --> TestDB
     ProdNS --> ProdDB
 ```
 
-| Environment | Namespace | Database | Branch | URL |
-|-------------|-----------|----------|--------|-----|
-| Test | `dataviz-test` | Azure PostgreSQL | develop, main | `dataviz-test.innovazione.gov.it` |
-| Production | `dataviz` | Azure PostgreSQL | main | `dataviz.innovazione.gov.it` |
+| Environment | Namespace           | Database         | Trigger           | URL                               |
+| ----------- | ------------------- | ---------------- | ----------------- | --------------------------------- |
+| Test        | `graph-italia-test` | Azure PostgreSQL | Push su `develop` | `graph-test.developers.italia.it` |
+| Production  | `graph-italia`      | Azure PostgreSQL | Tag `v*.*.*`      | `graph.developers.italia.it`      |
 
 ### Monitoring & Alerting
 
@@ -1185,25 +1201,27 @@ Il progetto include un sistema completo di monitoring basato su Prometheus, Graf
 
 Il server espone metriche Prometheus su `/metrics`:
 
-| Metrica | Tipo | Descrizione |
-|---------|------|-------------|
-| `http_requests_total` | Counter | Richieste HTTP per method, path, status |
-| `http_request_duration_seconds` | Histogram | Latenza richieste HTTP |
-| `dataviz_db_queries_total` | Counter | Query database per operation, status |
-| `dataviz_db_query_duration_seconds` | Histogram | Latenza query database |
-| `dataviz_ai_requests_total` | Counter | Richieste OpenAI per status |
-| `dataviz_ai_request_duration_seconds` | Histogram | Latenza richieste OpenAI |
+| Metrica                                    | Tipo      | Descrizione                             |
+| ------------------------------------------ | --------- | --------------------------------------- |
+| `http_requests_total`                      | Counter   | Richieste HTTP per method, path, status |
+| `http_request_duration_seconds`            | Histogram | Latenza richieste HTTP                  |
+| `graph_italia_db_queries_total`            | Counter   | Query database per operation, status    |
+| `graph_italia_db_query_duration_seconds`   | Histogram | Latenza query database                  |
+| `graph_italia_ai_requests_total`           | Counter   | Richieste OpenAI per status             |
+| `graph_italia_ai_request_duration_seconds` | Histogram | Latenza richieste OpenAI                |
 
 #### Dashboard Grafana
 
-La dashboard è disponibile in `charts/dataviz/dashboards/dataviz-dashboard.json`.
+La dashboard è disponibile in `charts/graph-italia/dashboards/graph-italia-dashboard.json`.
 
 **Importazione manuale**:
+
 1. Grafana → Dashboards → Import
-2. Upload `dataviz-dashboard.json`
+2. Upload `graph-italia-dashboard.json`
 3. Selezionare datasource Prometheus e Loki
 
 **Sezioni della dashboard**:
+
 - Overview (requests/s, error rate, latency, pods)
 - HTTP Traffic (requests by status, latency percentiles)
 - Database (query latency, queries by operation)
@@ -1214,17 +1232,17 @@ La dashboard è disponibile in `charts/dataviz/dashboards/dataviz-dashboard.json
 
 #### Alert Rules
 
-Gli alert sono definiti in `charts/dataviz/templates/prometheusrule.yaml`:
+Gli alert sono definiti in `charts/graph-italia/templates/prometheusrule.yaml`:
 
-| Alert | Condizione | Severità |
-|-------|------------|----------|
-| `DatavizDown` | Nessun pod running per 2 min | Critical |
-| `DatavizHighErrorRate` | 5xx > 10% per 5 min | Critical |
-| `DatavizDatabaseErrors` | Errori DB > 0.5/s per 3 min | Critical |
-| `DatavizCrashLooping` | > 5 restart in 30 min | Critical |
-| `DatavizHighWAFBlocks` | 4xx > 30% per 10 min | Critical |
-| `DatavizUnresponsive` | p95 latency > 30s | Critical |
-| `DatavizOutOfMemory` | Memory > 95% per 5 min | Critical |
+| Alert                       | Condizione                   | Severità |
+| --------------------------- | ---------------------------- | -------- |
+| `GraphItaliaDown`           | Nessun pod running per 2 min | Critical |
+| `GraphItaliaHighErrorRate`  | 5xx > 10% per 5 min          | Critical |
+| `GraphItaliaDatabaseErrors` | Errori DB > 0.5/s per 3 min  | Critical |
+| `GraphItaliaCrashLooping`   | > 5 restart in 30 min        | Critical |
+| `GraphItaliaHighWAFBlocks`  | 4xx > 30% per 10 min         | Critical |
+| `GraphItaliaUnresponsive`   | p95 latency > 30s            | Critical |
+| `GraphItaliaOutOfMemory`    | Memory > 95% per 5 min       | Critical |
 
 #### Configurazione Email Alerting
 
@@ -1244,9 +1262,9 @@ monitoring:
     enabled: true
     emailTo: "team@example.com, ops@example.com"
     # Opzionali (hanno default):
-    # emailFrom: "dataviz@innovazione.gov.it"
+    # emailFrom: "TBD@italia.it"
     # smarthost: "smtp.eu.mailgun.org:587"
-    # authUsername: "dataviz@innovazione.gov.it"
+    # authUsername: "TBD@italia.it"
     # authPasswordSecret: "alertmanager-smtp-secret"
 ```
 
@@ -1275,20 +1293,20 @@ monitoring:
 
 ## Tecnologie Chiave
 
-| Categoria | Tecnologie |
-|-----------|-----------|
-| **Runtime** | Bun |
-| **Frontend** | React 19, TypeScript, Vite |
-| **Backend** | Hono, Bun, TypeScript |
-| **Database** | PostgreSQL, Prisma ORM |
-| **Charts** | ECharts 5 |
-| **Maps** | OpenLayers 10 |
-| **Styling** | TailwindCSS, DaisyUI |
-| **State** | Zustand, XState |
-| **Build** | Rollup (components), Vite (apps) |
-| **Auth** | JWT, bcrypt |
-| **Email** | Resend |
-| **AI** | OpenAI API |
+| Categoria    | Tecnologie                       |
+| ------------ | -------------------------------- |
+| **Runtime**  | Bun                              |
+| **Frontend** | React 19, TypeScript, Vite       |
+| **Backend**  | Hono, Bun, TypeScript            |
+| **Database** | PostgreSQL, Prisma ORM           |
+| **Charts**   | ECharts 5                        |
+| **Maps**     | OpenLayers 10                    |
+| **Styling**  | TailwindCSS, DaisyUI             |
+| **State**    | Zustand, XState                  |
+| **Build**    | Rollup (components), Vite (apps) |
+| **Auth**     | JWT, bcrypt                      |
+| **Email**    | Resend                           |
+| **AI**       | OpenAI API                       |
 
 ---
 
@@ -1301,10 +1319,10 @@ Se hai bisogno di creare o verificare utenti manualmente senza passare dal seed 
 #### Verificare utenti esistenti
 
 ```bash
-kubectl run -n dataviz db-check --rm -it --restart=Never \
+kubectl run -n graph-italia db-check --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "SELECT id, email, role, verifyed FROM \"User\";"
+  -c "SELECT id, email, role, verified FROM \"User\";"
 ```
 
 #### Creare un nuovo utente
@@ -1312,33 +1330,33 @@ kubectl run -n dataviz db-check --rm -it --restart=Never \
 Prima genera l'hash della password:
 
 ```bash
-kubectl exec -n dataviz deployment/dataviz-server -- \
+kubectl exec -n graph-italia deployment/graph-italia-server -- \
   bun -e "const {hash} = require('bcrypt'); hash('PASSWORD', 10).then(console.log)"
 ```
 
 Poi crea l'utente:
 
 ```bash
-kubectl run -n dataviz db-create-user --rm -it --restart=Never \
+kubectl run -n graph-italia db-create-user --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "INSERT INTO \"User\" (id, email, password, verifyed, role, \"createdAt\", \"updatedAt\")
+  -c "INSERT INTO \"User\" (id, email, password, verified, role, \"createdAt\", \"updatedAt\")
       VALUES ('user-001', 'email@example.com', '\$2b\$10\$HASH...', true, 'USER', NOW(), NOW());"
 ```
 
 #### Verificare/Approvare un utente esistente
 
 ```bash
-kubectl run -n dataviz db-verify-user --rm -it --restart=Never \
+kubectl run -n graph-italia db-verify-user --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
-  -c "UPDATE \"User\" SET verifyed = true WHERE email = 'email@example.com';"
+  -c "UPDATE \"User\" SET verified = true WHERE email = 'email@example.com';"
 ```
 
 #### Promuovere utente ad ADMIN
 
 ```bash
-kubectl run -n dataviz db-promote-admin --rm -it --restart=Never \
+kubectl run -n graph-italia db-promote-admin --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
   -c "UPDATE \"User\" SET role = 'ADMIN' WHERE email = 'email@example.com';"
@@ -1347,7 +1365,7 @@ kubectl run -n dataviz db-promote-admin --rm -it --restart=Never \
 #### Eliminare un utente
 
 ```bash
-kubectl run -n dataviz db-delete-user --rm -it --restart=Never \
+kubectl run -n graph-italia db-delete-user --rm -it --restart=Never \
   --image=postgres:15-alpine -- \
   psql "$DATABASE_URL" \
   -c "DELETE FROM \"User\" WHERE email = 'email@example.com';"
@@ -1357,18 +1375,18 @@ kubectl run -n dataviz db-delete-user --rm -it --restart=Never \
 
 ### Problemi Comuni
 
-| Problema | Soluzione |
-|----------|-----------|
-| Utente non riceve email di verifica | Verificare `RESEND_API_KEY` e `SENDER_EMAIL` nel deployment |
-| Login fallisce con "Invalid credentials" | Verificare che l'utente sia `verifyed = true` |
-| Migration job fallisce | Controllare i logs con `kubectl logs -n dataviz -l component=db-migration` |
-| Seed job fallisce | Controllare i logs con `kubectl logs -n dataviz -l component=db-seed` |
+| Problema                                 | Soluzione                                                                       |
+| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| Utente non riceve email di verifica      | Verificare `RESEND_API_KEY` e `SENDER_EMAIL` nel deployment                     |
+| Login fallisce con "Invalid credentials" | Verificare che l'utente sia `verified = true`                                   |
+| Migration job fallisce                   | Controllare i logs con `kubectl logs -n graph-italia -l component=db-migration` |
+| Seed job fallisce                        | Controllare i logs con `kubectl logs -n graph-italia -l component=db-seed`      |
 
 ---
 
 ## Conclusioni
 
-Il progetto **Dataviz** è un sistema completo e modulare per la creazione e gestione di visualizzazioni dati. La struttura monorepo permette:
+Il progetto **Graph Italia** è un sistema completo e modulare per la creazione e gestione di visualizzazioni dati. La struttura monorepo permette:
 
 1. **Riutilizzo**: Componenti React pubblicabili come libreria npm
 2. **Separazione**: Backend e frontend completamente separati

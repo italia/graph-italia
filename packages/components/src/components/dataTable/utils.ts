@@ -30,6 +30,7 @@ export type DataTableProps = {
   enableColumnReorder?: boolean;
   enableExportCsv?: boolean;
   labels?: DataTableLabels;
+  poweredByLabel?: string;
 };
 
 export const defaultFormatNumber = (n: number) =>

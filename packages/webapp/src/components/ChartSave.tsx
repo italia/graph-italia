@@ -129,15 +129,16 @@ function ChartSave({ item, handleSave }: any) {
 
         {/* Publish option */}
         <div className="form-control bg-base-200/50 rounded-lg p-4">
-          <div
+          <label
+            htmlFor="chart-publish-toggle"
             className="flex items-center gap-4 cursor-pointer"
-            onClick={() => setValue("publish", !publishValue)}
           >
-            <span
-              role="switch"
-              aria-checked={publishValue}
-              className={`toggle toggle-primary ${publishValue ? "toggle-checked" : ""
-                }`}
+            <input
+              id="chart-publish-toggle"
+              type="checkbox"
+              checked={publishValue}
+              onChange={(e) => setValue("publish", e.target.checked)}
+              className={`toggle toggle-primary ${publishValue ? "toggle-checked" : ""}`}
             />
             <div>
               <span className="label-text font-medium block">
@@ -147,7 +148,7 @@ function ChartSave({ item, handleSave }: any) {
                 Make the chart publicly visible
               </span>
             </div>
-          </div>
+          </label>
         </div>
 
         {/* Save button */}

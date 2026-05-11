@@ -1,8 +1,8 @@
 {
     "menu": {
         "items": {
-            "charts": {
-                "label": "Charts"
+            "examples": {
+                "label": "Examples"
             },
             "tools": {
                 "label": "Tools",
@@ -21,6 +21,20 @@
                     },
                     "geo": {
                         "label": "Check GeoJSon File"
+                    }
+                }
+            },
+            "settings": {
+                "label": "Settings",
+                "subItems": {
+                    "apikeys": {
+                        "label": "API Keys"
+                    },
+                    "orgs": {
+                        "label": "Organizations"
+                    },
+                    "accountSettings": {
+                        "label": "Change Password"
                     }
                 }
             }

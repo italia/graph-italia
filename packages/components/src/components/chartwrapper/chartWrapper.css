@@ -246,3 +246,74 @@
   font-size: 0.95rem;
   color: #374151;
 }
+
+/* ===========================================
+   Dark mode overrides
+   =========================================== */
+.graph-italia-dark.cw-container,
+.graph-italia-dark .cw-container {
+  color: #e5e7eb;
+}
+
+.graph-italia-dark .cw-title {
+  color: #f3f4f6;
+}
+
+.graph-italia-dark .cw-subtitle {
+  color: #d1d5db;
+}
+
+.graph-italia-dark .cw-tablist {
+  border-bottom-color: #374151;
+}
+
+.graph-italia-dark .cw-tab {
+  color: #9ca3af;
+}
+
+.graph-italia-dark .cw-tab:hover {
+  color: #f3f4f6;
+}
+
+.graph-italia-dark .cw-tab[aria-selected="true"] {
+  color: #60a5fa;
+  border-bottom-color: #60a5fa;
+}
+
+.graph-italia-dark .cw-footer {
+  color: #9ca3af;
+}
+
+.graph-italia-dark .cw-source-label {
+  color: #f3f4f6;
+}
+
+.graph-italia-dark .cw-source-content p {
+  color: #d1d5db;
+}
+
+.graph-italia-dark .cw-meta {
+  color: #d1d5db;
+}
+
+.graph-italia-dark .cw-btn--primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+.graph-italia-dark .cw-btn--primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.graph-italia-dark .cw-btn--secondary {
+  background-color: transparent;
+  border-color: #60a5fa;
+  color: #60a5fa;
+}
+.graph-italia-dark .cw-btn--secondary:hover {
+  background-color: rgba(96, 165, 250, 0.12);
+  border-color: #93c5fd;
+  color: #93c5fd;
+}
+

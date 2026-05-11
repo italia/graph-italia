@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import * as ai from '../lib/ai';
-import { checkAuth, requireUser } from '../lib/middlewares-hono';
+import { checkAuth, requireUser } from '../lib/middlewares';
 import { logger } from '../lib/logger';
 import * as z from "zod";
 import {

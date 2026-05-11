@@ -32,7 +32,7 @@ export type DataSourceMinAggregateOutputType = {
   isTrasposed: boolean | null
   remoteUrl: string | null
   isRemote: boolean | null
-  userId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -45,7 +45,7 @@ export type DataSourceMaxAggregateOutputType = {
   isTrasposed: boolean | null
   remoteUrl: string | null
   isRemote: boolean | null
-  userId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,7 +60,7 @@ export type DataSourceCountAggregateOutputType = {
   isTrasposed: number
   remoteUrl: number
   isRemote: number
-  userId: number
+  projectId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -75,7 +75,7 @@ export type DataSourceMinAggregateInputType = {
   isTrasposed?: true
   remoteUrl?: true
   isRemote?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,7 +88,7 @@ export type DataSourceMaxAggregateInputType = {
   isTrasposed?: true
   remoteUrl?: true
   isRemote?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -103,7 +103,7 @@ export type DataSourceCountAggregateInputType = {
   isTrasposed?: true
   remoteUrl?: true
   isRemote?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -191,7 +191,7 @@ export type DataSourceGroupByOutputType = {
   isTrasposed: boolean
   remoteUrl: string | null
   isRemote: boolean
-  userId: string
+  projectId: string
   createdAt: Date
   updatedAt: Date
   _count: DataSourceCountAggregateOutputType | null
@@ -227,10 +227,10 @@ export type DataSourceWhereInput = {
   isTrasposed?: Prisma.BoolFilter<"DataSource"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"DataSource"> | string | null
   isRemote?: Prisma.BoolFilter<"DataSource"> | boolean
-  userId?: Prisma.StringFilter<"DataSource"> | string
+  projectId?: Prisma.StringFilter<"DataSource"> | string
   createdAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   sourceLink?: Prisma.SourceLinkListRelationFilter
 }
 
@@ -244,10 +244,10 @@ export type DataSourceOrderByWithRelationInput = {
   isTrasposed?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isRemote?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
   sourceLink?: Prisma.SourceLinkOrderByRelationAggregateInput
 }
 
@@ -264,10 +264,10 @@ export type DataSourceWhereUniqueInput = Prisma.AtLeast<{
   isTrasposed?: Prisma.BoolFilter<"DataSource"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"DataSource"> | string | null
   isRemote?: Prisma.BoolFilter<"DataSource"> | boolean
-  userId?: Prisma.StringFilter<"DataSource"> | string
+  projectId?: Prisma.StringFilter<"DataSource"> | string
   createdAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   sourceLink?: Prisma.SourceLinkListRelationFilter
 }, "id">
 
@@ -281,7 +281,7 @@ export type DataSourceOrderByWithAggregationInput = {
   isTrasposed?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isRemote?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DataSourceCountOrderByAggregateInput
@@ -302,7 +302,7 @@ export type DataSourceScalarWhereWithAggregatesInput = {
   isTrasposed?: Prisma.BoolWithAggregatesFilter<"DataSource"> | boolean
   remoteUrl?: Prisma.StringNullableWithAggregatesFilter<"DataSource"> | string | null
   isRemote?: Prisma.BoolWithAggregatesFilter<"DataSource"> | boolean
-  userId?: Prisma.StringWithAggregatesFilter<"DataSource"> | string
+  projectId?: Prisma.StringWithAggregatesFilter<"DataSource"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DataSource"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DataSource"> | Date | string
 }
@@ -319,7 +319,7 @@ export type DataSourceCreateInput = {
   isRemote?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutDataSourceInput
+  project: Prisma.ProjectCreateNestedOneWithoutDataSourceInput
   sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutDataSourceInput
 }
 
@@ -333,7 +333,7 @@ export type DataSourceUncheckedCreateInput = {
   isTrasposed?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutDataSourceInput
@@ -351,7 +351,7 @@ export type DataSourceUpdateInput = {
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutDataSourceNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDataSourceNestedInput
   sourceLink?: Prisma.SourceLinkUpdateManyWithoutDataSourceNestedInput
 }
 
@@ -365,7 +365,7 @@ export type DataSourceUncheckedUpdateInput = {
   isTrasposed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutDataSourceNestedInput
@@ -381,7 +381,7 @@ export type DataSourceCreateManyInput = {
   isTrasposed?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -410,7 +410,7 @@ export type DataSourceUncheckedUpdateManyInput = {
   isTrasposed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -435,7 +435,7 @@ export type DataSourceCountOrderByAggregateInput = {
   isTrasposed?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrder
   isRemote?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -448,7 +448,7 @@ export type DataSourceMaxOrderByAggregateInput = {
   isTrasposed?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrder
   isRemote?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -461,7 +461,7 @@ export type DataSourceMinOrderByAggregateInput = {
   isTrasposed?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrder
   isRemote?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -471,50 +471,46 @@ export type DataSourceScalarRelationFilter = {
   isNot?: Prisma.DataSourceWhereInput
 }
 
-export type DataSourceCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutUserInput, Prisma.DataSourceUncheckedCreateWithoutUserInput> | Prisma.DataSourceCreateWithoutUserInput[] | Prisma.DataSourceUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutUserInput | Prisma.DataSourceCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.DataSourceCreateManyUserInputEnvelope
+export type DataSourceCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutProjectInput, Prisma.DataSourceUncheckedCreateWithoutProjectInput> | Prisma.DataSourceCreateWithoutProjectInput[] | Prisma.DataSourceUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutProjectInput | Prisma.DataSourceCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.DataSourceCreateManyProjectInputEnvelope
   connect?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
 }
 
-export type DataSourceUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutUserInput, Prisma.DataSourceUncheckedCreateWithoutUserInput> | Prisma.DataSourceCreateWithoutUserInput[] | Prisma.DataSourceUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutUserInput | Prisma.DataSourceCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.DataSourceCreateManyUserInputEnvelope
+export type DataSourceUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutProjectInput, Prisma.DataSourceUncheckedCreateWithoutProjectInput> | Prisma.DataSourceCreateWithoutProjectInput[] | Prisma.DataSourceUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutProjectInput | Prisma.DataSourceCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.DataSourceCreateManyProjectInputEnvelope
   connect?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
 }
 
-export type DataSourceUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutUserInput, Prisma.DataSourceUncheckedCreateWithoutUserInput> | Prisma.DataSourceCreateWithoutUserInput[] | Prisma.DataSourceUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutUserInput | Prisma.DataSourceCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.DataSourceUpsertWithWhereUniqueWithoutUserInput | Prisma.DataSourceUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.DataSourceCreateManyUserInputEnvelope
+export type DataSourceUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutProjectInput, Prisma.DataSourceUncheckedCreateWithoutProjectInput> | Prisma.DataSourceCreateWithoutProjectInput[] | Prisma.DataSourceUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutProjectInput | Prisma.DataSourceCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.DataSourceUpsertWithWhereUniqueWithoutProjectInput | Prisma.DataSourceUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.DataSourceCreateManyProjectInputEnvelope
   set?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
   disconnect?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
   delete?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
   connect?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
-  update?: Prisma.DataSourceUpdateWithWhereUniqueWithoutUserInput | Prisma.DataSourceUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.DataSourceUpdateManyWithWhereWithoutUserInput | Prisma.DataSourceUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.DataSourceUpdateWithWhereUniqueWithoutProjectInput | Prisma.DataSourceUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.DataSourceUpdateManyWithWhereWithoutProjectInput | Prisma.DataSourceUpdateManyWithWhereWithoutProjectInput[]
   deleteMany?: Prisma.DataSourceScalarWhereInput | Prisma.DataSourceScalarWhereInput[]
 }
 
-export type DataSourceUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutUserInput, Prisma.DataSourceUncheckedCreateWithoutUserInput> | Prisma.DataSourceCreateWithoutUserInput[] | Prisma.DataSourceUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutUserInput | Prisma.DataSourceCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.DataSourceUpsertWithWhereUniqueWithoutUserInput | Prisma.DataSourceUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.DataSourceCreateManyUserInputEnvelope
+export type DataSourceUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.DataSourceCreateWithoutProjectInput, Prisma.DataSourceUncheckedCreateWithoutProjectInput> | Prisma.DataSourceCreateWithoutProjectInput[] | Prisma.DataSourceUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.DataSourceCreateOrConnectWithoutProjectInput | Prisma.DataSourceCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.DataSourceUpsertWithWhereUniqueWithoutProjectInput | Prisma.DataSourceUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.DataSourceCreateManyProjectInputEnvelope
   set?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
   disconnect?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
   delete?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
   connect?: Prisma.DataSourceWhereUniqueInput | Prisma.DataSourceWhereUniqueInput[]
-  update?: Prisma.DataSourceUpdateWithWhereUniqueWithoutUserInput | Prisma.DataSourceUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.DataSourceUpdateManyWithWhereWithoutUserInput | Prisma.DataSourceUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.DataSourceUpdateWithWhereUniqueWithoutProjectInput | Prisma.DataSourceUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.DataSourceUpdateManyWithWhereWithoutProjectInput | Prisma.DataSourceUpdateManyWithWhereWithoutProjectInput[]
   deleteMany?: Prisma.DataSourceScalarWhereInput | Prisma.DataSourceScalarWhereInput[]
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type DataSourceCreateNestedOneWithoutSourceLinkInput = {
@@ -531,7 +527,7 @@ export type DataSourceUpdateOneRequiredWithoutSourceLinkNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DataSourceUpdateToOneWithWhereWithoutSourceLinkInput, Prisma.DataSourceUpdateWithoutSourceLinkInput>, Prisma.DataSourceUncheckedUpdateWithoutSourceLinkInput>
 }
 
-export type DataSourceCreateWithoutUserInput = {
+export type DataSourceCreateWithoutProjectInput = {
   id?: string
   name?: string | null
   description?: string | null
@@ -546,7 +542,7 @@ export type DataSourceCreateWithoutUserInput = {
   sourceLink?: Prisma.SourceLinkCreateNestedManyWithoutDataSourceInput
 }
 
-export type DataSourceUncheckedCreateWithoutUserInput = {
+export type DataSourceUncheckedCreateWithoutProjectInput = {
   id?: string
   name?: string | null
   description?: string | null
@@ -561,30 +557,30 @@ export type DataSourceUncheckedCreateWithoutUserInput = {
   sourceLink?: Prisma.SourceLinkUncheckedCreateNestedManyWithoutDataSourceInput
 }
 
-export type DataSourceCreateOrConnectWithoutUserInput = {
+export type DataSourceCreateOrConnectWithoutProjectInput = {
   where: Prisma.DataSourceWhereUniqueInput
-  create: Prisma.XOR<Prisma.DataSourceCreateWithoutUserInput, Prisma.DataSourceUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.DataSourceCreateWithoutProjectInput, Prisma.DataSourceUncheckedCreateWithoutProjectInput>
 }
 
-export type DataSourceCreateManyUserInputEnvelope = {
-  data: Prisma.DataSourceCreateManyUserInput | Prisma.DataSourceCreateManyUserInput[]
+export type DataSourceCreateManyProjectInputEnvelope = {
+  data: Prisma.DataSourceCreateManyProjectInput | Prisma.DataSourceCreateManyProjectInput[]
   skipDuplicates?: boolean
 }
 
-export type DataSourceUpsertWithWhereUniqueWithoutUserInput = {
+export type DataSourceUpsertWithWhereUniqueWithoutProjectInput = {
   where: Prisma.DataSourceWhereUniqueInput
-  update: Prisma.XOR<Prisma.DataSourceUpdateWithoutUserInput, Prisma.DataSourceUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.DataSourceCreateWithoutUserInput, Prisma.DataSourceUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.DataSourceUpdateWithoutProjectInput, Prisma.DataSourceUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.DataSourceCreateWithoutProjectInput, Prisma.DataSourceUncheckedCreateWithoutProjectInput>
 }
 
-export type DataSourceUpdateWithWhereUniqueWithoutUserInput = {
+export type DataSourceUpdateWithWhereUniqueWithoutProjectInput = {
   where: Prisma.DataSourceWhereUniqueInput
-  data: Prisma.XOR<Prisma.DataSourceUpdateWithoutUserInput, Prisma.DataSourceUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.DataSourceUpdateWithoutProjectInput, Prisma.DataSourceUncheckedUpdateWithoutProjectInput>
 }
 
-export type DataSourceUpdateManyWithWhereWithoutUserInput = {
+export type DataSourceUpdateManyWithWhereWithoutProjectInput = {
   where: Prisma.DataSourceScalarWhereInput
-  data: Prisma.XOR<Prisma.DataSourceUpdateManyMutationInput, Prisma.DataSourceUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.DataSourceUpdateManyMutationInput, Prisma.DataSourceUncheckedUpdateManyWithoutProjectInput>
 }
 
 export type DataSourceScalarWhereInput = {
@@ -600,7 +596,7 @@ export type DataSourceScalarWhereInput = {
   isTrasposed?: Prisma.BoolFilter<"DataSource"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"DataSource"> | string | null
   isRemote?: Prisma.BoolFilter<"DataSource"> | boolean
-  userId?: Prisma.StringFilter<"DataSource"> | string
+  projectId?: Prisma.StringFilter<"DataSource"> | string
   createdAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DataSource"> | Date | string
 }
@@ -617,7 +613,7 @@ export type DataSourceCreateWithoutSourceLinkInput = {
   isRemote?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutDataSourceInput
+  project: Prisma.ProjectCreateNestedOneWithoutDataSourceInput
 }
 
 export type DataSourceUncheckedCreateWithoutSourceLinkInput = {
@@ -630,7 +626,7 @@ export type DataSourceUncheckedCreateWithoutSourceLinkInput = {
   isTrasposed?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -663,7 +659,7 @@ export type DataSourceUpdateWithoutSourceLinkInput = {
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutDataSourceNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutDataSourceNestedInput
 }
 
 export type DataSourceUncheckedUpdateWithoutSourceLinkInput = {
@@ -676,12 +672,12 @@ export type DataSourceUncheckedUpdateWithoutSourceLinkInput = {
   isTrasposed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type DataSourceCreateManyUserInput = {
+export type DataSourceCreateManyProjectInput = {
   id?: string
   name?: string | null
   description?: string | null
@@ -695,7 +691,7 @@ export type DataSourceCreateManyUserInput = {
   updatedAt?: Date | string
 }
 
-export type DataSourceUpdateWithoutUserInput = {
+export type DataSourceUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -710,7 +706,7 @@ export type DataSourceUpdateWithoutUserInput = {
   sourceLink?: Prisma.SourceLinkUpdateManyWithoutDataSourceNestedInput
 }
 
-export type DataSourceUncheckedUpdateWithoutUserInput = {
+export type DataSourceUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -725,7 +721,7 @@ export type DataSourceUncheckedUpdateWithoutUserInput = {
   sourceLink?: Prisma.SourceLinkUncheckedUpdateManyWithoutDataSourceNestedInput
 }
 
-export type DataSourceUncheckedUpdateManyWithoutUserInput = {
+export type DataSourceUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -780,10 +776,10 @@ export type DataSourceSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   isTrasposed?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   sourceLink?: boolean | Prisma.DataSource$sourceLinkArgs<ExtArgs>
   _count?: boolean | Prisma.DataSourceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dataSource"]>
@@ -798,10 +794,10 @@ export type DataSourceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   isTrasposed?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dataSource"]>
 
 export type DataSourceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -814,10 +810,10 @@ export type DataSourceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   isTrasposed?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dataSource"]>
 
 export type DataSourceSelectScalar = {
@@ -830,28 +826,28 @@ export type DataSourceSelectScalar = {
   isTrasposed?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DataSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "data" | "rules" | "publish" | "isTrasposed" | "remoteUrl" | "isRemote" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["dataSource"]>
+export type DataSourceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "data" | "rules" | "publish" | "isTrasposed" | "remoteUrl" | "isRemote" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["dataSource"]>
 export type DataSourceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   sourceLink?: boolean | Prisma.DataSource$sourceLinkArgs<ExtArgs>
   _count?: boolean | Prisma.DataSourceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DataSourceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 export type DataSourceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 
 export type $DataSourcePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DataSource"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs>
     sourceLink: Prisma.$SourceLinkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -864,7 +860,7 @@ export type $DataSourcePayload<ExtArgs extends runtime.Types.Extensions.Internal
     isTrasposed: boolean
     remoteUrl: string | null
     isRemote: boolean
-    userId: string
+    projectId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["dataSource"]>
@@ -1261,7 +1257,7 @@ readonly fields: DataSourceFieldRefs;
  */
 export interface Prisma__DataSourceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   sourceLink<T extends Prisma.DataSource$sourceLinkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DataSource$sourceLinkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourceLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1301,7 +1297,7 @@ export interface DataSourceFieldRefs {
   readonly isTrasposed: Prisma.FieldRef<"DataSource", 'Boolean'>
   readonly remoteUrl: Prisma.FieldRef<"DataSource", 'String'>
   readonly isRemote: Prisma.FieldRef<"DataSource", 'Boolean'>
-  readonly userId: Prisma.FieldRef<"DataSource", 'String'>
+  readonly projectId: Prisma.FieldRef<"DataSource", 'String'>
   readonly createdAt: Prisma.FieldRef<"DataSource", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DataSource", 'DateTime'>
 }

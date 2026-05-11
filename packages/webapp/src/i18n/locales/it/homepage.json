@@ -1,0 +1,32 @@
+{
+    "hero": {
+        "chip": "Dai forma ai tuoi dati",
+        "title": "<block>Racconta i tuoi dati in modo semplice</block> <gradient>trasformandoli in grafici</gradient> <withBlock>semplici e accessibili</withBlock>",
+        "description": "Usa Graph Italia per convertire la tua base dati da un file CSV in grafici interattivi. L’interfaccia intuitiva rende l’utilizzo della piattaforma semplice e accessibile a tutti.",
+        "ctas": {
+            "getStarted": "Accedi",
+            "quickStart": "Come usare Graph Italia"
+        }
+    },
+    "contentBlock": {
+        "tag": "Come funziona",
+        "title": "Come usare Graph Italia",
+        "features": {
+            "easyToUse": {
+                "title": "Carica i tuoi dati",
+                "content": "Se hai già una base dati per creare il grafico, carica il file in versione CSV, in alternativa, puoi utilizzare i dati di esempio disponibili su Graph Italia."
+            },
+            "customization": {
+                "title": "Crea e personalizza il tuo grafico",
+                "content": "Seleziona la tipologia di grafico che vuoi creare e personalizzalo scegliendo le impostazioni che meglio lo possono rappresentare."
+            },
+            "saveAndShare": {
+                "title": "Salva, Condividi e Pubblica",
+                "content": "Una volta completato, potrai salvare il grafico e rivederlo in un secondo momento oppure, pubblicarlo e ottenere il link da utilizzare all’interno della tua pagina o sito."
+            }
+        },
+        "ctas": {
+            "getStarted": "Accedi"
+        }
+    }
+}

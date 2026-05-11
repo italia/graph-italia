@@ -1,6 +1,29 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
+// Prevents duplicate in-flight mutation requests for the same resource.
+// Key format: "<verb>:<resource>:<id>" e.g. "upsert:chart:abc" or "upsert:chart:new"
+const pendingMutations = new Set<string>();
+async function withMutationGuard<T>(key: string, fn: () => Promise<T>): Promise<T | null> {
+  if (pendingMutations.has(key)) return null;
+  pendingMutations.add(key);
+  try {
+    return await fn();
+  } finally {
+    pendingMutations.delete(key);
+  }
+}
+
+// Interceptor to inject the active project ID into all requests
+axios.interceptors.request.use((config) => {
+  const projectId = localStorage.getItem("currentProjectId");
+  if (projectId) {
+    config.headers["x-project-id"] = projectId;
+  }
+  return config;
+});
+
+
 // Runtime configuration loaded from ConfigMap (in Kubernetes) or from /config.json
 // The config is loaded at app startup in main.tsx and stored in window.__ENV__
 // Falls back to import.meta.env (from .env file at build-time) for development, then to default
@@ -82,21 +105,19 @@ export async function showChart(id: string) {
   return null;
 }
 
-/** Upsert */
+/** Upsert — creates (POST→201) or updates (PUT→200). Concurrent calls for the same resource are dropped. */
 export async function upsertChart(payload: any, id?: string) {
-  const url = id
-    ? `${getServerUrlWithApi()}/charts/${id}`
-    : `${getServerUrlWithApi()}/charts/`;
-  const method = id ? "PUT" : "POST";
-
-  const response = await (method === "PUT"
-    ? axios.put(url, payload)
-    : axios.post(url, payload));
-  if (response.status === 200) {
-    return response.data;
-  }
-
-  return null;
+  const lockKey = id ? `upsert:chart:${id}` : "upsert:chart:new";
+  return withMutationGuard(lockKey, async () => {
+    const url = id
+      ? `${getServerUrlWithApi()}/charts/${id}`
+      : `${getServerUrlWithApi()}/charts/`;
+    const response = await (id ? axios.put(url, payload) : axios.post(url, payload));
+    if (response.status === 200 || response.status === 201) {
+      return response.data as { id: string };
+    }
+    return null;
+  });
 }
 
 /** Delete */
@@ -183,7 +204,7 @@ export async function verify({ uid, code }: { uid: string; code: string }) {
     if (response.status === 200) {
       return true;
     }
-  } catch (error: any) {
+  } catch (error) {
     console.log("verify ERROR", error?.message);
     throw error;
   }
@@ -204,16 +225,13 @@ export async function changePasssword({ password }: { password: string }) {
   }
 }
 
-export async function activate() {
-  try {
-    const response = await axios.post(`${getServerUrlWithApi()}/auth/init`);
-    if (response.status === 200) {
-      return true;
-    }
-  } catch (error: any) {
-    console.log("changePasssword ERROR", error?.message);
-    throw error;
+/** reset password via recovery code (uid + pin from email + new password) */
+export async function resetPassword({ uid, code, password }: { uid: string; code: string; password: string }) {
+  const response = await axios.post(`${getServerUrlWithApi()}/auth/reset-password`, { uid, code, password });
+  if (response.status === 200) {
+    return true;
   }
+  return false;
 }
 /** ask pin code */
 export async function recoverPasssword(email: string) {
@@ -226,6 +244,19 @@ export async function recoverPasssword(email: string) {
     }
   } catch (error: any) {
     console.log("recoverPasssword ERROR", error?.message);
+    throw error;
+  }
+}
+
+/** re-send activation email for an unverified account */
+export async function resendActivation(email: string) {
+  try {
+    const response = await axios.post(`${getServerUrlWithApi()}/auth/resend`, {
+      email,
+    });
+    return response.status === 200;
+  } catch (error: any) {
+    console.log("resendActivation ERROR", error?.message);
     throw error;
   }
 }
@@ -243,6 +274,7 @@ export function redirectToLoginOidc() {
 export interface DashboardDetail {
   name: string;
   description: string;
+  publish: boolean;
   slots: {
     settings: {
       i: `item-${number}`;
@@ -293,6 +325,17 @@ export async function updateSlots(
 ) {
   const response = await axios.put(
     `${getServerUrlWithApi()}/dashboards/${id}/slots`,
+    body
+  );
+  return response.status === 200;
+}
+
+export async function updateDashboard(
+  id: string,
+  body: { name: string, description: string, publish: boolean }
+) {
+  const response = await axios.put(
+    `${getServerUrlWithApi()}/dashboards/${id}`,
     body
   );
   return response.status === 200;
@@ -375,3 +418,266 @@ export async function saveKpiGroup({
   );
   return Boolean(response.data.id);
 }
+/** API KEYS calls */
+
+export interface ApiKey {
+  id: string;
+  prefix: string;
+  rawKey?: string; // only present on creation response
+  role: string;
+  expire: number;
+  revokedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  projectId: string;
+  project?: Project;
+}
+
+export async function getApiKeys(): Promise<ApiKey[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/apikeys`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function createApiKey(payload: {
+  role: string;
+  expire: number;
+  projectId?: string;
+}): Promise<ApiKey | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/apikeys`, payload);
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function deleteApiKey(id: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/apikeys/${id}`);
+  return response.status === 204;
+}
+
+export async function revokeApiKey(id: string): Promise<ApiKey | null> {
+  const response = await axios.patch(`${getServerUrlWithApi()}/apikeys/${id}/revoke`);
+  if (response.status === 200) return response.data;
+  return null;
+}
+
+export async function reinstateApiKey(id: string): Promise<ApiKey | null> {
+  const response = await axios.patch(`${getServerUrlWithApi()}/apikeys/${id}/reinstate`);
+  if (response.status === 200) return response.data;
+  return null;
+}
+
+export async function getApiKeyLogs(id: string, limit = 100) {
+  const response = await axios.get(`${getServerUrlWithApi()}/apikeys/${id}/logs?limit=${limit}`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+/** ORGANIZATION calls */
+
+export interface Organization {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  members?: OrganizationMember[];
+}
+
+export interface OrganizationMember {
+  userId: string;
+  orgId: string;
+  role: "USER" | "ADMIN";
+  createdAt: string;
+  updatedAt: string;
+  user?: {
+    id: string;
+    email: string;
+  };
+}
+
+
+export async function getOrgs(): Promise<Organization[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function getOrgDetail(orgId: string): Promise<Organization | null> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs/${orgId}`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function createOrg(name: string): Promise<Organization | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/orgs`, { name });
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function updateOrg(orgId: string, name: string): Promise<Organization | null> {
+  const response = await axios.put(`${getServerUrlWithApi()}/orgs/${orgId}`, { name });
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function deleteOrg(orgId: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/orgs/${orgId}`);
+  return response.status === 204;
+}
+
+export async function getOrgMembers(orgId: string): Promise<OrganizationMember[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs/${orgId}/members`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function addOrgMember(orgId: string, email: string, role: string): Promise<OrganizationMember | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/orgs/${orgId}/members`, { email, role });
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+
+export async function updateOrgMemberRole(orgId: string, userId: string, role: string): Promise<OrganizationMember | null> {
+  const response = await axios.put(`${getServerUrlWithApi()}/orgs/${orgId}/members/${userId}`, { role });
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function removeOrgMember(orgId: string, userId: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/orgs/${orgId}/members/${userId}`);
+  return response.status === 204;
+}
+
+/** PROJECT calls */
+
+export interface Project {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+  owner?: {
+    id: string;
+    email: string;
+  };
+  orgs?: {
+    org: {
+      id: string;
+      name: string;
+    };
+  }[];
+}
+
+
+
+export async function getProjects(): Promise<Project[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/projects`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function createProject(payload: { name: string }): Promise<Project | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/projects`, payload);
+  if (response.status === 201) {
+    return response.data;
+  }
+  return null;
+}
+
+export async function getOrgProjects(orgId: string): Promise<Project[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/orgs/${orgId}/projects`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function getPersonalProjects(): Promise<Project[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/projects/personal`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return [];
+}
+
+export async function transferProjectToOrg(projectId: string, orgId: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/projects/${projectId}/orgs`, { orgId });
+  return response.status === 201;
+}
+
+export async function revokeOrgFromProject(projectId: string, orgId: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/projects/${projectId}/orgs/${orgId}`);
+  return response.status === 204;
+}
+
+export async function updateProject(projectId: string, payload: { name: string }): Promise<Project | null> {
+  const response = await axios.put(`${getServerUrlWithApi()}/projects/${projectId}`, payload);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return null;
+}
+
+// ── Admin ────────────────────────────────────────────────────────────────────
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  verified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  ownedProjects: { id: string; name: string }[];
+  projectMember: { project: { id: string; name: string } }[];
+  memberships: { org: { name: string; projects: { project: { id: string; name: string } }[] } }[];
+}
+
+export async function adminGetUsers(): Promise<AdminUser[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/admin/users`);
+  if (response.status === 200) return response.data;
+  return [];
+}
+
+export async function adminDeleteUser(id: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/admin/users/${id}`);
+  return response.status === 200;
+}
+
+export async function adminActivateUser(id: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/activate`);
+  return response.status === 200;
+}
+
+export async function adminResendActivation(id: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/resend-activation`);
+  return response.status === 200;
+}
+
+export async function adminResetPassword(id: string): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/reset-password`);
+  return response.status === 200;
+}
+
+
+

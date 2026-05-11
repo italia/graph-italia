@@ -98,8 +98,8 @@ export default function ChooseLoader({
             type="button"
             key={tab.id}
             role="tab"
-            className={`tab gap-2 transition-all ${currentTab === tab.id
-              ? "tab-active bg-base-100 shadow-sm"
+            className={`tab gap-2 transition-all text-base-content ${currentTab === tab.id
+              ? "tab-active bg-base-100 shadow-sm font-semibold"
               : "hover:bg-base-100/50"
               }`}
             onClick={() => setCurrentTab(tab.id)}
@@ -143,7 +143,7 @@ export default function ChooseLoader({
                 />
                 <span className="label-text ml-2">CSV</span>
               </label>
-              <label className="cursor-pointer label " htmlFor="json_val">
+              <label className="cursor-pointer label " htmlFor="json_value">
                 <input
                   id="json_value"
                   type="radio"

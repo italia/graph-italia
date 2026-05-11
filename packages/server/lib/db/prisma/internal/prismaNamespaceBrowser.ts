@@ -51,8 +51,15 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Project: 'Project',
+  ProjectMember: 'ProjectMember',
+  OrgProject: 'OrgProject',
+  Org: 'Org',
+  Membership: 'Membership',
   User: 'User',
-  Code: 'Code',
+  ApiKey: 'ApiKey',
+  ApiLog: 'ApiLog',
+  VerificationCode: 'VerificationCode',
   DataSource: 'DataSource',
   Chart: 'Chart',
   SourceLink: 'SourceLink',
@@ -76,11 +83,64 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  ownerId: 'ownerId'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectMemberScalarFieldEnum = {
+  userId: 'userId',
+  projectId: 'projectId',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
+
+
+export const OrgProjectScalarFieldEnum = {
+  orgId: 'orgId',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrgProjectScalarFieldEnum = (typeof OrgProjectScalarFieldEnum)[keyof typeof OrgProjectScalarFieldEnum]
+
+
+export const OrgScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrgScalarFieldEnum = (typeof OrgScalarFieldEnum)[keyof typeof OrgScalarFieldEnum]
+
+
+export const MembershipScalarFieldEnum = {
+  userId: 'userId',
+  orgId: 'orgId',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   password: 'password',
-  verifyed: 'verifyed',
+  verified: 'verified',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -89,16 +149,47 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const CodeScalarFieldEnum = {
+export const ApiKeyScalarFieldEnum = {
+  id: 'id',
+  prefix: 'prefix',
+  keyHash: 'keyHash',
+  role: 'role',
+  expire: 'expire',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  projectId: 'projectId'
+} as const
+
+export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+
+
+export const ApiLogScalarFieldEnum = {
+  id: 'id',
+  method: 'method',
+  endpoint: 'endpoint',
+  status: 'status',
+  responseTime: 'responseTime',
+  timestamp: 'timestamp',
+  projectName: 'projectName',
+  apiKeyId: 'apiKeyId'
+} as const
+
+export type ApiLogScalarFieldEnum = (typeof ApiLogScalarFieldEnum)[keyof typeof ApiLogScalarFieldEnum]
+
+
+export const VerificationCodeScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  type: 'type',
   expire: 'expire',
+  consumedAt: 'consumedAt',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type CodeScalarFieldEnum = (typeof CodeScalarFieldEnum)[keyof typeof CodeScalarFieldEnum]
+export type VerificationCodeScalarFieldEnum = (typeof VerificationCodeScalarFieldEnum)[keyof typeof VerificationCodeScalarFieldEnum]
 
 
 export const DataSourceScalarFieldEnum = {
@@ -111,7 +202,7 @@ export const DataSourceScalarFieldEnum = {
   isTrasposed: 'isTrasposed',
   remoteUrl: 'remoteUrl',
   isRemote: 'isRemote',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -130,8 +221,7 @@ export const ChartScalarFieldEnum = {
   publish: 'publish',
   remoteUrl: 'remoteUrl',
   isRemote: 'isRemote',
-  preview: 'preview',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -155,7 +245,7 @@ export const DashboardScalarFieldEnum = {
   name: 'name',
   description: 'description',
   publish: 'publish',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -207,6 +297,14 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -214,12 +312,4 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

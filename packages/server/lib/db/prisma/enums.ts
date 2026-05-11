@@ -15,3 +15,35 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const ApiKeyRole = {
+  READONLY: 'READONLY',
+  READWRITE: 'READWRITE'
+} as const
+
+export type ApiKeyRole = (typeof ApiKeyRole)[keyof typeof ApiKeyRole]
+
+
+export const OrgRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+} as const
+
+export type OrgRole = (typeof OrgRole)[keyof typeof OrgRole]
+
+
+export const ProjectRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+} as const
+
+export type ProjectRole = (typeof ProjectRole)[keyof typeof ProjectRole]
+
+
+export const CodeType = {
+  ACTIVATION: 'ACTIVATION',
+  RECOVERY: 'RECOVERY'
+} as const
+
+export type CodeType = (typeof CodeType)[keyof typeof CodeType]

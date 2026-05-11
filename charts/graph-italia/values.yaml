@@ -1,0 +1,473 @@
+# Default values for graph-italia
+# This is a template file - actual values should be stored in the cluster
+# and reused with --reuse-values flag
+
+replicaCount: 1
+
+imageRegistry: ghcr.io
+imageRepository: italia
+
+# Image pull secret for private registry (optional)
+# If imagePullSecret.token is set, a secret will be created automatically
+imagePullSecret:
+  enabled: false
+  token: ""  # GitHub Personal Access Token or GITHUB_TOKEN
+  username: ""  # Optional, defaults to github.repository_owner
+
+# =============================================================================
+# DATABASE MIGRATION (Helm pre-upgrade/pre-install hook)
+# =============================================================================
+# Supported modes:
+# - auto: use migrate deploy when versioned migrations exist, otherwise fallback to db push
+# - migrateDeploy: force prisma migrate deploy (fails if no migration files)
+# - dbPush: force legacy prisma db push
+dbMigration:
+  enabled: false
+  mode: auto
+  # In auto mode, allow fallback to db push when no migration files are found.
+  # Keep true for backward compatibility with legacy releases.
+  # Set false to fail fast and avoid accidental schema drift.
+  allowLegacyDbPushFallback: true
+  # Automatically migrates legacy schema (userId-based) to project-based schema
+  # before running Prisma migrations. Recommended for one-time transition.
+  legacySchemaAutoMigrate: true
+  # Applies only to the legacy prisma db push fallback path.
+  # Ignored when prisma migrate deploy is used.
+  acceptDataLoss: false
+  # How long to keep the job after completion (seconds)
+  ttlSecondsAfterFinished: 300
+  # Number of retries before marking as failed
+  backoffLimit: 3
+  # Optional: use DATABASE_URL from an existing secret instead of server.env
+  # databaseUrlFromSecret:
+  #   secretName: "graph-italia-db-credentials"
+  #   key: "DATABASE_URL"
+
+# =============================================================================
+# DATABASE SEEDING (Helm pre-upgrade/pre-install hook)
+# =============================================================================
+# Seeds initial users after migration. Idempotent - skips existing users.
+dbSeed:
+  enabled: false
+  # How long to keep the job after completion (seconds)
+  ttlSecondsAfterFinished: 300
+  # Number of retries before marking as failed
+  backoffLimit: 3
+  # Optional: use DATABASE_URL from an existing secret
+  # databaseUrlFromSecret:
+  #   secretName: "graph-italia-db-credentials"
+  #   key: "DATABASE_URL"
+  # Users to seed (if not set, uses default users from seed script)
+  # These will be exposed as SEED_USERS env var (JSON array)
+  users: []
+    # - email: "admin@example.com"
+    #   password: "secure-password-here"
+    #   verified: true
+    # - email: "user@example.com"
+    #   password: "another-secure-password"
+    #   verified: true
+
+webapp:
+  enabled: true
+  image:
+    repository: graph-italia-webapp
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  # Node scheduling (optional)
+  nodeSelector: {}
+    # agentpool: applications
+  tolerations: []
+    # - key: "workload"
+    #   operator: "Equal"
+    #   value: "applications"
+    #   effect: "NoSchedule"
+  affinity: {}
+  # Prometheus metrics scraping
+  prometheus:
+    enabled: false
+    port: 8080
+    path: "/nginx_status"
+  service:
+    type: ClusterIP
+    port: 80
+  config:
+    # Runtime configuration via ConfigMap
+    # This allows using the same build image across different environments
+    serverUrl: ""  # e.g., "http://graph-italia-server:3003" or "https://api.example.com"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  # Horizontal Pod Autoscaler
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+  # Security context (Pod level)
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101  # nginx user
+    fsGroup: 101
+    seccompProfile:
+      type: RuntimeDefault
+    # AppArmor profile (Kubernetes 1.30+)
+    # Types: RuntimeDefault, Localhost, Unconfined
+    appArmorProfile:
+      type: RuntimeDefault
+  # Container security context
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  # Additional pod annotations (e.g., for custom security policies)
+  podAnnotations: {}
+  # Volumes for readonly root filesystem
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: var-tmp
+      emptyDir: {}
+    - name: var-cache-nginx
+      emptyDir: {}
+    - name: var-run-nginx
+      emptyDir: {}
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: var-tmp
+      mountPath: /var/tmp
+    - name: var-cache-nginx
+      mountPath: /var/cache/nginx
+    - name: var-run-nginx
+      mountPath: /var/run
+  # Health check configuration
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+server:
+  enabled: true
+  image:
+    repository: graph-italia-srv
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  # Node scheduling (optional)
+  nodeSelector: {}
+    # agentpool: applications
+  tolerations: []
+    # - key: "workload"
+    #   operator: "Equal"
+    #   value: "applications"
+    #   effect: "NoSchedule"
+  affinity: {}
+  # Prometheus metrics scraping
+  prometheus:
+    enabled: false
+    port: 3003
+    path: "/metrics"
+  service:
+    type: ClusterIP
+    port: 3003
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  env:
+    # These are example values - actual values should be set in the cluster
+    PORT: "3003"
+    HOST: ""
+    DOMAINS: ""
+    UPLOAD_SIZE_LIMIT: "15mb"
+    ROUTES_PREFIX: ""
+    DATABASE_URL: ""
+    # Add other environment variables as needed
+  # Horizontal Pod Autoscaler
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+  # Security context (Pod level)
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000  # bun user
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+    # AppArmor profile (Kubernetes 1.30+)
+    # Types: RuntimeDefault, Localhost, Unconfined
+    appArmorProfile:
+      type: RuntimeDefault
+  # Container security context
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  # Additional pod annotations (e.g., for custom security policies)
+  podAnnotations: {}
+  # Volumes for readonly root filesystem
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: var-tmp
+      emptyDir: {}
+  volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: var-tmp
+      mountPath: /var/tmp
+  # Health check configuration
+  # Note: paths should match ROUTES_PREFIX (e.g., /api if ROUTES_PREFIX=/api)
+  # 
+  # livenessProbe: Is the app alive? (restart if fails)
+  # readinessProbe: Is the app ready to serve traffic? (no traffic if fails)
+  # startupProbe: Did the app start correctly? (gives more time for initial startup)
+  #
+  # The /health/ready endpoint verifies database connectivity, preventing
+  # traffic to pods with broken database connections (like Prisma version mismatch)
+  livenessProbe:
+    httpGet:
+      path: /api
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /api/health/ready  # Deep check: verifies database connection
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  startupProbe:
+    httpGet:
+      path: /api/health/ready  # Verify DB on startup before receiving traffic
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 30  # 30 * 5s = 150s max startup time
+
+# Unified Ingress configuration
+# Supports both single host with paths and multiple hosts
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  # ==========================================================================
+  # ModSecurity WAF Configuration
+  # ==========================================================================
+  # Enable ModSecurity Web Application Firewall for protection against
+  # OWASP Top 10 vulnerabilities (SQLi, XSS, etc.)
+  modsecurity:
+    enabled: false
+    # SecRuleEngine: On (block), DetectionOnly (log only), Off
+    # Start with DetectionOnly to test, then switch to On
+    secRuleEngine: "DetectionOnly"
+    # OWASP Core Rule Set - provides protection against common attacks
+    owasp: true
+    # Custom rules and exclusions to prevent false positives
+    # These are tuned for modern web applications with JSON APIs
+    customRules: |
+      # Paranoia Level 1 (default, less false positives)
+      SecAction "id:900000,phase:1,nolog,pass,t:none,setvar:tx.paranoia_level=1"
+      
+      # Increase body limits for file uploads (match UPLOAD_SIZE_LIMIT)
+      SecRequestBodyLimit 16777216
+      SecRequestBodyNoFilesLimit 1048576
+      
+      # Exclude common false positives for JSON APIs
+      SecRuleRemoveById 920420
+      SecRuleRemoveById 942100
+      SecRuleRemoveById 942200
+      SecRuleRemoveById 942260
+      SecRuleRemoveById 942340
+      SecRuleRemoveById 942370
+      SecRuleRemoveById 942430
+      SecRuleRemoveById 942431
+      SecRuleRemoveById 942432
+      
+      # Allow JWT tokens in Authorization header
+      SecRuleRemoveById 942450
+      
+      # Exclude /api paths from some strict rules that break JSON
+      SecRule REQUEST_URI "@beginsWith /api" "id:1000,phase:1,nolog,pass,ctl:ruleRemoveById=921180"
+  # ==========================================================================
+  # Rate Limiting
+  # ==========================================================================
+  rateLimit:
+    enabled: false
+    # Requests per second per client IP
+    rps: 10
+    # Burst size (concurrent connections)
+    burst: 20
+    # Connections per IP
+    connections: 10
+  # Single host mode: set host and paths
+  # If host is set, paths will be used for routing
+  host: ""  # e.g., "graph-italia.example.com"
+  paths:
+    webapp:
+      path: "/"
+      pathType: Prefix
+    server:
+      path: "/api"
+      pathType: Prefix
+  # Multiple hosts mode: set hosts array
+  # If hosts array is set, it takes precedence over single host mode
+  hosts: []
+    # - host: webapp.graph-italia.example.com
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       service: webapp
+    # - host: api.graph-italia.example.com
+    #   paths:
+    #     - path: /
+    #       pathType: Prefix
+    #       service: server
+  tls: []
+    # - secretName: graph-italia-tls
+    #   hosts:
+    #     - graph-italia.example.com
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1  # Alternative to minAvailable
+
+# Network Policy
+networkPolicy:
+  enabled: false
+  allowSameNamespace: true
+  allowDNS: true
+  ingressNamespace: "ingress-nginx"
+  # Additional ingress rules (raw NetworkPolicy format)
+  ingress: []
+    # - from:
+    #     - namespaceSelector:
+    #         matchLabels:
+    #           name: monitoring
+  # Additional egress rules (raw NetworkPolicy format)
+  egress: []
+  # ==========================================================================
+  # Server Egress Configuration (structured)
+  # ==========================================================================
+  # Pre-defined egress rules for the server component
+  serverEgress:
+    # PostgreSQL database access
+    postgresql:
+      enabled: false
+      # IP address of the PostgreSQL server (use /32 for single IP)
+      # This should be set per environment (test/prod have different DBs)
+      cidr: ""  # e.g., "172.213.241.163/32"
+      port: 5432
+    # External HTTPS APIs (OpenAI, Resend, etc.)
+    # These services use Cloudflare CDN, so we allow all Cloudflare IP ranges
+    cloudflareAPIs:
+      enabled: false
+      port: 443
+      # Official Cloudflare IPv4 ranges (from https://www.cloudflare.com/ips-v4)
+      # Last updated: 2026-01-15
+      cidrs:
+        - "173.245.48.0/20"
+        - "103.21.244.0/22"
+        - "103.22.200.0/22"
+        - "103.31.4.0/22"
+        - "141.101.64.0/18"
+        - "108.162.192.0/18"
+        - "190.93.240.0/20"
+        - "188.114.96.0/20"
+        - "197.234.240.0/22"
+        - "198.41.128.0/17"
+        - "162.158.0.0/15"
+        - "104.16.0.0/13"
+        - "104.24.0.0/14"
+        - "172.64.0.0/13"
+        - "131.0.72.0/22"
+    # Custom external endpoints (for services not behind Cloudflare)
+    custom: []
+      # - name: "custom-api"
+      #   cidr: "1.2.3.4/32"
+      #   port: 443
+
+# =============================================================================
+# MONITORING & OBSERVABILITY
+# =============================================================================
+monitoring:
+  # ServiceMonitor for Prometheus Operator
+  serviceMonitor:
+    enabled: false
+    # Labels to add to ServiceMonitor (for Prometheus selector)
+    labels: {}
+      # release: prometheus
+    # Scrape interval
+    interval: "30s"
+    # Scrape timeout
+    scrapeTimeout: "10s"
+    # Metric relabeling configs
+    metricRelabelings: []
+
+  # PrometheusRule for alerting
+  prometheusRule:
+    enabled: false
+    # Labels to add to PrometheusRule (for Prometheus selector)
+    labels: {}
+      # release: prometheus
+
+  # Grafana Dashboard as ConfigMap
+  grafanaDashboard:
+    enabled: false
+    # Labels for Grafana sidecar discovery
+    labels: {}
+      # grafana_dashboard: "1"
+    # Namespace where Grafana is deployed (for dashboard ConfigMap)
+    namespace: ""  # e.g., "monitoring"
+
+  # AlertmanagerConfig for email notifications
+  alertmanagerConfig:
+    enabled: false
+    # Email recipients (comma-separated)
+    emailTo: ""
+    # Email sender
+    emailFrom: ""  # TBD: email sender for graph.developers.italia.it
+    # SMTP server
+    smarthost: "smtp.eu.mailgun.org:587"
+    # SMTP authentication
+    authUsername: ""  # TBD: SMTP auth for graph.developers.italia.it
+    # Secret containing SMTP password
+    authPasswordSecret: "alertmanager-smtp-secret"
+    authPasswordKey: "password"
+
+# Global settings
+global:
+  namespace: ""

@@ -1,5 +1,5 @@
 # RBAC configuration for GitHub Actions deployer
-# Grants permissions to deploy Helm charts to dataviz and dataviz-test namespaces
+# Grants permissions to deploy Helm charts to graph-italia and graph-italia-test namespaces
 ---
 # ClusterRole with permissions needed for Helm deployments
 apiVersion: rbac.authorization.k8s.io/v1
@@ -62,31 +62,31 @@ rules:
       - alertmanagerconfigs
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
-# RoleBinding for dataviz namespace
+# RoleBinding for graph-italia namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: github-actions-deployer-binding
-  namespace: dataviz
+  namespace: graph-italia
 subjects:
   - kind: ServiceAccount
     name: github-actions-deployer
-    namespace: dataviz
+    namespace: graph-italia
 roleRef:
   kind: ClusterRole
   name: helm-deployer
   apiGroup: rbac.authorization.k8s.io
 ---
-# RoleBinding for dataviz-test namespace
+# RoleBinding for graph-italia-test namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: github-actions-deployer-binding
-  namespace: dataviz-test
+  namespace: graph-italia-test
 subjects:
   - kind: ServiceAccount
     name: github-actions-deployer
-    namespace: dataviz
+    namespace: graph-italia
 roleRef:
   kind: ClusterRole
   name: helm-deployer
@@ -96,12 +96,12 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: dataviz-deployer-binding
+  name: graph-italia-deployer-binding
   namespace: monitoring
 subjects:
   - kind: ServiceAccount
     name: github-actions-deployer
-    namespace: dataviz
+    namespace: graph-italia
 roleRef:
   kind: ClusterRole
   name: helm-deployer

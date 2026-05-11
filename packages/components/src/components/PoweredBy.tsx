@@ -1,0 +1,60 @@
+import React from "react";
+import "./poweredBy.css";
+import { useResolvedTheme } from "../context/ColorSchemeContext";
+
+export type PoweredByProps = {
+  label?: string;
+  className?: string;
+};
+
+const GraphItaliaIcon = () => (
+  <svg
+    className="cw-powered-by-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="395 400 255 245"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      className="cw-powered-by-icon__shape"
+      opacity=".3"
+      d="M453.5,644.5h146.8c12.7,0,25.9-5.5,34.9-14.5,8.6-8.6,15-22.6,14.5-34.9-1.2-26.7-21.7-49.3-49.3-49.3h-146.8c-12.7,0-25.9,5.5-34.9,14.5-8.6,8.6-15,22.6-14.5,34.9,1.2,26.7,21.7,49.3,49.3,49.3h0Z"
+    />
+    <path
+      className="cw-powered-by-icon__shape"
+      d="M502.8,595.2v-143.9c0-12.7-5.5-25.9-14.5-34.9-8.6-8.6-22.6-15-34.9-14.5-26.7,1.2-49.3,21.7-49.3,49.3v143.9c0,12.7,5.5,25.9,14.5,34.9,8.6,8.6,22.6,15,34.9,14.5,26.7-1.2,49.3-21.7,49.3-49.3h0Z"
+    />
+    <path
+      className="cw-powered-by-icon__shape"
+      opacity=".6"
+      d="M484.2,633.4c33-26,66-52,99.1-78l14-11c9.9-7.8,17-20.4,18.5-32.9,1.4-12-2.2-27-10.2-36.4-17.5-20.3-47.6-25.4-69.3-8.3-33,26-66,52-99.1,78-4.7,3.7-9.4,7.4-14,11-9.9,7.8-17,20.4-18.5,32.9-1.4,12,2.2,27,10.2,36.4,17.5,20.3,47.6,25.4,69.3,8.3h0Z"
+    />
+  </svg>
+);
+
+export default function PoweredBy({ label, className = "cw-powered-by" }: PoweredByProps) {
+  const resolvedTheme = useResolvedTheme();
+  const themeClass = typeof resolvedTheme === "string" ? resolvedTheme : "";
+
+  if (label === "") return null;
+
+  const composedClassName = `${themeClass} ${className}`.trim();
+
+  if (label === undefined) {
+    return (
+      <div className={composedClassName}>
+        Generato con <GraphItaliaIcon />{" "}
+        <a
+          href="https://graph.italia.it/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cw-powered-by-link"
+        >
+          Graph Italia
+        </a>
+      </div>
+    );
+  }
+
+  return <div className={composedClassName}>{label}</div>;
+}

@@ -8,7 +8,7 @@ edition: 2026-01-30
 organization:
   # Name of your organization or company, used to determine the name of the client
   # and headings.
-  name: dataviz-api-sdk
+  name: graph-italia-api-sdk
   # Link to your API documentation.
   docs: ''
   # Contact email for bug reports, questions, and support requests.
@@ -22,7 +22,7 @@ targets:
     #
     # [docs]: https://www.stainless.com/docs/reference/editions
     edition: typescript.2025-10-10
-    package_name: dataviz-api-sdk
+    package_name: graph-italia-api-sdk
     production_repo: null
     publish:
       npm: false
@@ -31,8 +31,8 @@ targets:
 # "production") to the corresponding url to use.
 environments:
   production: http://localhost:3000
-  test: http://dataviz-test.innovazione.gov.it
-  environment_2: http://dataviz.innovazione.gov.it
+  test: http://graph-test.developers.italia.it
+  environment_2: http://graph.developers.italia.it
 
 # `resources` define the structure and organization for your API, such as how
 # methods and models are grouped together and accessed. See the [configuration
@@ -87,7 +87,7 @@ client_settings:
       nullable: false
       auth:
         security_scheme: bearerAuth
-      read_env: DATAVIZ_API_SDK_API_KEY
+      read_env: GRAPH_ITALIA_API_SDK_API_KEY
 
 # `readme` is used to configure the code snippets that will be rendered in the
 # README.md of various SDKs. In particular, you can change the `headline`

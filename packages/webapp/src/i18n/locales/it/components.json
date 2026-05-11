@@ -3,57 +3,57 @@
         "auth": {
             "changePasswordForm": {
                 "header": {
-                    "label": "Choose a new Password"
+                    "label": "Scegli una nuova password"
                 },
                 "form": {
                     "fields": {
                         "password": {
                             "label": "Password",
                             "errors": {
-                                "required": "This field is required",
-                                "minLength": "Password must be at least 8 characters long",
-                                "uppercase": "Password must have at least one uppercase letter",
-                                "lowercase": "Password must have at least one lowercase letter",
-                                "number": "Must contain a number",
-                                "specialChar": "Must contain at least one special character"
+                                "required": "Questo campo è obbligatorio",
+                                "minLength": "La password deve essere di almeno 8 caratteri",
+                                "uppercase": "La password deve contenere almeno una lettera maiuscola",
+                                "lowercase": "La password deve contenere almeno una lettera minuscola",
+                                "number": "Deve contenere un numero",
+                                "specialChar": "Deve contenere almeno un carattere speciale"
                             }
                         },
                         "confirmPassword": {
-                            "label": "Confirm Password",
+                            "label": "Conferma password",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Questo campo è obbligatorio"
                             }
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Passwords do not match"
+                        "passwordDontMatch": "Le password non corrispondono"
                     },
                     "actions": {
                         "submit": {
-                            "label": "Change Password"
+                            "label": "Cambia password"
                         }
                     }
                 }
             },
             "recoverPwdForm": {
                 "header": {
-                    "label": "Insert your email"
+                    "label": "Inserisci la tua email"
                 },
                 "form": {
                     "fields": {
                         "email": {
-                            "label": "Email address",
+                            "label": "Indirizzo email",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Questo campo è obbligatorio"
                             }
                         }
                     },
                     "actions": {
                         "submit": {
-                            "label": "Recover Password",
+                            "label": "Recupera password",
                             "messages": {
-                                "error": "Error while recovering password",
-                                "success": "Check Your Email"
+                                "error": "Errore durante il recupero della password",
+                                "success": "Controlla la tua email"
                             }
                         }
                     }
@@ -61,108 +61,114 @@
             },
             "signin": {
                 "header": {
-                    "label": "Sign in to your account"
+                    "label": "Accedi al tuo account"
                 },
                 "form": {
                     "fields": {
                         "email": {
-                            "label": "Email address",
+                            "label": "Indirizzo email",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Questo campo è obbligatorio"
                             }
                         },
                         "password": {
                             "label": "Password",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Questo campo è obbligatorio"
                             }
                         }
                     },
                     "actions": {
                         "submit": {
-                            "label": "Sign In"
+                            "label": "Accedi"
                         },
                         "recoverPassword": {
-                            "label": "Forgot password?"
+                            "label": "Password dimenticata?"
+                        },
+                        "resend": {
+                            "label": "Non hai ricevuto l'email di attivazione? Inviala di nuovo",
+                            "success": "Email di attivazione inviata. Controlla la tua casella di posta.",
+                            "tooMany": "Troppi tentativi. Riprova più tardi.",
+                            "error": "Impossibile inviare l'email. Riprova più tardi."
                         }
                     }
                 },
                 "bottom": {
-                    "label": "Don't have an account?",
+                    "label": "Non hai un account?",
                     "actions": {
                         "signup": {
-                            "label": "Sign Up"
+                            "label": "Registrati"
                         }
                     }
                 }
             },
             "signup": {
                 "header": {
-                    "label": "Sign in to your account"
+                    "label": "Crea il tuo account"
                 },
                 "form": {
                     "fields": {
                         "email": {
-                            "label": "Email address",
+                            "label": "Indirizzo email",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Questo campo è obbligatorio"
                             }
                         },
                         "password": {
                             "label": "Password",
                             "errors": {
-                                "required": "This field is required",
-                                "minLength": "Password must be at least 8 characters long",
-                                "uppercase": "Password must have at least one uppercase letter",
-                                "lowercase": "Password must have at least one lowercase letter",
-                                "number": "Must contain a number",
-                                "specialChar": "Must contain at least one special character"
+                                "required": "Questo campo è obbligatorio",
+                                "minLength": "La password deve essere di almeno 8 caratteri",
+                                "uppercase": "La password deve contenere almeno una lettera maiuscola",
+                                "lowercase": "La password deve contenere almeno una lettera minuscola",
+                                "number": "Deve contenere un numero",
+                                "specialChar": "Deve contenere almeno un carattere speciale"
                             }
                         },
                         "confirmPassword": {
-                            "label": "Confirm Password",
+                            "label": "Conferma password",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Questo campo è obbligatorio"
                             }
                         },
                         "policyAcknologment": {
                             "label": {
-                                "main": "I accept the <privacyLink>privacy policy</privacyLink> agreement.",
-                                "small": "Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
+                                "main": "Accetto l'<privacyLink>informativa sulla privacy</privacyLink>.",
+                                "small": "Privacy in breve: i tuoi dati sono al sicuro. Graph Italia utilizza un solo cookie strettamente necessario, lato server, per l'autenticazione. Non usiamo cookie di terze parti, tracker o strumenti di analisi. Conserviamo solo il tuo indirizzo email per gestire il tuo account e mantenere salvati i tuoi grafici. I tuoi dati rimangono tuoi."
                             },
                             "errors": {
-                                "mustAccept": "You must accept the policy agreement"
+                                "mustAccept": "Devi accettare l'informativa sulla privacy"
                             }
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Passwords do not match"
+                        "passwordDontMatch": "Le password non corrispondono"
                     },
                     "actions": {
                         "submit": {
-                            "label": "Sign Up"
+                            "label": "Registrati"
                         }
                     }
                 },
                 "bottom": {
-                    "label": "Already have account?",
+                    "label": "Hai già un account?",
                     "actions": {
                         "signin": {
-                            "label": "Sign In"
+                            "label": "Accedi"
                         }
                     }
                 }
             },
             "verifyCode": {
                 "header": {
-                    "label": "Verification code",
-                    "description": "insert your verification code in the input below"
+                    "label": "Codice di verifica",
+                    "description": "Inserisci il tuo codice di verifica nel campo sottostante"
                 },
                 "bottom": {
-                    "label": "Resend code?",
+                    "label": "Rinviare il codice?",
                     "actions": {
                         "sendAnotherCode": {
-                            "label": "Send another code"
+                            "label": "Invia un altro codice"
                         }
                     }
                 }
@@ -179,21 +185,21 @@
                     },
                     "actions": {
                         "login": {
-                            "label": "Login"
+                            "label": "Accedi"
                         },
                         "logout": {
-                            "label": "Logout"
+                            "label": "Esci"
                         }
                     }
                 },
                 "center": {
                     "brand": {
-                        "title": "Dataviz",
-                        "tagline": "Share your charts"
+                        "title": "Graph Italia",
+                        "tagline": "Dai forma ai tuoi dati"
                     },
                     "social": {
-                        "label": "Source on",
-                        "platoforms": {
+                        "label": "Sorgenti su",
+                        "platforms": {
                             "github": {
                                 "ariaLabel": "GitHub (si apre in nuova finestra)"
                             }
@@ -210,7 +216,7 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Dataviz"
+                    "title": "Graph Italia"
                 },
                 "actions": {
                     "login": {
@@ -229,8 +235,8 @@
             },
             "footer": {
                 "brand": {
-                    "title": "Dataviz",
-                    "tagline": ""
+                    "title": "Graph Italia",
+                    "tagline": "Dai forma ai tuoi dati"
                 },
                 "links": {
                     "quickstart": {
@@ -241,6 +247,9 @@
                     },
                     "privacy": {
                         "label": "Informativa sulla Privacy"
+                    },
+                    "accessibility": {
+                        "label": "Dichiarazione di accessibilità"
                     }
                 }
             }
@@ -257,119 +266,120 @@
                         "description": "Carica un file JSON dal tuo computer"
                     },
                     "remoteUrl": {
-                        "label": "Remote URL",
+                        "label": "URL remoto",
                         "description": "Carica dati da un URL"
                     }
                 }
             },
             "loadRemoteCsvData": {
                 "errors": {
-                    "invalidUrl": "Please enter a valid URL",
-                    "loadingError": "Unable to load data from the specified URL"
+                    "invalidUrl": "Inserisci un URL valido",
+                    "loadingError": "Impossibile caricare i dati dall'URL specificato"
                 },
                 "header": {
-                    "label": "CSV data source URL"
+                    "label": "URL sorgente dati CSV"
                 },
                 "actions": {
                     "load": {
-                        "default": "Load remote CSV data",
-                        "loading": "Loading..."
+                        "default": "Carica dati CSV remoti",
+                        "loading": "Caricamento..."
                     }
                 }
             },
             "loadRemoteJsonData": {
                 "errors": {
-                    "invalidUrl": "Please enter a valid URL",
-                    "loadingError": "Unable to load data from the specified URL"
+                    "invalidUrl": "Inserisci un URL valido",
+                    "loadingError": "Impossibile caricare i dati dall'URL specificato"
                 },
                 "header": {
-                    "label": "JSON data source URL"
+                    "label": "URL sorgente dati JSON"
                 },
                 "actions": {
                     "load": {
-                        "default": "Load remote JSON data",
-                        "loading": "Loading..."
+                        "default": "Carica dati JSON remoti",
+                        "loading": "Caricamento..."
                     }
                 }
             },
             "transformData": {
                 "header": {
-                    "label": "Transform Data"
+                    "label": "Trasforma dati"
                 },
                 "actions": {
                     "transpose": {
-                        "label": "Transpose"
+                        "label": "Trasponi"
                     },
                     "reset": {
-                        "label": "Reset"
+                        "label": "Reimposta"
                     }
                 },
                 "table": {
                     "actions": {
                         "toggleColumns": {
-                            "label": "Toggle columns"
+                            "label": "Mostra/nascondi colonne"
                         },
                         "apply": {
-                            "label": "Apply Changes"
+                            "label": "Applica modifiche"
                         },
                         "reset": {
-                            "label": "Reset"
+                            "label": "Reimposta"
                         }
                     },
-                    "title": "Transform Data",
+                    "title": "Trasforma dati",
                     "sorting": {
-                        "label": "Sorted by"
+                        "label": "Ordinato per"
                     }
                 }
             }
         },
         "chartOptions": {
             "errors": {
-                "selectChart": "Select a chart type to configure options"
+                "selectChart": "Seleziona un tipo di grafico per configurare le opzioni"
             },
             "form": {
                 "errors": {
-                    "required": "Required field"
+                    "required": "Campo obbligatorio"
                 }
             }
         },
         "chartTable": {
+            "noDataComponent": "Nessun grafico creato",
             "columns": {
                 "type": {
-                    "label": "Type"
+                    "label": "Tipo"
                 },
                 "name": {
-                    "label": "Name"
+                    "label": "Nome"
                 },
                 "isRemote": {
-                    "label": "Is Remote"
+                    "label": "Remoto"
                 },
                 "createdAt": {
-                    "label": "Created At"
+                    "label": "Creato il"
                 },
                 "updatedAt": {
-                    "label": "Updated At"
+                    "label": "Aggiornato il"
                 },
                 "visibility": {
-                    "label": "Visibility",
+                    "label": "Visibilità",
                     "values": {
-                        "private": "Private",
-                        "public": "Public"
+                        "private": "Privato",
+                        "public": "Pubblico"
                     }
                 },
                 "share": {
-                    "label": "Share"
+                    "label": "Condividi"
                 },
                 "actions": {
-                    "label": "Actions"
+                    "label": "Azioni"
                 }
             },
             "modals": {
                 "embedChart": {
-                    "title": "Embed this Chart"
+                    "title": "Incorpora questo grafico"
                 },
                 "previewChart": {
-                    "title": "Preview Chart"
+                    "title": "Anteprima grafico"
                 }
             }
         },
@@ -377,81 +387,101 @@
             "form": {
                 "fields": {
                     "geoJsonUrl": {
-                        "label": "GeoJson URL",
+                        "label": "URL GeoJson",
                         "errors": {
-                            "required": "This field is required"
+                            "required": "Questo campo è obbligatorio"
                         }
                     }
                 },
                 "actions": {
                     "load": {
-                        "label": "Load Geo Json"
+                        "label": "Carica GeoJson"
                     }
                 }
             },
             "columns": {
-                "title": "Data Matching Column"
+                "title": "Colonna di corrispondenza dati"
+            }
+        },
+        "dashboardTable": {
+            "noDataComponent": "Nessuna dashboard creata",
+            "columns": {
+                "name": {
+                    "label": "Nome"
+                },
+                "visibility": {
+                    "label": "Visibilità"
+                },
+                "createdAt": {
+                    "label": "Creato il"
+                },
+                "updatedAt": {
+                    "label": "Aggiornato il"
+                },
+                "actions": {
+                    "label": "Azioni"
+                }
             }
         },
         "dataMngTable": {
             "header": {
-                "rows": "rows",
-                "columns": "columns"
+                "rows": "righe",
+                "columns": "colonne"
             },
             "actions": {
                 "transpose": {
-                    "label": "Transpose"
+                    "label": "Trasponi"
                 },
                 "applyChanges": {
-                    "label": "Apply Changes"
+                    "label": "Applica modifiche"
                 },
                 "reset": {
-                    "label": "Reset"
+                    "label": "Reimposta"
                 },
                 "downloadCsv": {
-                    "label": "Download CSV"
+                    "label": "Scarica CSV"
                 },
                 "downloadJson": {
-                    "label": "Download JSON"
+                    "label": "Scarica JSON"
                 },
                 "rename": {
-                    "label": "Rename Headers",
-                    "fallback": "Cancel Rename"
+                    "label": "Rinomina intestazioni",
+                    "fallback": "Annulla rinomina"
                 }
             },
             "toggle": {
-                "title": "Toggle columns"
+                "title": "Mostra/nascondi colonne"
             },
             "sorting": {
-                "sortedBy": "Sorted by"
+                "sortedBy": "Ordinato per"
             },
             "renameForm": {
-                "title": "Rename column headers",
-                "column": "Column",
+                "title": "Rinomina intestazioni colonne",
+                "column": "Colonna",
                 "actions": {
                     "apply": {
-                        "label": "Apply"
+                        "label": "Applica"
                     },
                     "cancel": {
-                        "label": "Cancel"
+                        "label": "Annulla"
                     }
                 }
             }
         },
         "generateRandomData": {
-            "title": "Parameters",
+            "title": "Parametri",
             "columns": {
                 "rows": {
-                    "label": "Rows"
+                    "label": "Righe"
                 },
                 "columns": {
-                    "label": "Columns"
+                    "label": "Colonne"
                 },
                 "rangeMin": {
-                    "label": "Range min"
+                    "label": "Valore minimo"
                 },
                 "rangeMax": {
-                    "label": "Range max"
+                    "label": "Valore massimo"
                 },
                 "offset": {
                     "label": "Offset"
@@ -462,33 +492,33 @@
             },
             "actions": {
                 "generate": {
-                    "label": "Generate data"
+                    "label": "Genera dati"
                 }
             }
         },
         "generateRandomPoi": {
-            "title": "Parameters",
+            "title": "Parametri",
             "form": {
                 "fieldset": {
                     "numberOfPoi": {
-                        "label": "Number of POIs"
+                        "label": "Numero di POI"
                     },
                     "minLatitude": {
-                        "label": "Min latitude"
+                        "label": "Latitudine minima"
                     },
                     "maxLatitude": {
-                        "label": "Max latitude"
+                        "label": "Latitudine massima"
                     },
                     "minLongitude": {
-                        "label": "Min longitude"
+                        "label": "Longitudine minima"
                     },
                     "maxLongitude": {
-                        "label": "Max longitude"
+                        "label": "Longitudine massima"
                     }
                 },
                 "actions": {
                     "generate": {
-                        "label": "Generate Pois"
+                        "label": "Genera POI"
                     }
                 }
             }
@@ -496,25 +526,25 @@
         "selectChart": {
             "chartTypes": {
                 "bar": {
-                    "label": "Bar chart",
-                    "description": "Compare values across categories"
+                    "label": "Grafico a barre",
+                    "description": "Confronta valori tra categorie"
                 },
                 "line": {
-                    "label": "Line",
-                    "description": "Show trends over time"
+                    "label": "Linee",
+                    "description": "Mostra andamenti nel tempo"
                 },
                 "pie": {
-                    "label": "Pie chart",
-                    "description": "Display proportions"
+                    "label": "Grafico a torta",
+                    "description": "Visualizza proporzioni"
                 },
                 "map": {
-                    "label": "Geographic map",
-                    "description": "Display data on a map"
+                    "label": "Mappa geografica",
+                    "description": "Visualizza dati su una mappa"
                 }
             },
             "fieldset": {
                 "legend": {
-                    "label": "Chart type"
+                    "label": "Tipo di grafico"
                 }
             }
         }

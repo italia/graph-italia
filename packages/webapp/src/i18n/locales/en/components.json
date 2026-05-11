@@ -84,6 +84,12 @@
                         },
                         "recoverPassword": {
                             "label": "Forgot password?"
+                        },
+                        "resend": {
+                            "label": "Didn't get the activation email? Resend it",
+                            "success": "Activation email sent. Check your inbox.",
+                            "tooMany": "Too many attempts. Try again later.",
+                            "error": "Could not send the email. Try again later."
                         }
                     }
                 },
@@ -128,7 +134,7 @@
                         "policyAcknologment": {
                             "label": {
                                 "main": "I accept the <privacyLink>privacy policy</privacyLink> agreement.",
-                                "small": "Privacy at a Glance: We value your data. Dataviz uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
+                                "small": "Privacy at a Glance: We value your data. Graph Italia uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
                             },
                             "errors": {
                                 "mustAccept": "You must accept the policy agreement"
@@ -170,7 +176,7 @@
         },
         "layout": {
             "sr": {
-                "label": "Vai al contenuto principale"
+                "label": "Go to the main content"
             },
             "fullHeader": {
                 "slim": {
@@ -188,14 +194,14 @@
                 },
                 "center": {
                     "brand": {
-                        "title": "Dataviz",
-                        "tagline": "Share your charts"
+                        "title": "Graph Italia",
+                        "tagline": "Shape your data"
                     },
                     "social": {
-                        "label": "Source on",
-                        "platoforms": {
+                        "label": "Sources on",
+                        "platforms": {
                             "github": {
-                                "ariaLabel": "GitHub (si apre in nuova finestra)"
+                                "ariaLabel": "GitHub (a new tab will be open)"
                             }
                         }
                     }
@@ -210,7 +216,7 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Dataviz"
+                    "title": "Graph Italia"
                 },
                 "actions": {
                     "login": {
@@ -229,8 +235,8 @@
             },
             "footer": {
                 "brand": {
-                    "title": "Dataviz",
-                    "tagline": "Share your charts"
+                    "title": "Graph Italia",
+                    "tagline": "Shape your data"
                 },
                 "links": {
                     "quickstart": {
@@ -241,6 +247,9 @@
                     },
                     "privacy": {
                         "label": "Privacy policy"
+                    },
+                    "accessibility": {
+                        "label": "Accessibility statement"
                     }
                 }
             }
@@ -334,6 +343,7 @@
             }
         },
         "chartTable": {
+            "noDataComponent": "No charts created",
             "columns": {
                 "type": {
                     "label": "Type"
@@ -391,6 +401,26 @@
             },
             "columns": {
                 "title": "Data Matching Column"
+            }
+        },
+        "dashboardTable": {
+            "noDataComponent": "No dashboards created",
+            "columns": {
+                "name": {
+                    "label": "Name"
+                },
+                "visibility": {
+                    "label": "Visibility"
+                },
+                "createdAt": {
+                    "label": "Created At"
+                },
+                "updatedAt": {
+                    "label": "Updated At"
+                },
+                "actions": {
+                    "label": "Actions"
+                }
             }
         },
         "dataMngTable": {

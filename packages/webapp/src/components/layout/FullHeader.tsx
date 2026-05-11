@@ -1,7 +1,3 @@
-/**
- * Full Header – three-band layout matching developers.italia.it style
- * Slim (#accent) + Centre (#primary) + Nav (#primary), no dividers, outer shadow
- */
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
@@ -9,7 +5,7 @@ import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import { useUserStore } from "../../lib/store/user_store";
 import { useSettingsStore } from "../../lib/store/settings_store";
-import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
+// import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
 
 export default function HeaderCompleta() {
@@ -18,12 +14,12 @@ export default function HeaderCompleta() {
   });
   const { t: translateMenu } = useTranslation("menu");
   const { user, clearUser } = useUserStore();
-  const { settings, setTheme, setLanguage } = useSettingsStore();
-  const theme = settings?.preferredTheme;
+  const { settings, setLanguage, /*setTheme*/ } = useSettingsStore();
+  // const theme = settings?.preferredTheme;
   const language = settings?.preferredLanguage ?? "it";
-  const [dropdownToolsOpen, setDropdownToolsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
-  const dropdownToolsRef = useRef<HTMLLIElement>(null);
+  const dropdownRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   const handleLogout = async () => {
     try {
@@ -39,8 +35,11 @@ export default function HeaderCompleta() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
-      if (dropdownToolsRef.current && !dropdownToolsRef.current.contains(target)) {
-        setDropdownToolsOpen(false);
+      const clickedInside = Object.values(dropdownRefs.current).some(
+        (el) => el && el.contains(target),
+      );
+      if (!clickedInside) {
+        setOpenDropdown(null);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -52,7 +51,7 @@ export default function HeaderCompleta() {
 
       {/* ── 1. SLIM BAR — accent (#0059b3), h-12, text-sm ── */}
       <div className="bg-accent">
-        <div className="max-w-screen-xl mx-auto px-[18px] flex items-center justify-between h-12">
+        <div className="mx-auto px-[18px] flex items-center justify-between h-12">
           <a
             href="https://innovazione.gov.it/"
             target="_blank"
@@ -64,14 +63,6 @@ export default function HeaderCompleta() {
 
 
           <div className="flex items-center gap-6 text-accent-content">
-            {/* Theme switcher – desktop only */}
-            <div className="hidden sm:block">
-              <ThemeSwitcherComponent
-                currentTheme={theme as "light" | "dark"}
-                handleChange={setTheme}
-              />
-            </div>
-
             <LanguageSwitcher
               currentLanguage={language}
               handleChange={setLanguage}
@@ -82,31 +73,19 @@ export default function HeaderCompleta() {
 
       {/* ── 2. CENTRE BAND — primary (#06c), logo 80px, title 1.75rem ── */}
       <div className="bg-primary">
-        <div className="max-w-screen-xl mx-auto px-[18px] flex items-center justify-between py-6">
+        <div className="mx-auto px-[18px] flex items-center justify-between py-6">
           <a
             href={ROUTES.root}
             aria-label={t(`center.brand.title`)}
-            className="flex items-center gap-4 no-underline group"
+            className="flex items-center no-underline group"
           >
-            <svg
-              className="w-20 h-20 shrink-0 text-primary-content"
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-              />
-            </svg>
-            <div>
-              <span className="block text-[1.75rem] font-semibold leading-tight text-primary-content ">
+            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`center.brand.title`)} />
+
+            <div className="ml-[-8px]">
+              <span className="block text-[2rem] font-semibold leading-tight text-primary-content ">
                 {t(`center.brand.title`)}
               </span>
-              <p className="text-sm font-normal text-primary-content/80 m-0 mt-0.5">
+              <p className="text-sm font-normal text-primary-content m-0 mt-0.5 ml-0.5">
                 {t(`center.brand.tagline`)}
               </p>
             </div>
@@ -122,7 +101,7 @@ export default function HeaderCompleta() {
               <ul className="flex items-center list-none m-0 p-0" aria-label={t(`center.social.label`)}>
                 <li>
                   <a
-                    href="https://github.com/italia/dataviz"
+                    href="https://github.com/italia/graph-italia"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center w-10 h-10 text-primary-content hover:text-primary-content transition-colors duration-150"
@@ -144,7 +123,7 @@ export default function HeaderCompleta() {
 
       {/* ── 3. NAV BAND — primary (#06c), nav-link py-2 px-4 text-sm ── */}
       <div className="bg-primary relative">
-        <div className="max-w-screen-xl mx-auto px-[18px] flex items-center h-12">
+        <div className="mx-auto px-[18px] flex items-center h-12">
 
           {/* Hamburger – mobile only */}
           <button
@@ -174,20 +153,20 @@ export default function HeaderCompleta() {
           {/* Desktop nav */}
           <nav className="hidden lg:flex w-full items-center justify-between" aria-label="Navigazione principale">
             <ul className="flex items-center list-none m-0 p-0">
-              {MENU.map((item) => {
+              {MENU.filter(i => !i.requireAuth).map((item) => {
                 if ("subMenu" in item) {
                   return (
-                    <li key={item.name} className="relative" ref={dropdownToolsRef}>
+                    <li key={item.name} className="relative" ref={(el) => { dropdownRefs.current[item.name] = el; }}>
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-4 py-2 text-sm text-primary-content/90 hover:text-primary-content hover:bg-primary-content/10 transition-colors duration-150 bg-transparent border-none cursor-pointer"
-                        aria-expanded={dropdownToolsOpen}
+                        aria-expanded={openDropdown === item.name}
                         aria-haspopup="true"
-                        onClick={() => setDropdownToolsOpen((v) => !v)}
+                        onClick={() => setOpenDropdown((v) => v === item.name ? null : item.name)}
                       >
                         {item.translationKey ? translateMenu(item.translationKey) : item.name}
                         <svg
-                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${dropdownToolsOpen ? "rotate-180" : ""}`}
+                          className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${openDropdown === item.name ? "rotate-180" : ""}`}
                           aria-hidden="true"
                           viewBox="0 0 24 24"
                         >
@@ -196,7 +175,7 @@ export default function HeaderCompleta() {
                       </button>
 
                       <ul
-                        className={`absolute top-full left-0 z-[1000] min-w-48 py-2 bg-base-100 text-base-content rounded shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] list-none m-0 p-0 ${dropdownToolsOpen ? "block" : "hidden"}`}
+                        className={`absolute top-full left-0 z-[1000] min-w-48 py-2 bg-base-100 text-base-content rounded shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] list-none m-0 p-0 ${openDropdown === item.name ? "block" : "hidden"}`}
                       >
                         {item.subMenu.map((sub: MenuSubItem) => (
                           <li key={sub.name}>
@@ -256,7 +235,7 @@ export default function HeaderCompleta() {
           aria-hidden={!menuMobileOpen}
         >
           <ul className="list-none m-0 px-[18px] py-2">
-            {MENU.map((item) => {
+            {MENU.filter(i => !i.requireAuth).map((item) => {
               if ("subMenu" in item) {
                 return (
                   <li key={item.name} className="border-b border-primary-content/20">

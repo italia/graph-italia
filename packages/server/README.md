@@ -1,4 +1,4 @@
-# Dataviz chart server
+# Graph Italia chart server
 
 ## Install deps
 
@@ -22,10 +22,10 @@ After that, you have to setup youn db
 Run:
 
 ```
-prisma db push
+prisma migrate deploy
 ```
 
-It will generate prisma client and generate all the tables in the db.
+It will apply the committed Prisma migrations and align the database schema.
 
 Then, seed the db
 

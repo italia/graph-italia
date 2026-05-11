@@ -204,7 +204,7 @@ export default function SeriesSelector({ setData, initialData }: {
                 onChange={(e) => handleChangeCategory(e.target.value)}
               >
                 {getCols(rawData[0])
-                  .filter((col, i) => !isNumericColumn(rawData, i))
+                  .filter((_, i) => !isNumericColumn(rawData, i))
                   .map((col) => (
                     <option key={col.value} value={col.value}>
                       {col.value}
@@ -235,7 +235,7 @@ export default function SeriesSelector({ setData, initialData }: {
                   }
                 >
                   {getCols(rawData[0])
-                    .filter((col, i) => isNumericColumn(rawData, i))
+                    .filter((_, i) => isNumericColumn(rawData, i))
                     .map((col) => (
                       <option key={col.value} value={col.value}>
                         {col.value}

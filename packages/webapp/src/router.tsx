@@ -12,7 +12,14 @@ import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
 import PrivateAreaPage from "./pages/private";
+import EditApiKeysPage from "./pages/private/EditApiKeys";
+import EditOrgsPage from "./pages/private/EditOrgs";
+import EditSettingsPage from "./pages/private/EditSettings";
+import GodModeOnPage from "./pages/private/GodModeOn";
+import AdminRoute from "./components/auth/AdminRoute";
 import QuickStartPage from "./pages/QuickStartPage";
+
+
 import ShowChartPage from "./pages/display/ShowChartPage";
 import DashboardViewPage from "./pages/display/ShowDashboardPage";
 import RootRoute from "./pages/Splash";
@@ -46,6 +53,12 @@ export const ROUTES = {
   editKpi: (id?: string) => `/private/edit/kpi${id ? `/${id}` : ""}`,
   editMap: (id?: string) => `/private/edit/map${id ? `/${id}` : ""}`,
   editDashboard: (id: string) => `/private/edit/dashboard/${id}`,
+  editApiKeys: "/private/edit/apikeys",
+  editOrgs: "/private/edit/orgs",
+  editSettings: "/private/edit/settings",
+  godModeOn: "/private/god-mode-on",
+
+
   // Display / embed
   viewChart: (id: string) => `/display/charts/${id}`,
   embedChart: (id: string) => `/embed/charts/${id}`,
@@ -63,6 +76,7 @@ export const ROUTES = {
 type TMenuItem = {
   name: string;
   link: string;
+  requireAuth?: boolean;
   translationKey?: `${typeof MENU_ITEMS_TRANSLATION_KEYS}.${string}.label`;
 };
 export type MenuSubItem = TMenuItem;
@@ -71,13 +85,20 @@ export type MenuItem =
   | (TMenuItem & { subMenu: readonly MenuSubItem[] });
 
 export const MENU: readonly MenuItem[] = [
+  // {
+  //   name: "Charts",
+  //   translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
+  //   link: ROUTES.home,
+  // },
   {
-    name: "Charts",
-    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
-    link: ROUTES.home,
+    name: "Examples",
+    requireAuth: false,
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.examples.label`,
+    link: ROUTES.loadData,
   },
   {
     name: "Tools",
+    requireAuth: false,
     translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.label`,
     link: "",
     subMenu: [
@@ -96,19 +117,34 @@ export const MENU: readonly MenuItem[] = [
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generatePois.label`,
         link: ROUTES.generatePoi,
       },
+    ],
+  },
+  {
+    name: "Settings",
+    requireAuth: true,
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.label`,
+    link: "",
+    subMenu: [
       {
-        name: "Load Remote Data",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.loadRemoteData.label`,
-        link: ROUTES.loadData,
+        name: "API Keys",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.subItems.apikeys.label`,
+        link: ROUTES.editApiKeys,
       },
       {
-        name: "Check GeoJSon File",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.geo.label`,
-        link: ROUTES.geo,
+        name: "Organizations",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.subItems.orgs.label`,
+        link: ROUTES.editOrgs,
+      },
+      {
+        name: "Account Settings",
+        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.settings.subItems.accountSettings.label`,
+        link: ROUTES.editSettings,
       },
     ],
   },
 ];
+
+
 // Assertion necessaria per compatibilità React 19 / react-router-dom (element: ReactElement vs ReactNode)
 const routes = [
   // Root: landing se non loggato, home Charts se loggato
@@ -168,7 +204,41 @@ const routes = [
       </ProtectedRoute>
     ),
   },
+  {
+    path: "/private/edit/apikeys",
+    element: (
+      <ProtectedRoute>
+        <EditApiKeysPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/private/edit/orgs",
+    element: (
+      <ProtectedRoute>
+        <EditOrgsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/private/edit/settings",
+    element: (
+      <ProtectedRoute>
+        <EditSettingsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/private/god-mode-on",
+    element: (
+      <AdminRoute>
+        <GodModeOnPage />
+      </AdminRoute>
+    ),
+  },
   //PUBLIC PART
+
+
   {
     path: "/gdpr",
     element: <PolicyPage />,

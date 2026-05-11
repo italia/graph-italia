@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "Graph Italia — Dashboards",
+    "_postman_id": "graph-italia-dashboards",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{api_key}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3003/api" },
+    { "key": "api_key",  "value": "dv_replace_with_your_key" }
+  ],
+  "item": [
+    {
+      "name": "List dashboards",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{base_url}}/dashboards", "host": ["{{base_url}}"], "path": ["dashboards"] }
+      }
+    },
+    {
+      "name": "Get dashboard by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/dashboards/{{dashboard_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dashboards", "{{dashboard_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Get dashboard (public show)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/dashboards/show/{{dashboard_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dashboards", "show", "{{dashboard_id}}"]
+        },
+        "description": "Public endpoint — no auth required. Only works if the dashboard is published."
+      },
+      "auth": { "type": "noauth" }
+    },
+    {
+      "name": "Create dashboard",
+      "request": {
+        "method": "POST",
+        "url": { "raw": "{{base_url}}/dashboards", "host": ["{{base_url}}"], "path": ["dashboards"] },
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"My Dashboard\",\n  \"description\": \"A sample dashboard\",\n  \"publish\": false\n}"
+        }
+      }
+    },
+    {
+      "name": "Update dashboard",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "{{base_url}}/dashboards/{{dashboard_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dashboards", "{{dashboard_id}}"]
+        },
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Dashboard\",\n  \"publish\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Update dashboard slots",
+      "request": {
+        "method": "PUT",
+        "url": {
+          "raw": "{{base_url}}/dashboards/{{dashboard_id}}/slots",
+          "host": ["{{base_url}}"],
+          "path": ["dashboards", "{{dashboard_id}}", "slots"]
+        },
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"slots\": [\n    {\n      \"chartId\": \"{{chart_id}}\",\n      \"settings\": { \"w\": 6, \"h\": 4, \"x\": 0, \"y\": 0 }\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete dashboard",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/dashboards/{{dashboard_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["dashboards", "{{dashboard_id}}"]
+        }
+      }
+    }
+  ]
+}

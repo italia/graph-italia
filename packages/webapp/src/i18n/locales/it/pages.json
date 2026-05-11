@@ -2,148 +2,278 @@
     "auth": {
         "header": {
             "accountCreated": {
-                "label": "Your account has been created successfully."
+                "label": "Il tuo account è stato creato con successo."
             },
             "checkEmail": {
-                "label": "Check your email to activate your account"
+                "label": "Controlla la tua email per attivare il tuo account"
             }
         }
     },
     "charts": {
         "editChart": {
-            "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+            "unsavedChanges": "Hai modifiche non salvate. Sei sicuro di voler uscire?",
             "save": {
                 "success": {
-                    "label": "Chart saved successfully!"
+                    "label": "Grafico salvato con successo!"
                 },
                 "error": {
-                    "label": "Error saving chart!"
+                    "label": "Errore durante il salvataggio del grafico!"
                 }
             },
             "head": {
                 "title": {
-                    "label": "Edit Chart"
+                    "label": "Modifica grafico"
                 },
                 "meta": {
                     "description": {
-                        "content": "Creating chart"
+                        "content": "Creazione grafico"
                     }
                 }
             },
             "header": {
+                "pageTitle": {
+                    "new": "Nuovo grafico",
+                    "edit": "Modifica grafico"
+                },
+                "preview": {
+                    "heading": "Anteprima",
+                    "untitled": "Grafico senza titolo"
+                },
                 "actions": {
                     "back": {
-                        "label": "Back to list"
+                        "label": "Torna alla lista"
                     },
                     "save": {
-                        "default": "Save",
-                        "isSaving": "Saving"
+                        "default": "Salva",
+                        "isSaving": "Salvataggio..."
                     }
                 }
             },
             "body": {
                 "options": {
                     "setup": {
-                        "title": "Setup Info",
-                        "description": "Name, description and visibility of the chart",
+                        "title": "Informazioni",
+                        "description": "Nome, descrizione e visibilità del grafico",
                         "form": {
                             "fields": {
                                 "visibility": {
-                                    "label": "Chart Visibility",
+                                    "label": "Visibilità grafico",
                                     "values": {
-                                        "private": "Private",
-                                        "public": "Public"
+                                        "private": "Privato",
+                                        "public": "Pubblico"
                                     }
                                 },
                                 "title": {
-                                    "label": "Chart Title"
+                                    "label": "Titolo grafico"
                                 },
                                 "description": {
-                                    "label": "Chart Description",
-                                    "placeholder": "Add a description"
+                                    "label": "Descrizione grafico",
+                                    "placeholder": "Aggiungi una descrizione"
                                 }
                             }
                         }
                     },
                     "configuration": {
-                        "title": "Configure the chart",
-                        "description": "Choose the chart type and customize its appearance",
-                        "status": "Please load data and proceed to configuration step to see chart options"
+                        "title": "Configura il grafico",
+                        "description": "Scegli il tipo di grafico e personalizza l'aspetto",
+                        "status": "Carica i dati e procedi alla fase di configurazione per vedere le opzioni del grafico"
                     },
                     "data": {
-                        "title": "Load your data",
-                        "description": "Import data from CSV, JSON files or from a remote source",
+                        "title": "Carica i tuoi dati",
+                        "description": "Importa dati da file CSV, JSON o da una fonte remota",
                         "actions": {
                             "useData": {
-                                "label": "Use thi data"
+                                "label": "Usa questi dati"
                             }
                         }
                     }
                 },
                 "preview": {
-                    "loadDataMessage": "Load your data to display the data preview"
+                    "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima",
+                    "chartA11y": "Grafico di tipo {{type}}: {{name}}. {{description}}"
+                }
+            }
+        },
+        "editDashboard": {
+            "head": {
+                "title": {
+                    "label": "Modifica dashboard"
+                },
+                "meta": {
+                    "description": {
+                        "content": "Modifica dashboard"
+                    }
+                }
+            },
+            "header": {
+                "pageTitle": {
+                    "new": "Nuova dashboard",
+                    "edit": "Modifica dashboard"
+                },
+                "preview": {
+                    "heading": "Anteprima",
+                    "untitled": "Dashboard senza titolo"
+                },
+                "actions": {
+                    "back": {
+                        "label": "Torna alla lista"
+                    },
+                    "save": {
+                        "default": "Salva",
+                        "isSaving": "Salvataggio..."
+                    }
+                }
+            },
+            "body": {
+                "options": {
+                    "setup": {
+                        "title": "Informazioni",
+                        "description": "Nome, descrizione e visibilità della dashboard",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Visibilità dashboard",
+                                    "values": {
+                                        "private": "Privato",
+                                        "public": "Pubblico"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Titolo dashboard"
+                                },
+                                "description": {
+                                    "label": "Descrizione dashboard",
+                                    "placeholder": "Aggiungi una descrizione"
+                                }
+                            }
+                        }
+                    }
+                },
+                "preview": {
+                    "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima"
+                }
+            },
+            "slots": {
+                "title": "Modifica dashboard slots",
+                "description": "Crea uno slot e assegnalo al grafico",
+                "actions": {
+                    "addSlot": {
+                        "label": "Aggiungi slot"
+                    },
+                    "viewChart": {
+                        "label": "Visualizza grafico"
+                    }
+                }
+            },
+            "bottom": {
+                "actions": {
+                    "addChart": {
+                        "label": "Aggiungi Grafico"
+                    }
+                }
+            },
+            "components": {
+                "chartSelection": {
+                    "form": {
+                        "fields": {
+                            "selectChart": {
+                                "label": "Seleziona un grafico",
+                                "options": {
+                                    "noValue": "Seleziona un grafico"
+                                }
+                            }
+                        }
+                    }
+                },
+                "slotToolbar": {
+                    "width": {
+                        "label": "Larghezza"
+                    },
+                    "height": {
+                        "label": "Altezza"
+                    },
+                    "actions": {
+                        "change": {
+                            "label": "Cambia",
+                            "title": "Assegna Grafico"
+                        },
+                        "remove": {
+                            "label": "Rimuovi",
+                            "title": "Rimuovi slot"
+                        }
+                    }
                 }
             }
         },
         "editKpiGroup": {
+            "unsavedChanges": "Hai modifiche non salvate",
+            "head": {
+                "title": {
+                    "label": "Modifica gruppo KPI"
+                }
+            },
             "components": {
                 "kpiConfigForm": {
                     "form": {
                         "fields": {
                             "direction": {
-                                "label": "Direction",
+                                "label": "Direzione",
                                 "values": {
-                                    "horizontal": "Horizontal",
-                                    "vertical": "Vertical"
+                                    "horizontal": "Orizzontale",
+                                    "vertical": "Verticale"
                                 }
                             },
                             "height": {
-                                "label": "Height"
+                                "label": "Altezza"
                             },
                             "labelLine": {
-                                "label": "Label Line"
+                                "label": "Linea etichetta"
                             },
                             "legend": {
-                                "label": "Legend"
+                                "label": "Legenda"
                             },
                             "legendPosition": {
-                                "label": "Legend Position",
+                                "label": "Posizione legenda",
                                 "values": {
-                                    "noValue": "--Select a value--",
-                                    "top": "Top",
-                                    "bottom": "Bottom",
-                                    "left": "Left",
-                                    "right": "Right"
+                                    "noValue": "--Seleziona un valore--",
+                                    "top": "In alto",
+                                    "bottom": "In basso",
+                                    "left": "A sinistra",
+                                    "right": "A destra"
                                 }
                             },
                             "palette": {
-                                "label": "Palette (comma separated)"
+                                "label": "Palette (separata da virgola)"
                             },
                             "tooltip": {
                                 "label": "Tooltip"
                             },
                             "tooltipFormatter": {
-                                "label": "Tooltip Formatter"
+                                "label": "Formattatore tooltip"
                             },
                             "tooltipTrigger": {
-                                "label": "Tooltip Trigger",
+                                "label": "Trigger tooltip",
                                 "values": {
-                                    "noValue": "--Select a value--",
-                                    "item": "Item",
-                                    "axis": "Axis"
+                                    "noValue": "--Seleziona un valore--",
+                                    "item": "Elemento",
+                                    "axis": "Asse"
                                 }
                             },
                             "valueFormatter": {
-                                "label": "Value Formatter"
+                                "label": "Formattatore valore"
                             },
                             "totalLabel": {
-                                "label": "Total Label"
+                                "label": "Etichetta totale"
                             },
                             "colors": {
-                                "label": "Colors (comma separated)"
+                                "label": "Colori (separati da virgola)"
                             },
                             "background": {
-                                "label": "Background"
+                                "label": "Sfondo",
+                                "values": {
+                                    "theme": "Tema predefinito",
+                                    "accent": "Accento"
+                                }
                             }
                         }
                     }
@@ -151,10 +281,10 @@
                 "kpiDropdown": {
                     "actions": {
                         "edit": {
-                            "label": "Edit"
+                            "label": "Modifica"
                         },
                         "delete": {
-                            "label": "Delete"
+                            "label": "Elimina"
                         }
                     }
                 },
@@ -162,50 +292,50 @@
                     "form": {
                         "fieldSets": {
                             "additionalInfos": {
-                                "label": "Additional infos"
+                                "label": "Informazioni aggiuntive"
                             }
                         },
                         "fields": {
                             "title": {
-                                "label": "Title"
+                                "label": "Titolo"
                             },
                             "value": {
-                                "label": "Value"
+                                "label": "Valore"
                             },
                             "openDataPath": {
-                                "label": "Open Data Path"
+                                "label": "Percorso Open Data"
                             },
                             "showFlow": {
-                                "label": "Show flow"
+                                "label": "Mostra andamento"
                             },
                             "flowDirection": {
-                                "label": "Flow direction",
+                                "label": "Direzione andamento",
                                 "values": {
-                                    "noValue": "--Select a value--",
-                                    "positive": "Positive",
-                                    "negative": "Negative"
+                                    "noValue": "--Seleziona un valore--",
+                                    "positive": "Positivo",
+                                    "negative": "Negativo"
                                 }
                             },
                             "flowValue": {
-                                "label": "Flow value"
+                                "label": "Valore andamento"
                             },
                             "flowDetail": {
-                                "label": "Flow detail"
+                                "label": "Dettaglio andamento"
                             },
                             "backgroundColor": {
-                                "label": "Background color"
+                                "label": "Colore di sfondo"
                             },
                             "valuePrefix": {
-                                "label": "Value prefix"
+                                "label": "Prefisso valore"
                             },
                             "valueSuffix": {
-                                "label": "Value suffix"
+                                "label": "Suffisso valore"
                             },
                             "percentage": {
-                                "label": "Percentage"
+                                "label": "Percentuale"
                             },
                             "footerText": {
-                                "label": "Footer text"
+                                "label": "Testo a piè di pagina"
                             }
                         }
                     }
@@ -214,48 +344,82 @@
             "header": {
                 "actions": {
                     "back": {
-                        "label": "Back to list"
+                        "label": "Torna alla lista"
                     },
                     "save": {
-                        "default": "Save",
-                        "isSaving": "Saving"
+                        "default": "Salva",
+                        "isSaving": "Salvataggio...",
+                        "success": "Salvato con successo",
+                        "error": "Errore durante il salvataggio"
                     },
                     "reset": {
-                        "default": "Reset",
-                        "isSaving": "Saving"
+                        "default": "Reimposta",
+                        "isSaving": "Salvataggio..."
                     }
                 }
             },
             "body": {
+                "options": {
+                    "setup": {
+                        "title": "Info",
+                        "form": {
+                            "fields": {
+                                "visibility": {
+                                    "label": "Visibilità",
+                                    "values": {
+                                        "public": "Pubblico",
+                                        "private": "Privato"
+                                    }
+                                },
+                                "title": {
+                                    "label": "Nome"
+                                },
+                                "description": {
+                                    "label": "Descrizione",
+                                    "placeholder": "Inserisci una descrizione..."
+                                }
+                            }
+                        }
+                    },
+                    "configuration": {
+                        "title": "Configurazione"
+                    }
+                },
                 "actions": {
                     "changeConfiguration": {
-                        "label": "Change configuration"
+                        "label": "Applica configurazione"
                     },
                     "addKpi": {
-                        "label": "Add KPI"
+                        "label": "Aggiungi KPI"
+                    },
+                    "cancelEdit": {
+                        "label": "Annulla"
+                    },
+                    "updateKpi": {
+                        "label": "Aggiorna KPI"
                     }
                 },
                 "messages": {
-                    "noKpi": "No KPIs. Add a new KPI."
+                    "noKpi": "Nessun KPI. Aggiungi un nuovo KPI."
                 }
             },
             "modals": {
                 "addKpiForm": {
-                    "title": "New KPI"
+                    "title": "Nuovo KPI"
                 },
                 "editKpiForm": {
-                    "title": "Edit KPI"
+                    "title": "Modifica KPI"
                 },
                 "config": {
-                    "title": "KPI Group Configuration"
+                    "title": "Configurazione gruppo KPI"
                 },
                 "delete": {
-                    "title": "Confirm deletion",
-                    "message": "Do you want to delete KPI with title"
+                    "title": "Conferma eliminazione",
+                    "message": "Vuoi eliminare il KPI con titolo"
                 },
                 "showConfirmNavigation": {
-                    "title": "Confirm exit",
-                    "message": "Do you want to exit without saving?"
+                    "title": "Conferma uscita",
+                    "message": "Vuoi uscire senza salvare?"
                 }
             }
         }
@@ -263,82 +427,124 @@
     "utility": {
         "generateDataPage": {
             "header": {
-                "title": "Generate data",
-                "description": "Create a random dataset with configurable rows, columns and value range. Use it to try charts or export as CSV/JSON."
+                "title": "Genera dati",
+                "description": "Crea un dataset casuale con righe, colonne e intervallo di valori configurabili. Usalo per provare i grafici o esportarlo come CSV/JSON."
             }
         },
         "generatePoiPage": {
             "header": {
-                "title": "Generate POI data",
-                "description": "Create a random POI dataset. Use it to try charts or export as CSV/JSON."
+                "title": "Genera dati POI",
+                "description": "Crea un dataset POI casuale. Usalo per provare i grafici o esportarlo come CSV/JSON."
             }
         },
         "loadRemoteDataPage": {
-            "title": "Load remote data",
-            "description": "Here some Open Data sources of real data you can use here",
+            "title": "Carica dati remoti",
+            "description": "Qui alcune fonti di Open Data con dati reali che puoi utilizzare",
             "link": "Dati Italia, Governo e servizi pubblici"
         }
     },
     "home": {
+        "head": {
+            "title": "Home",
+            "meta": {
+                "description": {
+                    "content": "Creazione grafico"
+                }
+            }
+        },
         "header": {
-            "myCharts": "My Charts",
-            "noCharts": "Welcome"
+            "title": "Area Privata",
+            "charts": "I miei grafici",
+            "noCharts": "I miei grafici",
+            "chartsEmpty": "Non hai ancora creato grafici. Usa \"Crea nuovo\" per iniziare.",
+            "dashboards": "Le mie dashboard",
+            "noDashboards": "Le mie dashboard",
+            "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare."
+        },
+        "projectSwitcher": {
+            "title": "I Tuoi Progetti",
+            "selectPrompt": "Seleziona Progetto",
+            "newBtn": "Nuovo Progetto"
         },
         "body": {
             "actions": {
-                "label": "Create new",
+                "createNew": {
+                    "label": "Crea nuovo"
+                },
+                "label": "Crea nuovo",
                 "actionItems": {
                     "createChart": {
-                        "label": "Create Chart"
+                        "label": "Crea grafico"
                     },
                     "createKPIGroup": {
-                        "label": "Create KPI Group"
+                        "label": "Crea gruppo KPI"
                     }
                 }
             },
             "confirms": {
                 "deleteChart": {
-                    "label": "Are you sure you want to delete this chart?"
+                    "label": "Sei sicuro di voler eliminare questo grafico?"
                 }
             }
         },
         "modals": {
+            "createNew": {
+                "title": "Crea nuovo",
+                "description": "Cosa vorresti creare?",
+                "labels": {
+                    "confirm": "Seleziona un'opzione sopra",
+                    "cancel": "Chiudi"
+                }
+            },
+            "cancel": "Annulla",
+            "confirm": "Elimina",
+            "createProject": {
+                "title": "Crea Nuovo Progetto",
+                "description": "I progetti ti aiutano a organizzare i tuoi grafici e le tue dashboard.",
+                "confirm": "Crea Progetto",
+                "form": {
+                    "name": {
+                        "label": "Nome Progetto",
+                        "placeholder": "Es: Dashboard Marketing"
+                    }
+                }
+            },
             "createChart": {
-                "title": "Create new chart",
-                "description": "Name your chart to start editing it",
+                "title": "Crea nuovo grafico",
+                "description": "Dai un nome al grafico per iniziare a modificarlo",
                 "labels": {
                     "confirm": {
-                        "default": "Create",
-                        "isCreating": "Creating..."
+                        "default": "Crea",
+                        "isCreating": "Creazione in corso..."
                     },
-                    "cancel": "Cancel"
+                    "cancel": "Annulla"
                 },
                 "form": {
                     "fields": {
                         "name": {
-                            "label": "Chart name",
-                            "placeholder": "E.g.: Monthly sales 2024",
-                            "content": "You can change the name later"
+                            "label": "Nome grafico",
+                            "placeholder": "Es.: Vendite mensili 2024",
+                            "content": "Puoi cambiare il nome in seguito"
                         }
                     }
                 }
             },
             "createKpiGroup": {
-                "title": "Create KPI Group",
-                "description": "Enter data to create a new KPI indicator group",
+                "title": "Crea gruppo KPI",
+                "description": "Inserisci i dati per creare un nuovo gruppo di indicatori KPI",
                 "labels": {
-                    "confirm": "Create",
-                    "cancel": "Cancel"
+                    "confirm": "Crea",
+                    "cancel": "Annulla"
                 },
                 "form": {
                     "fields": {
                         "name": {
-                            "label": "Name",
-                            "placeholder": "Enter the KPI group name"
+                            "label": "Nome",
+                            "placeholder": "Inserisci il nome del gruppo KPI"
                         },
                         "description": {
-                            "label": "Description",
-                            "placeholder": "Enter a description (optional)"
+                            "label": "Descrizione",
+                            "placeholder": "Inserisci una descrizione (opzionale)"
                         }
                     }
                 }
@@ -349,22 +555,104 @@
         "body": {
             "errors": {
                 "invalidParam": {
-                    "label": "Invalid params, use the recover password flow to get a new code.",
+                    "label": "Parametri non validi, usa il flusso di recupero password per ottenere un nuovo codice.",
                     "actions": {
                         "recoverPassword": {
-                            "label": "Recover Password"
+                            "label": "Recupera password"
                         }
                     }
                 }
             },
             "messages": {
-                "valid": "The code is valid"
+                "valid": "Il codice è valido"
             },
             "actions": {
                 "init": {
-                    "label": "You can now close this window or <redirectLink>privacy policy</redirectLink> enter."
+                    "label": "Puoi ora chiudere questa finestra o <redirectLink>accedere</redirectLink>."
                 }
             }
+        }
+    },
+    "apikeys": {
+        "title": "API Key",
+        "description": "Gestisci le tue API key per l'accesso programmatico.",
+        "createBtn": "Crea Nuova Key",
+        "noKeys": "Nessuna API key trovata.",
+        "table": {
+            "id": "ID",
+            "role": "Ruolo",
+            "created": "Creato il",
+            "expires": "Scadenza (min)",
+            "actions": "Azioni"
+        },
+        "modal": {
+            "createTitle": "Crea API Key",
+            "createDesc": "Configura la tua nuova API key.",
+            "successTitle": "Key Creata con Successo",
+            "successDesc": "Copia questa key ora. Non potrai più vederla!",
+            "warning": "Una volta chiusa questa finestra, la key verrà nascosta per sempre per motivi di sicurezza.",
+            "close": "Chiudi",
+            "cancel": "Annulla",
+            "create": "Crea Key",
+            "deleteTitle": "Elimina API Key",
+            "deleteDesc": "Sei sicuro di voler eliminare questa API key? L'azione non può essere annullata.",
+            "delete": "Elimina"
+        },
+        "form": {
+            "role": "Ruolo",
+            "expire": "Scadenza (minuti)"
+        }
+    },
+    "orgs": {
+        "title": "Organizzazioni",
+        "description": "Gestisci le tue organizzazioni e i loro membri.",
+        "createBtn": "Nuova Organizzazione",
+        "listTitle": "Le Tue Organizzazioni",
+        "noOrgs": "Nessuna organizzazione trovata.",
+        "membersTitle": "Membri",
+        "projectsTitle": "Progetti dell'Organizzazione",
+        "addMemberBtn": "Aggiungi Membro",
+        "transferProjectBtn": "Trasferisci Progetto",
+        "noMembers": "Nessun membro trovato in questa organizzazione.",
+        "noProjects": "Nessun progetto associato a questa organizzazione.",
+        "selectPrompt": "Seleziona un'organizzazione per gestire i suoi membri.",
+        "tabs": {
+            "members": "Membri",
+            "projects": "Progetti"
+        },
+        "table": {
+            "user": "Utente",
+            "role": "Ruolo",
+            "actions": "Azioni",
+            "projectName": "Nome Progetto",
+            "projectId": "ID",
+            "owner": "Proprietario"
+        },
+        "modal": {
+            "createOrgTitle": "Crea Nuova Organizzazione",
+            "createOrgDesc": "Inserisci un nome per la tua nuova organizzazione.",
+            "addMemberTitle": "Aggiungi Membro",
+            "addMemberDesc": "Invita un utente a unirsi a questa organizzazione.",
+            "deleteOrgTitle": "Elimina Organizzazione",
+            "deleteOrgDesc": "Sei sicuro di voler eliminare questa organizzazione? Questo rimuoverà tutte le associazioni ai progetti.",
+            "removeMemberTitle": "Rimuovi Membro",
+            "removeMemberDesc": "Sei sicuro di voler rimuovere questo utente dall'organizzazione?",
+            "transferProjectTitle": "Trasferisci Progetto Personale",
+            "transferProjectDesc": "Seleziona uno dei tuoi progetti personali da trasferire a questa organizzazione.",
+            "transfer": "Trasferisci",
+            "cancel": "Annulla",
+            "create": "Crea",
+            "add": "Invita",
+            "delete": "Elimina",
+            "remove": "Rimuovi"
+        },
+        "form": {
+            "orgName": "Nome Organizzazione",
+            "email": "Indirizzo Email",
+            "role": "Ruolo",
+            "project": "Progetto",
+            "selectProject": "Seleziona un progetto",
+            "noPersonalProjects": "Nessun progetto personale trovato"
         }
     }
 }

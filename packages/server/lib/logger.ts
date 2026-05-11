@@ -2,7 +2,7 @@ import { createMiddleware } from "hono/factory";
 import type { Context } from "hono";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🔮 DATAVIZ STRUCTURED LOGGER
+// 🔮 GRAPH ITALIA STRUCTURED LOGGER
 // ═══════════════════════════════════════════════════════════════════════════════
 // A nerd-friendly JSON logger that captures the essence of each request
 // without exposing your deepest secrets (API keys, tokens, etc.)
@@ -109,7 +109,7 @@ class Logger {
 	private environment: string;
 
 	constructor() {
-		this.service = "dataviz-server";
+		this.service = "graph-italia-server";
 		this.version = process.env.APP_VERSION || "0.0.0-dev";
 		this.environment = process.env.NODE_ENV || "development";
 	}

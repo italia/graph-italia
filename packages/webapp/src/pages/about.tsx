@@ -1,46 +1,28 @@
+import { Trans, useTranslation } from "react-i18next";
 import Layout from "../components/layout";
-import { HOME_ROUTE } from "../router";
 import { useUserStore } from "../lib/store/user_store";
+import { HOME_ROUTE } from "../router";
 
 export default function Landing() {
+  const { t } = useTranslation("homepage");
+
   const { user } = useUserStore();
 
   const features = [
     {
-      name: "Upload & Parse Your Data in Seconds",
-      description:
-        "Simply upload your CSV file, and Dataviz will instantly parse the data for you. View your data in a clean table format and get ready to visualize it in just a few clicks.",
+      name: t("contentBlock.features.easyToUse.title"),
+      description: t("contentBlock.features.easyToUse.content"),
       icon: "upload",
     },
     {
-      name: "Customizable Chart Creation",
-      description:
-        "Choose how to represent your data by selecting which columns to display as series, and easily define your X and Y axes. Dataviz offers a range of chart types: Bar, Line, Pie charts and Geographical Maps (Geomap). No matter the type, you have full control over your data's presentation!",
+      name: t("contentBlock.features.customization.title"),
+      description: t("contentBlock.features.customization.content"),
       icon: "chart",
     },
     {
-      name: "Intuitive Filtering & Data Selection",
-      description:
-        "Only want to display specific data points? Use our simple filtering options to select which columns or data sets to include in your visualization, ensuring clarity and focus in your chart.",
-      icon: "filter",
-    },
-    {
-      name: "Fine-Tune Chart Parameters",
-      description:
-        "Tweak and customize each aspect of your chart. From colors to data labels, control every detail to ensure your chart perfectly fits your needs and looks great.",
-      icon: "palette",
-    },
-    {
-      name: "Save, Edit & Reuse Your Charts",
-      description:
-        "Dataviz allows you to save your charts for future editing. Come back anytime to update your data, adjust chart settings, or switch the chart type. Your work is always at your fingertips.",
+      name: t("contentBlock.features.saveAndShare.title"),
+      description: t("contentBlock.features.saveAndShare.content"),
       icon: "save",
-    },
-    {
-      name: "Publish & Embed Your Charts",
-      description:
-        "Share your work with the world! Once your chart is ready, publish it directly from Dataviz and get an embed code to seamlessly integrate your visualizations into any website or platform.",
-      icon: "share",
     },
   ];
 
@@ -174,7 +156,12 @@ export default function Landing() {
               <path d="M100 200V.5M.5 .5H200" fill="none" />
             </pattern>
           </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-base-200" aria-hidden="true">
+          <svg
+            x="50%"
+            y={-1}
+            className="overflow-visible fill-base-200"
+            aria-hidden="true"
+          >
             <path
               d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
               strokeWidth={0}
@@ -196,51 +183,51 @@ export default function Landing() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 w-full">
             <div className="text-center">
               <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                <span className="relative flex h-2 w-2" aria-hidden>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-                </span>
-                Data visualization made simple
+                <span
+                  className="relative inline-flex h-2 w-2 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
+                {t("hero.chip")}
               </p>
-              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight">
-                <span className="block">Transform Data Into</span>
-                <span className="mt-1 block py-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-[1.4]">
-                  Stunning Visuals
-                </span>
-                <span className="block mt-1">
-                  with{" "}
-                  <span className="inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text py-0.5 font-semibold tracking-wide text-transparent">
-                    Dataviz
-                  </span>
-                </span>
+              <h1 className="mt-8 text-4xl font-bold tracking-tight text-base-content sm:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-tight [text-wrap:balance]">
+                <Trans
+                  t={t}
+                  i18nKey="hero.title"
+                  components={{
+                    block: <span className="block" />,
+                    gradient: (
+                      <span className="mt-1 block py-1 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-[1.4]" />
+                    ),
+                    withBlock: <span className="block mt-1" />,
+                    brand: (
+                      <span className="inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text py-0.5 font-semibold tracking-wide text-transparent" />
+                    ),
+                  }}
+                />
               </h1>
               <p className="mt-8 text-lg leading-8 text-base-content/70 max-w-2xl mx-auto sm:text-xl">
-                Effortlessly convert your CSV data into beautiful, interactive
-                charts with Dataviz. Whether you're a data analyst, business
-                professional, or content creator, Dataviz offers an intuitive
-                interface to bring your numbers to life.
+                {t("hero.description")}
               </p>
               <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
                 <a
                   href={user ? HOME_ROUTE : "/login"}
                   className="btn btn-primary"
                 >
-                  Get started
+                  {t("hero.ctas.getStarted")}
                 </a>
-                <a
-                  href="/quickstart"
-                  className="btn btn-outline"
-                >
-                  Quick start guide
+                <a href="/quickstart" className="btn btn-outline">
+                  {t("hero.ctas.quickStart")}
                 </a>
               </div>
-              <div
-                className="mt-16 flex items-center justify-center gap-8 text-sm text-base-content/60"
-                aria-hidden
+              <ul
+                className="mt-16 flex items-center justify-center gap-8 text-sm text-base-content/70 list-none p-0"
+                aria-label={t("hero.featuresLabel", {
+                  defaultValue: "Caratteristiche principali",
+                })}
               >
-                <span className="flex items-center gap-2">
+                <li className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 text-primary/60"
+                    className="h-5 w-5 text-primary/80"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -254,8 +241,8 @@ export default function Landing() {
                     />
                   </svg>
                   CSV upload
-                </span>
-                <span className="flex items-center gap-2">
+                </li>
+                <li className="flex items-center gap-2">
                   <svg
                     className="h-5 w-5 shrink-0 text-primary/80"
                     fill="none"
@@ -270,11 +257,11 @@ export default function Landing() {
                       d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
                     />
                   </svg>
-                  Charts & maps
-                </span>
-                <span className="flex items-center gap-2">
+                  Charts &amp; maps
+                </li>
+                <li className="flex items-center gap-2">
                   <svg
-                    className="h-5 w-5 text-primary/60"
+                    className="h-5 w-5 text-primary/80"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -287,9 +274,9 @@ export default function Landing() {
                       d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
                     />
                   </svg>
-                  Publish & embed
-                </span>
-              </div>
+                  Publish &amp; embed
+                </li>
+              </ul>
             </div>
           </div>
         </section>
@@ -313,29 +300,29 @@ export default function Landing() {
           <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <span className="inline-block text-sm font-medium text-primary uppercase tracking-wider mb-3">
-                Features
+                {t("contentBlock.tag")}
               </span>
               <h2
                 id="features-heading"
                 className="text-3xl font-bold tracking-tight text-base-content sm:text-4xl"
               >
-                Everything you need
+                {t("contentBlock.title")}
               </h2>
-              <p className="mt-4 text-lg leading-8 text-base-content/70">
-                Start visualizing your data with Dataviz today. Dataviz makes
+              {/* <p className="mt-4 text-lg leading-8 text-base-content/70">
+                Start visualizing your data with Graph Italia today. Graph Italia makes
                 data visualization quick, simple, and powerful. Try it and see
                 how easily you can create, edit, and publish stunning charts in
                 minutes.
-              </p>
+              </p> */}
             </div>
 
             <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {features.map((feature) => (
                 <article
                   key={feature.name}
-                  className="landing__feature-card group relative flex flex-col rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30"
+                  className="landing__feature-card relative flex flex-col rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm"
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <FeatureIcon name={feature.icon} />
                   </div>
                   <h3 className="text-lg font-semibold text-base-content">
@@ -345,7 +332,7 @@ export default function Landing() {
                     {feature.description}
                   </p>
                   <div
-                    className="mt-4 h-px w-12 rounded-full bg-primary/30 transition-all group-hover:w-full group-hover:bg-primary/50"
+                    className="mt-4 h-px w-12 rounded-full bg-primary/30"
                     aria-hidden="true"
                   />
                 </article>
@@ -355,13 +342,13 @@ export default function Landing() {
         </section>
 
         {/* Divisore tra Features e CTA */}
-        <div
+        {/* <div
           className="landing__divider h-px w-full bg-base-200"
           aria-hidden="true"
-        />
+        /> */}
 
         {/* Sezione Ready to create your first chart */}
-        <section
+        {/* <section
           className="landing__cta relative bg-base-100/80 py-16 lg:py-20"
           aria-label="Call to action"
         >
@@ -374,10 +361,7 @@ export default function Landing() {
               started.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="/quickstart"
-                className="btn btn-primary btn-lg"
-              >
+              <a href="/quickstart" className="btn btn-primary btn-lg">
                 Go to Quick start guide
               </a>
               <a
@@ -388,7 +372,7 @@ export default function Landing() {
               </a>
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
     </Layout>
   );

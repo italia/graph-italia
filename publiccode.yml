@@ -1,0 +1,74 @@
+publiccodeYmlVersion: "0.4"
+name: GraphItalia
+applicationSuite: GraphItalia
+url: https://github.com/italia/graph-italia
+landingURL: https://graph.italia.it/
+softwareVersion: "1.0"
+releaseDate: 2026-05-01
+platforms:
+  - web
+organisation:
+  uri: https://github.com/italia
+  name: DTD Dipartimento Trasformazione Digitale
+developmentStatus: stable
+softwareType: standalone/web
+intendedAudience:
+  scope:
+    - government
+    - science-and-technology
+    - education
+    - culture
+description:
+  it-IT:
+    localisedName: Graph Italia
+    shortDescription: Un tool per creare grafici
+    longDescription: >+
+      Graph Italia è progettato per semplificare il processo di creazione di
+      visualizzazioni dati, rendendolo accessibile sia a utenti tecnici che non
+      tecnici. Le principali funzionalità includono:
+
+
+      Creazione Grafici: Upload dati CSV o caricamento da URL remoti, selezione
+      del tipo di grafico più appropriato (barre, linee, torta, mappe
+      geografiche, KPI), e personalizzazione completa di colori, legende e stili
+
+      Dashboard Interattive: Creazione di dashboard personalizzate con layout
+      drag-and-drop, combinando multipli grafici in un'unica vista
+
+      Pubblicazione e Condivisione: Pubblicazione pubblica di grafici e
+      dashboard con URL dedicati per la condivisione o l'embed in altri siti web
+
+      Persistenza e Gestione: Salvataggio di grafici e dashboard nel database
+      per accesso futuro e modifica
+
+      Autenticazione Utenti: Sistema di autenticazione completo con
+      registrazione, verifica email e gestione password
+
+      Suggerimenti AI: Integrazione con OpenAI per suggerimenti automatici nella
+      creazione di grafici
+
+      Il progetto è strutturato come monorepo per massimizzare la riusabilità
+      dei componenti: la libreria React può essere utilizzata indipendentemente,
+      mentre l'applicazione web completa offre un'interfaccia utente completa
+      per tutte le funzionalità.
+
+
+      Graph Italia è sviluppato principalmente con TypeScript, React, e utilizza
+      Bun come runtime e package manager.
+
+    documentation: https://raw.githubusercontent.com/italia/graph-italia/refs/heads/main/README.md?token=GHSAT0AAAAAACMI2CRCIPBKEE7P4N7XN6IA2P26M6Q
+    apiDocumentation: https://raw.githubusercontent.com/italia/graph-italia/refs/heads/main/README.md?token=GHSAT0AAAAAACMI2CRCIPBKEE7P4N7XN6IA2P26M6Q
+    features:
+      - permette di creare e condividere grafici
+legal:
+  license: MIT
+maintenance:
+  type: internal
+  contacts:
+    - name: Lorenzo Ponticelli
+      email: l.ponticelli@innovazione.gov.it
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - it-IT
+    - en

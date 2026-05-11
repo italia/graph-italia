@@ -1,13 +1,13 @@
 {
-  "name": "dataviz-components",
+  "name": "graph-italia-components",
   "description": "A simple React component library.",
-  "version": "0.3.1",
+  "version": "0.3.23",
   "keywords": [
     "react",
     "typescript",
     "component",
     "library",
-    "dataviz",
+    "graph-italia",
     "echarts"
   ],
   "license": "MIT",
@@ -20,12 +20,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/italia/dataviz.git"
+    "url": "git+https://github.com/italia/graph-italia.git"
   },
   "bugs": {
-    "url": "https://github.com/italia/dataviz.git/issues"
+    "url": "https://github.com/italia/graph-italia.git/issues"
   },
-  "homepage": "https://github.com/italia/dataviz/tree/main/packages/components#readme",
+  "homepage": "https://github.com/italia/graph-italia/tree/main/packages/components#readme",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",

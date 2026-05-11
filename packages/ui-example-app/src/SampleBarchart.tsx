@@ -1,4 +1,4 @@
-import { ColorSchemeProvider, RenderChart, type FieldDataType } from "dataviz-components";
+import { RenderChart, type FieldDataType } from "graph-italia-components";
 
 function App() {
   const sampleData: FieldDataType = {
@@ -85,11 +85,9 @@ function App() {
 
   return (
     <div>
-      <ColorSchemeProvider scheme="dark">
-        <RenderChart
-          {...(sampleData as FieldDataType)}
-        />
-      </ColorSchemeProvider>
+      <RenderChart
+        {...(sampleData as FieldDataType)}
+      />
     </div>
   );
 }

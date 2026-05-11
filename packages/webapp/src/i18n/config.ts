@@ -9,7 +9,7 @@ const resources = { en, it };
 /** Read the persisted language from the zustand settings store before React mounts. */
 function getStoredLanguage(): string {
     try {
-        const raw = localStorage.getItem('dataviz-settings');
+        const raw = localStorage.getItem('graph-italia-settings');
         if (raw) {
             const parsed = JSON.parse(raw);
             const lang = parsed?.state?.settings?.preferredLanguage;
