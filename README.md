@@ -14,12 +14,14 @@ Il progetto è strutturato come **monorepo** per massimizzare la riusabilità de
 
 - **Come è nato** Deriva da una esigenza interna di visualizzare dati e cruscotti su siti istituzionali che gestiamo, avendo cura di rispettare principi di accessibilità, identity e trasparenza che denotano i siti in questione.
 
-- **Come è Articolato** E' composto da diversi tool:
-  - una Libreria per la visualizzazione dei grafici, che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
-  - una componente Server che sovraintende alle Api per il controllo accesso e salvataggio dati nel db e rimpiazza il Plugin
-  - una Web App per permettere di creare grafici a partire dal caricamento di file dati formattati ad hoc, anche questa parte rimpiazza il Plugin.
+**Come è Articolato** E' composto da diversi tool:
 
-- **Creazione Grafici**: Upload file dati CSV (max 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
+- una libreria per la visualizzazione dei grafici, che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad
+- un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
+- una componente server che sovraintende alle Api per il controllo accesso e salvataggio dati nel db
+- una webapp per permettere di creare grafici a partire da dati formattati ad hoc per la visualizzazione.
+
+- **Creazione Grafici**: Upload file dati CSV (massimo 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
 - **Dashboards**: Creazione di dashboard a partire dai grafici creati, combinando più grafici in un'unica vista
 - **Integrazione e Condivisione**: E' possibile integrare i chart creati all'interno di siti web tramite l'utilizzo delle Api, e utilizzando apposite chiavi per ogni progetto. Ogni progetto può avere N grafici e Dashboard. E' presente anche la possibilità di flaggare i grafici come pubblici e visualizzarli ad un url corrispondente all'identificativo alfanumerico del grafico, ma per adesso questa funzionalità è disabilitatà sulla nostra istanza per motivi legali. Questa Modalità permette anche l'embedding di grafici e dashboard tramite l'utilizzo di iframes all'interno di terzi siti web.
 - **Persistenza e Gestione**: Vengono salvati soltanto i dati caricati e selezionati dagli utenti. Nel caso di url remoti viene mantenuta in cache l'ultima versione valida , mentre viene effettuata una nuova richiesta se i dati sono più vecchi di tot ore (24 attualmente), e i dati vengono sostituiti se la nuova chiamata ha successo.
@@ -149,176 +151,6 @@ Il sistema supporta due ruoli:
 - **`Dashboard`**: Raccolta di grafici organizzati in "slots", pubblicazione pubblica, layout personalizzabile
 - **`ApiKey`**: Chiavi utilizzabili come bearers tokens per accedere tramite api ai grafici e le Dashboard
 - **`Slot`**: Collegamento tra Dashboard e Chart con configurazioni personalizzate per ogni slot
-
-#### Schema modelli prisma.
-
-```mermaid
-erDiagram
-    User {
-        String id PK
-        String email
-        String password
-        Boolean verified
-        Role role
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Project {
-        String id PK
-        String name
-        String ownerId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    ProjectMember {
-        String userId FK
-        String projectId FK
-        ProjectRole role
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Org {
-        String id PK
-        String name
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Membership {
-        String userId FK
-        String orgId FK
-        OrgRole role
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    OrgProject {
-        String orgId FK
-        String projectId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    ApiKey {
-        String id PK
-        String prefix
-        String keyHash
-        ApiKeyRole role
-        Int expire
-        DateTime revokedAt
-        String projectId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    ApiLog {
-        String id PK
-        String method
-        String endpoint
-        Int status
-        Int responseTime
-        DateTime timestamp
-        String projectName
-        String apiKeyId FK
-    }
-
-    VerificationCode {
-        String id PK
-        String code
-        CodeType type
-        Int expire
-        DateTime consumedAt
-        String userId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    DataSource {
-        String id PK
-        String name
-        String description
-        Json data
-        Json rules
-        Boolean publish
-        Boolean isTrasposed
-        String remoteUrl
-        Boolean isRemote
-        String projectId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Chart {
-        String id PK
-        String name
-        String description
-        String chart
-        Json config
-        Json data
-        Json dataSource
-        Boolean publish
-        String remoteUrl
-        Boolean isRemote
-        String projectId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    SourceLink {
-        String dataSourceId FK
-        String chartId FK
-        Json config
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Dashboard {
-        String id PK
-        String name
-        String description
-        Boolean publish
-        String projectId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Slot {
-        String dashboardId FK
-        String chartId FK
-        Json settings
-        String name
-        String description
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    User ||--o{ Project : "owns"
-    User ||--o{ ProjectMember : "member of"
-    User ||--o{ Membership : "belongs to"
-    User ||--o{ VerificationCode : "has"
-
-    Project ||--o{ ProjectMember : "has"
-    Project ||--o{ OrgProject : "linked to"
-    Project ||--o{ Chart : "contains"
-    Project ||--o{ Dashboard : "contains"
-    Project ||--o{ DataSource : "contains"
-    Project ||--o{ ApiKey : "has"
-
-    Org ||--o{ Membership : "has"
-    Org ||--o{ OrgProject : "linked to"
-
-    ApiKey ||--o{ ApiLog : "logs"
-
-    Chart ||--o{ Slot : "placed in"
-    Chart ||--o{ SourceLink : "linked to"
-
-    Dashboard ||--o{ Slot : "contains"
-
-    DataSource ||--o{ SourceLink : "linked to"
-```
 
 #### Documentazione API
 
@@ -1314,7 +1146,7 @@ Gli alert sono definiti in `charts/graph-italia/templates/prometheusrule.yaml`:
 | `GraphItaliaHighErrorRate`  | 5xx > 10% per 5 min          | Critical |
 | `GraphItaliaDatabaseErrors` | Errori DB > 0.5/s per 3 min  | Critical |
 | `GraphItaliaCrashLooping`   | > 5 restart in 30 min        | Critical |
-| `GraphItaliaHighWAFBlocks`  | 4xx > 30% **e** > 5 req/s (solo prod ns) per 10 min | Warning  |
+| `GraphItaliaHighWAFBlocks`  | 4xx > 30% per 10 min         | Critical |
 | `GraphItaliaUnresponsive`   | p95 latency > 30s            | Critical |
 | `GraphItaliaOutOfMemory`    | Memory > 95% per 5 min       | Critical |
 
