@@ -14,14 +14,12 @@ Il progetto è strutturato come **monorepo** per massimizzare la riusabilità de
 
 - **Come è nato** Deriva da una esigenza interna di visualizzare dati e cruscotti su siti istituzionali che gestiamo, avendo cura di rispettare principi di accessibilità, identity e trasparenza che denotano i siti in questione.
 
-**Come è Articolato** E' composto da diversi tool:
+- **Come è Articolato** E' composto da diversi tool:
+  - una Libreria per la visualizzazione dei grafici, che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
+  - una componente Server che sovraintende alle Api per il controllo accesso e salvataggio dati nel db e rimpiazza il Plugin
+  - una Web App per permettere di creare grafici a partire dal caricamento di file dati formattati ad hoc, anche questa parte rimpiazza il Plugin.
 
-- una libreria per la visualizzazione dei grafici, che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad
-- un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
-- una componente server che sovraintende alle Api per il controllo accesso e salvataggio dati nel db
-- una webapp per permettere di creare grafici a partire da dati formattati ad hoc per la visualizzazione.
-
-- **Creazione Grafici**: Upload file dati CSV (massimo 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
+- **Creazione Grafici**: Upload file dati CSV (max 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
 - **Dashboards**: Creazione di dashboard a partire dai grafici creati, combinando più grafici in un'unica vista
 - **Integrazione e Condivisione**: E' possibile integrare i chart creati all'interno di siti web tramite l'utilizzo delle Api, e utilizzando apposite chiavi per ogni progetto. Ogni progetto può avere N grafici e Dashboard. E' presente anche la possibilità di flaggare i grafici come pubblici e visualizzarli ad un url corrispondente all'identificativo alfanumerico del grafico, ma per adesso questa funzionalità è disabilitatà sulla nostra istanza per motivi legali. Questa Modalità permette anche l'embedding di grafici e dashboard tramite l'utilizzo di iframes all'interno di terzi siti web.
 - **Persistenza e Gestione**: Vengono salvati soltanto i dati caricati e selezionati dagli utenti. Nel caso di url remoti viene mantenuta in cache l'ultima versione valida , mentre viene effettuata una nuova richiesta se i dati sono più vecchi di tot ore (24 attualmente), e i dati vengono sostituiti se la nuova chiamata ha successo.
