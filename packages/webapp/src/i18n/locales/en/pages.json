@@ -76,7 +76,9 @@
                     "configuration": {
                         "title": "Configure the chart",
                         "description": "Choose the chart type and customize its appearance",
-                        "status": "Please load data and proceed to configuration step to see chart options"
+                        "status": "Load your data to get started. Once data is available you'll be able to pick the chart type and options.",
+                        "statusAwaitingSeries": "Data loaded. Confirm the series selection in the preview section to enable configuration.",
+                        "announcement": "Configuration available. Choose the chart type and customize its options."
                     },
                     "data": {
                         "title": "Load your data",
@@ -90,7 +92,12 @@
                 },
                 "preview": {
                     "loadDataMessage": "Load your data to display the data preview",
-                    "chartA11y": "Chart of type {{type}}: {{name}}. {{description}}"
+                    "chartA11y": "Chart of type {{type}}: {{name}}. {{description}}",
+                    "seriesSelector": {
+                        "title": "Series selection",
+                        "description": "Pick the columns to use as data series and confirm to proceed with the chart configuration.",
+                        "announcement": "Data loaded. Continue with the series selection in the preview section to enable configuration."
+                    }
                 }
             }
         },

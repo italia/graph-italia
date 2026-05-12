@@ -6,8 +6,9 @@ export default function EditStepComponent(props: {
   isOpen: boolean;
   isDisabled: boolean;
   index: number;
+  headingRef?: React.Ref<HTMLHeadingElement>;
 }) {
-  const { title, description, Icon, children, isOpen, index, isDisabled } = props;
+  const { title, description, Icon, children, isOpen, index, isDisabled, headingRef } = props;
   return (
     <details className="collapse collapse-arrow bg-base-100 border border-base-200" name={`my-accordion-det-${index}`} aria-disabled={isDisabled} open={isOpen}>
       <summary className="collapse-title font-semibold">
@@ -21,7 +22,7 @@ export default function EditStepComponent(props: {
             </span>
           </div>
           <div>
-            <h2 className="card-title text-xl">
+            <h2 ref={headingRef} tabIndex={-1} className="card-title text-xl">
               {title}
             </h2>
             <p className="text-sm text-base-content/60">
