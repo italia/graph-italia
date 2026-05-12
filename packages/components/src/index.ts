@@ -16,7 +16,7 @@ export type { DashboardProviderProps } from "./context/DashboardProvider";
 export type { ChartColorScheme, EchartsThemeValue } from "./themes";
 export type { ChartProviderProps } from "./context/ChartProvider";
 export type { DashboardProviderProps } from "./context/DashboardProvider";
-export type { DashboardProviderGridProps } from "./context/DashboardGridProvider";
+export type { DashboardGridProviderProps } from "./context/DashboardGridProvider";
 export type { DashboardData, DashboardSlot, RenderDashboardProps } from "./components/RenderDashboard";
 
 export * from "./types";
