@@ -1,0 +1,58 @@
+name: Segnalazione
+description: Segnala un problema relativo a una pagina o a un grafico pubblicato
+title: "[Segnalazione]: "
+labels: ["segnalazione"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie per la tua segnalazione. Compila tutti i campi obbligatori.
+
+        > ⚠️ **Nota:** il campo *Altro* va compilato **solo** se hai selezionato "Altro" come motivazione.
+
+  - type: input
+    id: email
+    attributes:
+      label: Email del segnalatore
+      description: Indirizzo email valido a cui poterti ricontattare.
+      placeholder: nome@esempio.it
+    validations:
+      required: true
+
+  - type: input
+    id: url-pagina
+    attributes:
+      label: URL della pagina
+      description: URL completo della pagina interessata dalla segnalazione.
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: input
+    id: url-grafico
+    attributes:
+      label: URL del grafico
+      description: URL del grafico (se applicabile).
+      placeholder: https://...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: motivazione
+    attributes:
+      label: Motivazione
+      description: Seleziona la motivazione della segnalazione.
+      options:
+        - Pubblicazione dati sensibili
+        - Altro
+    validations:
+      required: true
+
+  - type: textarea
+    id: altro
+    attributes:
+      label: Altro
+      description: Compila questo campo **solo** se hai selezionato "Altro" come motivazione. Descrivi nel dettaglio il problema.
+      placeholder: Descrivi qui la motivazione...
+    validations:
+      required: false
