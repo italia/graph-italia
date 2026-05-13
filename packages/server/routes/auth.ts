@@ -348,7 +348,7 @@ router.post("/resend",
 		// Re-send only if the account exists AND is still unverified.
 		// Already-verified accounts must use /recover for password resets.
 		if (user && !user.verified) {
-			const pin = await db.createCode(user.id);
+			const pin = await db.createCode(user.id, "ACTIVATION");
 			await sendActivationEmail(user, pin);
 		}
 		// Always return success to prevent email enumeration
