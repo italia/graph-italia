@@ -8,11 +8,11 @@ import ChartProvider from "./context/ChartProvider";
 import { ColorSchemeProvider, useColorScheme, useResolvedTheme } from "./context/ColorSchemeContext";
 import DashboardGridProvider from "./context/DashboardGridProvider";
 import DashboardProvider from "./context/DashboardProvider";
-export type { DashboardData, DashboardSlot, RenderDashboardProps } from "./components/RenderDashboard";
-export type { ChartProviderProps } from "./context/ChartProvider";
-export type { DashboardGridProviderProps } from "./context/DashboardGridProvider";
-export type { DashboardProviderProps } from "./context/DashboardProvider";
 export type { ChartColorScheme, EchartsThemeValue } from "./themes";
+export type { ChartProviderProps } from "./context/ChartProvider";
+export type { DashboardProviderProps } from "./context/DashboardProvider";
+export type { DashboardData, DashboardSlot, RenderDashboardProps } from "./components/RenderDashboard";
+export type { DashboardGridProviderProps } from "./context/DashboardGridProvider";
 
 export * from "./types";
 export {

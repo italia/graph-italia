@@ -5,6 +5,7 @@ const API_KEY = import.meta.env.VITE_API_KEY ?? "dv_your_project_key";
 const ENDPOINT = import.meta.env.VITE_ENDPOINT ?? "http://localhost:3003";
 const CHART_ID = import.meta.env.VITE_CHART_ID ?? "your-chart-id";
 
+
 export default function SampleChartProvider() {
   return (
     <div>

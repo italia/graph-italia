@@ -28,6 +28,7 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 	"localhost",
 	HOST,
 	`${HOST}:${PORT}`,
+	"localhost",
 	"localhost:3000",
 	"http://localhost:3000",
 	"http://127.0.0.1:3000",
