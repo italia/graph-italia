@@ -1,5 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import React from "react";
+import React, { useEffect, type RefObject } from "react";
 
 export type MatrixType = (string | number)[][];
 
@@ -33,31 +32,28 @@ export type DataTableProps = {
   poweredByLabel?: string;
 };
 
+export type SortState = {
+  columnKey: string;
+  direction: "asc" | "desc";
+} | null;
+
+export type RowRecord = Record<string, unknown>;
+
 export const defaultFormatNumber = (n: number) =>
   new Intl.NumberFormat("it-IT").format(n);
-
-function getColumnId(index: number): string {
-  return `col_${index}`;
-}
 
 export function extractHeaderRow(data: MatrixType): (string | number)[] {
   return Array.isArray(data) && data.length > 0 ? data[0] : [];
 }
 
-export function getFirstColumnId(
-  headerRow: (string | number)[]
-): string | undefined {
-  return headerRow && headerRow.length > 0 ? getColumnId(0) : undefined;
-}
-
-export function convertMatrixToTableData(
+export function convertMatrixToRows(
   data: MatrixType,
   headerRow: (string | number)[]
-): Record<string, unknown>[] {
+): RowRecord[] {
   if (!Array.isArray(data) || data.length === 0) return [];
   const rows = data.slice(1);
   return rows.map((row) => {
-    const obj: Record<string, unknown> = {};
+    const obj: RowRecord = {};
     headerRow.forEach((colHeader, idx) => {
       obj[String(colHeader)] = row[idx];
     });
@@ -65,57 +61,19 @@ export function convertMatrixToTableData(
   });
 }
 
-type CreateColumnsOptions = {
-  headerRow: (string | number)[];
-  firstColumnId: string | undefined;
-  format: (n: number) => string;
-  formatValue?: (value: unknown, ctx: FormatValueContext) => React.ReactNode;
-};
-
-export function createTableColumns(
-  options: CreateColumnsOptions
-): ColumnDef<Record<string, unknown>>[] {
-  const { headerRow, firstColumnId, format, formatValue } = options;
-
-  return headerRow.map((headerCell, index) => {
-    const headerLabel = String(headerCell);
-    const columnId = getColumnId(index);
-
-    return {
-      id: columnId,
-      accessorFn: (row) => row[headerLabel],
-      header: headerLabel,
-      cell: (info) => {
-        const value = info.getValue() as unknown;
-        const colIndex = index;
-        const isFirstCol = firstColumnId
-          ? info.column.id === firstColumnId
-          : colIndex === 0;
-
-        if (typeof formatValue === "function") {
-          return formatValue(value, {
-            columnId: info.column.id,
-            rowIndex: info.row.index,
-            colIndex,
-            isFirstColumn: isFirstCol,
-          });
-        }
-
-        if (typeof value === "number") {
-          const formatted = format(value as number);
-          return formatted;
-        }
-
-        return value as React.ReactNode;
-      },
-    } as ColumnDef<Record<string, unknown>>;
-  });
-}
-
-export function getSortIndicator(sorted: "asc" | "desc" | false): string {
-  if (sorted === "asc") return "▲";
-  if (sorted === "desc") return "▼";
-  return "";
+export function formatCellValue(
+  value: unknown,
+  ctx: FormatValueContext,
+  format: (n: number) => string,
+  formatValue?: (value: unknown, ctx: FormatValueContext) => React.ReactNode
+): React.ReactNode {
+  if (typeof formatValue === "function") {
+    return formatValue(value, ctx);
+  }
+  if (typeof value === "number") {
+    return format(value);
+  }
+  return value as React.ReactNode;
 }
 
 export function computeScrollState(el: HTMLDivElement): {
@@ -227,4 +185,32 @@ export function useFadePresence(targetVisible: boolean, durationMs = 180) {
   }, [targetVisible, durationMs]);
 
   return { present, visible };
+}
+
+// react-data-table-component renders div-based markup without native aria-sort.
+// This hook injects aria-sort on its [role="columnheader"] elements after each
+// sort change so screen readers announce the sorted column.
+export function useAriaSort(
+  containerRef: RefObject<HTMLElement | null>,
+  sortState: SortState
+) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const headers = container.querySelectorAll<HTMLElement>(
+      '[role="columnheader"]'
+    );
+    headers.forEach((header) => {
+      const colName = header.textContent?.trim() ?? "";
+      if (sortState && colName === sortState.columnKey) {
+        header.setAttribute(
+          "aria-sort",
+          sortState.direction === "asc" ? "ascending" : "descending"
+        );
+      } else {
+        header.setAttribute("aria-sort", "none");
+      }
+    });
+  }, [containerRef, sortState]);
 }
