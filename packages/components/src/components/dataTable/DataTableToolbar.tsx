@@ -1,11 +1,7 @@
-import type { Table } from "@tanstack/react-table";
 import React from "react";
 import { ColumnVisibilityPanel } from "./ColumnVisibilityPanel";
 
-type TableRecord = Record<string, unknown>;
-
 type DataTableToolbarProps = {
-  table: Table<TableRecord>;
   showFilters: boolean;
   isFilterOpen: boolean;
   onToggleFilters: () => void;
@@ -14,10 +10,12 @@ type DataTableToolbarProps = {
   filterButtonAriaLabel: string;
   panelTitle: string;
   panelCloseAriaLabel: string;
+  headers: string[];
+  visibleColumns: Set<string>;
+  onToggleColumn: (colName: string) => void;
 };
 
 export function DataTableToolbar({
-  table,
   showFilters,
   isFilterOpen,
   onToggleFilters,
@@ -26,6 +24,9 @@ export function DataTableToolbar({
   filterButtonAriaLabel,
   panelTitle,
   panelCloseAriaLabel,
+  headers,
+  visibleColumns,
+  onToggleColumn,
 }: DataTableToolbarProps) {
   if (!showFilters) return null;
 
@@ -43,11 +44,13 @@ export function DataTableToolbar({
         </button>
       </div>
       <ColumnVisibilityPanel
-        table={table}
         isOpen={isFilterOpen}
         onClose={onCloseFilters}
         title={panelTitle}
         closeAriaLabel={panelCloseAriaLabel}
+        headers={headers}
+        visibleColumns={visibleColumns}
+        onToggleColumn={onToggleColumn}
       />
     </>
   );

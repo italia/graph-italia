@@ -1,33 +1,26 @@
-import type { Table } from "@tanstack/react-table";
 import React from "react";
 
-type TableRecord = Record<string, unknown>;
-
 type ColumnVisibilityPanelProps = {
-  table: Table<TableRecord>;
   isOpen: boolean;
   onClose: () => void;
   title: string;
   closeAriaLabel: string;
+  headers: string[];
+  visibleColumns: Set<string>;
+  onToggleColumn: (colName: string) => void;
 };
 
 export function ColumnVisibilityPanel({
-  table,
   isOpen,
   onClose,
   title,
   closeAriaLabel,
+  headers,
+  visibleColumns,
+  onToggleColumn,
 }: ColumnVisibilityPanelProps) {
   if (!isOpen) return null;
-
-  const columns = table
-    .getAllLeafColumns()
-    // Solo colonne che possono essere nascoste
-    .filter(
-      (column) => (column.getCanHide?.() ?? true) && column.id !== "_dummy"
-    );
-
-  if (!columns.length) return null;
+  if (!headers.length) return null;
 
   return (
     <div className="mid-table-filter-panel">
@@ -43,26 +36,17 @@ export function ColumnVisibilityPanel({
         </button>
       </div>
       <div className="mid-table-filter-body">
-        {columns.map((column) => {
-          const headerLabel =
-            typeof column.columnDef.header === "string" ||
-            typeof column.columnDef.header === "number"
-              ? String(column.columnDef.header)
-              : column.id;
-
+        {headers.map((colName) => {
+          const id = `mid-col-filter-${colName}`;
           return (
-            <label
-              key={column.id}
-              className="mid-table-filter-item"
-              htmlFor={`mid-col-filter-${column.id}`}
-            >
+            <label key={colName} className="mid-table-filter-item" htmlFor={id}>
               <input
-                id={`mid-col-filter-${column.id}`}
+                id={id}
                 type="checkbox"
-                checked={column.getIsVisible()}
-                onChange={(e) => column.toggleVisibility(e.target.checked)}
+                checked={visibleColumns.has(colName)}
+                onChange={() => onToggleColumn(colName)}
               />
-              <span className="mid-table-filter-label">{headerLabel}</span>
+              <span className="mid-table-filter-label">{colName}</span>
             </label>
           );
         })}

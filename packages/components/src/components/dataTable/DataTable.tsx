@@ -1,34 +1,25 @@
-import {
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
-import {
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type SortingState,
-  type VisibilityState,
-} from "@tanstack/react-table";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import DataTableComponent, {
+  type TableColumn,
+} from "react-data-table-component";
 import "./dataTable.css";
-import { DataTableContent } from "./DataTableContent";
 import { DataTableExport } from "./DataTableExport";
 import { DataTableToolbar } from "./DataTableToolbar";
-import ScrollButton from "./ScrollButton";
 import PoweredBy from "../PoweredBy";
+import { useColorScheme } from "../../context/ColorSchemeContext";
+import { registerDataTableDarkTheme } from "./theme";
 import {
-  convertMatrixToTableData,
-  createTableColumns,
+  convertMatrixToRows,
   defaultFormatNumber,
   extractHeaderRow,
-  getFirstColumnId,
-  useFadePresence,
-  useHorizontalScrollArrows,
+  formatCellValue,
+  useAriaSort,
   type DataTableProps,
+  type RowRecord,
+  type SortState,
 } from "./utils";
+
+registerDataTableDarkTheme();
 
 export default function DataTable(props: DataTableProps) {
   const {
@@ -52,84 +43,105 @@ export default function DataTable(props: DataTableProps) {
     columnVisibilityCloseAriaLabel:
       labels?.columnVisibilityCloseAriaLabel ?? "Chiudi filtri colonne",
     exportCsvButton: labels?.exportCsvButton ?? "Esporta CSV",
-    scrollLeftAriaLabel: labels?.scrollLeftAriaLabel ?? "Scorri a sinistra",
-    scrollRightAriaLabel: labels?.scrollRightAriaLabel ?? "Scorri a destra",
-    reorderColumnAriaLabel:
-      labels?.reorderColumnAriaLabel ?? "Riordina colonna",
   };
 
-  const { wrapperRef, showLeftArrow, showRightArrow, scrollBy } =
-    useHorizontalScrollArrows();
-  const leftFade = useFadePresence(showLeftArrow, 180);
-  const rightFade = useFadePresence(showRightArrow, 180);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [isFilterOpen, setIsFilterOpen] = React.useState(false);
+  const scheme = useColorScheme();
+  const currentTheme = scheme === "dark" ? "graph-italia-dark" : "default";
+
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [sortState, setSortState] = useState<SortState>(null);
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set());
+  const [columnOrder, setColumnOrder] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useAriaSort(tableRef, sortState);
 
   const hasData = Array.isArray(data) && data.length > 0;
-  const headerRow = React.useMemo(() => extractHeaderRow(data), [data]);
-  const firstColumnId = React.useMemo(
-    () => getFirstColumnId(headerRow),
-    [headerRow]
-  );
-  const format = React.useMemo(
+  const headerRow = useMemo(() => extractHeaderRow(data), [data]);
+  const headers = useMemo(() => headerRow.map((h) => String(h)), [headerRow]);
+
+  const format = useMemo(
     () => formatNumber ?? defaultFormatNumber,
     [formatNumber]
   );
 
-  const columns = React.useMemo(
-    () =>
-      createTableColumns({
-        headerRow,
-        firstColumnId,
-        format,
-        formatValue,
-      }),
-    [headerRow, firstColumnId, format, formatValue]
+  useEffect(() => {
+    setVisibleColumns(new Set(headers));
+    setColumnOrder(headers);
+    setSortState(null);
+  }, [headers]);
+
+  const orderedVisibleHeaders = useMemo(
+    () => columnOrder.filter((h) => visibleColumns.has(h)),
+    [columnOrder, visibleColumns]
   );
 
-  const tableData = React.useMemo(
-    () => convertMatrixToTableData(data, headerRow),
+  const rows = useMemo<RowRecord[]>(
+    () => convertMatrixToRows(data, headerRow),
     [data, headerRow]
   );
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 0,
-      },
-    })
+  const columns = useMemo<TableColumn<RowRecord>[]>(() => {
+    return orderedVisibleHeaders.map((key, displayIndex) => {
+      const originalIndex = headers.indexOf(key);
+      return {
+        id: key,
+        name: key,
+        selector: (row) => row[key] as string | number,
+        sortable: true,
+        reorder: enableColumnReorder,
+        wrap: true,
+        cell: (row, rowIndex) =>
+          formatCellValue(
+            row[key],
+            {
+              columnId: key,
+              rowIndex,
+              colIndex: originalIndex,
+              isFirstColumn: displayIndex === 0,
+            },
+            format,
+            formatValue
+          ),
+        style: displayIndex === 0 ? { fontWeight: "bold" } : undefined,
+      };
+    });
+  }, [orderedVisibleHeaders, headers, enableColumnReorder, format, formatValue]);
+
+  const handleSort = useCallback(
+    (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
+      const key = typeof column.name === "string" ? column.name : "";
+      if (key) setSortState({ columnKey: key, direction });
+    },
+    []
   );
 
-  const table = useReactTable({
-    data: tableData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    state: { sorting, columnOrder, columnVisibility },
-    onSortingChange: setSorting,
-    onColumnOrderChange: setColumnOrder,
-    onColumnVisibilityChange: setColumnVisibility,
-  });
+  const handleColumnOrderChange = useCallback(
+    (newCols: TableColumn<RowRecord>[]) => {
+      const newOrder = newCols
+        .map((c) => (typeof c.name === "string" ? c.name : ""))
+        .filter(Boolean);
+      // Merge into the full column order, preserving the positions of any
+      // currently hidden columns.
+      setColumnOrder((prev) => {
+        const hidden = prev.filter((h) => !visibleColumns.has(h));
+        return [...newOrder, ...hidden];
+      });
+    },
+    [visibleColumns]
+  );
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    setColumnOrder((prev) => {
-      const oldIndex = prev.indexOf(active.id as string);
-      const newIndex = prev.indexOf(over.id as string);
-      if (oldIndex === -1 || newIndex === -1) return prev;
-      return arrayMove(prev, oldIndex, newIndex);
+  const toggleColumn = useCallback((colName: string) => {
+    setVisibleColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(colName)) {
+        next.delete(colName);
+      } else {
+        next.add(colName);
+      }
+      return next;
     });
-  };
-
-  useEffect(() => {
-    if (headerRow && headerRow.length > 0) {
-      setColumnOrder(headerRow.map((h) => String(h)));
-    }
-  }, [headerRow]);
+  }, []);
 
   if (!hasData) {
     return null;
@@ -138,7 +150,6 @@ export default function DataTable(props: DataTableProps) {
   return (
     <div className="mid-table-outer">
       <DataTableToolbar
-        table={table as any}
         showFilters={showFilters}
         isFilterOpen={isFilterOpen}
         onToggleFilters={() => setIsFilterOpen((prev) => !prev)}
@@ -147,38 +158,29 @@ export default function DataTable(props: DataTableProps) {
         filterButtonAriaLabel={resolvedLabels.filterColumnsAriaLabel}
         panelTitle={resolvedLabels.columnVisibilityTitle}
         panelCloseAriaLabel={resolvedLabels.columnVisibilityCloseAriaLabel}
+        headers={headers}
+        visibleColumns={visibleColumns}
+        onToggleColumn={toggleColumn}
       />
-      <DataTableContent
-        table={table as any}
-        id={id}
-        firstColumnId={firstColumnId}
-        wrapperRef={wrapperRef as React.RefObject<HTMLDivElement | null>}
-        columnOrder={columnOrder}
-        sensors={sensors}
-        onDragEnd={handleDragEnd}
-        enableColumnReorder={enableColumnReorder}
-      />
+      <div ref={tableRef} className="mid-table-wrapper">
+        <DataTableComponent
+          columns={columns}
+          data={rows}
+          theme={currentTheme}
+          dense
+          highlightOnHover
+          responsive
+          onSort={handleSort}
+          sortServer={false}
+          onColumnOrderChange={enableColumnReorder ? handleColumnOrderChange : undefined}
+        />
+      </div>
       {enableExportCsv && (
         <DataTableExport
-          table={table as any}
           id={id}
           buttonLabel={resolvedLabels.exportCsvButton}
-        />
-      )}
-      {leftFade.present && (
-        <ScrollButton
-          side="left"
-          ariaLabel={resolvedLabels.scrollLeftAriaLabel}
-          onClick={() => scrollBy("left")}
-          visible={leftFade.visible}
-        />
-      )}
-      {rightFade.present && (
-        <ScrollButton
-          side="right"
-          ariaLabel={resolvedLabels.scrollRightAriaLabel}
-          onClick={() => scrollBy("right")}
-          visible={rightFade.visible}
+          headers={orderedVisibleHeaders}
+          rows={rows}
         />
       )}
       <PoweredBy label={poweredByLabel} />

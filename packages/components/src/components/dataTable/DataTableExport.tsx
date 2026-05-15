@@ -1,45 +1,28 @@
-import type { Table } from "@tanstack/react-table";
 import React from "react";
-
-type TableRecord = Record<string, unknown>;
+import type { RowRecord } from "./utils";
 
 type DataTableExportProps = {
-  table: Table<TableRecord>;
   id?: string;
   buttonLabel: string;
+  headers: string[];
+  rows: RowRecord[];
 };
 
 export function DataTableExport({
-  table,
   id,
   buttonLabel,
+  headers,
+  rows,
 }: DataTableExportProps) {
   const handleExportCsv = () => {
     if (typeof window === "undefined" || typeof document === "undefined") {
       return;
     }
-
-    const allVisibleColumns = table
-      .getVisibleLeafColumns()
-      .filter((column) => column.id !== "_dummy");
-
-    if (!allVisibleColumns.length) {
-      return;
-    }
-
-    const headerRowCsv = allVisibleColumns.map((column) => {
-      const headerDef = column.columnDef.header;
-      if (typeof headerDef === "string" || typeof headerDef === "number") {
-        return String(headerDef);
-      }
-      return String(column.id);
-    });
-
-    const rows = table.getRowModel().rows;
+    if (!headers.length) return;
 
     const dataRowsCsv = rows.map((row) =>
-      allVisibleColumns.map((column) => {
-        const rawValue = row.getValue(column.id as string) as unknown;
+      headers.map((key) => {
+        const rawValue = row[key] as unknown;
         if (rawValue === null || rawValue === undefined) return "";
         if (typeof rawValue === "number") return String(rawValue);
         if (typeof rawValue === "string") return rawValue;
@@ -54,7 +37,7 @@ export function DataTableExport({
       return needsQuote ? `"${escaped}"` : escaped;
     };
 
-    const csvLines = [headerRowCsv, ...dataRowsCsv].map((row) =>
+    const csvLines = [headers, ...dataRowsCsv].map((row) =>
       row.map((cell) => escapeCell(String(cell))).join(",")
     );
 
