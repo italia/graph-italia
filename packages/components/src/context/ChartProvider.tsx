@@ -58,8 +58,8 @@ type Action =
 function reducer(_: State, action: Action): State {
   switch (action.type) {
     case "FETCH": return { status: "loading" };
-    case "OK":    return { status: "success", chart: action.chart };
-    case "ERR":   return { status: "error", message: action.message };
+    case "OK": return { status: "success", chart: action.chart };
+    case "ERR": return { status: "error", message: action.message };
   }
 }
 
