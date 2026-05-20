@@ -98,9 +98,9 @@ export default function ChooseLoader({
             type="button"
             key={tab.id}
             role="tab"
-            className={`tab gap-2 transition-all text-base-content ${currentTab === tab.id
+            className={`tab gap-2 transition-all text-base-content opacity-100 ${currentTab === tab.id
               ? "tab-active bg-base-100 shadow-sm font-semibold"
-              : "hover:bg-base-100/50"
+              : "font-medium hover:bg-base-100/50"
               }`}
             onClick={() => setCurrentTab(tab.id)}
             aria-selected={currentTab === tab.id}

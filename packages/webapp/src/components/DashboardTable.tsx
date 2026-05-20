@@ -94,7 +94,8 @@ export default function DashboardTable({
           </button> */}
           <button
             type="button"
-            aria-label="edit"
+            aria-label={t("actions.edit", { defaultValue: "Modifica" })}
+            title={t("actions.edit", { defaultValue: "Modifica" })}
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => handleEditDashboard(row)}
           >
@@ -108,14 +109,16 @@ export default function DashboardTable({
             href={ROUTES.viewDashboard(row.id ?? "")}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="open published dashboard"
+            aria-label={t("actions.view", { defaultValue: "Apri dashboard pubblicata" })}
+            title={t("actions.view", { defaultValue: "Apri dashboard pubblicata" })}
             className="btn btn-ghost btn-xs btn-square"
           >
             <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
           <button
             type="button"
-            aria-label="delete"
+            aria-label={t("actions.delete", { defaultValue: "Elimina" })}
+            title={t("actions.delete", { defaultValue: "Elimina" })}
             className="btn btn-ghost btn-xs btn-square"
             onClick={() => handleDeleteDashboard(row.id ?? "")}
           >

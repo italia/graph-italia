@@ -44,6 +44,7 @@ interface DashboardEditActions {
   addItem: () => void;
   deleteItem: (id: string) => void;
   updateItemSize: (id: string, w: number, h: number) => void;
+  updateItemPosition: (id: string, dx: number, dy: number) => void;
   showAddModal: (i: string) => void;
   closeAddModal: () => void;
   setBreakpoint: (breakpoint: string) => void;
@@ -107,6 +108,16 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   updateItemSize: (id: string, w: number, h: number) => {
     const { layout } = get();
     set({ layout: layout.map((item) => item.i === id ? { ...item, w, h } : item) });
+  },
+  updateItemPosition: (id: string, dx: number, dy: number) => {
+    const { layout } = get();
+    set({
+      layout: layout.map((item) =>
+        item.i === id
+          ? { ...item, x: Math.max(0, item.x + dx), y: Math.max(0, item.y + dy) }
+          : item
+      ),
+    });
   },
   deleteItem: (id: string) => {
     console.log('delete', id);
