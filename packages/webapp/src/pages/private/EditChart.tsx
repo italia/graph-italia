@@ -130,17 +130,14 @@ function EditChartPage() {
   const haveData = data && data[0].length > 0 ? true : dataSource ? true : false;
   const isConfigStep = state.matches("config");
 
-  // Announce step transitions and move keyboard focus so AT users learn that
-  // the next interactive section just became available (WCAG 1.3.2, 3.3.2).
+  // Announce step transitions via aria-live so AT users learn that the next
+  // interactive section is available, without forcibly moving keyboard focus.
   useEffect(() => {
     if (loading) return;
     if (isConfigStep) {
       setStepAnnouncement(t(`body.options.configuration.announcement`));
-      // Defer until the configuration section is rendered/opened.
-      requestAnimationFrame(() => configurationHeadingRef.current?.focus());
     } else if (currentData && !haveData) {
       setStepAnnouncement(t(`body.preview.seriesSelector.announcement`));
-      requestAnimationFrame(() => seriesSelectorRef.current?.focus());
     }
   }, [isConfigStep, currentData, haveData, loading, t]);
 
@@ -487,6 +484,10 @@ function EditChartPage() {
                           description: chartDescription || "",
                           defaultValue: `Grafico di tipo {{type}}: {{name}}. {{description}}`,
                         })}
+                        {" "}
+                        <a href="#chart-data-table">
+                          {t(`body.preview.dataTableLink`, { defaultValue: "Visualizza la tabella dati associata" })}
+                        </a>
                       </figcaption>
                     </figure>
                   </>
@@ -531,7 +532,7 @@ function EditChartPage() {
                       </div>)}
                   </div>
                 ) : (
-                  <div className="overflow-auto flex-1 min-h-0">
+                  <div id="chart-data-table" className="overflow-auto flex-1 min-h-0">
                     <TransformDataTable
                       currentData={(data)}
                       handleTransformData={(d) => {

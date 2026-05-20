@@ -332,7 +332,7 @@ export default function AboutPage() {
               {features.map((f) => (
                 <article
                   key={f.title}
-                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm"
                 >
                   <span className="text-3xl mb-4 select-none" aria-hidden="true">
                     {f.emoji}
@@ -427,7 +427,7 @@ export default function AboutPage() {
               {levels.map((level, i) => (
                 <div
                   key={level.badge}
-                  className={`flex flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md ${i === 1
+                  className={`flex flex-col rounded-2xl border p-6 shadow-sm ${i === 1
                     ? "border-primary/40 bg-primary/5 ring-1 ring-primary/20"
                     : "border-base-300 bg-base-100"
                     }`}

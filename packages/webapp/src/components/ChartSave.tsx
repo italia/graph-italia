@@ -1,11 +1,14 @@
 import dayjs from "dayjs";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import * as api from "../lib/api";
 import { HOME_ROUTE } from "../router";
 
 function ChartSave({ item, handleSave }: any) {
   const navigate = useNavigate();
+  const [saveStatus, setSaveStatus] = useState("");
   const defaultName = `${item.chart}chart-${dayjs(Date.now()).format(
     "YYYY-MM-DD_HH-mm"
   )}`;
@@ -43,10 +46,20 @@ function ChartSave({ item, handleSave }: any) {
   }
 
   const onSubmit = async (formData: any) => {
-    const result = await saveChart(formData);
-    if (result) {
-      handleSave();
-      navigate(HOME_ROUTE);;
+    try {
+      const result = await saveChart(formData);
+      if (result) {
+        const successMessage = "Grafico salvato con successo";
+        setSaveStatus(successMessage);
+        toast.success(successMessage);
+        handleSave();
+        setTimeout(() => navigate(HOME_ROUTE), 600);
+      }
+    } catch (error) {
+      const errorMessage = "Errore durante il salvataggio del grafico";
+      setSaveStatus(errorMessage);
+      toast.error(errorMessage);
+      console.error(error);
     }
   };
 
@@ -73,6 +86,9 @@ function ChartSave({ item, handleSave }: any) {
 
   return (
     <div className="space-y-6">
+      <div role="status" aria-live="polite" className="sr-only">
+        {saveStatus}
+      </div>
       {/* Image preview if available */}
       {item.preview && (
         <div className="flex justify-center">

@@ -283,6 +283,8 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            aria-expanded={showFilterColumns}
+            aria-controls="data-table-filter-columns"
             onClick={() => setShowFilterColumns((v) => !v)}
           >
             {showFilterColumns ? "Hide Columns Filter" : "Filter Columns"}
@@ -290,6 +292,8 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            aria-expanded={showSortColumns}
+            aria-controls="data-table-sort-columns"
             onClick={() => setShowSortColumns((v) => !v)}
           >
             {showSortColumns ? "Hide Column Order" : "Reorder Columns"}
@@ -297,6 +301,8 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            aria-expanded={showRenameForm}
+            aria-controls="data-table-rename-headers"
             onClick={() =>
               showRenameForm ? setShowRenameForm(false) : openRenameForm()
             }
@@ -334,24 +340,30 @@ export default function TransformData({
       </div>
 
       {showRenameForm && (
-        <RenameTableHeadersForm
-          initialValues={workingData[0].map(String)}
-          onApply={applyRenames}
-          onCancel={() => setShowRenameForm(false)}
-        />
+        <div id="data-table-rename-headers" role="region" aria-label={t(`actions.renameHeaders.label`, { defaultValue: "Rinomina intestazioni" })}>
+          <RenameTableHeadersForm
+            initialValues={workingData[0].map(String)}
+            onApply={applyRenames}
+            onCancel={() => setShowRenameForm(false)}
+          />
+        </div>
       )}
       {showFilterColumns && (
-        <ToggleTableColumns
-          columnOrder={columnOrder}
-          visibleColumns={visibleColumns}
-          onToggle={toggleColumn}
-        />
+        <div id="data-table-filter-columns" role="region" aria-label={t(`actions.filterColumns.label`, { defaultValue: "Filtra colonne" })}>
+          <ToggleTableColumns
+            columnOrder={columnOrder}
+            visibleColumns={visibleColumns}
+            onToggle={toggleColumn}
+          />
+        </div>
       )}
       {showSortColumns && (
-        <SortTableColumns
-          columnOrder={columnOrder}
-          onReorder={setColumnOrder}
-        />
+        <div id="data-table-sort-columns" role="region" aria-label={t(`actions.reorderColumns.label`, { defaultValue: "Riordina colonne" })}>
+          <SortTableColumns
+            columnOrder={columnOrder}
+            onReorder={setColumnOrder}
+          />
+        </div>
       )}
 
       <div ref={tableRef}>

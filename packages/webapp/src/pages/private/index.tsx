@@ -1,6 +1,6 @@
 import { useMachine } from "@xstate/react";
 import { type FieldDataType } from "graph-italia-components";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaChevronDown,
   FaChartBar,
@@ -55,6 +55,20 @@ function Home() {
   const [projectToRename, setProjectToRename] = useState<api.Project | null>(null);
   const [renameProjectName, setRenameProjectName] = useState("");
   const [isRenamingProject, setIsRenamingProject] = useState(false);
+  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
+  const projectDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (projectDropdownRef.current && !projectDropdownRef.current.contains(event.target as Node)) {
+        setProjectDropdownOpen(false);
+      }
+    }
+    if (projectDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [projectDropdownOpen]);
 
 
 
@@ -140,10 +154,7 @@ function Home() {
 
   const handleSelectProject = (projectId: string) => {
     setCurrentProjectId(projectId);
-    // Force blur any active element to close DaisyUI dropdowns
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
+    setProjectDropdownOpen(false);
   };
 
   const personalProjects = projects.filter(p => !p.orgs || p.orgs.length === 0);
@@ -273,15 +284,25 @@ function Home() {
         <div>
           {/* Project Switcher */}
           <div className="flex items-center gap-2 mt-1">
-            <div className="dropdown dropdown-bottom">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-xl normal-case gap-2 px-1 opacity-70 hover:opacity-100">
-                <FaFolderOpen className="text-secondary" />
+            <div className="relative" ref={projectDropdownRef}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-xl normal-case gap-2 px-1 opacity-70 hover:opacity-100"
+                aria-haspopup="menu"
+                aria-expanded={projectDropdownOpen}
+                aria-label={t("projectSwitcher.ariaLabel", { defaultValue: "Cambia progetto" })}
+                onClick={() => setProjectDropdownOpen((v) => !v)}
+              >
+                <FaFolderOpen className="text-secondary" aria-hidden="true" />
                 <span className="max-w-[200px] truncate">
                   {projects.find(p => p.id === currentProjectId)?.name || t("projectSwitcher.selectPrompt", "Select Project")}
                 </span>
-                <FaChevronDown className="w-3 h-3" />
-              </div>
-              <ul tabIndex={0} className="dropdown-content z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto">
+                <FaChevronDown className="w-3 h-3" aria-hidden="true" />
+              </button>
+              <ul
+                role="menu"
+                className={`${projectDropdownOpen ? "block" : "hidden"} absolute left-0 top-full z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto`}
+              >
                 {personalProjects.length > 0 && (
                   <>
                     <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{t("projectSwitcher.personal", "Personal Projects")}</li>
@@ -298,6 +319,7 @@ function Home() {
                           <button
                             type="button"
                             aria-label={t("projectSwitcher.renameBtn", { name: project.name, defaultValue: `Rinomina progetto ${project.name}` })}
+                            title={t("projectSwitcher.renameBtn", { name: project.name, defaultValue: `Rinomina progetto ${project.name}` })}
                             className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 px-1"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -332,6 +354,7 @@ function Home() {
                           <button
                             type="button"
                             aria-label={t("projectSwitcher.renameBtn", { name: project.name, defaultValue: `Rinomina progetto ${project.name}` })}
+                            title={t("projectSwitcher.renameBtn", { name: project.name, defaultValue: `Rinomina progetto ${project.name}` })}
                             className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 px-1"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -354,9 +377,9 @@ function Home() {
                     type="button"
                     onClick={() => {
                       setShowCreateProjectDialog(true);
-                      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+                      setProjectDropdownOpen(false);
                     }} className="text-primary gap-2">
-                    <FaFolderPlus /> {t("projectSwitcher.newBtn", "New Project")}
+                    <FaFolderPlus aria-hidden="true" /> {t("projectSwitcher.newBtn", "New Project")}
                   </button>
                 </li>
               </ul>
