@@ -14,6 +14,9 @@ import SampleWrapperBar from "./SampleWrapperBar";
 import SampleWrapperGeomap from "./SampleWrapperGeomap";
 import SampleWrapperLine from "./SampleWrapperLine";
 import SampleWrapperPie from "./SampleWrapperPie";
+import SampleChartProvider from "./SampleChartProvider";
+import SampleDashboardProvider from "./SampleDashboardProvider";
+import SampleDashboardGridProvider from "./SampleDashboardGridProvider";
 
 export default function App() {
   const [scheme, setScheme] = useState<"light" | "dark">("light");
@@ -107,6 +110,21 @@ export default function App() {
         <div style={{ marginTop: 50, marginBottom: 50, height: 600 }}>
           <h3>Cluster Map</h3>
           <SampleMap />
+        </div>
+
+        <div style={{ marginTop: 50, marginBottom: 50 }}>
+          <h3>ChartProvider</h3>
+          <SampleChartProvider />
+        </div>
+
+        <div style={{ marginTop: 50, marginBottom: 50 }}>
+          <h3>DashboardProvider</h3>
+          <SampleDashboardProvider />
+        </div>
+
+        <div style={{ marginTop: 50, marginBottom: 50 }}>
+          <h3>DashboardGridProvider</h3>
+          <SampleDashboardGridProvider />
         </div>
       </div>
     </ColorSchemeProvider>

@@ -231,7 +231,7 @@ export default function EditOrgsPage() {
           {loading ? (
             <Loading />
           ) : orgs.length === 0 ? (
-            <div className="bg-base-200 rounded-lg p-10 text-center opacity-50">
+            <div className="bg-base-200 rounded-lg p-10 text-center text-base-content">
               {t("noOrgs", "No organizations found.")}
             </div>
           ) : (
@@ -268,7 +268,7 @@ export default function EditOrgsPage() {
                               name: org.name,
                               defaultValue: `Elimina organizzazione ${org.name}`,
                             })}
-                            className="btn btn-outline btn-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error text-primary-content"
+                            className={`btn btn-outline btn-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${isSelected ? "text-primary-content" : "text-base-content"}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               setPendingDeleteOrgId(org.id);

@@ -13,7 +13,9 @@
     "graph-italia-components": "workspace:*",
     "ol": "^10.7.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-data-table-component": "^7.7.0",
+    "react-dom": "^19.1.0",
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

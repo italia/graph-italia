@@ -547,6 +547,13 @@
                     "label": "Chart type"
                 }
             }
+        },
+        "themeSwitcher": {
+            "label": "Theme",
+            "values": {
+                "light": "Light",
+                "dark": "Dark"
+            }
         }
     }
 }

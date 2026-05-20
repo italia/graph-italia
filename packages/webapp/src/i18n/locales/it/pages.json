@@ -76,7 +76,9 @@
                     "configuration": {
                         "title": "Configura il grafico",
                         "description": "Scegli il tipo di grafico e personalizza l'aspetto",
-                        "status": "Carica i dati e procedi alla fase di configurazione per vedere le opzioni del grafico"
+                        "status": "Carica i dati per iniziare. Quando i dati saranno disponibili potrai scegliere il tipo di grafico e le opzioni.",
+                        "statusAwaitingSeries": "Dati caricati. Conferma la selezione delle serie nella sezione anteprima per abilitare la configurazione.",
+                        "announcement": "Configurazione disponibile. Scegli il tipo di grafico e personalizza le opzioni."
                     },
                     "data": {
                         "title": "Carica i tuoi dati",
@@ -90,7 +92,12 @@
                 },
                 "preview": {
                     "loadDataMessage": "Carica i tuoi dati per visualizzare l'anteprima",
-                    "chartA11y": "Grafico di tipo {{type}}: {{name}}. {{description}}"
+                    "chartA11y": "Grafico di tipo {{type}}: {{name}}. {{description}}",
+                    "seriesSelector": {
+                        "title": "Selezione serie",
+                        "description": "Scegli le colonne da utilizzare come serie dei dati e conferma per proseguire con la configurazione del grafico.",
+                        "announcement": "Dati caricati. Procedi con la selezione delle serie nella sezione anteprima per abilitare la configurazione."
+                    }
                 }
             }
         },

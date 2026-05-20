@@ -547,6 +547,13 @@
                     "label": "Tipo di grafico"
                 }
             }
+        },
+        "themeSwitcher": {
+            "label": "Tema",
+            "values": {
+                "light": "Chiaro",
+                "dark": "Scuro"
+            }
         }
     }
 }

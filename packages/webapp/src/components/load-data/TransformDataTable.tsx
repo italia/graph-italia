@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DataTable from "react-data-table-component";
 import type { TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
@@ -149,12 +149,35 @@ export default function TransformData({
     return columnOrder
       .filter((key) => visibleColumns.has(key))
       .map((key) => ({
+        id: key,
         name: key,
         selector: (row: RowRecord) => row[key] as string,
         sortable: true,
         reorder: true,
       }));
   }, [columnOrder, visibleColumns]);
+
+  // a11y: react-data-table-component does not expose aria-sort on column
+  // headers, so we sync it manually after each render. Sort icons rendered by
+  // the library are also aria-hidden to avoid duplicate announcements.
+  const tableRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = tableRef.current;
+    if (!root) return;
+    const headers = root.querySelectorAll<HTMLElement>(
+      '[role="columnheader"][data-column-id]',
+    );
+    headers.forEach((el) => {
+      const id = el.getAttribute("data-column-id");
+      const value =
+        sortState && sortState.columnKey === id
+          ? sortState.direction === "asc"
+            ? "ascending"
+            : "descending"
+          : "none";
+      el.setAttribute("aria-sort", value);
+    });
+  }, [sortState, columns]);
 
   // Handle column reorder from DataTable drag-and-drop
   const handleColumnOrderChange = useCallback(
@@ -260,6 +283,8 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            aria-expanded={showFilterColumns}
+            aria-controls="data-table-filter-columns"
             onClick={() => setShowFilterColumns((v) => !v)}
           >
             {showFilterColumns ? "Hide Columns Filter" : "Filter Columns"}
@@ -267,6 +292,8 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            aria-expanded={showSortColumns}
+            aria-controls="data-table-sort-columns"
             onClick={() => setShowSortColumns((v) => !v)}
           >
             {showSortColumns ? "Hide Column Order" : "Reorder Columns"}
@@ -274,6 +301,8 @@ export default function TransformData({
           <button
             type="button"
             className="btn btn-outline"
+            aria-expanded={showRenameForm}
+            aria-controls="data-table-rename-headers"
             onClick={() =>
               showRenameForm ? setShowRenameForm(false) : openRenameForm()
             }
@@ -311,41 +340,50 @@ export default function TransformData({
       </div>
 
       {showRenameForm && (
-        <RenameTableHeadersForm
-          initialValues={workingData[0].map(String)}
-          onApply={applyRenames}
-          onCancel={() => setShowRenameForm(false)}
-        />
+        <div id="data-table-rename-headers" role="region" aria-label={t(`actions.renameHeaders.label`, { defaultValue: "Rinomina intestazioni" })}>
+          <RenameTableHeadersForm
+            initialValues={workingData[0].map(String)}
+            onApply={applyRenames}
+            onCancel={() => setShowRenameForm(false)}
+          />
+        </div>
       )}
       {showFilterColumns && (
-        <ToggleTableColumns
-          columnOrder={columnOrder}
-          visibleColumns={visibleColumns}
-          onToggle={toggleColumn}
-        />
+        <div id="data-table-filter-columns" role="region" aria-label={t(`actions.filterColumns.label`, { defaultValue: "Filtra colonne" })}>
+          <ToggleTableColumns
+            columnOrder={columnOrder}
+            visibleColumns={visibleColumns}
+            onToggle={toggleColumn}
+          />
+        </div>
       )}
       {showSortColumns && (
-        <SortTableColumns
-          columnOrder={columnOrder}
-          onReorder={setColumnOrder}
-        />
+        <div id="data-table-sort-columns" role="region" aria-label={t(`actions.reorderColumns.label`, { defaultValue: "Riordina colonne" })}>
+          <SortTableColumns
+            columnOrder={columnOrder}
+            onReorder={setColumnOrder}
+          />
+        </div>
       )}
 
-      <DataTable
-        title={t(`table.title`)}
-        columns={columns}
-        data={objectData}
-        theme={currentTheme}
-        pagination
-        dense
-        highlightOnHover
-        fixedHeader
-        fixedHeaderScrollHeight="360px"
-        responsive
-        onColumnOrderChange={handleColumnOrderChange}
-        onSort={handleSort}
-        sortServer={false}
-      />
+      <div ref={tableRef}>
+        <DataTable
+          title={t(`table.title`)}
+          columns={columns}
+          data={objectData}
+          theme={currentTheme}
+          pagination
+          dense
+          highlightOnHover
+          fixedHeader
+          fixedHeaderScrollHeight="360px"
+          responsive
+          onColumnOrderChange={handleColumnOrderChange}
+          onSort={handleSort}
+          sortServer={false}
+          sortIcon={<span aria-hidden="true">▾</span>}
+        />
+      </div>
 
       {sortState && (
         <div className="mt-2 text-xs text-base-content/50">

@@ -7,7 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
-import { FaInfo } from "react-icons/fa";
+import { FaInfo, FaThLarge } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import EditStepComponent from "../../components/EditStepComponent";
 import AppLayout from "../../components/layout";
@@ -165,11 +165,13 @@ function SlotToolbar({
   onDelete,
   onAddChart,
   onSizeChange,
+  onMove,
 }: {
   item: TLayoutItem;
   onDelete: () => void;
   onAddChart: () => void;
   onSizeChange: (colSpan: number, rowSpan: number) => void;
+  onMove: (dx: number, dy: number) => void;
 }) {
   const { t } = useTranslation("pages", {
     keyPrefix: `charts.editDashboard`,
@@ -233,6 +235,53 @@ function SlotToolbar({
         ))}
       </div>
 
+      <div
+        role="group"
+        aria-label={t(`components.slotToolbar.move.label`, { defaultValue: "Sposta slot" })}
+        className="flex items-center gap-1 ml-1"
+      >
+        <button
+          type="button"
+          className="btn btn-xs btn-ghost"
+          aria-label={t(`components.slotToolbar.move.left`, { defaultValue: "Sposta a sinistra" })}
+          title={t(`components.slotToolbar.move.left`, { defaultValue: "Sposta a sinistra" })}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() => onMove(-1, 0)}
+        >
+          <span aria-hidden="true">←</span>
+        </button>
+        <button
+          type="button"
+          className="btn btn-xs btn-ghost"
+          aria-label={t(`components.slotToolbar.move.up`, { defaultValue: "Sposta in alto" })}
+          title={t(`components.slotToolbar.move.up`, { defaultValue: "Sposta in alto" })}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() => onMove(0, -1)}
+        >
+          <span aria-hidden="true">↑</span>
+        </button>
+        <button
+          type="button"
+          className="btn btn-xs btn-ghost"
+          aria-label={t(`components.slotToolbar.move.down`, { defaultValue: "Sposta in basso" })}
+          title={t(`components.slotToolbar.move.down`, { defaultValue: "Sposta in basso" })}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() => onMove(0, 1)}
+        >
+          <span aria-hidden="true">↓</span>
+        </button>
+        <button
+          type="button"
+          className="btn btn-xs btn-ghost"
+          aria-label={t(`components.slotToolbar.move.right`, { defaultValue: "Sposta a destra" })}
+          title={t(`components.slotToolbar.move.right`, { defaultValue: "Sposta a destra" })}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() => onMove(1, 0)}
+        >
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+
       <button
         type="button"
         className="btn btn-xs btn-outline ml-1"
@@ -246,10 +295,11 @@ function SlotToolbar({
         type="button"
         className="btn btn-xs btn-error ml-auto"
         title={t(`components.slotToolbar.actions.remove.title`)}
+        aria-label={t(`components.slotToolbar.actions.remove.title`)}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={onDelete}
       >
-        ✕
+        <span aria-hidden="true">✕</span>
       </button>
     </div>
   );
@@ -273,6 +323,7 @@ function DashboardEditPage() {
     addItem,
     deleteItem,
     updateItemSize,
+    updateItemPosition,
     showAddModal,
     closeAddModal,
     load,
@@ -468,9 +519,9 @@ function DashboardEditPage() {
 
             <div className="card bg-base-100 shadow-sm border border-base-200">
               <div className="card-body">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center" aria-hidden="true">
                   <span className="text-primary font-bold">
-                    <FaInfo />
+                    <FaThLarge />
                   </span>
                 </div>
                 <div>
@@ -543,6 +594,7 @@ function DashboardEditPage() {
                         onSizeChange={(colSpan, rowSpan) =>
                           updateItemSize(item.i, colSpan, rowSpan)
                         }
+                        onMove={(dx, dy) => updateItemPosition(item.i, dx, dy)}
                       />
                       <div style={{ height: chartHeight, overflow: "hidden" }}>
                         {currentChart ? (
@@ -554,13 +606,13 @@ function DashboardEditPage() {
                             />
                           </ColorSchemeProvider>
                         ) : (
-                          <div className="flex items-center justify-center h-full">
+                          <div className="flex items-center justify-center h-full bg-base-200">
                             <button
                               type="button"
-                              className="btn btn-sm btn-primary"
+                              className="btn btn-primary"
                               onClick={() => showAddModal(item.i)}
                             >
-                              + {t(`bottom.actions.addChart.label`)}
+                              <span aria-hidden="true">+</span> {t(`bottom.actions.addChart.label`)}
                             </button>
                           </div>
                         )}

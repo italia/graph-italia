@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { HOME_ROUTE, ROUTES } from "../../router.tsx";
@@ -69,6 +69,10 @@ function EditChartPage() {
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string>("");
+  // Announces step transitions to assistive tech (WCAG 1.3.2 / 3.3.2)
+  const [stepAnnouncement, setStepAnnouncement] = useState<string>("");
+  const seriesSelectorRef = useRef<HTMLDivElement>(null);
+  const configurationHeadingRef = useRef<HTMLHeadingElement>(null);
   useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
   // After the initial load completes, reset any dirty flag that child components
@@ -124,6 +128,18 @@ function EditChartPage() {
   }, [paramId]);
 
   const haveData = data && data[0].length > 0 ? true : dataSource ? true : false;
+  const isConfigStep = state.matches("config");
+
+  // Announce step transitions via aria-live so AT users learn that the next
+  // interactive section is available, without forcibly moving keyboard focus.
+  useEffect(() => {
+    if (loading) return;
+    if (isConfigStep) {
+      setStepAnnouncement(t(`body.options.configuration.announcement`));
+    } else if (currentData && !haveData) {
+      setStepAnnouncement(t(`body.preview.seriesSelector.announcement`));
+    }
+  }, [isConfigStep, currentData, haveData, loading, t]);
 
   function handleUpload(d: any) {
     setHasUnsavedChanges(true);
@@ -216,6 +232,10 @@ function EditChartPage() {
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {saveStatus}
       </div>
+      {/* Live region for step-flow transitions (WCAG 1.3.2, 3.3.2) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {stepAnnouncement}
+      </div>
       <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
         <button
           type="button"
@@ -266,7 +286,9 @@ function EditChartPage() {
                       <input
                         id="chart_visibility"
                         type="checkbox"
+                        role="switch"
                         checked={chartPublish}
+                        aria-describedby="chart_visibility_state"
                         onChange={() => {
                           setHasUnsavedChanges(true);
                           setChartPublish(!chartPublish);
@@ -279,7 +301,10 @@ function EditChartPage() {
                       >
                         {t(`body.options.setup.form.fields.visibility.label`)}
                       </label>
-                      <span className="text-sm text-base-content font-bold">
+                      <span
+                        id="chart_visibility_state"
+                        className="text-sm text-base-content font-bold"
+                      >
                         {t(
                           `body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
                         )}
@@ -333,9 +358,10 @@ function EditChartPage() {
               isOpen={currentStepIndex > 0 ? true : false}
               isDisabled={currentStepIndex === 0 ? true : false}
               index={2}
+              headingRef={configurationHeadingRef}
             >
               <div>
-                {state.matches("config") ? (
+                {isConfigStep ? (
                   <div className="card bg-base-100 shadow-sm border border-base-200">
                     <div className="card-body">
                       <SelectChart
@@ -359,8 +385,9 @@ function EditChartPage() {
                   </div>
                 ) : (
                   <div role="status">
-                    {" "}
-                    {t(`body.options.configuration.status`)}{" "}
+                    {currentData && !haveData
+                      ? t(`body.options.configuration.statusAwaitingSeries`)
+                      : t(`body.options.configuration.status`)}
                   </div>
                 )}
               </div>
@@ -426,6 +453,7 @@ function EditChartPage() {
                       handleChange={(value: ChartColorScheme) =>
                         setPreviewScheme(value)
                       }
+                      contextLabel={t(`header.preview.heading`)}
                     />
                     <figure
                       role="figure"
@@ -456,6 +484,10 @@ function EditChartPage() {
                           description: chartDescription || "",
                           defaultValue: `Grafico di tipo {{type}}: {{name}}. {{description}}`,
                         })}
+                        {" "}
+                        <a href="#chart-data-table">
+                          {t(`body.preview.dataTableLink`, { defaultValue: "Visualizza la tabella dati associata" })}
+                        </a>
                       </figcaption>
                     </figure>
                   </>
@@ -472,9 +504,22 @@ function EditChartPage() {
                       {t(`body.preview.loadDataMessage`)}
                     </p>
                     {currentData && (
-                      <div className="card bg-base-100 shadow-sm border border-base-200">
+                      <div
+                        ref={seriesSelectorRef}
+                        tabIndex={-1}
+                        aria-labelledby="series-selector-heading"
+                        className="card bg-base-100 shadow-sm border border-base-200"
+                      >
                         <div className="card-body">
-                          <h4>serie selector</h4>
+                          <h3
+                            id="series-selector-heading"
+                            className="text-lg font-semibold"
+                          >
+                            {t(`body.preview.seriesSelector.title`)}
+                          </h3>
+                          <p className="text-sm text-base-content/70">
+                            {t(`body.preview.seriesSelector.description`)}
+                          </p>
                           <SeriesSelector
                             initialData={currentData || data}
                             setData={(d) => {
@@ -487,7 +532,7 @@ function EditChartPage() {
                       </div>)}
                   </div>
                 ) : (
-                  <div className="overflow-auto flex-1 min-h-0">
+                  <div id="chart-data-table" className="overflow-auto flex-1 min-h-0">
                     <TransformDataTable
                       currentData={(data)}
                       handleTransformData={(d) => {

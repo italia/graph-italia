@@ -1,0 +1,162 @@
+{
+  "hero": {
+    "chip": "Open Source · GPL-3.0",
+    "headline1": "Visualizzazione Dati OpenSource",
+    "headlineGradient": "e Accessibile",
+    "headline2": "per il Web.",
+    "subheadline": "Trasforma dati grezzi in grafici e dashboard bellissimi, conformi e facilmente integrabili. Graph Italia è il toolkit open-source completo pensato per colmare il divario tra creatori di contenuto non tecnici e l'integrazione web moderna.",
+    "ctas": {
+      "github": "Visualizza su GitHub",
+      "docs": "Leggi la Documentazione"
+    },
+    "badges": [
+      "Upload CSV & JSON",
+      "Grafici & Mappe",
+      "Pubblica & Integra",
+      "API Key",
+      "Accessibilità Prima"
+    ]
+  },
+  "why": {
+    "label": "Perché Graph Italia?",
+    "title": "Nato da esigenze istituzionali reali.",
+    "body": "Nato dalla necessità di mostrare dati trasparenti, accessibili e responsive sui siti istituzionali italiani, Graph Italia garantisce le best practice di design fin da subito. Che tu sia uno sviluppatore alla ricerca di una solida libreria React per i grafici, o un'organizzazione che ha bisogno di una piattaforma completa per gestire e pubblicare dashboard, Graph Italia si adatta alle tue esigenze."
+  },
+  "features": {
+    "label": "Funzionalità",
+    "title": "Tutto ciò di cui hai bisogno, in un unico posto.",
+    "subtitle": "Graph Italia non è solo una libreria di grafici — è un flusso di lavoro completo per la pubblicazione dei dati.",
+    "items": [
+      {
+        "emoji": "📊",
+        "title": "Tipi di Grafico Versatili",
+        "description": "Grafici a barre, linee e torte, mappe geografiche GeoJSON, mappe Cluster interattive, indicatori KPI e Tabelle Dati dinamiche — tutti accessibili e responsive."
+      },
+      {
+        "emoji": "💾",
+        "title": "Caricamento Dati Intelligente",
+        "description": "Carica file CSV/JSON locali o connettiti a URL remoti. Graph Italia memorizza nella cache i dati remoti e li aggiorna automaticamente ogni 24 ore per mantenere i siti veloci."
+      },
+      {
+        "emoji": "🖱️",
+        "title": "Builder Visuale No-Code",
+        "description": "Gli utenti non tecnici possono mappare le colonne dati, personalizzare i colori, configurare le legende e creare layout dashboard con drag-and-drop — senza bisogno di codice."
+      },
+      {
+        "emoji": "🔒",
+        "title": "Sicuro e Organizzato",
+        "description": "Autenticazione integrata e isolamento dei progetti. Organizza grafici e dashboard in Progetti con accesso basato su ruoli e chiavi API dedicate per progetto."
+      },
+      {
+        "emoji": "♿",
+        "title": "Accessibilità Prima",
+        "description": "Costruito come wrapper attorno ad Apache ECharts e OpenLayers, i nostri componenti rispettano rigorosamente gli standard di accessibilità web e le best practice UI/UX."
+      },
+      {
+        "emoji": "🌍",
+        "title": "Open Source",
+        "description": "Rilasciato sotto licenza GNU GPL v3. Costruito per essere condiviso, adattato e riutilizzato da altre organizzazioni, agenzie e sviluppatori."
+      }
+    ]
+  },
+  "integration": {
+    "label": "Integrazione Tramite API Key",
+    "title": "Integra in tre passi.",
+    "subtitle": "La missione principale di Graph Italia è permetterti di integrare facilmente le tue creazioni nei tuoi siti web con un sistema sicuro di API key basato sui progetti.",
+    "steps": [
+      {
+        "title": "Crea e Configura",
+        "body": "Carica i tuoi dati e progetta grafici o dashboard usando la nostra Web App visuale."
+      },
+      {
+        "title": "Genera le tue Chiavi",
+        "body": "Nelle impostazioni del Progetto, genera una API Key sicura. Agisce come bearer token di sola lettura — i tuoi dati sono esposti in modo sicuro solo dove vuoi."
+      },
+      {
+        "title": "Integra con poche righe di codice",
+        "body": "Usa la nostra libreria di componenti React. Passa la API key e l'ID del grafico — il componente recupera e renderizza il grafico accessibile automaticamente."
+      }
+    ],
+    "codeNote": "Puoi anche integrare usando metodi tradizionali con <iframe> per siti non React.",
+    "copy": "Copia",
+    "copied": "Copiato!"
+  },
+  "adoption": {
+    "label": "Open Source & Riusabile",
+    "title": "Scegli il tuo livello di adozione.",
+    "subtitle": "Graph Italia è un monorepo rilasciato sotto licenza GNU GPL v3. Offriamo diversi modi per adottarlo in base alle tue esigenze tecniche.",
+    "subtitleStrong": "monorepo rilasciato sotto licenza GNU GPL v3",
+    "levels": [
+      {
+        "badge": "Livello 1",
+        "icon": "📦",
+        "title": "Solo la Libreria React",
+        "description": "Non hai bisogno del backend? Installa i nostri componenti React direttamente via NPM. Porta i tuoi dati e usa i nostri wrapper accessibili per ECharts e OpenLayers."
+      },
+      {
+        "badge": "Livello 2",
+        "icon": "🐳",
+        "title": "Docker Compose (Full Stack)",
+        "description": "Vuoi l'intera piattaforma? Forniamo Dockerfile ottimizzati per frontend e backend. Avvia la tua istanza interna in pochi minuti con PostgreSQL."
+      },
+      {
+        "badge": "Livello 3",
+        "icon": "☸️",
+        "title": "Kubernetes Enterprise (Helm)",
+        "description": "Pronto per la produzione su larga scala? Il nostro Helm Chart completo deploya su Kubernetes con hook di migrazione DB integrati, seeding utenti e monitoraggio Prometheus/Grafana."
+      }
+    ],
+    "cta": "Esplora il Monorepo su GitHub →"
+  },
+  "architecture": {
+    "label": "L'Architettura",
+    "title": "Moderno, velocissimo, alimentato da Bun.",
+    "stack": [
+      {
+        "layer": "Web App",
+        "items": [
+          "React 19",
+          "Vite",
+          "TailwindCSS v4",
+          "Zustand"
+        ]
+      },
+      {
+        "layer": "Server / API",
+        "items": [
+          "Hono",
+          "Bun runtime",
+          "PostgreSQL",
+          "Prisma ORM"
+        ]
+      },
+      {
+        "layer": "Componenti",
+        "items": [
+          "Rollup",
+          "Apache ECharts 5",
+          "OpenLayers 10",
+          "TypeScript"
+        ]
+      }
+    ]
+  },
+  "cta": {
+    "title": "Pronto a creare il tuo primo grafico?",
+    "subtitle": "Segui la guida passo-passo o accedi e inizia in pochi minuti.",
+    "primary": "Vai alla guida Quick Start",
+    "secondaryUser": "Vai ai miei grafici",
+    "secondaryGuest": "Accedi"
+  },
+  "aboutFooter": {
+    "title": "Graph Italia",
+    "copyright": "Copyright © 2023–presente · Presidenza del Consiglio dei Ministri",
+    "license": "Rilasciato sotto",
+    "licenseName": "GNU General Public License v3",
+    "links": {
+      "github": "GitHub",
+      "docs": "Documentazione",
+      "issues": "Segnala un problema"
+    }
+  }
+}

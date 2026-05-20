@@ -165,17 +165,20 @@ function ChartOptions({
 
       return (
         <div key={field.name} className={`form-control ${gridSpan}`}>
-          <label className="label cursor-pointer justify-start gap-3">
+          <label htmlFor={`opt-${field.name}`} className="label">
+            <span className="label-text font-medium">
+              {translateLabel(field.label)}
+            </span>
+          </label>
+          <div className="h-12 flex items-center">
             <input
+              id={`opt-${field.name}`}
               className="checkbox checkbox-primary"
               type="checkbox"
               {...field.otherProps}
               {...register(field.name, { required: field.required })}
             />
-            <span className="label-text font-medium">
-              {translateLabel(field.label)}
-            </span>
-          </label>
+          </div>
           {errors[field.name] && (
             <label className="label">
               <span className="label-text-alt text-error">

@@ -134,99 +134,6 @@ Server Hono che gestisce autenticazione, persistenza dati, e API per charts e da
 - **Observability**: Pino (logging JSON), Prometheus metrics
 - **API Docs**: OpenAPI + Scalar
 
-### Modelli Database (Prisma Schema)
-
-```mermaid
-erDiagram
-    User ||--o{ Chart : "crea"
-    User ||--o{ Dashboard : "crea"
-    User ||--o{ DataSource : "crea"
-    User ||--o{ Code : "ha"
-
-    Dashboard ||--o{ Slot : "contiene"
-    Chart ||--o{ Slot : "usato_in"
-    Chart ||--o{ SourceLink : "collegato_a"
-    DataSource ||--o{ SourceLink : "collegato_a"
-
-    User {
-        string id PK
-        string email UK
-        string password
-        boolean verified
-        Role role
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    Chart {
-        string id PK
-        string userId FK
-        string name
-        string description
-        string chart
-        json config
-        json data
-        boolean publish
-        string remoteUrl
-        boolean isRemote
-        string preview
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    Dashboard {
-        string id PK
-        string userId FK
-        string name
-        string description
-        boolean publish
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    Slot {
-        string dashboardId PK,FK
-        string chartId PK,FK
-        json settings
-        string name
-        string description
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    DataSource {
-        string id PK
-        string userId FK
-        string name
-        string description
-        json data
-        json rules
-        boolean publish
-        boolean isTrasposed
-        string remoteUrl
-        boolean isRemote
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    Code {
-        string id PK
-        string userId FK
-        string code
-        int expire
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    SourceLink {
-        string dataSourceId PK,FK
-        string chartId PK,FK
-        json config
-        datetime createdAt
-        datetime updatedAt
-    }
-```
-
 #### Ruoli Utente
 
 Il sistema supporta due ruoli:
@@ -234,15 +141,184 @@ Il sistema supporta due ruoli:
 - **`USER`**: Utente standard (default)
 - **`ADMIN`**: Amministratore con privilegi estesi
 
-#### Descrizione Modelli
+#### Descrizione Modelli principali
 
 - **`User`**: Gestione utenti con autenticazione email/password, verifica account tramite codici PIN, ruolo assegnabile
+- **`Project`**: Contenitore a cui si possono associare grafici e dashboard, è possibile condividere i Progetti con altri utenti e Organizzazioni
 - **`Chart`**: Configurazione grafici (tipo, dati, configurazione), supporto per dati remoti, pubblicazione pubblica, preview come immagine
 - **`Dashboard`**: Raccolta di grafici organizzati in "slots", pubblicazione pubblica, layout personalizzabile
-- **`DataSource`**: Fonti dati riutilizzabili, supporto per dati remoti, trasposizione dati
+- **`ApiKey`**: Chiavi utilizzabili come bearers tokens per accedere tramite api ai grafici e le Dashboard
 - **`Slot`**: Collegamento tra Dashboard e Chart con configurazioni personalizzate per ogni slot
-- **`Code`**: Codici PIN temporanei per verifica account e reset password
-- **`SourceLink`**: Collegamento tra Chart e DataSource con configurazioni specifiche
+
+#### Schema modelli prisma.
+
+```mermaid
+erDiagram
+    User {
+        String id PK
+        String email
+        String password
+        Boolean verified
+        Role role
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Project {
+        String id PK
+        String name
+        String ownerId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    ProjectMember {
+        String userId FK
+        String projectId FK
+        ProjectRole role
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Org {
+        String id PK
+        String name
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Membership {
+        String userId FK
+        String orgId FK
+        OrgRole role
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    OrgProject {
+        String orgId FK
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    ApiKey {
+        String id PK
+        String prefix
+        String keyHash
+        ApiKeyRole role
+        Int expire
+        DateTime revokedAt
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    ApiLog {
+        String id PK
+        String method
+        String endpoint
+        Int status
+        Int responseTime
+        DateTime timestamp
+        String projectName
+        String apiKeyId FK
+    }
+
+    VerificationCode {
+        String id PK
+        String code
+        CodeType type
+        Int expire
+        DateTime consumedAt
+        String userId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    DataSource {
+        String id PK
+        String name
+        String description
+        Json data
+        Json rules
+        Boolean publish
+        Boolean isTrasposed
+        String remoteUrl
+        Boolean isRemote
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Chart {
+        String id PK
+        String name
+        String description
+        String chart
+        Json config
+        Json data
+        Json dataSource
+        Boolean publish
+        String remoteUrl
+        Boolean isRemote
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    SourceLink {
+        String dataSourceId FK
+        String chartId FK
+        Json config
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Dashboard {
+        String id PK
+        String name
+        String description
+        Boolean publish
+        String projectId FK
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    Slot {
+        String dashboardId FK
+        String chartId FK
+        Json settings
+        String name
+        String description
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    User ||--o{ Project : "owns"
+    User ||--o{ ProjectMember : "member of"
+    User ||--o{ Membership : "belongs to"
+    User ||--o{ VerificationCode : "has"
+
+    Project ||--o{ ProjectMember : "has"
+    Project ||--o{ OrgProject : "linked to"
+    Project ||--o{ Chart : "contains"
+    Project ||--o{ Dashboard : "contains"
+    Project ||--o{ DataSource : "contains"
+    Project ||--o{ ApiKey : "has"
+
+    Org ||--o{ Membership : "has"
+    Org ||--o{ OrgProject : "linked to"
+
+    ApiKey ||--o{ ApiLog : "logs"
+
+    Chart ||--o{ Slot : "placed in"
+    Chart ||--o{ SourceLink : "linked to"
+
+    Dashboard ||--o{ Slot : "contains"
+
+    DataSource ||--o{ SourceLink : "linked to"
+```
 
 #### Documentazione API
 
@@ -325,10 +401,10 @@ flowchart TD
 ```
 
 1. **Caricamento Dati**:
-   - Upload CSV
-   - Caricamento da URL remoto
-   - Generazione dati randomici
-   - Trasformazione dati
+   - Upload CSV/JSON
+   - Caricamento CSV/JSON da URL remoto
+   - Generazione dati randomici di esempio
+   - Selezione colonne dati da salvare/usare
 
 2. **Configurazione**:
    - Selezione tipo grafico (bar, line, pie, map, kpi)
@@ -338,8 +414,6 @@ flowchart TD
 
 3. **Salvataggio**:
    - Salvataggio nel database
-   - Pubblicazione pubblica
-   - Generazione preview immagine
 
 #### Dashboard
 
@@ -1401,4 +1475,4 @@ Il sistema supporta un workflow completo: dall'upload dati, alla configurazione 
 
 Copyright© 2023-present - Presidenza del Consiglio dei Ministri
 
-The source code is released under the BSD license (SPDX code: BSD-3-Clause)
+The source code is released under the GNU General Public License v3 (SPDX code: GPL-3.0-only)
