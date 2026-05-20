@@ -18,9 +18,14 @@ spec:
         # -----------------------------------------------------------------------
         # Application Down - No pods running
         # -----------------------------------------------------------------------
+        # Fires only when the deployment *wants* replicas but has none available,
+        # so intentional scale-to-zero (e.g. nightly scaler in test environments,
+        # or `helm uninstall`) does not trigger a false positive.
         - alert: GraphItaliaDown
           expr: |
             sum(kube_deployment_status_replicas_available{namespace="{{ .Release.Namespace }}", deployment=~".*graph-italia.*"}) == 0
+              and
+            sum(kube_deployment_spec_replicas{namespace="{{ .Release.Namespace }}", deployment=~".*graph-italia.*"}) > 0
           for: 2m
           labels:
             severity: critical
