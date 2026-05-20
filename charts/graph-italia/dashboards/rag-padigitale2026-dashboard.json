@@ -1,0 +1,1372 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgba(78, 197, 255, 0.9)",
+        "name": "Ingestion run start",
+        "tagKeys": "pod",
+        "titleFormat": "Run start",
+        "target": {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "{namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |= `Starting...`",
+          "queryType": "range",
+          "refId": "Anno"
+        }
+      },
+      {
+        "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgba(106, 196, 117, 1)",
+        "name": "Ingestion run end",
+        "tagKeys": "pod",
+        "titleFormat": "Run end",
+        "target": {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "{namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Finish after`",
+          "queryType": "range",
+          "refId": "Anno"
+        }
+      },
+      {
+        "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "name": "Ingestion errors",
+        "tagKeys": "pod",
+        "titleFormat": "Worker error",
+        "target": {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "{namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `not sent|error|Error`",
+          "queryType": "range",
+          "refId": "Anno"
+        }
+      }
+    ]
+  },
+  "description": "🧬 rag-padigitale2026 — flow di ingestion testo (CSV/ODT/HTML/MD → splitter → OpenAI embeddings → Qdrant) e stato runtime (webapp, worker, Redis, Postgres/Payload). Diagramma data-driven con plugin grafana-graphviz-panel ≥ v0.0.5.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "🔮 Qdrant dashboard",
+      "tooltip": "Vai alla dashboard Qdrant dell'ambiente selezionato",
+      "type": "link",
+      "url": "/d/qdrant-monitoring-v2?var-namespace=${qdrant_ns}"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "🐘 Postgres backup",
+      "tooltip": "Stato dei backup Postgres",
+      "type": "link",
+      "url": "/d/postgres-backup"
+    },
+    {
+      "asDropdown": false,
+      "icon": "doc",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "📖 POPULATE.md",
+      "tooltip": "Procedura di popolamento Qdrant",
+      "type": "link",
+      "url": "https://github.com/teamdigitale/rag-padigitale2026/blob/main/POPULATE.md"
+    },
+    {
+      "asDropdown": true,
+      "icon": "search",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": ["rag-padigitale2026"],
+      "targetBlank": false,
+      "title": "Dashboard correlate",
+      "type": "dashboards"
+    }
+  ],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1000,
+      "panels": [],
+      "title": "🚦 KPI — $env",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Disponibilità Qdrant nel range osservato (tempo up / tempo totale).",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 0.95 },
+              { "color": "green", "value": 0.99 }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "avg_over_time((sum(up{namespace=~\"$qdrant_ns\", job=~\".*qdrant.*\"}) > bool 0)[$__range:30s])",
+          "instant": true,
+          "legendFormat": "uptime",
+          "refId": "A"
+        }
+      ],
+      "title": "🟢 Qdrant uptime (range)",
+      "type": "gauge"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Latenza media delle response REST di Qdrant nelle ultime 5 minuti.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.2 },
+              { "color": "red", "value": 0.5 }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "avg(rest_responses_avg_duration_seconds{namespace=~\"$qdrant_ns\"})",
+          "instant": true,
+          "legendFormat": "latency",
+          "refId": "A"
+        }
+      ],
+      "title": "⏱ Qdrant latency (5m avg)",
+      "type": "gauge"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Vettori totali indicizzati nelle collection del namespace Qdrant. Sparkline mostra crescita nel range. Percent change vs inizio del range — se è 0% significa che non sono entrate nuove ingestion nel periodo.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "continuous-BlPu" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showPercentChange": true,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "sum(collection_points{namespace=~\"$qdrant_ns\", id=~\"$collection\"})",
+          "legendFormat": "vettori — $collection",
+          "refId": "A"
+        }
+      ],
+      "title": "📚 Vettori indicizzati ($collection)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Rate di errori HTTP 5xx esposti da nginx-ingress per l'app. Sparkline e percent-change mostrano l'andamento.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.05 },
+              { "color": "red", "value": 0.5 }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "inverted",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showPercentChange": true,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace=~\"$env\", status=~\"5..\"}[5m])) or vector(0)",
+          "legendFormat": "5xx/s",
+          "refId": "A"
+        }
+      ],
+      "title": "🔥 Webapp 5xx rate",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 7 },
+      "id": 1001,
+      "panels": [],
+      "title": "🧬 Flow ingestion + serving",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Ogni nodo riflette lo stato corrente — i numeri sotto al nome arrivano da Prometheus (Qdrant, replicas) e Loki (counters parsed dai log del worker). Gli archi 'addDocuments' e 'similaritySearch' diventano più spessi e colorati al crescere del traffico Qdrant.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 18, "w": 18, "x": 0, "y": 8 },
+      "id": 10,
+      "options": {
+        "inputMode": "code",
+        "layoutEngine": "dot",
+        "rankDirection": "LR",
+        "splineType": "true",
+        "namedThresholds": [
+          {
+            "id": "health",
+            "name": "Health (0=down, ≥1=ok)",
+            "steps": [
+              { "value": 0, "color": "rgba(229, 71, 71, 0.85)" },
+              { "value": 1, "color": "rgba(98, 196, 110, 0.85)" }
+            ]
+          },
+          {
+            "id": "flow_rate",
+            "name": "Flow rate (rps)",
+            "steps": [
+              { "value": 0, "color": "rgba(150,150,150,0.5)" },
+              { "value": 0.01, "color": "rgba(78, 197, 255, 0.9)" },
+              { "value": 5, "color": "rgba(78, 197, 255, 1)" }
+            ]
+          }
+        ],
+        "nodeOverrides": [
+          {
+            "id": "ovr_worker",
+            "targetNodeIds": ["worker"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "worker",
+            "rules": [
+              { "kind": "fillColor", "colorFieldName": "Value", "thresholdId": "health" }
+            ]
+          },
+          {
+            "id": "ovr_webapp",
+            "targetNodeIds": ["webapp"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "webapp",
+            "rules": [
+              { "kind": "fillColor", "colorFieldName": "Value", "thresholdId": "health" }
+            ]
+          },
+          {
+            "id": "ovr_redis",
+            "targetNodeIds": ["redis"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "redis",
+            "rules": [
+              { "kind": "fillColor", "colorFieldName": "Value", "thresholdId": "health" }
+            ]
+          },
+          {
+            "id": "ovr_qdrant",
+            "targetNodeIds": ["qdrant"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "qdrant",
+            "rules": [
+              { "kind": "fillColor", "colorFieldName": "Value", "thresholdId": "health" }
+            ]
+          },
+          {
+            "id": "ovr_pg",
+            "targetNodeIds": ["pg"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "pg",
+            "rules": [
+              { "kind": "fillColor", "colorFieldName": "Value", "thresholdId": "health" }
+            ]
+          }
+        ],
+        "edgeOverrides": [
+          {
+            "id": "ovr_edge_batcher_qdrant",
+            "targetEdgeIds": ["batcher->qdrant"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "ingest_flow",
+            "rules": [
+              { "kind": "strokeColor", "colorFieldName": "Value", "thresholdId": "flow_rate" },
+              { "kind": "strokeWidth", "widthFieldName": "Value" }
+            ]
+          },
+          {
+            "id": "ovr_edge_webapp_qdrant",
+            "targetEdgeIds": ["webapp->qdrant"],
+            "matchMode": "manual",
+            "matchFieldName": "node_id",
+            "matchValue": "rag_flow",
+            "rules": [
+              { "kind": "strokeColor", "colorFieldName": "Value", "thresholdId": "flow_rate" },
+              { "kind": "strokeWidth", "widthFieldName": "Value" }
+            ]
+          }
+        ],
+        "dotDiagram": "digraph G {\n  rankdir=LR;\n  bgcolor=\"transparent\";\n  fontname=\"Inter\";\n  node [shape=box, style=\"rounded,filled\", fontname=\"Inter\", fontsize=12, margin=\"0.2,0.12\", penwidth=2];\n  edge [fontname=\"Inter\", fontsize=10, color=\"#888\", penwidth=1.5];\n\n  subgraph cluster_src {\n    label=<<b>📥 Sorgenti</b>>;\n    style=\"filled,rounded\"; color=\"#222\"; fillcolor=\"#1c2030\"; fontcolor=\"#ddd\"; fontname=\"Inter\";\n    csv  [label=\"CSV\\n(scripts/rawdata)\", fillcolor=\"#fde68a\", color=\"#a16207\", fontcolor=\"#3f2a00\"];\n    odt  [label=\"ODT/ODS\\n(odt-to-text)\", fillcolor=\"#fde68a\", color=\"#a16207\", fontcolor=\"#3f2a00\"];\n    html [label=\"HTML\\n(Cheerio)\", fillcolor=\"#fde68a\", color=\"#a16207\", fontcolor=\"#3f2a00\"];\n    md   [label=\"MD/TXT\", fillcolor=\"#fde68a\", color=\"#a16207\", fontcolor=\"#3f2a00\"];\n  }\n\n  subgraph cluster_ingest {\n    label=<<b>⚙ Ingestion</b><br/><font point-size=\"10\">worker · ${worker_replicas} replica</font>>;\n    style=\"filled,rounded\"; color=\"#222\"; fillcolor=\"#0f2235\"; fontcolor=\"#cfe0ff\"; fontname=\"Inter\";\n    loader   [label=\"loader\\n+ tag-map\", fillcolor=\"#bfdbfe\", color=\"#1d4ed8\", fontcolor=\"#0f172a\"];\n    splitter [label=\"splitter\\nchunk=1000\\noverlap=200\", fillcolor=\"#bfdbfe\", color=\"#1d4ed8\", fontcolor=\"#0f172a\"];\n    embed    [label=\"OpenAI Embeddings\\ntext-embedding-3-large\", fillcolor=\"#bfdbfe\", color=\"#1d4ed8\", fontcolor=\"#0f172a\"];\n    batcher  [label=\"batcher\\nbatchSize=300\", fillcolor=\"#bfdbfe\", color=\"#1d4ed8\", fontcolor=\"#0f172a\"];\n    worker   [label=\"worker\\n${worker_replicas} ready\", fillcolor=\"#a7f3d0\", color=\"#047857\", fontcolor=\"#052e1f\"];\n  }\n\n  subgraph cluster_storage {\n    label=<<b>🗄 Storage</b>>;\n    style=\"filled,rounded\"; color=\"#222\"; fillcolor=\"#0a2820\"; fontcolor=\"#a7f3d0\"; fontname=\"Inter\";\n    qdrant   [label=\"Qdrant\\nvectors=${vectors_total}\\ncols=${collections_n}\\nrps=${qdrant_rps}\\nlat=${qdrant_lat_ms}ms\", fillcolor=\"#86efac\", color=\"#15803d\", fontcolor=\"#052e1f\"];\n    redis    [label=\"Redis\\ncache\", fillcolor=\"#fecaca\", color=\"#b91c1c\", fontcolor=\"#3f0a0a\"];\n    pg       [label=\"Postgres\\nPayload CMS\\n(metadata + auth)\", fillcolor=\"#ddd6fe\", color=\"#6d28d9\", fontcolor=\"#1e1b4b\"];\n  }\n\n  subgraph cluster_serve {\n    label=<<b>🌐 Serving</b><br/><font point-size=\"10\">webapp · ${webapp_replicas} replica</font>>;\n    style=\"filled,rounded\"; color=\"#222\"; fillcolor=\"#3b1d0a\"; fontcolor=\"#ffd9b3\"; fontname=\"Inter\";\n    webapp [label=\"Next.js webapp\\n${webapp_replicas} replica\\n/api/chat\", fillcolor=\"#fed7aa\", color=\"#c2410c\", fontcolor=\"#3b1d0a\"];\n    user   [label=\"User\", shape=ellipse, fillcolor=\"#f5f5f5\", color=\"#71717a\"];\n  }\n\n  csv  -> loader [label=\"csv→text\"];\n  odt  -> loader [label=\"odt→text\"];\n  html -> loader [label=\"cheerio\"];\n  md   -> loader;\n  loader   -> splitter [label=\"docs\"];\n  splitter -> embed    [label=\"splits\"];\n  embed    -> batcher  [label=\"vectors\"];\n  batcher  -> qdrant   [label=\"addDocuments\"];\n\n  user   -> webapp [label=\"chat\"];\n  webapp -> redis  [label=\"cache\"];\n  webapp -> pg     [label=\"payload\"];\n  webapp -> qdrant [label=\"similaritySearch\"];\n}\n"
+      },
+      "pluginVersion": "0.0.5",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(sum(kube_deployment_status_replicas_available{namespace=~\"$env\", deployment=\"rag-padigitale2026-worker\"}) or vector(0), \"node_id\", \"worker\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "worker",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(sum(kube_deployment_status_replicas_available{namespace=~\"$env\", deployment=\"rag-padigitale2026-webapp\"}) or vector(0), \"node_id\", \"webapp\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "webapp",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(max(kube_pod_status_ready{namespace=~\"$env\", pod=~\"rag-padigitale2026-redis.*\", condition=\"true\"}) or vector(0), \"node_id\", \"redis\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "redis",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(sum(collection_points{namespace=~\"$qdrant_ns\", id=~\"$collection\"}) or vector(0), \"node_id\", \"qdrant\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "qdrant",
+          "refId": "D"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(vector(1), \"node_id\", \"pg\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "pg",
+          "refId": "E"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(sum(rate(rest_responses_total{namespace=~\"$qdrant_ns\", method=\"PUT\"}[5m])) or vector(0), \"node_id\", \"ingest_flow\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "ingest_flow",
+          "refId": "F"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "label_replace(sum(rate(rest_responses_total{namespace=~\"$qdrant_ns\", method=\"POST\"}[5m])) or vector(0), \"node_id\", \"rag_flow\", \"__name__\", \".*\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "rag_flow",
+          "refId": "G"
+        }
+      ],
+      "title": "Flow ingestion + serving",
+      "type": "grafana-graphviz-panel"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Readiness dei pod del chart nell'ultima ora — utile per spot di flapping/restart.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": { "fillOpacity": 80, "lineWidth": 0, "spanNulls": false },
+          "mappings": [
+            { "options": { "0": { "color": "red", "index": 0, "text": "NotReady" }, "1": { "color": "green", "index": 1, "text": "Ready" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 18, "w": 6, "x": 18, "y": 8 },
+      "id": 11,
+      "options": {
+        "alignValue": "center",
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "max by (pod) (kube_pod_status_ready{namespace=~\"$env\", pod=~\"rag-padigitale2026.*\", condition=\"true\"})",
+          "legendFormat": "{{pod}}",
+          "refId": "A"
+        }
+      ],
+      "title": "🩺 Pod readiness",
+      "type": "state-timeline"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+      "id": 1002,
+      "panels": [],
+      "title": "📥 Run di ingestion (Loki)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Timeline degli eventi di ingestion: ogni casella = un evento loggato dal worker. Verde = batch ok, rosso = batch fallito.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": { "fillOpacity": 70, "lineWidth": 1 },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 27 },
+      "id": 20,
+      "options": {
+        "alignValue": "left",
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "mergeValues": false,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (pod) (count_over_time({namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Batch with size .* sent` != `not sent` [1m]))",
+          "legendFormat": "batch ok — {{pod}}",
+          "queryType": "range",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (pod) (count_over_time({namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Batch with size .* not sent` [1m]))",
+          "legendFormat": "batch ko — {{pod}}",
+          "queryType": "range",
+          "refId": "B"
+        }
+      ],
+      "title": "📊 Status history — batch worker",
+      "type": "status-history"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Bar gauge LCD: rapporto OK/KO degli ultimi batch nel range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "❌ batch falliti" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } },
+              { "id": "thresholds", "value": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "✅ batch inviati" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 27 },
+      "id": 21,
+      "options": {
+        "displayMode": "lcd",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Batch with size .* sent` != `not sent` [$__range]))",
+          "legendFormat": "✅ batch inviati",
+          "queryType": "instant",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Batch with size .* not sent` [$__range]))",
+          "legendFormat": "❌ batch falliti",
+          "queryType": "instant",
+          "refId": "B"
+        }
+      ],
+      "title": "Batch OK vs KO (range)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Durata media di una run di ingestion estratta dal log finale 'Finish after N seconds'.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 60 },
+              { "color": "red", "value": 300 }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 27 },
+      "id": 22,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "inverted",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showPercentChange": true,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "avg(avg_over_time({namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Finish after` | regexp `Finish after \\.{3} (?P<s>[0-9]+(?:\\.[0-9]+)?) seconds` | unwrap s [$__range]))",
+          "legendFormat": "durata",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "⏱ Durata media run",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Ultime run di ingestion: pod, ora, durata. Cella durata con barretta inline.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": {
+            "align": "auto",
+            "cellOptions": { "type": "auto" },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] },
+          "unit": "string"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "durata (s)" },
+            "properties": [
+              { "id": "unit", "value": "s" },
+              { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient", "valueDisplayMode": "color" } },
+              { "id": "thresholds", "value": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "orange", "value": 60 }, { "color": "red", "value": 300 } ] } },
+              { "id": "max", "value": 600 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Time" },
+            "properties": [
+              { "id": "custom.width", "value": 180 }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 35 },
+      "id": 23,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": true, "fields": "", "reducer": ["count"], "show": true },
+        "showHeader": true,
+        "sortBy": [ { "desc": true, "displayName": "Time" } ]
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "{namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `Finish after` | regexp `Finish after \\.{3} (?P<duration>[0-9]+(?:\\.[0-9]+)?) seconds`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "🧾 Run di ingestion — ultime",
+      "transformations": [
+        { "id": "extractFields", "options": { "format": "auto", "source": "labels" } },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": { "id": true, "labels": true, "tsNs": true, "Line": true },
+            "indexByName": { "Time": 0, "pod": 1, "duration": 2 },
+            "renameByName": { "duration": "durata (s)", "pod": "worker pod" }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
+      "id": 1003,
+      "panels": [],
+      "title": "🧠 Qdrant deep-dive — $qdrant_ns",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Top endpoint per RPS (rate 5m). Aiuta a capire dove va il traffico: ingestion (PUT /collections/*/points) vs query (POST /collections/*/points/search).",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 45 },
+      "id": 30,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "topk(10, sum by (method, endpoint) (rate(rest_responses_total{namespace=~\"$qdrant_ns\"}[5m])))",
+          "legendFormat": "{{method}} {{endpoint}}",
+          "refId": "A"
+        }
+      ],
+      "title": "🛤 Top endpoint Qdrant (RPS)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Crescita vettori per collection — verifica che le ingestion incrementino monotonicamente. Le annotazioni 'Ingestion run' (Loki) appaiono in sovrapposizione.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "area" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 45 },
+      "id": 31,
+      "options": {
+        "legend": { "calcs": ["lastNotNull", "max", "diff"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (id) (collection_points{namespace=~\"$qdrant_ns\", id=~\"$collection\"})",
+          "legendFormat": "{{id}}",
+          "refId": "A"
+        }
+      ],
+      "title": "📈 Crescita vettori per collection",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Latenza media REST Qdrant per endpoint.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": false,
+            "thresholdsStyle": { "mode": "line+area" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.2 },
+              { "color": "red", "value": 0.5 }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 55 },
+      "id": 32,
+      "options": {
+        "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true, "seriesLimit": 25 },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "avg by (endpoint) (rest_responses_avg_duration_seconds{namespace=~\"$qdrant_ns\"})",
+          "legendFormat": "{{endpoint}}",
+          "refId": "A"
+        }
+      ],
+      "title": "⏱ Latenza Qdrant per endpoint",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Risposte HTTP Qdrant per status code: stacking evidenzia 4xx/5xx in rosso.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "bars",
+            "barAlignment": -1,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "lineWidth": 0,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "normal" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] },
+          "unit": "reqps"
+        },
+        "overrides": [
+          { "matcher": { "id": "byRegexp", "options": "^[45].*" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 55 },
+      "id": 33,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (status_code) (rate(rest_responses_total{namespace=~\"$qdrant_ns\"}[5m]))",
+          "legendFormat": "{{status_code}}",
+          "refId": "A"
+        }
+      ],
+      "title": "📡 Qdrant response status",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 63 },
+      "id": 1004,
+      "panels": [],
+      "title": "💾 Risorse — webapp / worker / redis",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "CPU usage per pod, threshold area che evidenzia saturazione.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "showPoints": "never",
+            "spanNulls": false,
+            "thresholdsStyle": { "mode": "area" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.7 },
+              { "color": "red", "value": 0.9 }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 64 },
+      "id": 40,
+      "options": {
+        "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true, "seriesLimit": 25 },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=~\"$env\", pod=~\"rag-padigitale2026-(webapp|worker|redis).*\", container!=\"\"}[5m]))",
+          "legendFormat": "{{pod}}",
+          "refId": "A"
+        }
+      ],
+      "title": "🧮 CPU per pod (cores)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Saturazione memoria (working set / limit). Bar gauge horizontal con thresholds.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.7 },
+              { "color": "red", "value": 0.9 }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 64 },
+      "id": 41,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (pod) (container_memory_working_set_bytes{namespace=~\"$env\", pod=~\"rag-padigitale2026-(webapp|worker|redis).*\", container!=\"\"}) / sum by (pod) (kube_pod_container_resource_limits{namespace=~\"$env\", pod=~\"rag-padigitale2026-(webapp|worker|redis).*\", resource=\"memory\"})",
+          "legendFormat": "{{pod}}",
+          "refId": "A"
+        }
+      ],
+      "title": "🧠 Memoria — saturazione",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 72 },
+      "id": 1005,
+      "panels": [],
+      "title": "📜 Log",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Top 10 messaggi di errore aggregati dai pod del chart (ultimi $__range).",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": {
+            "align": "auto",
+            "cellOptions": { "type": "auto" },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 5 },
+              { "color": "red", "value": 50 }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "count" },
+            "properties": [
+              { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient", "valueDisplayMode": "color" } },
+              { "id": "max", "value": 100 }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 73 },
+      "id": 50,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true,
+        "sortBy": [ { "desc": true, "displayName": "count" } ]
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "topk(10, sum by (app, pod) (count_over_time({namespace=~\"$env\", app=~\"rag-padigitale2026-.*\"} |~ `(?i)(error|exception|not sent|failed)` [$__range])))",
+          "legendFormat": "{{app}} / {{pod}}",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "🚨 Top error sources",
+      "transformations": [
+        { "id": "labelsToFields", "options": { "mode": "columns" } },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": { "Time": true },
+            "indexByName": { "app": 0, "pod": 1, "Value": 2 },
+            "renameByName": { "Value": "count" }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Eventi importanti dell'ingestion (split, embed, batch, finish, errori).",
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 73 },
+      "id": 51,
+      "options": {
+        "dedupStrategy": "exact",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "{namespace=~\"$env\", app=\"rag-padigitale2026-worker\"} |~ `(?i)(documents loaded|Split blog|Adding embeddings|Sending a batch|Batch with size|Finish after|not sent|error)`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "📥 Ingestion log",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+      "description": "Log webapp Next.js — utile per debug retrieval/serving.",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 83 },
+      "id": 52,
+      "options": {
+        "dedupStrategy": "exact",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "${loki_datasource}" },
+          "editorMode": "code",
+          "expr": "{namespace=~\"$env\", app=\"rag-padigitale2026-webapp\"}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "🌐 Webapp log",
+      "type": "logs"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 41,
+  "style": "dark",
+  "tags": ["rag-padigitale2026", "ingestion", "qdrant", "rag", "teseo"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": false, "text": "prometheus", "value": "prometheus" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Prometheus",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": { "selected": false, "text": "loki", "value": "loki" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Loki",
+        "multi": false,
+        "name": "loki_datasource",
+        "options": [],
+        "query": "loki",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": { "selected": true, "text": "🟢 prod", "value": "rag-padigitale2026" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "🌍 Environment",
+        "multi": false,
+        "name": "env",
+        "options": [
+          { "selected": true, "text": "🟢 prod", "value": "rag-padigitale2026" },
+          { "selected": false, "text": "🟡 test", "value": "rag-padigitale2026-test" },
+          { "selected": false, "text": "🔵 demo", "value": "rag-padigitale2026-demo" }
+        ],
+        "query": "🟢 prod : rag-padigitale2026, 🟡 test : rag-padigitale2026-test, 🔵 demo : rag-padigitale2026-demo",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": { "selected": true, "text": "🟢 prod", "value": "qdrant-prod" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "🔮 Qdrant env",
+        "multi": false,
+        "name": "qdrant_ns",
+        "options": [
+          { "selected": true, "text": "🟢 prod", "value": "qdrant-prod" },
+          { "selected": false, "text": "🟡 test", "value": "qdrant-test" },
+          { "selected": false, "text": "🔵 demo", "value": "qdrant-test" }
+        ],
+        "query": "🟢 prod : qdrant-prod, 🟡 test : qdrant-test, 🔵 demo : qdrant-test",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": ".*",
+        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "label_values(collection_points{namespace=~\"$qdrant_ns\"}, id)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "📚 Collection",
+        "multi": true,
+        "name": "collection",
+        "options": [],
+        "query": { "query": "label_values(collection_points{namespace=~\"$qdrant_ns\"}, id)", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "0", "value": "0" },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "query_result(sum(collection_points{namespace=~\"$qdrant_ns\", id=~\"$collection\"}))",
+        "hide": 2,
+        "includeAll": false,
+        "label": "vectors_total",
+        "multi": false,
+        "name": "vectors_total",
+        "options": [],
+        "query": { "query": "query_result(sum(collection_points{namespace=~\"$qdrant_ns\", id=~\"$collection\"}))", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "/ ([0-9.eE+-]+) /",
+        "skipUrlSync": true,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "0", "value": "0" },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "query_result(max(collections_total{namespace=~\"$qdrant_ns\"}))",
+        "hide": 2,
+        "includeAll": false,
+        "label": "collections_n",
+        "multi": false,
+        "name": "collections_n",
+        "options": [],
+        "query": { "query": "query_result(max(collections_total{namespace=~\"$qdrant_ns\"}))", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "/ ([0-9.eE+-]+) /",
+        "skipUrlSync": true,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "0", "value": "0" },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "query_result(round(sum(rate(rest_responses_total{namespace=~\"$qdrant_ns\"}[5m])), 0.01))",
+        "hide": 2,
+        "includeAll": false,
+        "label": "qdrant_rps",
+        "multi": false,
+        "name": "qdrant_rps",
+        "options": [],
+        "query": { "query": "query_result(round(sum(rate(rest_responses_total{namespace=~\"$qdrant_ns\"}[5m])), 0.01))", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "/ ([0-9.eE+-]+) /",
+        "skipUrlSync": true,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "0", "value": "0" },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "query_result(round(1000 * avg(rest_responses_avg_duration_seconds{namespace=~\"$qdrant_ns\"}), 1))",
+        "hide": 2,
+        "includeAll": false,
+        "label": "qdrant_lat_ms",
+        "multi": false,
+        "name": "qdrant_lat_ms",
+        "options": [],
+        "query": { "query": "query_result(round(1000 * avg(rest_responses_avg_duration_seconds{namespace=~\"$qdrant_ns\"}), 1))", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "/ ([0-9.eE+-]+) /",
+        "skipUrlSync": true,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "0", "value": "0" },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "query_result(sum(kube_deployment_status_replicas_available{namespace=~\"$env\", deployment=\"rag-padigitale2026-webapp\"}))",
+        "hide": 2,
+        "includeAll": false,
+        "label": "webapp_replicas",
+        "multi": false,
+        "name": "webapp_replicas",
+        "options": [],
+        "query": { "query": "query_result(sum(kube_deployment_status_replicas_available{namespace=~\"$env\", deployment=\"rag-padigitale2026-webapp\"}))", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "/ ([0-9.eE+-]+) /",
+        "skipUrlSync": true,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "0", "value": "0" },
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "definition": "query_result(sum(kube_deployment_status_replicas_available{namespace=~\"$env\", deployment=\"rag-padigitale2026-worker\"}))",
+        "hide": 2,
+        "includeAll": false,
+        "label": "worker_replicas",
+        "multi": false,
+        "name": "worker_replicas",
+        "options": [],
+        "query": { "query": "query_result(sum(kube_deployment_status_replicas_available{namespace=~\"$env\", deployment=\"rag-padigitale2026-worker\"}))", "refId": "StandardVariableQuery" },
+        "refresh": 2,
+        "regex": "/ ([0-9.eE+-]+) /",
+        "skipUrlSync": true,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"] },
+  "timezone": "browser",
+  "title": "🧬 rag-padigitale2026 — Ingestion flow & runtime",
+  "uid": "rag-padigitale2026-flow",
+  "version": 4,
+  "weekStart": ""
+}
