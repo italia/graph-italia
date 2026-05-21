@@ -537,7 +537,7 @@ function DashboardEditPage() {
                     className="btn btn-primary mb-4"
                     onClick={addItem}
                   >
-                    + {t(`slots.actions.addSlot.label`)}
+                    <span aria-hidden="true">+</span> {t(`slots.actions.addSlot.label`)}
                   </button>
 
                   <a

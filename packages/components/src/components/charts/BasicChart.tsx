@@ -1,8 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import ReactEcharts, { type EChartsOption } from "echarts-for-react";
+import type { EChartsType } from "echarts";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { formatTooltip } from "../../lib/utils";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
+import { useChartKeyboard } from "../../lib/useChartKeyboard";
 import React from "react";
 
 function BasicChart({
@@ -15,6 +17,7 @@ function BasicChart({
   const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
+  const [localInstance, setLocalInstance] = useState<EChartsType | null>(null);
   useEffect(() => {
     setTimeout(() => {
       setLoaded(true);
@@ -24,6 +27,7 @@ function BasicChart({
     if (loaded && refCanvas.current) {
       try {
         const echartInstance = refCanvas.current.getEchartsInstance();
+        setLocalInstance(echartInstance);
         if (setEchartInstance) {
           setEchartInstance(echartInstance);
         }
@@ -173,10 +177,17 @@ function BasicChart({
 
     const colorOpt = config.colors?.length ? { color: config.colors } : {};
 
+    const aria = {
+      enabled: true,
+      decal: { show: true },
+      label: { enabled: true, description: config.title || config.description || "" },
+    };
+
     let options = {
       ...colorOpt,
       ...axis,
       grid,
+      aria,
       series: data.dataSource?.series?.map((serie: any) => {
         let rest = {};
         if (serie.type === "bar" && config.stack) {
@@ -229,8 +240,11 @@ function BasicChart({
 
   const config: any = data.config || null;
   const height = (config?.h || 500) * hFactor;
+  const seriesCount = data.dataSource?.series?.length ?? 0;
+  const ariaLabel = `${config?.title || "Grafico"}. ${seriesCount > 0 ? `${seriesCount} serie. ` : ""}Usa le frecce per esplorare i dati, Esc per uscire.`;
+  const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
   return (
-    <div style={{ textAlign: "left" }}>
+    <div style={{ textAlign: "left" }} {...keyboardProps}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
         theme={resolvedTheme}
