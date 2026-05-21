@@ -1,8 +1,10 @@
 import ReactEcharts, { type EChartsOption } from "echarts-for-react";
+import type { EChartsType } from "echarts";
 import React, { useEffect, useRef, useState } from "react";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
+import { useChartKeyboard } from "../../lib/useChartKeyboard";
 
 function PieChart({
   id,
@@ -15,6 +17,7 @@ function PieChart({
   const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
+  const [localInstance, setLocalInstance] = useState<EChartsType | null>(null);
   useEffect(() => {
     setTimeout(() => {
       setLoaded(true);
@@ -24,6 +27,7 @@ function PieChart({
     if (loaded && refCanvas.current) {
       try {
         const echartInstance = refCanvas.current.getEchartsInstance();
+        setLocalInstance(echartInstance);
         if (setEchartInstance) {
           setEchartInstance(echartInstance);
         }
@@ -85,6 +89,11 @@ function PieChart({
         },
       },
       ...colorOpt,
+      aria: {
+        enabled: true,
+        decal: { show: true },
+        label: { enabled: true, description: config.title || config.description || "" },
+      },
       series: {
         ...dataSource.series,
         labelLine: {
@@ -110,6 +119,8 @@ function PieChart({
     return options;
   }
 
+  const ariaLabel = `${data?.config?.title || "Grafico a torta"}. Usa le frecce per esplorare i settori, Esc per uscire.`;
+  const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
   if (!data) return <div>...</div>;
   let h = (data.config?.h || 350) * hFactor;
   const responsive =
@@ -120,7 +131,7 @@ function PieChart({
   const height = rowHeight ? "100%" : `${chartHeight}px`;
   const minHeight = rowHeight ? rowHeight : "auto";
   return (
-    <div key={id} id={"chart_" + id}>
+    <div key={id} id={"chart_" + id} {...keyboardProps}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
         theme={resolvedTheme}

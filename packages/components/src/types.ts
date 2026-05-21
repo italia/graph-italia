@@ -76,6 +76,8 @@ export type ChartConfigType = {
   nameProperty?: string;
   nameGap?: string;
   preview?: string;
+  title?: string;
+  description?: string;
 };
 
 export interface StoreStateType {

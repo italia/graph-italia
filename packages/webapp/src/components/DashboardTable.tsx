@@ -12,6 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
 
@@ -142,6 +143,12 @@ export default function DashboardTable({
         onSort={handleSort}
         onRowClicked={(row) => navigate(ROUTES.editDashboard(row.id ?? ""))}
         pagination
+        paginationComponentOptions={{
+          rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+          rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+          selectAllRowsItem: false,
+        }}
+        {...paginationIcons}
         highlightOnHover
         noDataComponent={t(`noDataComponent`)}
       />

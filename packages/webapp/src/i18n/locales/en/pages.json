@@ -461,9 +461,9 @@
         },
         "header": {
             "title": "Private Area",
-            "charts": "My charts",
-            "noCharts": "My charts",
-            "chartsEmpty": "You haven't created any chart yet. Use \"Create new\" to start.",
+            "charts": "Charts, maps and KPIs",
+            "noCharts": "Charts, maps and KPIs",
+            "chartsEmpty": "You haven't created any chart, map or KPI yet. Use \"Create new\" to start.",
             "dashboards": "My dashboards",
             "noDashboards": "My dashboards",
             "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start."
