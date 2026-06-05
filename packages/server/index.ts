@@ -28,8 +28,7 @@ const whitelist = process.env.DOMAINS?.split(",") || [
 	"localhost",
 	HOST,
 	`${HOST}:${PORT}`,
-	"localhost",
-	"localhost:3000",
+	"http://localhost:3002",
 	"http://localhost:3000",
 	"http://127.0.0.1:3000",
 ];
@@ -50,7 +49,31 @@ const app = ROUTES_PREFIX
 // 🔧 MIDDLEWARE STACK
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Prometheus metrics collection (before other middleware)
+// CORS must be first so OPTIONS preflights are answered before any other
+// middleware (rate limiter, CSRF, auth) can return a response without headers.
+const publicCors = cors({
+	origin: "*",
+	allowMethods: ["GET", "OPTIONS"],
+	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
+});
+
+if (!isDev) {
+	app.use(`/charts/*`, publicCors);
+	app.use(`/dashboards/*`, publicCors);
+} else {
+	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
+	app.use(
+		"/*",
+		cors({
+			origin: whitelist,
+			credentials: true,
+			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
+		}),
+	);
+}
+
+// Prometheus metrics collection
 app.use("*", metricsMiddleware);
 
 // Structured JSON logging (skips healthchecks)
@@ -91,35 +114,6 @@ app.use(
 			: process.env.HOST,
 	}),
 );
-
-
-// CORS — only for public chart/dashboard show and embed endpoints
-const publicCors = cors({
-	origin: "*",
-	allowMethods: ["GET", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
-});
-
-// app.use(`/*`, publicCors);
-// app.use(`/charts/show/*`, publicCors);
-// app.use(`/dashboards/show/*`, publicCors);
-
-if (!isDev) {
-	app.use(`/charts/*`, publicCors);
-	app.use(`/dashboards/*`, publicCors);
-} else {
-	console.warn("CORS is enabled for all routes in development mode. Make sure to restrict this in production!");
-	// CORS CRUD (only in dev)
-	app.use(
-		"/*",
-		cors({
-			origin: whitelist,
-			credentials: true,
-			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
-		}),
-	);
-}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
