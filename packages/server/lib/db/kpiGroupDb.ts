@@ -5,7 +5,8 @@ import type { Chart, Prisma } from "./prisma/client";
 type CreateKpiGroup = {
     name: string;
     description?: string;
-    userId: string;
+    projectId: string;
+    config: {};
     data: unknown[];
     chart: 'kpiGroup'
 }
