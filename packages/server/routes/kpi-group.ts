@@ -96,7 +96,7 @@ router.post(
 			if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
 			const chartData = {
-				userId: user.userId,
+				projectId,
 				chart: "kpiGroup" as const,
 				config: {
 					direction: "vertical",

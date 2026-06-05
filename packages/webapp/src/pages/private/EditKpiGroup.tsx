@@ -479,38 +479,45 @@ function EditKpiGroupPage() {
               </div>
             )}
 
-            <EditStepComponent
-              title={t("body.actions.addKpi.label")}
-              Icon={FaPlus}
-              isOpen={loaded}
-              isDisabled={!loaded}
-              index={2}
-            >
-
-              <div className="">
-                <KpiForm
-                  key={editKpiGroupFormModalVisible ? `edit-${selectedKpiIndex}` : addFormKey}
-                  initialValues={editKpiGroupFormModalVisible ? selectedKpi : undefined}
-                  onSubmit={handleFormSubmit}
-                />
-                <div className="mt-4 flex gap-2">
-                  {editKpiGroupFormModalVisible && (
-                    <button
-                      type="button"
-                      onClick={closeEditKpiFormModal}
-                      className="btn btn-outline"
-                    >
-                      {t("body.actions.cancelEdit.label")}
-                    </button>
-                  )}
-                  <button type="submit" form={KPI_FORM_ID} className="btn btn-primary">
-                    {editKpiGroupFormModalVisible
-                      ? t("body.actions.updateKpi.label")
-                      : `${t("body.actions.addKpi.label")} +`}
-                  </button>
-                </div>
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
+                aria-hidden="true"
+              >
+                <span className="text-primary font-bold">
+                  <FaPlus />
+                </span>
               </div>
-            </EditStepComponent>
+              <div>
+                <h2 tabIndex={-1} className="card-title text-xl">
+                  {t("body.actions.addKpi.label")}
+                </h2>
+              </div>
+            </div>
+
+            <div className="h-full lg:py-10 lg:min-h-[500px] ">
+              <KpiForm
+                key={editKpiGroupFormModalVisible ? `edit-${selectedKpiIndex}` : addFormKey}
+                initialValues={editKpiGroupFormModalVisible ? selectedKpi : undefined}
+                onSubmit={handleFormSubmit}
+              />
+              <div className="mt-4 flex gap-2">
+                {editKpiGroupFormModalVisible && (
+                  <button
+                    type="button"
+                    onClick={closeEditKpiFormModal}
+                    className="btn btn-outline"
+                  >
+                    {t("body.actions.cancelEdit.label")}
+                  </button>
+                )}
+                <button type="submit" form={KPI_FORM_ID} className="btn btn-primary">
+                  {editKpiGroupFormModalVisible
+                    ? t("body.actions.updateKpi.label")
+                    : `${t("body.actions.addKpi.label")} +`}
+                </button>
+              </div>
+            </div>
           </section>
         </div>
       </div>
