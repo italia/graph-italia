@@ -635,6 +635,67 @@ export async function updateProject(projectId: string, payload: { name: string }
   return null;
 }
 
+// ── Datasources ──────────────────────────────────────────────────────────────
+
+export type DatasourceItem = {
+  id: string;
+  name?: string;
+  description?: string;
+  data?: any;
+  publish: boolean;
+  isTrasposed: boolean;
+  remoteUrl?: string;
+  isRemote: boolean;
+  projectId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export async function getDatasources(): Promise<DatasourceItem[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/datasources`);
+  if (response.status === 200) return response.data;
+  return [];
+}
+
+export async function getDatasource(id: string): Promise<DatasourceItem | null> {
+  const response = await axios.get(`${getServerUrlWithApi()}/datasources/${id}`);
+  if (response.status === 200) return response.data;
+  return null;
+}
+
+export async function createDatasource(payload: {
+  name: string;
+  description?: string;
+}): Promise<{ id: string } | null> {
+  const response = await axios.post(`${getServerUrlWithApi()}/datasources`, {
+    ...payload,
+    data: [],
+    publish: true,
+    isRemote: false,
+  });
+  if (response.status === 201) return { id: response.data.id };
+  return null;
+}
+
+export async function upsertDatasource(payload: any, id?: string): Promise<{ id: string } | null> {
+  const lockKey = id ? `upsert:datasource:${id}` : "upsert:datasource:new";
+  return withMutationGuard(lockKey, async () => {
+    const url = id
+      ? `${getServerUrlWithApi()}/datasources/${id}`
+      : `${getServerUrlWithApi()}/datasources`;
+    const response = await (id ? axios.put(url, payload) : axios.post(url, payload));
+    if (response.status === 200 || response.status === 201) {
+      return response.data as { id: string };
+    }
+    return null;
+  });
+}
+
+export async function deleteDatasource(id: string): Promise<boolean> {
+  const response = await axios.delete(`${getServerUrlWithApi()}/datasources/${id}`);
+  return response.status === 204;
+}
+
 // ── Admin ────────────────────────────────────────────────────────────────────
 
 export interface AdminUser {

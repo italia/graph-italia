@@ -5,6 +5,7 @@ import AuthPage from "./pages/auth/AuthPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
 import EditChartPage from "./pages/private/EditChart";
+import EditDataSourcePage from "./pages/private/EditDataSource";
 import EditMapPage from "./pages/private/EditMap";
 import EditKpiGroupPage from "./pages/private/EditKpiGroup";
 import DashboardEditPage from "./pages/private/EditDashboard";
@@ -53,6 +54,7 @@ export const ROUTES = {
   editKpi: (id?: string) => `/private/edit/kpi${id ? `/${id}` : ""}`,
   editMap: (id?: string) => `/private/edit/map${id ? `/${id}` : ""}`,
   editDashboard: (id: string) => `/private/edit/dashboard/${id}`,
+  editDataSource: (id?: string) => `/private/edit/datasource${id ? `/${id}` : ""}`,
   editApiKeys: "/private/edit/apikeys",
   editOrgs: "/private/edit/orgs",
   editSettings: "/private/edit/settings",
@@ -199,6 +201,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <DashboardEditPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/private/edit/datasource/:id?",
+    element: (
+      <ProtectedRoute>
+        <EditDataSourcePage />
       </ProtectedRoute>
     ),
   },
