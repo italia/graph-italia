@@ -10,7 +10,7 @@
     "graph-italia",
     "echarts"
   ],
-  "license": "MIT",
+  "license": "gpl-3.0",
   "type": "module",
   "module": "dist/index.esm.js",
   "main": "dist/index.js",
