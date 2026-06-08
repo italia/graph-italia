@@ -1,8 +1,8 @@
 {
   "name": "graph-italia-uiexampleapp",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "gpl-3.0",
   "scripts": {
     "dev": "vite --port 3002",
     "build": "tsc -b && vite build",

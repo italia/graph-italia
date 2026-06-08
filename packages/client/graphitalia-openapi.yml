@@ -1,0 +1,4746 @@
+---
+  openapi: "3.1.0"
+  info: 
+    title: "Graph Italia API"
+    description: "API documentation for the Graph Italia application"
+    version: "1.0.0"
+  components: 
+    securitySchemes: 
+      bearerAuth: 
+        type: "http"
+        scheme: "bearer"
+        bearerFormat: "JWT"
+  security: 
+    - 
+      bearerAuth: []
+  servers: 
+    - 
+      url: "http://localhost:3000"
+      description: "Local server"
+    - 
+      url: "https://graph-test.developers.italia.it"
+      description: "Staging server"
+    - 
+      url: "https://graph.developers.italia.it"
+      description: "Production server"
+  paths: 
+    /api/admin/users: 
+      get: 
+        operationId: "getApiAdminUsers"
+        description: "List all users. Admin only."
+        responses: 
+          200: 
+            description: "User list"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/admin/users/{id}: 
+      delete: 
+        operationId: "deleteApiAdminUsersById"
+        description: "Delete a user by id. Admin only."
+        responses: 
+          200: 
+            description: "User deleted"
+          400: 
+            description: "Cannot delete your own account"
+          404: 
+            description: "User not found"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+              minLength: 1
+            required: true
+    /api/admin/users/{id}/activate: 
+      post: 
+        operationId: "postApiAdminUsersByIdActivate"
+        description: "Force-activate (verify) a user account. Admin only."
+        responses: 
+          200: 
+            description: "User activated"
+          404: 
+            description: "User not found"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+              minLength: 1
+            required: true
+    /api/admin/users/{id}/resend-activation: 
+      post: 
+        operationId: "postApiAdminUsersByIdResendActivation"
+        description: "Resend the activation email to an unverified user. Admin only."
+        responses: 
+          200: 
+            description: "Activation email sent"
+          400: 
+            description: "User is already verified"
+          404: 
+            description: "User not found"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+              minLength: 1
+            required: true
+    /api/admin/users/{id}/reset-password: 
+      post: 
+        operationId: "postApiAdminUsersByIdResetPassword"
+        description: "Send a password reset email to a user. Admin only."
+        responses: 
+          200: 
+            description: "Password reset email sent"
+          404: 
+            description: "User not found"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+              minLength: 1
+            required: true
+    /api/auth/user: 
+      get: 
+        operationId: "getApiAuthUser"
+        description: "If the user is authenticated, returns the user information along with current token."
+        responses: 
+          201: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: {}
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/auth/register: 
+      post: 
+        operationId: "postApiAuthRegister"
+        description: "Register a new user with email and password."
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    uid: 
+                      type: "string"
+                  required: 
+                    - "uid"
+          400: 
+            description: "Missing email or password"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          409: 
+            description: "User Already Exists"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  email: 
+                    type: "string"
+                    format: "email"
+                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  password: 
+                    type: "string"
+                    minLength: 8
+                required: 
+                  - "email"
+                  - "password"
+    /api/auth/login: 
+      post: 
+        operationId: "postApiAuthLogin"
+        description: "Authenticate with email and password. Sets an access_token cookie on success."
+        responses: 
+          200: 
+            description: "Logged in"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    auth: 
+                      type: "boolean"
+                  required: 
+                    - "auth"
+          401: 
+            description: "Invalid credentials or unverified email"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          429: 
+            description: "Too many requests"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  email: 
+                    type: "string"
+                    format: "email"
+                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  password: 
+                    type: "string"
+                required: 
+                  - "email"
+                  - "password"
+    /api/auth/recover: 
+      post: 
+        operationId: "postApiAuthRecover"
+        description: "Request a password reset email. Always returns success to prevent email enumeration."
+        responses: 
+          200: 
+            description: "Recovery email sent (or silently ignored)"
+            content: 
+              application/json: 
+                schema: 
+                  type: "boolean"
+          429: 
+            description: "Too many requests"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  email: 
+                    type: "string"
+                    format: "email"
+                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                required: 
+                  - "email"
+    /api/auth/resend: 
+      post: 
+        operationId: "postApiAuthResend"
+        description: "Re-send the activation email to an unverified user. Always returns success to prevent email enumeration."
+        responses: 
+          200: 
+            description: "Activation email sent (or silently ignored)"
+            content: 
+              application/json: 
+                schema: 
+                  type: "boolean"
+          429: 
+            description: "Too many requests"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  email: 
+                    type: "string"
+                    format: "email"
+                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                required: 
+                  - "email"
+    /api/auth/logout: 
+      get: 
+        operationId: "getApiAuthLogout"
+        description: "Clear the access_token cookie and log the user out."
+        responses: 
+          200: 
+            description: "Logged out"
+            content: 
+              application/json: 
+                schema: 
+                  type: "boolean"
+    /api/auth/verify: 
+      post: 
+        operationId: "postApiAuthVerify"
+        description: "Verify a user account using the PIN sent to their email."
+        responses: 
+          200: 
+            description: "Verified and logged in"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    auth: 
+                      type: "boolean"
+                  required: 
+                    - "auth"
+          400: 
+            description: "Invalid or expired code"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          429: 
+            description: "Too many requests"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  uid: 
+                    type: "string"
+                  code: 
+                    type: "string"
+                required: 
+                  - "uid"
+                  - "code"
+    /api/auth/confirm/{uid}/{code}: 
+      get: 
+        operationId: "getApiAuthConfirmByUidByCode"
+        description: "Confirm email via link (redirects to app on success)."
+        responses: 
+          302: 
+            description: "Redirect to app after successful confirmation"
+          400: 
+            description: "Invalid or expired code"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "uid"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "path"
+            name: "code"
+            schema: 
+              type: "string"
+            required: true
+    /api/auth/reset-password: 
+      post: 
+        operationId: "postApiAuthResetPassword"
+        description: "Reset password using a recovery code sent by email."
+        responses: 
+          200: 
+            description: "Password reset and logged in"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    auth: 
+                      type: "boolean"
+                  required: 
+                    - "auth"
+          400: 
+            description: "Invalid or expired code"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  uid: 
+                    type: "string"
+                  code: 
+                    type: "string"
+                  password: 
+                    type: "string"
+                    minLength: 8
+                required: 
+                  - "uid"
+                  - "code"
+                  - "password"
+    /api/auth/pwd: 
+      put: 
+        operationId: "putApiAuthPwd"
+        description: "Change the current user's password. Requires an active session."
+        responses: 
+          204: 
+            description: "Password changed successfully"
+          400: 
+            description: "Missing user or password"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  password: 
+                    type: "string"
+                    minLength: 8
+                required: 
+                  - "password"
+    /api/apikeys: 
+      get: 
+        operationId: "getApiApikeys"
+        description: "List all API keys for the current user across all accessible projects."
+        responses: 
+          200: 
+            description: "API key list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      prefix: 
+                        type: "string"
+                      role: 
+                        type: "string"
+                        enum: 
+                          - "READONLY"
+                          - "READWRITE"
+                      expire: 
+                        type: "number"
+                      revokedAt: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      projectId: 
+                        type: "string"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "prefix"
+                      - "role"
+                      - "expire"
+                      - "revokedAt"
+                      - "projectId"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+      post: 
+        operationId: "postApiApikeys"
+        description: "Create a new API key. The raw key is returned once and never shown again."
+        responses: 
+          201: 
+            description: "Created API key (includes raw key)"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    prefix: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "READONLY"
+                        - "READWRITE"
+                    expire: 
+                      type: "number"
+                    revokedAt: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    projectId: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "prefix"
+                    - "role"
+                    - "expire"
+                    - "revokedAt"
+                    - "projectId"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  role: 
+                    default: "READONLY"
+                    type: "string"
+                    enum: 
+                      - "READONLY"
+                      - "READWRITE"
+                  expire: 
+                    default: 60
+                    type: "integer"
+                    exclusiveMinimum: 0
+                    maximum: 9007199254740991
+                  projectId: 
+                    type: "string"
+    /api/apikeys/{id}: 
+      delete: 
+        operationId: "deleteApiApikeysById"
+        description: "Delete an API key by ID. Requires ADMIN or owner access on the key's project."
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/apikeys/{id}/revoke: 
+      patch: 
+        operationId: "patchApiApikeysByIdRevoke"
+        description: "Revoke an API key, disabling it without deleting it."
+        responses: 
+          200: 
+            description: "Revoked API key"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    prefix: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "READONLY"
+                        - "READWRITE"
+                    expire: 
+                      type: "number"
+                    revokedAt: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    projectId: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "prefix"
+                    - "role"
+                    - "expire"
+                    - "revokedAt"
+                    - "projectId"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/apikeys/{id}/reinstate: 
+      patch: 
+        operationId: "patchApiApikeysByIdReinstate"
+        description: "Reinstate a previously revoked API key."
+        responses: 
+          200: 
+            description: "Reinstated API key"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    prefix: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "READONLY"
+                        - "READWRITE"
+                    expire: 
+                      type: "number"
+                    revokedAt: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    projectId: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "prefix"
+                    - "role"
+                    - "expire"
+                    - "revokedAt"
+                    - "projectId"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/apikeys/{id}/logs: 
+      get: 
+        operationId: "getApiApikeysByIdLogs"
+        description: "Retrieve usage logs for a specific API key. Requires access to the key's project."
+        responses: 
+          200: 
+            description: "API log list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      method: 
+                        type: "string"
+                      endpoint: 
+                        type: "string"
+                      status: 
+                        type: "number"
+                      responseTime: 
+                        type: "number"
+                      timestamp: 
+                        type: "string"
+                      apiKeyId: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      projectName: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                    required: 
+                      - "id"
+                      - "method"
+                      - "endpoint"
+                      - "status"
+                      - "responseTime"
+                      - "timestamp"
+                      - "apiKeyId"
+                      - "projectName"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "query"
+            name: "limit"
+            schema: 
+              default: 100
+              type: "integer"
+              exclusiveMinimum: 0
+              maximum: 500
+    /api/charts: 
+      get: 
+        operationId: "getApiCharts"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      projectId: 
+                        type: "string"
+                      name: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      description: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      chart: 
+                        type: "string"
+                      dataSource: {}
+                      config: 
+                        anyOf: 
+                          - {}
+                          - 
+                            type: "null"
+                      data: 
+                        anyOf: 
+                          - {}
+                          - 
+                            type: "null"
+                      isRemote: 
+                        anyOf: 
+                          - 
+                            type: "boolean"
+                          - 
+                            type: "null"
+                      remoteUrl: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      publish: 
+                        type: "boolean"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "projectId"
+                      - "name"
+                      - "description"
+                      - "chart"
+                      - "config"
+                      - "data"
+                      - "isRemote"
+                      - "remoteUrl"
+                      - "publish"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+      post: 
+        operationId: "postApiCharts"
+        responses: 
+          201: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    chart: 
+                      type: "string"
+                    dataSource: {}
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    data: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    isRemote: 
+                      anyOf: 
+                        - 
+                          type: "boolean"
+                        - 
+                          type: "null"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "chart"
+                    - "config"
+                    - "data"
+                    - "isRemote"
+                    - "remoteUrl"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  chart: 
+                    type: "string"
+                  config: {}
+                  data: {}
+                  dataSource: {}
+                  remoteUrl: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  isRemote: 
+                    type: "boolean"
+                  publish: 
+                    type: "boolean"
+                  preview: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  projectId: 
+                    type: "string"
+                required: 
+                  - "chart"
+    /api/charts/{id}: 
+      get: 
+        operationId: "getApiChartsById"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    chart: 
+                      type: "string"
+                    dataSource: {}
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    data: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    isRemote: 
+                      anyOf: 
+                        - 
+                          type: "boolean"
+                        - 
+                          type: "null"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "chart"
+                    - "config"
+                    - "data"
+                    - "isRemote"
+                    - "remoteUrl"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+      delete: 
+        operationId: "deleteApiChartsById"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    chart: 
+                      type: "string"
+                    dataSource: {}
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    data: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    isRemote: 
+                      anyOf: 
+                        - 
+                          type: "boolean"
+                        - 
+                          type: "null"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "chart"
+                    - "config"
+                    - "data"
+                    - "isRemote"
+                    - "remoteUrl"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+      put: 
+        operationId: "putApiChartsById"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    chart: 
+                      type: "string"
+                    dataSource: {}
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    data: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    isRemote: 
+                      anyOf: 
+                        - 
+                          type: "boolean"
+                        - 
+                          type: "null"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "chart"
+                    - "config"
+                    - "data"
+                    - "isRemote"
+                    - "remoteUrl"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  chart: 
+                    type: "string"
+                  config: {}
+                  data: {}
+                  dataSource: {}
+                  publish: 
+                    type: "boolean"
+                  remoteUrl: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  isRemote: 
+                    type: "boolean"
+                  id: 
+                    type: "string"
+                  preview: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  slots: 
+                    anyOf: 
+                      - 
+                        type: "array"
+                        items: 
+                          type: "string"
+                      - 
+                        type: "null"
+    /api/charts/show/{id}: 
+      get: 
+        operationId: "getApiChartsShowById"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    chart: 
+                      type: "string"
+                    dataSource: {}
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    data: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    isRemote: 
+                      anyOf: 
+                        - 
+                          type: "boolean"
+                        - 
+                          type: "null"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "chart"
+                    - "config"
+                    - "data"
+                    - "isRemote"
+                    - "remoteUrl"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/charts/publish/{id}: 
+      post: 
+        operationId: "postApiChartsPublishById"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    published: 
+                      type: "boolean"
+                  required: 
+                    - "published"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/charts/kpi-group: 
+      post: 
+        operationId: "postApiChartsKpiGroup"
+        description: "Create a new KPI group chart. Requires an authenticated user session (not API key)."
+        responses: 
+          201: 
+            description: "Created KPI group"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                  required: 
+                    - "id"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required or user auth required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  projectId: 
+                    type: "string"
+                required: 
+                  - "name"
+    /api/charts/kpi-group/{id}: 
+      put: 
+        operationId: "putApiChartsKpiGroupById"
+        description: "Update a KPI group's config and data source items. Requires READWRITE access."
+        responses: 
+          200: 
+            description: "Updated KPI group ID"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                  required: 
+                    - "id"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  publish: 
+                    type: "boolean"
+                  config: 
+                    type: "object"
+                    properties: 
+                      direction: 
+                        type: "string"
+                        enum: 
+                          - "vertical"
+                          - "horizontal"
+                      h: 
+                        type: "number"
+                      labeLine: 
+                        type: "boolean"
+                      legend: 
+                        type: "boolean"
+                      legendPosition: 
+                        type: "string"
+                      palette: 
+                        type: "array"
+                        items: 
+                          type: "string"
+                      tooltip: 
+                        type: "boolean"
+                      tooltipFormatter: 
+                        type: "string"
+                      valueFormatter: 
+                        type: "string"
+                      totalLabel: 
+                        type: "string"
+                      tooltipTrigger: 
+                        type: "string"
+                      colors: 
+                        type: "array"
+                        items: 
+                          type: "string"
+                      background: 
+                        type: "string"
+                    required: 
+                      - "direction"
+                      - "h"
+                      - "labeLine"
+                      - "legend"
+                      - "legendPosition"
+                      - "palette"
+                      - "tooltip"
+                      - "tooltipFormatter"
+                      - "valueFormatter"
+                      - "totalLabel"
+                      - "tooltipTrigger"
+                      - "colors"
+                      - "background"
+                  dataSource: 
+                    type: "array"
+                    items: 
+                      type: "object"
+                      properties: 
+                        title: 
+                          type: "string"
+                        value: 
+                          type: "string"
+                        percentage: 
+                          type: "string"
+                        background_color: 
+                          type: "string"
+                        value_prefix: 
+                          type: "string"
+                        value_suffix: 
+                          type: "string"
+                        show_flow: 
+                          type: "boolean"
+                        flow_value: 
+                          type: "string"
+                        flow_direction: 
+                          type: "string"
+                          enum: 
+                            - "+"
+                            - "-"
+                        flow_detail: 
+                          type: "string"
+                        footer_text: 
+                          type: "string"
+                      required: 
+                        - "title"
+                        - "value"
+                        - "show_flow"
+                        - "flow_value"
+                        - "flow_direction"
+                required: 
+                  - "name"
+                  - "config"
+                  - "dataSource"
+      get: 
+        operationId: "getApiChartsKpiGroupById"
+        description: "Get a KPI group by ID including its config and data source items."
+        responses: 
+          200: 
+            description: "KPI group detail"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    data: 
+                      type: "object"
+                      properties: 
+                        id: 
+                          type: "string"
+                        name: 
+                          anyOf: 
+                            - 
+                              type: "string"
+                            - 
+                              type: "null"
+                        description: 
+                          anyOf: 
+                            - 
+                              type: "string"
+                            - 
+                              type: "null"
+                        config: {}
+                        dataSource: 
+                          type: "array"
+                          items: 
+                            type: "object"
+                            properties: 
+                              title: 
+                                type: "string"
+                              value: 
+                                type: "string"
+                              percentage: 
+                                type: "string"
+                              background_color: 
+                                type: "string"
+                              value_prefix: 
+                                type: "string"
+                              value_suffix: 
+                                type: "string"
+                              show_flow: 
+                                type: "boolean"
+                              flow_value: 
+                                type: "string"
+                              flow_direction: 
+                                type: "string"
+                                enum: 
+                                  - "+"
+                                  - "-"
+                              flow_detail: 
+                                type: "string"
+                              footer_text: 
+                                type: "string"
+                            required: 
+                              - "title"
+                              - "value"
+                              - "show_flow"
+                              - "flow_value"
+                              - "flow_direction"
+                      required: 
+                        - "id"
+                        - "name"
+                        - "description"
+                        - "config"
+                        - "dataSource"
+                  required: 
+                    - "data"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/dashboards: 
+      get: 
+        operationId: "getApiDashboards"
+        description: "List all dashboards for the caller's project (resolved from API key or user session)."
+        responses: 
+          200: 
+            description: "Dashboard list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      projectId: 
+                        type: "string"
+                      name: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      description: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      publish: 
+                        type: "boolean"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "projectId"
+                      - "name"
+                      - "description"
+                      - "publish"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+      post: 
+        operationId: "postApiDashboards"
+        description: "Create a new dashboard in the caller's project. Requires READWRITE API key or user session."
+        responses: 
+          201: 
+            description: "Created dashboard"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  config: {}
+                  data: {}
+                  remoteUrl: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  isRemote: 
+                    type: "boolean"
+                  publish: 
+                    type: "boolean"
+                  preview: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  projectId: 
+                    type: "string"
+    /api/dashboards/{id}: 
+      get: 
+        operationId: "getApiDashboardsById"
+        description: "Get a single dashboard by ID including its chart slots."
+        responses: 
+          200: 
+            description: "Dashboard detail"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+      delete: 
+        operationId: "deleteApiDashboardsById"
+        description: "Delete a dashboard by ID. Requires READWRITE access."
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+      put: 
+        operationId: "putApiDashboardsById"
+        description: "Update dashboard metadata (name, description, publish state). Requires READWRITE access."
+        responses: 
+          200: 
+            description: "Updated dashboard"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  config: {}
+                  data: {}
+                  publish: 
+                    type: "boolean"
+                  remoteUrl: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  isRemote: 
+                    type: "boolean"
+                  id: 
+                    type: "string"
+                  preview: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  slots: 
+                    type: "array"
+                    items: 
+                      type: "object"
+                      properties: 
+                        chartId: 
+                          type: "string"
+                        settings: 
+                          type: "object"
+                          properties: {}
+                          additionalProperties: {}
+                        createdAt: 
+                          type: "string"
+                        updatedAt: 
+                          type: "string"
+                      required: 
+                        - "chartId"
+    /api/dashboards/show/{id}: 
+      get: 
+        operationId: "getApiDashboardsShowById"
+        description: "Public endpoint — returns a published dashboard. No auth required."
+        responses: 
+          200: 
+            description: "Published dashboard"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Dashboard is not published"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/dashboards/{id}/slots: 
+      put: 
+        operationId: "putApiDashboardsByIdSlots"
+        description: "Replace all chart slots for a dashboard. Requires READWRITE access."
+        responses: 
+          200: 
+            description: "Updated dashboard"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  slots: 
+                    type: "array"
+                    items: 
+                      type: "object"
+                      properties: 
+                        chartId: 
+                          type: "string"
+                        settings: 
+                          type: "object"
+                          properties: {}
+                          additionalProperties: {}
+                        createdAt: 
+                          type: "string"
+                        updatedAt: 
+                          type: "string"
+                      required: 
+                        - "chartId"
+                required: 
+                  - "slots"
+    /api/datasources: 
+      get: 
+        operationId: "getApiDatasources"
+        description: "List all data sources for the caller's project"
+        responses: 
+          200: 
+            description: "Data source list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      projectId: 
+                        type: "string"
+                      name: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      description: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      data: {}
+                      rules: 
+                        anyOf: 
+                          - {}
+                          - 
+                            type: "null"
+                      publish: 
+                        type: "boolean"
+                      isTrasposed: 
+                        type: "boolean"
+                      remoteUrl: 
+                        anyOf: 
+                          - 
+                            type: "string"
+                          - 
+                            type: "null"
+                      isRemote: 
+                        type: "boolean"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "projectId"
+                      - "name"
+                      - "description"
+                      - "data"
+                      - "rules"
+                      - "publish"
+                      - "isTrasposed"
+                      - "remoteUrl"
+                      - "isRemote"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+      post: 
+        operationId: "postApiDatasources"
+        description: "Create a new data source in the caller's project"
+        responses: 
+          201: 
+            description: "Created data source"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    data: {}
+                    rules: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    isTrasposed: 
+                      type: "boolean"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    isRemote: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "data"
+                    - "rules"
+                    - "publish"
+                    - "isTrasposed"
+                    - "remoteUrl"
+                    - "isRemote"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  data: {}
+                  rules: {}
+                  publish: 
+                    type: "boolean"
+                  isTrasposed: 
+                    type: "boolean"
+                  remoteUrl: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  isRemote: 
+                    type: "boolean"
+                  projectId: 
+                    type: "string"
+                required: 
+                  - "data"
+    /api/datasources/{id}: 
+      get: 
+        operationId: "getApiDatasourcesById"
+        description: "Get a single data source by id"
+        responses: 
+          200: 
+            description: "Data source"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    data: {}
+                    rules: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    isTrasposed: 
+                      type: "boolean"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    isRemote: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "data"
+                    - "rules"
+                    - "publish"
+                    - "isTrasposed"
+                    - "remoteUrl"
+                    - "isRemote"
+                    - "createdAt"
+                    - "updatedAt"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+      put: 
+        operationId: "putApiDatasourcesById"
+        description: "Update a data source"
+        responses: 
+          200: 
+            description: "Updated data source"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    description: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    data: {}
+                    rules: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    publish: 
+                      type: "boolean"
+                    isTrasposed: 
+                      type: "boolean"
+                    remoteUrl: 
+                      anyOf: 
+                        - 
+                          type: "string"
+                        - 
+                          type: "null"
+                    isRemote: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "data"
+                    - "rules"
+                    - "publish"
+                    - "isTrasposed"
+                    - "remoteUrl"
+                    - "isRemote"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                  description: 
+                    type: "string"
+                  data: {}
+                  rules: {}
+                  publish: 
+                    type: "boolean"
+                  isTrasposed: 
+                    type: "boolean"
+                  remoteUrl: 
+                    anyOf: 
+                      - 
+                        type: "string"
+                      - 
+                        type: "null"
+                  isRemote: 
+                    type: "boolean"
+                  projectId: 
+                    type: "string"
+      delete: 
+        operationId: "deleteApiDatasourcesById"
+        description: "Delete a data source"
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+    /api/datasources/{id}/links: 
+      get: 
+        operationId: "getApiDatasourcesByIdLinks"
+        description: "List all charts linked to a data source"
+        responses: 
+          200: 
+            description: "Source link list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      dataSourceId: 
+                        type: "string"
+                      chartId: 
+                        type: "string"
+                      config: 
+                        anyOf: 
+                          - {}
+                          - 
+                            type: "null"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "dataSourceId"
+                      - "chartId"
+                      - "config"
+                      - "createdAt"
+                      - "updatedAt"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+      post: 
+        operationId: "postApiDatasourcesByIdLinks"
+        description: "Link a chart to a data source"
+        responses: 
+          201: 
+            description: "Created source link"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    dataSourceId: 
+                      type: "string"
+                    chartId: 
+                      type: "string"
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "dataSourceId"
+                    - "chartId"
+                    - "config"
+                    - "createdAt"
+                    - "updatedAt"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  chartId: 
+                    type: "string"
+                  config: {}
+                required: 
+                  - "chartId"
+    /api/datasources/{id}/links/{chartId}: 
+      delete: 
+        operationId: "deleteApiDatasourcesByIdLinksByChartId"
+        description: "Remove a chart-datasource link"
+        responses: 
+          204: 
+            description: "No Content"
+          403: 
+            description: "Forbidden"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            schema: 
+              type: "string"
+            in: "path"
+            name: "id"
+            required: true
+          - 
+            schema: 
+              type: "string"
+            in: "path"
+            name: "chartId"
+            required: true
+    /api/hints: 
+      post: 
+        operationId: "postApiHints"
+        responses: 
+          200: 
+            description: "Successful response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      hint: 
+                        type: "string"
+                      confidence: 
+                        type: "number"
+                        minimum: 0
+                        maximum: 1
+                    required: 
+                      - "hint"
+                      - "confidence"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/orgs: 
+      get: 
+        operationId: "getApiOrgs"
+        description: "List all orgs the current user belongs to"
+        responses: 
+          200: 
+            description: "Org list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      name: 
+                        type: "string"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "name"
+                      - "createdAt"
+                      - "updatedAt"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+      post: 
+        operationId: "postApiOrgs"
+        description: "Create a new org. The current user becomes its first ADMIN member."
+        responses: 
+          201: 
+            description: "Created org"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    name: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "name"
+                    - "createdAt"
+                    - "updatedAt"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                required: 
+                  - "name"
+    /api/orgs/{orgId}: 
+      get: 
+        operationId: "getApiOrgsByOrgId"
+        description: "Get a single org with its members and associated projects"
+        responses: 
+          200: 
+            description: "Org detail"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    name: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "name"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+      put: 
+        operationId: "putApiOrgsByOrgId"
+        description: "Rename an org (ADMIN only)"
+        responses: 
+          200: 
+            description: "Updated org"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    name: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "name"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                required: 
+                  - "name"
+      delete: 
+        operationId: "deleteApiOrgsByOrgId"
+        description: "Delete an org (ADMIN only)"
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+    /api/orgs/{orgId}/members: 
+      get: 
+        operationId: "getApiOrgsByOrgIdMembers"
+        description: "List members of an org (members only)"
+        responses: 
+          200: 
+            description: "Member list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      userId: 
+                        type: "string"
+                      orgId: 
+                        type: "string"
+                      role: 
+                        type: "string"
+                        enum: 
+                          - "USER"
+                          - "ADMIN"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "userId"
+                      - "orgId"
+                      - "role"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+      post: 
+        operationId: "postApiOrgsByOrgIdMembers"
+        description: "Add a user to an org (ADMIN only)"
+        responses: 
+          201: 
+            description: "Created membership"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    userId: 
+                      type: "string"
+                    orgId: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "USER"
+                        - "ADMIN"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "userId"
+                    - "orgId"
+                    - "role"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  email: 
+                    type: "string"
+                    format: "email"
+                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  role: 
+                    default: "USER"
+                    type: "string"
+                    enum: 
+                      - "USER"
+                      - "ADMIN"
+                required: 
+                  - "email"
+    /api/orgs/{orgId}/projects: 
+      get: 
+        operationId: "getApiOrgsByOrgIdProjects"
+        description: "List projects of an org (members only)"
+        responses: 
+          200: 
+            description: "Project list"
+            content: 
+              application/json: 
+                schema: {}
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+    /api/orgs/{orgId}/members/{userId}: 
+      put: 
+        operationId: "putApiOrgsByOrgIdMembersByUserId"
+        description: "Update a member's role in an org (ADMIN only)"
+        responses: 
+          200: 
+            description: "Updated membership"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    userId: 
+                      type: "string"
+                    orgId: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "USER"
+                        - "ADMIN"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "userId"
+                    - "orgId"
+                    - "role"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "path"
+            name: "userId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  role: 
+                    type: "string"
+                    enum: 
+                      - "USER"
+                      - "ADMIN"
+                required: 
+                  - "role"
+      delete: 
+        operationId: "deleteApiOrgsByOrgIdMembersByUserId"
+        description: "Remove a member from an org (ADMIN only)"
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "path"
+            name: "userId"
+            schema: 
+              type: "string"
+            required: true
+    /api/projects: 
+      get: 
+        operationId: "getApiProjects"
+        description: "List all projects the current user owns or is a member of."
+        responses: 
+          200: 
+            description: "Project list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      name: 
+                        type: "string"
+                      ownerId: 
+                        type: "string"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "name"
+                      - "ownerId"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+      post: 
+        operationId: "postApiProjects"
+        description: "Create a new project. The current user becomes owner and ADMIN member automatically."
+        responses: 
+          201: 
+            description: "Created project"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    name: 
+                      type: "string"
+                    ownerId: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "name"
+                    - "ownerId"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                required: 
+                  - "name"
+    /api/projects/personal: 
+      get: 
+        operationId: "getApiProjectsPersonal"
+        description: "List projects owned by the current user that are not associated with any org."
+        responses: 
+          200: 
+            description: "Personal project list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      name: 
+                        type: "string"
+                      ownerId: 
+                        type: "string"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "id"
+                      - "name"
+                      - "ownerId"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/projects/{projectId}: 
+      get: 
+        operationId: "getApiProjectsByProjectId"
+        description: "Get a project by ID. Accessible to the owner and its members."
+        responses: 
+          200: 
+            description: "Project detail"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    name: 
+                      type: "string"
+                    ownerId: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "name"
+                    - "ownerId"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+      put: 
+        operationId: "putApiProjectsByProjectId"
+        description: "Rename a project. Requires ADMIN or owner access."
+        responses: 
+          200: 
+            description: "Updated project"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    name: 
+                      type: "string"
+                    ownerId: 
+                      type: "string"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "name"
+                    - "ownerId"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                required: 
+                  - "name"
+      delete: 
+        operationId: "deleteApiProjectsByProjectId"
+        description: "Delete a project. Owner only."
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+    /api/projects/{projectId}/members: 
+      get: 
+        operationId: "getApiProjectsByProjectIdMembers"
+        description: "List members of a project. Requires ADMIN or owner access."
+        responses: 
+          200: 
+            description: "Member list"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      userId: 
+                        type: "string"
+                      projectId: 
+                        type: "string"
+                      role: 
+                        type: "string"
+                        enum: 
+                          - "USER"
+                          - "ADMIN"
+                      createdAt: 
+                        type: "string"
+                      updatedAt: 
+                        type: "string"
+                    required: 
+                      - "userId"
+                      - "projectId"
+                      - "role"
+                      - "createdAt"
+                      - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+      post: 
+        operationId: "postApiProjectsByProjectIdMembers"
+        description: "Add a user to a project. Requires ADMIN or owner access."
+        responses: 
+          201: 
+            description: "Created membership"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    userId: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "USER"
+                        - "ADMIN"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "userId"
+                    - "projectId"
+                    - "role"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  userId: 
+                    type: "string"
+                  role: 
+                    default: "USER"
+                    type: "string"
+                    enum: 
+                      - "USER"
+                      - "ADMIN"
+                required: 
+                  - "userId"
+    /api/projects/{projectId}/members/{userId}: 
+      put: 
+        operationId: "putApiProjectsByProjectIdMembersByUserId"
+        description: "Change the role of a project member. Requires ADMIN or owner access."
+        responses: 
+          200: 
+            description: "Updated membership"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    userId: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    role: 
+                      type: "string"
+                      enum: 
+                        - "USER"
+                        - "ADMIN"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "userId"
+                    - "projectId"
+                    - "role"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "path"
+            name: "userId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  role: 
+                    type: "string"
+                    enum: 
+                      - "USER"
+                      - "ADMIN"
+                required: 
+                  - "role"
+      delete: 
+        operationId: "deleteApiProjectsByProjectIdMembersByUserId"
+        description: "Remove a member from a project. Requires ADMIN or owner access."
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "path"
+            name: "userId"
+            schema: 
+              type: "string"
+            required: true
+    /api/projects/{projectId}/orgs: 
+      post: 
+        operationId: "postApiProjectsByProjectIdOrgs"
+        description: "Associate an org with a project. Requires ADMIN or owner access."
+        responses: 
+          201: 
+            description: "Org associated"
+            content: 
+              application/json: 
+                schema: {}
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  orgId: 
+                    type: "string"
+                required: 
+                  - "orgId"
+    /api/projects/{projectId}/orgs/{orgId}: 
+      delete: 
+        operationId: "deleteApiProjectsByProjectIdOrgsByOrgId"
+        description: "Remove an org association from a project. Owner only."
+        responses: 
+          204: 
+            description: "No Content"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "projectId"
+            schema: 
+              type: "string"
+            required: true
+          - 
+            in: "path"
+            name: "orgId"
+            schema: 
+              type: "string"
+            required: true
+
