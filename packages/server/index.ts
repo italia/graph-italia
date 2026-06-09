@@ -25,12 +25,13 @@ import { Scalar } from "@scalar/hono-api-reference";
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
 const whitelist = process.env.DOMAINS?.split(",") || [
-	"localhost",
 	HOST,
 	`${HOST}:${PORT}`,
 	"http://localhost:3002",
 	"http://localhost:3000",
 	"http://127.0.0.1:3000",
+	"http://127.0.0.1:4321",
+	"http://localhost:4321",
 ];
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV === "development";
@@ -53,25 +54,27 @@ const app = ROUTES_PREFIX
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
 const publicCors = cors({
 	origin: "*",
-	allowMethods: ["GET", "OPTIONS"],
+	allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
 });
 
-if (!isDev) {
-	app.use(`/charts/*`, publicCors);
-	app.use(`/dashboards/*`, publicCors);
-} else {
-	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
-	app.use(
-		"/*",
-		cors({
-			origin: whitelist,
-			credentials: true,
-			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
-		}),
-	);
-}
+app.use("*", publicCors);
+
+// if (!isDev) {
+// 	app.use(`/charts/*`, publicCors);
+// 	app.use(`/dashboards/*`, publicCors);
+// } else {
+// 	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
+// 	app.use(
+// 		"/*",
+// 		cors({
+// 			origin: whitelist,
+// 			credentials: true,
+// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+// 			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
+// 		}),
+// 	);
+// }
 
 // Prometheus metrics collection
 app.use("*", metricsMiddleware);
