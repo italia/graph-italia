@@ -18,7 +18,10 @@ export * from "./types";
 export {
   ChartProvider,
   ChartWrapper,
-  ColorSchemeProvider, DashboardGridProvider, DashboardProvider, DataTable,
+  ColorSchemeProvider,
+  DashboardGridProvider,
+  DashboardProvider,
+  DataTable,
   KpiItem,
   PoweredBy,
   RenderChart,
