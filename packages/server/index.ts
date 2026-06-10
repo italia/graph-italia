@@ -54,21 +54,21 @@ const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-C
 
 // CORS must be first so OPTIONS preflights are answered before any other
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
-const publicCors = cors({
-	origin: "*",
-	credentials: true,
-	allowMethods,
-	allowHeaders,
-});
+// const publicCors = cors({
+// 	origin: "*",
+// 	credentials: true,
+// 	allowMethods,
+// 	allowHeaders,
+// });
 
-const privateCors = cors({
-	origin: ["https://developers-italia.vercel.app", ...whitelist],
-	credentials: true,
-	allowMethods,
-	allowHeaders,
-});
+// const privateCors = cors({
+// 	origin: ["https://developers-italia.vercel.app", ...whitelist],
+// 	credentials: true,
+// 	allowMethods,
+// 	allowHeaders,
+// });
 
-app.use("/*", publicCors);
+app.use("*", cors());
 // if (!isDev) {
 // 	app.use(`/charts/*`, publicCors);
 // 	app.use(`/dashboards/*`, publicCors);
