@@ -56,6 +56,7 @@ const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-C
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
 const publicCors = cors({
 	origin: "*",
+	credentials: true,
 	allowMethods,
 	allowHeaders,
 });
