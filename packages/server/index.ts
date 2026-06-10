@@ -61,7 +61,7 @@ const publicCors = cors({
 });
 
 const privateCors = cors({
-	origin: whitelist,
+	origin: ["https://developers-italia.vercel.app", ...whitelist],
 	credentials: true,
 	allowMethods,
 	allowHeaders,
