@@ -46,36 +46,36 @@ const app = ROUTES_PREFIX
 	? new Hono().basePath(ROUTES_PREFIX)
 	: new Hono();
 
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🔧 MIDDLEWARE STACK
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // CORS must be first so OPTIONS preflights are answered before any other
+const allowMethods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
+const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"];
+
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
 const publicCors = cors({
 	origin: "*",
 	credentials: false,
-	allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization", "x-project-id", "Access-Control-Allow-Credentials", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"],
+	allowMethods,
+	allowHeaders,
 });
 
-// app.use("*", publicCors);
+const privateCors = cors({
+	origin: (origin) => (origin && whitelist.includes(origin) ? origin : null),
+	credentials: true,
+	allowMethods,
+	allowHeaders
+});
 
-// if (!isDev) {
-// 	app.use(`/charts/*`, publicCors);
-// 	app.use(`/dashboards/*`, publicCors);
-// } else {
-// 	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
-// 	app.use(
-// 		"/*",
-// 		cors({
-// 			origin: whitelist,
-// 			credentials: true,
-// 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-// 			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
-// 		}),
-// 	);
-// }
+// Public read endpoints — any origin, no credentials
+app.use("/charts/*", publicCors);
+app.use("/dashboards/*", publicCors);
+
+// All other routes — whitelist only, cookies allowed
+app.use("/*", privateCors);
 
 // Prometheus metrics collection
 app.use("*", metricsMiddleware);
@@ -283,8 +283,6 @@ if (ROUTES_PREFIX) {
 	app.route("/metrics", metricsRouter);
 	rootApp = app;
 }
-
-rootApp.use("*", publicCors);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🚀 SERVER STARTUP
