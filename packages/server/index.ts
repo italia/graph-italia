@@ -109,14 +109,15 @@ app.use("/auth/*", rateLimiter({
 	handler: (c) => c.json({ error: "Too many requests, please try again later." }, 429),
 }));
 
-// CSRF protection
-app.use(
-	csrf({
-		origin: isDev
-			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
-			: process.env.HOST,
-	}),
-);
+
+// // CSRF protection
+// app.use(
+// 	csrf({
+// 		origin: isDev
+// 			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
+// 			: process.env.HOST,
+// 	}),
+// );
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
@@ -282,7 +283,7 @@ if (ROUTES_PREFIX) {
 	rootApp = app;
 }
 
-
+rootApp.use("*", publicCors);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🚀 SERVER STARTUP
