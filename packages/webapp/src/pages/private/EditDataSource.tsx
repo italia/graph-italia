@@ -14,7 +14,6 @@ import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
 import EditStepComponent from "../../components/EditStepComponent.tsx";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
 import TransformDataTable from "../../components/load-data/TransformDataTable.tsx";
-import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
 import useDatasourceEditStore from "../../lib/store/datasourceEditStore.ts";
@@ -393,7 +392,7 @@ export default function EditDataSource() {
                           {t("body.preview.seriesSelector.description")}
                         </p>
                         <DataHelper
-                          initialData={currentData ?? data}
+                          rawData={currentData ?? data}
                           setData={(d) => {
                             setData(d);
                             setHasUnsavedChanges(true);
