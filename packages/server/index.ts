@@ -67,14 +67,14 @@ const privateCors = cors({
 	allowHeaders,
 });
 
-// app.use("*", publicCors);
-if (!isDev) {
-	app.use(`/charts/*`, publicCors);
-	app.use(`/dashboards/*`, publicCors);
-} else {
-	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
-	app.use("/*", privateCors);
-}
+app.use("/*", publicCors);
+// if (!isDev) {
+// 	app.use(`/charts/*`, publicCors);
+// 	app.use(`/dashboards/*`, publicCors);
+// } else {
+// 	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
+// 	app.use("/*", privateCors);
+// }
 
 // Prometheus metrics collection
 app.use("*", metricsMiddleware);
