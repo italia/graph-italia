@@ -27,7 +27,6 @@ const PORT = process.env.PORT || 3003;
 const whitelist = process.env.DOMAINS?.split(",") || [
 	HOST,
 	`${HOST}:${PORT}`,
-	"https://developers-italia.vercel.app",
 	"http://localhost:3002",
 	"http://localhost:3000",
 	"http://127.0.0.1:3000",
@@ -47,36 +46,35 @@ const app = ROUTES_PREFIX
 	? new Hono().basePath(ROUTES_PREFIX)
 	: new Hono();
 
-
+const allowMethods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
+const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-Control-Allow-Credentials", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"];
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🔧 MIDDLEWARE STACK
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // CORS must be first so OPTIONS preflights are answered before any other
-const allowMethods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
-const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"];
-
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
 const publicCors = cors({
 	origin: "*",
-	credentials: false,
 	allowMethods,
 	allowHeaders,
 });
 
 const privateCors = cors({
-	origin: (origin) => (origin && whitelist.includes(origin) ? origin : null),
+	origin: whitelist,
 	credentials: true,
 	allowMethods,
-	allowHeaders
+	allowHeaders,
 });
 
-// Public read endpoints — any origin, no credentials
-app.use("/charts/*", publicCors);
-app.use("/dashboards/*", publicCors);
-
-// All other routes — whitelist only, cookies allowed
-app.use("/*", privateCors);
+// app.use("*", publicCors);
+if (!isDev) {
+	app.use(`/charts/*`, publicCors);
+	app.use(`/dashboards/*`, publicCors);
+} else {
+	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
+	app.use("/*", privateCors);
+}
 
 // Prometheus metrics collection
 app.use("*", metricsMiddleware);
@@ -113,13 +111,13 @@ app.use("/auth/*", rateLimiter({
 
 
 // // CSRF protection
-app.use(
-	csrf({
-		origin: isDev
-			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
-			: process.env.HOST,
-	}),
-);
+// app.use(
+// 	csrf({
+// 		origin: isDev
+// 			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
+// 			: process.env.HOST,
+// 	}),
+// );
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
