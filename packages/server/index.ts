@@ -111,13 +111,13 @@ app.use("/auth/*", rateLimiter({
 
 
 // // CSRF protection
-// app.use(
-// 	csrf({
-// 		origin: isDev
-// 			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
-// 			: process.env.HOST,
-// 	}),
-// );
+app.use(
+	csrf({
+		origin: isDev
+			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
+			: process.env.HOST,
+	}),
+);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
