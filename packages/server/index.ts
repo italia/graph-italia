@@ -54,11 +54,12 @@ const app = ROUTES_PREFIX
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
 const publicCors = cors({
 	origin: "*",
+	credentials: false,
 	allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 	allowHeaders: ["Content-Type", "Authorization", "x-project-id", "Access-Control-Allow-Credentials", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"],
 });
 
-app.use("*", publicCors);
+// app.use("*", publicCors);
 
 // if (!isDev) {
 // 	app.use(`/charts/*`, publicCors);
@@ -282,6 +283,8 @@ if (ROUTES_PREFIX) {
 	app.route("/metrics", metricsRouter);
 	rootApp = app;
 }
+
+rootApp.use("*", publicCors);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🚀 SERVER STARTUP
