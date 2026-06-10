@@ -55,7 +55,7 @@ const app = ROUTES_PREFIX
 const publicCors = cors({
 	origin: "*",
 	allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
+	allowHeaders: ["Content-Type", "Authorization", "x-project-id", "Access-Control-Allow-Credentials", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"],
 });
 
 app.use("*", publicCors);
