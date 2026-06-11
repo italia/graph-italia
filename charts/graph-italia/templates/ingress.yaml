@@ -10,6 +10,16 @@ metadata:
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- /* CORS annotations — emitted when ingress.cors.enabled=true */}}
+    {{- /* nginx ingress handles OPTIONS preflights itself, so the server's cors */}}
+    {{- /* middleware is bypassed via CORS_AT_INGRESS env var to avoid duplicate headers */}}
+    {{- if and .Values.ingress.cors .Values.ingress.cors.enabled }}
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: {{ .Values.ingress.cors.allowOrigin | default "*" | quote }}
+    nginx.ingress.kubernetes.io/cors-allow-methods: {{ .Values.ingress.cors.allowMethods | quote }}
+    nginx.ingress.kubernetes.io/cors-allow-headers: {{ .Values.ingress.cors.allowHeaders | quote }}
+    nginx.ingress.kubernetes.io/cors-max-age: {{ .Values.ingress.cors.maxAge | default "86400" | quote }}
+    {{- end }}
     {{- /* ModSecurity WAF annotations */}}
     {{- /* Note: modsecurity-snippet requires allow-snippet-annotations=true in ingress-nginx config */}}
     {{- /* Without snippet, ModSecurity uses global config (DetectionOnly by default) */}}

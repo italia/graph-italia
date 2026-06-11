@@ -68,7 +68,9 @@ const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-C
 // 	allowHeaders,
 // });
 
-app.use("*", cors());
+if (!process.env.CORS_AT_INGRESS) {
+	app.use("*", cors());
+}
 // if (!isDev) {
 // 	app.use(`/charts/*`, publicCors);
 // 	app.use(`/dashboards/*`, publicCors);
