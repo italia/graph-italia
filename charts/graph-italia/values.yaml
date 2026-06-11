@@ -203,6 +203,8 @@ server:
     UPLOAD_SIZE_LIMIT: "15mb"
     ROUTES_PREFIX: ""
     DATABASE_URL: ""
+    # Set to "true" automatically when ingress.cors.enabled=true to avoid duplicate CORS headers
+    CORS_AT_INGRESS: ""
     # Add other environment variables as needed
   # Horizontal Pod Autoscaler
   autoscaling:
@@ -331,6 +333,19 @@ ingress:
     burst: 20
     # Connections per IP
     connections: 10
+  # ==========================================================================
+  # CORS (Cross-Origin Resource Sharing)
+  # ==========================================================================
+  # Enable when the nginx ingress controller intercepts OPTIONS preflights
+  # before they reach the backend (common with ModSecurity or strict configs).
+  # When enabled, nginx handles all CORS; the server skips its own cors middleware
+  # to prevent duplicate Access-Control-Allow-Origin headers.
+  cors:
+    enabled: false
+    allowOrigin: "*"
+    allowMethods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    allowHeaders: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,x-project-id,X-CSRF-Token"
+    maxAge: "86400"
   # Single host mode: set host and paths
   # If host is set, paths will be used for routing
   host: ""  # e.g., "graph-italia.example.com"
