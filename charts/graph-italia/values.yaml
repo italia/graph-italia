@@ -203,8 +203,14 @@ server:
     UPLOAD_SIZE_LIMIT: "15mb"
     ROUTES_PREFIX: ""
     DATABASE_URL: ""
-    # Set to "true" automatically when ingress.cors.enabled=true to avoid duplicate CORS headers
-    CORS_AT_INGRESS: ""
+    # CORS allowed origin(s) for the app-level CORS middleware.
+    # "*" keeps published charts/dashboards embeddable from any site; set a single
+    # origin or a comma-separated list to restrict it. Ignored when CORS is handled
+    # at the ingress (see ingress.cors below, which sets CORS_AT_INGRESS).
+    CORS_ORIGIN: "*"
+    # NOTE: CORS_AT_INGRESS is injected automatically by the server-deployment
+    # template when ingress.cors.enabled=true — do not set it here (it would
+    # produce a duplicate env var).
     # Add other environment variables as needed
   # Horizontal Pod Autoscaler
   autoscaling:
