@@ -54,12 +54,12 @@ const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-C
 
 // CORS must be first so OPTIONS preflights are answered before any other
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
-// const publicCors = cors({
-// 	origin: "*",
-// 	credentials: true,
-// 	allowMethods,
-// 	allowHeaders,
-// });
+const publicCors = cors({
+	origin: "*",
+	credentials: false,
+	allowMethods,
+	allowHeaders,
+});
 
 // const privateCors = cors({
 // 	origin: ["https://developers-italia.vercel.app", ...whitelist],
@@ -68,9 +68,10 @@ const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-C
 // 	allowHeaders,
 // });
 
-if (!process.env.CORS_AT_INGRESS) {
-	app.use("*", cors());
-}
+// if (!process.env.CORS_AT_INGRESS) {
+app.use("*", publicCors);
+// }
+
 // if (!isDev) {
 // 	app.use(`/charts/*`, publicCors);
 // 	app.use(`/dashboards/*`, publicCors);
@@ -114,13 +115,13 @@ app.use("/auth/*", rateLimiter({
 
 
 // // CSRF protection
-// app.use(
-// 	csrf({
-// 		origin: isDev
-// 			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
-// 			: process.env.HOST,
-// 	}),
-// );
+app.use(
+	csrf({
+		origin: isDev
+			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
+			: process.env.HOST,
+	}),
+);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
