@@ -197,7 +197,8 @@ server:
     PORT: "3003"
     DATABASE_URL: "postgresql://user:pass@host:5432/db"
     JWT_SECRET: "your-secret"
-    DOMAINS: "https://graph-italia.example.com"
+    CORS_ORIGIN: "*"   # CORS allowed origin(s); "*" = public embeds, or a comma-separated list to restrict
+    DOMAINS: "https://graph-italia.example.com"   # trusted origins for CSRF (not CORS)
     UPLOAD_SIZE_LIMIT: "15mb"
     ROUTES_PREFIX: "/api"
     SENDER_EMAIL: "noreply@example.com"

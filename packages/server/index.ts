@@ -54,31 +54,30 @@ const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-C
 
 // CORS must be first so OPTIONS preflights are answered before any other
 // middleware (rate limiter, CSRF, auth) can return a response without headers.
+//
+// Origin is env-driven, never hardcoded: defaults to "*" so that published
+// charts and dashboards stay embeddable from any site, and can be restricted
+// via CORS_ORIGIN (a single origin or a comma-separated list) when reusing
+// this project in a closed context. Public endpoints serve read-only data, so
+// credentials are disabled — the auth cookie is same-origin only.
+const corsOrigin = process.env.CORS_ORIGIN?.includes(",")
+	? process.env.CORS_ORIGIN.split(",").map((o) => o.trim())
+	: process.env.CORS_ORIGIN || "*";
+
 const publicCors = cors({
-	origin: "*",
+	origin: corsOrigin,
 	credentials: false,
 	allowMethods,
 	allowHeaders,
 });
 
-// const privateCors = cors({
-// 	origin: ["https://developers-italia.vercel.app", ...whitelist],
-// 	credentials: true,
-// 	allowMethods,
-// 	allowHeaders,
-// });
-
-// if (!process.env.CORS_AT_INGRESS) {
-app.use("*", publicCors);
-// }
-
-// if (!isDev) {
-// 	app.use(`/charts/*`, publicCors);
-// 	app.use(`/dashboards/*`, publicCors);
-// } else {
-// 	console.warn("cors is enabled for all routes in development mode. make sure to restrict this in production!");
-// 	app.use("/*", privateCors);
-// }
+// When CORS is handled at the ingress (Helm: ingress.cors.enabled=true injects
+// CORS_AT_INGRESS=true), the app skips its own CORS middleware so the response
+// doesn't carry duplicate Access-Control-Allow-Origin headers, which browsers
+// reject.
+if (!process.env.CORS_AT_INGRESS) {
+	app.use("*", publicCors);
+}
 
 // Prometheus metrics collection
 app.use("*", metricsMiddleware);
