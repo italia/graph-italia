@@ -80,25 +80,6 @@ spec:
             description: 'Pod {{ "{{ $labels.pod }}" }} has restarted {{ "{{ $value | printf \"%.0f\" }}" }} times in 30 minutes'
 
         # -----------------------------------------------------------------------
-        # Ingress/WAF - High block rate (potential attack or misconfiguration)
-        # -----------------------------------------------------------------------
-        - alert: GraphItaliaHighWAFBlocks
-          expr: |
-            (
-              sum(rate(nginx_ingress_controller_requests{status=~"4..", ingress=~".*graph-italia.*"}[10m]))
-              /
-              sum(rate(nginx_ingress_controller_requests{ingress=~".*graph-italia.*"}[10m]))
-            ) > 0.30
-          for: 10m
-          labels:
-            severity: critical
-            service: graph-italia
-            namespace: {{ .Release.Namespace }}
-          annotations:
-            summary: "High 4xx rate on Graph Italia ingress - possible attack or WAF issue"
-            description: "{{ "{{ $value | humanizePercentage }}" }} of requests are returning 4xx (>30%) for 10+ minutes"
-
-        # -----------------------------------------------------------------------
         # Application completely unresponsive (latency > 30s)
         # -----------------------------------------------------------------------
         - alert: GraphItaliaUnresponsive
@@ -133,4 +114,36 @@ spec:
           annotations:
             summary: "Graph Italia is running out of memory"
             description: "Container {{ "{{ $labels.container }}" }} is at {{ "{{ $value | humanizePercentage }}" }} memory - OOM imminent"
+
+    # ==========================================================================
+    # WARNING ALERTS - Noteworthy, not a page-worthy critical incident
+    # ==========================================================================
+    - name: graph-italia.warning
+      rules:
+        # -----------------------------------------------------------------------
+        # Ingress/WAF - High block rate (potential attack or misconfiguration)
+        # -----------------------------------------------------------------------
+        # Guarded by a minimum-traffic floor: at low volume a handful of scanner
+        # 4xx (e.g. 404s) easily exceeds the 30% ratio and trips a false
+        # positive. Requiring >1 req/s of total ingress traffic means this only
+        # fires on a genuine high-volume 4xx storm. severity=warning so it is
+        # not treated as a critical incident (was a noisy critical false
+        # positive — see k8s-configuration/RIGHTSIZING.md).
+        - alert: GraphItaliaHighWAFBlocks
+          expr: |
+            (
+              sum(rate(nginx_ingress_controller_requests{status=~"4..", ingress=~".*graph-italia.*"}[10m]))
+              /
+              sum(rate(nginx_ingress_controller_requests{ingress=~".*graph-italia.*"}[10m]))
+            ) > 0.30
+            and
+            sum(rate(nginx_ingress_controller_requests{ingress=~".*graph-italia.*"}[10m])) > 1
+          for: 10m
+          labels:
+            severity: warning
+            service: graph-italia
+            namespace: {{ .Release.Namespace }}
+          annotations:
+            summary: "High 4xx rate on Graph Italia ingress - possible attack or WAF issue"
+            description: "{{ "{{ $value | humanizePercentage }}" }} of requests are returning 4xx (>30%) at >1 req/s for 10+ minutes"
 {{- end }}
