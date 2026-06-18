@@ -130,19 +130,21 @@ spec:
         # -----------------------------------------------------------------------
         # Guarded by a minimum-traffic floor: at low volume a handful of scanner
         # 4xx (e.g. 404s) easily exceeds the 30% ratio and trips a false
-        # positive. Requiring >1 req/s of total ingress traffic means this only
-        # fires on a genuine high-volume 4xx storm. severity=warning so it is
-        # not treated as a critical incident (was a noisy critical false
-        # positive — see k8s-configuration/RIGHTSIZING.md).
+        # positive. Requiring >5 req/s of total ingress traffic means this only
+        # fires on a genuine high-volume 4xx storm. Scoped to this release's own
+        # namespace via exported_namespace (the nginx `namespace` label is the
+        # controller's ns, not the ingress's). severity=warning so it is not
+        # treated as a critical incident (was a noisy critical false positive —
+        # see k8s-configuration/RIGHTSIZING.md).
         - alert: GraphItaliaHighWAFBlocks
           expr: |
             (
-              sum(rate(nginx_ingress_controller_requests{status=~"4..", ingress=~".*graph-italia.*"}[10m]))
+              sum(rate(nginx_ingress_controller_requests{status=~"4..", exported_namespace="{{ .Release.Namespace }}"}[10m]))
               /
-              sum(rate(nginx_ingress_controller_requests{ingress=~".*graph-italia.*"}[10m]))
+              sum(rate(nginx_ingress_controller_requests{exported_namespace="{{ .Release.Namespace }}"}[10m]))
             ) > 0.30
             and
-            sum(rate(nginx_ingress_controller_requests{ingress=~".*graph-italia.*"}[10m])) > 1
+            sum(rate(nginx_ingress_controller_requests{exported_namespace="{{ .Release.Namespace }}"}[10m])) > 5
           for: 10m
           labels:
             severity: warning
@@ -150,5 +152,5 @@ spec:
             namespace: {{ .Release.Namespace }}
           annotations:
             summary: "High 4xx rate on Graph Italia ingress - possible attack or WAF issue"
-            description: "{{ "{{ $value | humanizePercentage }}" }} of requests are returning 4xx (>30%) at >1 req/s for 10+ minutes"
+            description: "{{ "{{ $value | humanizePercentage }}" }} of requests are returning 4xx (>30%) at >5 req/s for 10+ minutes"
 {{- end }}
