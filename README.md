@@ -1314,7 +1314,7 @@ Gli alert sono definiti in `charts/graph-italia/templates/prometheusrule.yaml`:
 | `GraphItaliaHighErrorRate`  | 5xx > 10% per 5 min          | Critical |
 | `GraphItaliaDatabaseErrors` | Errori DB > 0.5/s per 3 min  | Critical |
 | `GraphItaliaCrashLooping`   | > 5 restart in 30 min        | Critical |
-| `GraphItaliaHighWAFBlocks`  | 4xx > 30% **e** > 1 req/s per 10 min | Warning  |
+| `GraphItaliaHighWAFBlocks`  | 4xx > 30% **e** > 5 req/s (solo prod ns) per 10 min | Warning  |
 | `GraphItaliaUnresponsive`   | p95 latency > 30s            | Critical |
 | `GraphItaliaOutOfMemory`    | Memory > 95% per 5 min       | Critical |
 
