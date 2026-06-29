@@ -2,8 +2,7 @@ import { getAuth, oidcAuthMiddleware, processOAuthCallback, revokeSession } from
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
 import db from "../lib/db";
-import { generateTokens } from "../lib/jwt";
-import { clearAccessTokenCookie, setAccessTokenCookie } from "../lib/jwt-hono";
+import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import logger from "../lib/logger";
 
 const APP_URL = process.env.APP_URL || "/";
@@ -30,7 +29,7 @@ router.get('/complete', async (c) => {
             email: oidcAuth.email,
             password: crypto.randomUUID(),
         })
-        await db.setVerifyed(user.id)
+        await db.setVerified(user.id)
     }
 
     const { accessToken } = generateTokens(user)
