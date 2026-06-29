@@ -10,7 +10,7 @@ export default function EditStepComponent(props: {
 }) {
   const { title, description, Icon, children, isOpen, index, isDisabled, headingRef } = props;
   return (
-    <details className="collapse collapse-arrow bg-base-100 border border-base-200" name={`my-accordion-det-${index}`} aria-disabled={isDisabled} open={isOpen}>
+    <details className="collapse collapse-arrow bg-base-100 border border-base-200 " name={`my-accordion-det-${index}`} aria-disabled={isDisabled} open={isOpen}>
       <summary className="collapse-title font-semibold">
         <div className="flex items-center gap-3 mb-4">
           <div
@@ -31,7 +31,7 @@ export default function EditStepComponent(props: {
           </div>
         </div>
       </summary>
-      <div className="collapse-content text-sm">
+      <div className="collapse-content text-sm ">
         {children}
       </div>
     </details>

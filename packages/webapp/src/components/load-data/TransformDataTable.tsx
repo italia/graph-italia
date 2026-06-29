@@ -6,6 +6,7 @@ import { transposeData } from "../../lib/utils.ts";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import type { MatrixType } from "../../types.ts";
 import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
+import { paginationIcons } from "../layout/paginationIcons";
 import GenericDialog from "../layout/GenericDialog.tsx";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
 import ToggleTableColumns from "./ToggleTableColumns.tsx";
@@ -373,6 +374,12 @@ export default function TransformData({
           data={objectData}
           theme={currentTheme}
           pagination
+          paginationComponentOptions={{
+            rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+            rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+            selectAllRowsItem: false,
+          }}
+          {...paginationIcons}
           dense
           highlightOnHover
           fixedHeader

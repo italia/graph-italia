@@ -29,6 +29,7 @@ import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
 import Dialog from "./layout/Dialog";
+import { paginationIcons } from "./layout/paginationIcons";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -171,14 +172,16 @@ export default function ChartTable({
               href={row.remoteUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="open remote URL"
+              aria-label={t("actions.openRemote", { defaultValue: "Apri URL remoto" })}
+              title={t("actions.openRemote", { defaultValue: "Apri URL remoto" })}
               className="btn btn-ghost btn-xs btn-square"
             >
               <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
             </a>
             <button
               type="button"
-              aria-label="copy remote URL"
+              aria-label={t("actions.copyRemote", { defaultValue: "Copia URL remoto" })}
+              title={t("actions.copyRemote", { defaultValue: "Copia URL remoto" })}
               className="btn btn-ghost btn-xs btn-square"
               onClick={handleCopy(`${row.remoteUrl || ""}`)}
             >
@@ -335,6 +338,12 @@ export default function ChartTable({
             data={list as FieldDataTypeWithPreview[]}
             theme={currentTheme}
             pagination
+            paginationComponentOptions={{
+              rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+              rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+              selectAllRowsItem: false,
+            }}
+            {...paginationIcons}
             highlightOnHover
             noDataComponent={t(`noDataComponent`)}
           />

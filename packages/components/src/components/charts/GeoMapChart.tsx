@@ -1,10 +1,12 @@
 import * as echarts from "echarts";
+import type { EChartsType } from "echarts";
 import ReactEcharts from "echarts-for-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
+import { useChartKeyboard } from "../../lib/useChartKeyboard";
 
 function GeoMapChart({
   data,
@@ -20,6 +22,7 @@ function GeoMapChart({
   const [options, setOptions] = useState(null);
   const [weDoNotHaveInstance, setWeDoNotHaveInstance] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [localInstance, setLocalInstance] = useState<EChartsType | null>(null);
 
   const mapId = useMemo(() => id || `map-${Date.now()}`, [id]);
 
@@ -56,6 +59,11 @@ function GeoMapChart({
       textStyle: {
         fontFamily: "Titillium Web, sans-serif",
         fontSize: 12,
+      },
+      aria: {
+        enabled: true,
+        decal: { show: true },
+        label: { enabled: true, description: config?.title || config?.description || "" },
       },
       tooltip,
       dataZoom: [
@@ -159,6 +167,7 @@ function GeoMapChart({
     if (loaded && refCanvas.current && weDoNotHaveInstance) {
       try {
         const echartInstance = refCanvas.current.getEchartsInstance();
+        setLocalInstance(echartInstance);
         if (setEchartInstance) {
           setEchartInstance(echartInstance);
           setWeDoNotHaveInstance(false);
@@ -171,9 +180,11 @@ function GeoMapChart({
 
   const chartHeight = (data.config?.h || 500) * hFactor;
   const effectiveHeight = rowHeight || chartHeight;
+  const ariaLabel = `${data?.config?.title || "Mappa geografica"}. Usa le frecce per esplorare le regioni, Esc per uscire.`;
+  const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
   return (
     <ErrorBoundary fallback={<div>Errore nel rendering della mappa</div>}>
-      <div key={mapId} id={"chart_" + mapId}>
+      <div key={mapId} id={"chart_" + mapId} {...keyboardProps}>
         {error && <div className="alert error">{error}</div>}
         {!geoData && <div>In attesa dei dati geo...</div>}
         {!options ? (

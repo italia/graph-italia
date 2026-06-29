@@ -26,13 +26,13 @@ import { openAPIRouteHandler } from "hono-openapi";
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
 const whitelist = process.env.DOMAINS?.split(",") || [
-	"localhost",
 	HOST,
 	`${HOST}:${PORT}`,
-	"localhost",
-	"localhost:3000",
+	"http://localhost:3002",
 	"http://localhost:3000",
 	"http://127.0.0.1:3000",
+	"http://127.0.0.1:4321",
+	"http://localhost:4321",
 ];
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV === "development";
@@ -47,43 +47,40 @@ const app = ROUTES_PREFIX
 	? new Hono().basePath(ROUTES_PREFIX)
 	: new Hono();
 
-// Fix cookie per sviluppo locale
-app.use('*', async (c, next) => {
-	await next()
-	if (!isDev) return
-
-	const setCookieHeaders = c.res.headers.getSetCookie?.()
-		?? [c.res.headers.get('set-cookie') ?? ''].filter(Boolean)
-
-	if (setCookieHeaders.length === 0) return
-
-	// Rimuovi tutti i set-cookie esistenti
-	c.res.headers.delete('set-cookie')
-
-	// Riscrivili senza Secure e con Path=/
-	for (const cookie of setCookieHeaders) {
-		const fixed = cookie
-			.replace(/;\s*Secure/gi, '')
-			.replace(/;\s*Path=[^;]*/gi, '; Path=/')
-		c.res.headers.append('set-cookie', fixed)
-		console.log('→ cookie fixato:', fixed)
-	}
-})
-
-// // ─── DEBUG ────────────────────────────────────────────────────────────────────
-// app.use('*', async (c, next) => {
-// 	await next()
-// 	if (c.req.path.includes('/auth/oidc/login')) {
-// 		console.log('→ response status:', c.res.status)
-// 		console.log('→ response headers:', Object.fromEntries(c.res.headers.entries()))
-// 	}
-// })
-
+const allowMethods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
+const allowHeaders = ["Content-Type", "Authorization", "x-project-id", "Access-Control-Allow-Credentials", "X-CSRF-Token", "X-Requested-With", "Accept", "Accept-Version", "Content-Length", "Content-MD5", "Date", "X-Api-Version"];
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🔧 MIDDLEWARE STACK
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Prometheus metrics collection (before other middleware)
+// CORS must be first so OPTIONS preflights are answered before any other
+// middleware (rate limiter, CSRF, auth) can return a response without headers.
+//
+// Origin is env-driven, never hardcoded: defaults to "*" so that published
+// charts and dashboards stay embeddable from any site, and can be restricted
+// via CORS_ORIGIN (a single origin or a comma-separated list) when reusing
+// this project in a closed context. Public endpoints serve read-only data, so
+// credentials are disabled — the auth cookie is same-origin only.
+const corsOrigin = process.env.CORS_ORIGIN?.includes(",")
+	? process.env.CORS_ORIGIN.split(",").map((o) => o.trim())
+	: process.env.CORS_ORIGIN || "*";
+
+const publicCors = cors({
+	origin: corsOrigin,
+	credentials: false,
+	allowMethods,
+	allowHeaders,
+});
+
+// When CORS is handled at the ingress (Helm: ingress.cors.enabled=true injects
+// CORS_AT_INGRESS=true), the app skips its own CORS middleware so the response
+// doesn't carry duplicate Access-Control-Allow-Origin headers, which browsers
+// reject.
+if (!process.env.CORS_AT_INGRESS) {
+	app.use("*", publicCors);
+}
+
+// Prometheus metrics collection
 app.use("*", metricsMiddleware);
 
 // Structured JSON logging (skips healthchecks)
@@ -116,46 +113,15 @@ app.use("/auth/*", rateLimiter({
 	handler: (c) => c.json({ error: "Too many requests, please try again later." }, 429),
 }));
 
-// CSRF protection
-app.use("*", async (c, next) => {
-	if (c.req.path.includes('/auth/oidc')) {
-		return next() // salta CSRF per il flusso OIDC
-	}
-	return csrf({
+
+// // CSRF protection
+app.use(
+	csrf({
 		origin: isDev
 			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
 			: process.env.HOST,
 	})
 });
-
-
-// CORS — only for public chart/dashboard show and embed endpoints
-const publicCors = cors({
-	origin: "*",
-	allowMethods: ["GET", "OPTIONS"],
-	allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
-});
-
-// app.use(`/*`, publicCors);
-// app.use(`/charts/show/*`, publicCors);
-// app.use(`/dashboards/show/*`, publicCors);
-
-if (!isDev) {
-	app.use(`/charts/*`, publicCors);
-	app.use(`/dashboards/*`, publicCors);
-} else {
-	console.warn("CORS is enabled for all routes in development mode. Make sure to restrict this in production!");
-	// CORS CRUD (only in dev)
-	app.use(
-		"/*",
-		cors({
-			origin: whitelist,
-			credentials: true,
-			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization", "x-project-id"],
-		}),
-	);
-}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🛣️ ROUTES
@@ -352,8 +318,6 @@ if (ROUTES_PREFIX) {
 	app.route("/", oidcApp);
 	rootApp = app;
 }
-
-
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🚀 SERVER STARTUP

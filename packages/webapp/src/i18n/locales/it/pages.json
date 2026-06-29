@@ -461,9 +461,9 @@
         },
         "header": {
             "title": "Area Privata",
-            "charts": "I miei grafici",
-            "noCharts": "I miei grafici",
-            "chartsEmpty": "Non hai ancora creato grafici. Usa \"Crea nuovo\" per iniziare.",
+            "charts": "Grafici, mappe e KPI",
+            "noCharts": "Grafici, mappe e KPI",
+            "chartsEmpty": "Non hai ancora creato grafici, mappe o KPI. Usa \"Crea nuovo\" per iniziare.",
             "dashboards": "Le mie dashboard",
             "noDashboards": "Le mie dashboard",
             "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare."

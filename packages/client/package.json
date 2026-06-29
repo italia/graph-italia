@@ -1,0 +1,31 @@
+{
+  "name": "graph-italia-cli",
+  "version": "0.0.01",
+  "license": "gpl-3.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "convert": "json2yaml graphitalia-openapi.json > graphitalia-openapi.yml",
+    "generate": "orval --config orval.config.ts"
+  },
+  "dependencies": {
+    "axios": "^1.17.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "ajv": "^8.20.0",
+    "json2yaml": "^1.1.0",
+    "orval": "^8.15.0",
+    "rollup": "^4.35.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.2"
+  }
+}

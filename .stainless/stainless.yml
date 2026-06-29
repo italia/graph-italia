@@ -10,9 +10,9 @@ organization:
   # and headings.
   name: graph-italia-api-sdk
   # Link to your API documentation.
-  docs: ''
+  docs: ""
   # Contact email for bug reports, questions, and support requests.
-  contact: ''
+  contact: ""
 
 # `targets` define the output targets and their customization options, such as
 # whether to emit the Node SDK and what its package name should be.
@@ -30,9 +30,9 @@ targets:
 # `environments` are a map of the name of the environment (e.g. "sandbox",
 # "production") to the corresponding url to use.
 environments:
-  production: http://localhost:3000
+  lcoal: http://localhost:3000
   test: http://graph-test.developers.italia.it
-  environment_2: http://graph.developers.italia.it
+  production: http://graph.developers.italia.it
 
 # `resources` define the structure and organization for your API, such as how
 # methods and models are grouped together and accessed. See the [configuration

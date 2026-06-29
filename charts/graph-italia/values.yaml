@@ -203,6 +203,14 @@ server:
     UPLOAD_SIZE_LIMIT: "15mb"
     ROUTES_PREFIX: ""
     DATABASE_URL: ""
+    # CORS allowed origin(s) for the app-level CORS middleware.
+    # "*" keeps published charts/dashboards embeddable from any site; set a single
+    # origin or a comma-separated list to restrict it. Ignored when CORS is handled
+    # at the ingress (see ingress.cors below, which sets CORS_AT_INGRESS).
+    CORS_ORIGIN: "*"
+    # NOTE: CORS_AT_INGRESS is injected automatically by the server-deployment
+    # template when ingress.cors.enabled=true — do not set it here (it would
+    # produce a duplicate env var).
     # Add other environment variables as needed
   # Horizontal Pod Autoscaler
   autoscaling:
@@ -331,6 +339,19 @@ ingress:
     burst: 20
     # Connections per IP
     connections: 10
+  # ==========================================================================
+  # CORS (Cross-Origin Resource Sharing)
+  # ==========================================================================
+  # Enable when the nginx ingress controller intercepts OPTIONS preflights
+  # before they reach the backend (common with ModSecurity or strict configs).
+  # When enabled, nginx handles all CORS; the server skips its own cors middleware
+  # to prevent duplicate Access-Control-Allow-Origin headers.
+  cors:
+    enabled: false
+    allowOrigin: "*"
+    allowMethods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    allowHeaders: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,x-project-id,X-CSRF-Token"
+    maxAge: "86400"
   # Single host mode: set host and paths
   # If host is set, paths will be used for routing
   host: ""  # e.g., "graph-italia.example.com"

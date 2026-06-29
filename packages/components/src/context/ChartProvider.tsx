@@ -220,7 +220,6 @@ export function ChartProvider({
     fetch(url, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
       },
       signal: controller.signal,
     })

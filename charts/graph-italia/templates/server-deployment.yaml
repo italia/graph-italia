@@ -68,6 +68,10 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+            {{- if and .Values.ingress.cors .Values.ingress.cors.enabled }}
+            - name: CORS_AT_INGRESS
+              value: "true"
+            {{- end }}
           {{- if .Values.server.volumeMounts }}
           volumeMounts:
             {{- toYaml .Values.server.volumeMounts | nindent 12 }}

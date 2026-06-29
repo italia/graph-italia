@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   FaChevronDown,
   FaChartBar,
+  FaDatabase,
   FaList,
   FaMap,
   FaRegSquare,
@@ -16,10 +17,12 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ChartTable from "../../components/ChartTable.tsx";
 import DashboardTable from "../../components/DashboardTable.tsx";
+import DataSourceTable from "../../components/DataSourceTable.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import * as api from "../../lib/api.ts";
 import useChartsStoreState from "../../lib/store/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
+import useDatasourceListStore from "../../lib/store/datasourceListStore.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import useStoreState from "../../lib/store/storeState.ts";
 import useProjectStore from "../../lib/store/projectStore.ts";
@@ -34,10 +37,14 @@ function Home() {
   const { list, setList } = useChartsStoreState((state) => state);
   const { list: dashboardList, setList: setDashboardList } =
     useDashboardsStoreState((state) => state);
+  const { list: datasourceList, setList: setDatasourceList } =
+    useDatasourceListStore((state) => state);
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [dashboardLoading, setDashboardLoading] = useState(true);
+  const [datasourceLoading, setDatasourceLoading] = useState(true);
+  const [pendingDeleteDatasourceId, setPendingDeleteDatasourceId] = useState<string | null>(null);
   const [isCreatingNewChart, setIsCreatingNewChart] = useState<number>(0);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [pendingDeleteDashboardId, setPendingDeleteDashboardId] = useState<string | null>(null);
@@ -71,6 +78,18 @@ function Home() {
   }, [projectDropdownOpen]);
 
 
+
+  async function fetchDatasources() {
+    setDatasourceLoading(true);
+    try {
+      const data = await api.getDatasources();
+      setDatasourceList(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDatasourceLoading(false);
+    }
+  }
 
   async function fetchDashboards() {
     setDashboardLoading(true);
@@ -115,6 +134,7 @@ function Home() {
     fetchProjects();
     fetchCharts();
     fetchDashboards();
+    fetchDatasources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProjectId]);
 
@@ -191,7 +211,7 @@ function Home() {
       .finally(() => setPendingDeleteId(null));
   }
 
-  type ItemTypeNames = "chart" | "kpi" | "map" | "dash";
+  type ItemTypeNames = "chart" | "kpi" | "map" | "dash" | "datasource";
 
   function navigateToEdit(key: ItemTypeNames, id: string) {
     if (!id) throw new Error("Missing ID");
@@ -202,6 +222,8 @@ function Home() {
         return navigate(ROUTES.editKpi(id));
       case "map":
         return navigate(ROUTES.editMap(id));
+      case "datasource":
+        return navigate(ROUTES.editDataSource(id));
       default:
         return navigate(ROUTES.editChart(id));
     }
@@ -240,6 +262,12 @@ function Home() {
       label: "Dashboard",
       icon: <FaRegSquare size={24} aria-hidden="true" />,
     },
+    {
+      id: 5,
+      key: "datasource",
+      label: "Data Source",
+      icon: <FaDatabase size={24} aria-hidden="true" />,
+    },
   ];
 
   async function handleCreateFromDialog(id: number, key: ItemTypeNames) {
@@ -254,6 +282,9 @@ function Home() {
           break;
         case "dash":
           response = await api.createDashboard({ name });
+          break;
+        case "datasource":
+          response = await api.createDatasource({ name });
           break;
         default:
           response = await api.createChart({
@@ -456,6 +487,31 @@ function Home() {
                 )}
               </div>
             </section>
+
+            <section
+              aria-labelledby="datasources-section-heading"
+              className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6"
+            >
+              <div className="mt-10">
+                <h2
+                  id="datasources-section-heading"
+                  className="text-lg mb-4 font-semibold"
+                >
+                  Data Sources
+                </h2>
+                {datasourceLoading ? (
+                  <Loading />
+                ) : (
+                  <DataSourceTable
+                    list={datasourceList}
+                    handleDelete={(id) => setPendingDeleteDatasourceId(id)}
+                    handleEdit={(item) =>
+                      navigate(ROUTES.editDataSource(item.id))
+                    }
+                  />
+                )}
+              </div>
+            </section>
           </>
         )}
       </div>
@@ -583,6 +639,23 @@ function Home() {
             .finally(() => setPendingDeleteDashboardId(null));
         }}
         cancelCb={() => setPendingDeleteDashboardId(null)}
+      >
+        <div></div>
+      </GenericDialog>
+
+      <GenericDialog
+        toggle={!!pendingDeleteDatasourceId}
+        title="Delete Data Source"
+        description="This action cannot be undone."
+        labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
+        confirmCb={() => {
+          if (!pendingDeleteDatasourceId) return;
+          api
+            .deleteDatasource(pendingDeleteDatasourceId)
+            .then(() => fetchDatasources())
+            .finally(() => setPendingDeleteDatasourceId(null));
+        }}
+        cancelCb={() => setPendingDeleteDatasourceId(null)}
       >
         <div></div>
       </GenericDialog>

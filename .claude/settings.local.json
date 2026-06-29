@@ -9,7 +9,9 @@
       "Bash(sed -n '51,58p' packages/server/tests/orgs.test.ts)",
       "Bash(bun run *)",
       "Bash(curl -s http://localhost:3003/api/openapi.json)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "WebFetch(domain:rollupjs.org)",
+      "Bash(bun install *)"
     ]
   }
 }
