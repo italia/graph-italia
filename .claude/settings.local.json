@@ -8,7 +8,8 @@
       "Bash(sed -n '50,58p' packages/server/tests/projects.test.ts)",
       "Bash(sed -n '51,58p' packages/server/tests/orgs.test.ts)",
       "Bash(bun run *)",
-      "Bash(curl -s http://localhost:3003/api/openapi.json)"
+      "Bash(curl -s http://localhost:3003/api/openapi.json)",
+      "Bash(git stash *)"
     ]
   }
 }
