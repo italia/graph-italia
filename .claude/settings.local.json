@@ -11,7 +11,8 @@
       "Bash(curl -s http://localhost:3003/api/openapi.json)",
       "Bash(git stash *)",
       "WebFetch(domain:rollupjs.org)",
-      "Bash(bun install *)"
+      "Bash(bun install *)",
+      "Bash(grep '\\\\.ts$')"
     ]
   }
 }

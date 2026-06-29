@@ -3,7 +3,7 @@ echo "Post Create Command: Installing dependencies with Bun"
 bun i
 
 echo "Post Create Command: Installing Prisma CLI globally"
-bun i -g prisma@latest
+bun i -g prisma@7.4.0
 
 
 if [ ! -e packages/server/.env ]; then

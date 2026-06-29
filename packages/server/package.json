@@ -30,8 +30,8 @@
     "@hono/oidc-auth": "1.8.1",
     "@hono/standard-validator": "^0.2.1",
     "@hono/zod-validator": "^0.7.5",
-    "@prisma/adapter-pg": "^7.0.1",
-    "@prisma/client": "^7.0.1",
+    "@prisma/adapter-pg": "7.4.0",
+    "@prisma/client": "7.4.0",
     "@scalar/hono-api-reference": "^0.9.32",
     "axios": "^1.7.7",
     "bcrypt": "^6.0.0",
@@ -51,7 +51,7 @@
     "openai": "^6.9.1",
     "papaparse": "^5.5.3",
     "pg": "^8.16.3",
-    "prisma": "^7.0.1",
+    "prisma": "7.4.0",
     "resend": "^6.5.2",
     "zod": "^4.1.13"
   }
