@@ -25,15 +25,9 @@ import { openAPIRouteHandler } from "hono-openapi";
 
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
-const whitelist = process.env.DOMAINS?.split(",") || [
-	HOST,
-	`${HOST}:${PORT}`,
-	"http://localhost:3002",
-	"http://localhost:3000",
-	"http://127.0.0.1:3000",
-	"http://127.0.0.1:4321",
-	"http://localhost:4321",
-];
+const whitelist = process.env.CORS_ORIGIN?.split(",") || [HOST, `${HOST}:${PORT}`];
+
+
 const ROUTES_PREFIX = process.env.ROUTES_PREFIX || "";
 const isDev = process.env.NODE_ENV === "development";
 
@@ -67,7 +61,7 @@ const corsOrigin = process.env.CORS_ORIGIN?.includes(",")
 
 const publicCors = cors({
 	origin: corsOrigin,
-	credentials: false,
+	credentials: true,
 	allowMethods,
 	allowHeaders,
 });
@@ -118,7 +112,7 @@ app.use("/auth/*", rateLimiter({
 app.use(
 	csrf({
 		origin: isDev
-			? ["http://localhost:3000", "http://localhost:3003", ...whitelist]
+			? [...whitelist]
 			: process.env.HOST,
 	})
 );
