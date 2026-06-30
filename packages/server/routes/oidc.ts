@@ -54,7 +54,7 @@ router.get(
 
 // ─── OIDC login ───────────────────────────────────────────────────────────────
 router.use('/login', (c, next) => {
-    setCookie(c, 'continue', 'http://127.0.0.1:3003/oidc/complete', {
+    setCookie(c, 'continue', 'http://127.0.0.1:3003/api/oidc/complete', {
         path: '/',
         httpOnly: true,
         secure: !isDev,
