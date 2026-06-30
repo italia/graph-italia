@@ -298,8 +298,8 @@ oidcApp.use('*', async (c, next) => {
 		console.log('→ oidcApp cookie fixato:', fixed)
 	}
 })
-
-oidcApp.route('/oidc', oidcRoutes) // solo le route oidc/login, oidc/callback, oidc/logout
+//TODO: need to be changed in IAM-Proxy-Italia config
+oidcApp.route('/api/oidc', oidcRoutes) // solo le route oidc/login, oidc/callback, oidc/logout
 
 
 if (ROUTES_PREFIX) {

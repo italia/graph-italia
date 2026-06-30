@@ -266,7 +266,8 @@ export function logout() {
 }
 
 export function redirectToLoginOidc() {
-  return `${getServerUrl()}/oidc/login`
+  //TODO: needed to be adjusted
+  return `${getServerUrl()}/api/oidc/login`
 }
 
 /** DAHSBOARDS calls */
