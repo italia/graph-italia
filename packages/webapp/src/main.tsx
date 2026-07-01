@@ -5,6 +5,7 @@ import "./style/index.css";
 
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
+import AuthProvider from "./components/auth/AuthProvider";
 
 // Load runtime configuration from ConfigMap (in Kubernetes) or /config.json
 // This allows using the same build image across different environments
@@ -27,7 +28,11 @@ async function loadRuntimeConfig() {
 }
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 // Load configuration before rendering the app
