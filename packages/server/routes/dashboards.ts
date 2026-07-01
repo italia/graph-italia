@@ -3,7 +3,7 @@ import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
-import { canModify, checkAuth, requireAuth } from "../lib/middlewares";
+import { canModify, canRead, checkAuth, requireAuth } from "../lib/middlewares";
 import type { AppVariables } from "../types";
 
 type Env = { Variables: AppVariables };
@@ -105,6 +105,9 @@ router.get(
 		try {
 			const { id } = c.req.valid("param");
 			const result = await db.findDashboardByIdWithIncludes(id);
+			// 404 on missing OR unauthorized (no cross-tenant read / id enumeration).
+			// Public read is served by /show/:id (publish-gated).
+			if (!result || !(await canRead(c, result.projectId))) return c.json({ error: "Not Found" }, 404);
 			return c.json(result);
 		} catch (err) {
 			logger.error("Dashboard get error", err instanceof Error ? err : undefined);

@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import * as z from "zod";
 import { rateLimiter } from "hono-rate-limiter";
 import db from "../lib/db";
-import { checkAuth, requireAuth, canModify } from "../lib/middlewares";
+import { checkAuth, requireAuth, canModify, canRead } from "../lib/middlewares";
 import { logger } from "../lib/logger";
 import type { AppVariables, ParsedToken } from "../types";
 import {
@@ -113,12 +113,15 @@ router.get(
 			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
 		},
 	}),
+	requireAuth,
 	zValidator("param", detailSchema),
 	async (c) => {
 		try {
 			const { id } = c.req.valid("param");
 			const result = await db.findChartById(id);
-			if (!result) return c.json({ error: "Not Found" }, 404);
+			// Unpublished charts are private: 404 on missing OR unauthorized (no
+			// id enumeration). Public read is served by /show/:id (publish-gated).
+			if (!result || !(await canRead(c, result.projectId))) return c.json({ error: "Not Found" }, 404);
 			return c.json(result);
 		} catch (err) {
 			logger.error("Chart get error", err instanceof Error ? err : undefined);

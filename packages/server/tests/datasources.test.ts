@@ -134,15 +134,25 @@ describe("GET /datasources — list", () => {
 });
 
 describe("GET /datasources/:id — single", () => {
-	test("returns datasource when it exists (no auth required)", async () => {
-		const res = await app.request(`/datasources/${DS_ID}`);
+	test("owner (user JWT) returns the datasource", async () => {
+		const res = await app.request(`/datasources/${DS_ID}`, { headers: userHeaders() });
 		expect(res.status).toBe(200);
 		const body = await res.json() as typeof DS;
 		expect(body.id).toBe(DS_ID);
 	});
 
+	test("READONLY API key scoped to the project can read", async () => {
+		const res = await app.request(`/datasources/${DS_ID}`, { headers: apiKeyHeaders(READONLY_KEY) });
+		expect(res.status).toBe(200);
+	});
+
+	test("no credentials → 401 (not an anonymous cross-tenant read)", async () => {
+		const res = await app.request(`/datasources/${DS_ID}`);
+		expect(res.status).toBe(401);
+	});
+
 	test("returns 404 when datasource does not exist", async () => {
-		const res = await app.request("/datasources/nonexistent");
+		const res = await app.request("/datasources/nonexistent", { headers: userHeaders() });
 		expect(res.status).toBe(404);
 	});
 });

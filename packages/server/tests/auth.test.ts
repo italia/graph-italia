@@ -233,9 +233,9 @@ describe("POST /auth/login", () => {
 	});
 });
 
-describe("GET /auth/logout", () => {
+describe("POST /auth/logout", () => {
 	test("any request → 200, true", async () => {
-		const res = await app.request("/auth/logout");
+		const res = await app.request("/auth/logout", { method: "POST" });
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body).toBe(true);
