@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
+import { HTTPException } from "hono/http-exception";
 import { rateLimiter } from "hono-rate-limiter";
 // Routes
 import adminRoutes from "./routes/admin.ts";
@@ -156,7 +157,7 @@ app.get("/health/ready", async (c) => {
 		return c.json({
 			status: "not_ready",
 			database: "disconnected",
-			error: errorMessage,
+			error: isDev ? errorMessage : "database unavailable",
 			version: {
 				sha: BUILD_SHA,
 				buildTime: BUILD_TIME
@@ -248,6 +249,12 @@ app.notFound((c) => {
 
 app.onError((err, c) => {
 	const requestId = c.get("requestId") || "unknown";
+	// Respect intentional HTTP errors (401/403/404/...) instead of masking every
+	// error as 500. A masked 500 on a POST is retried by the ingress onto another
+	// upstream and surfaces to the browser as a confusing 405.
+	if (err instanceof HTTPException) {
+		return err.getResponse();
+	}
 	logger.error(`Unhandled error: ${err.message}`, err, { requestId });
 	return c.json(
 		{

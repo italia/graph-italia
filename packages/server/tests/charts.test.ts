@@ -167,15 +167,25 @@ describe("GET /charts — list", () => {
 // ── GET /:id ──────────────────────────────────────────────────────────────────
 
 describe("GET /charts/:id — single", () => {
-	test("returns chart when it exists (no auth required)", async () => {
-		const res = await app.request(`/charts/${CHART_ID}`);
+	test("owner (user JWT) returns the chart", async () => {
+		const res = await app.request(`/charts/${CHART_ID}`, { headers: userHeaders() });
 		expect(res.status).toBe(200);
 		const body = await res.json() as typeof CHART;
 		expect(body.id).toBe(CHART_ID);
 	});
 
+	test("READONLY API key scoped to the project can read", async () => {
+		const res = await app.request(`/charts/${CHART_ID}`, { headers: apiKeyHeaders(READONLY_KEY) });
+		expect(res.status).toBe(200);
+	});
+
+	test("no credentials → 401 (unpublished charts are not anonymously readable)", async () => {
+		const res = await app.request(`/charts/${CHART_ID}`);
+		expect(res.status).toBe(401);
+	});
+
 	test("returns 404 when chart does not exist", async () => {
-		const res = await app.request("/charts/nonexistent");
+		const res = await app.request("/charts/nonexistent", { headers: userHeaders() });
 		expect(res.status).toBe(404);
 	});
 });
