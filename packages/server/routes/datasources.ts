@@ -3,7 +3,7 @@ import * as z from "zod";
 import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
-import { checkAuth, requireAuth, canModify } from "../lib/middlewares";
+import { checkAuth, requireAuth, canModify, canRead } from "../lib/middlewares";
 import type { AppVariables } from "../types";
 
 type Env = { Variables: AppVariables };
@@ -90,14 +90,16 @@ router.get(
   "/:id",
   describeRoute({
     description: "Get a single data source by id",
-    responses: { ...R[200]("Data source", dataSourceSchema), 404: R[404], 500: R[500] },
+    responses: { ...R[200]("Data source", dataSourceSchema), 401: R[401], 404: R[404], 500: R[500] },
   }),
+  requireAuth,
   zValidator("param", detailSchema),
   async (c) => {
     try {
       const { id } = c.req.valid("param");
       const result = await db.findDataSourceById(id);
-      if (!result) return c.json({ error: "Not Found" }, 404);
+      // 404 on both missing and unauthorized to avoid cross-tenant id enumeration.
+      if (!result || !(await canRead(c, result.projectId))) return c.json({ error: "Not Found" }, 404);
       return c.json(result);
     } catch (e) {
       logger.error("DataSource get error", e instanceof Error ? e : undefined);
@@ -203,7 +205,7 @@ router.get(
     try {
       const { id } = c.req.valid("param");
       const ds = await db.findDataSourceById(id);
-      if (!ds) return c.json({ error: "Not Found" }, 404);
+      if (!ds || !(await canRead(c, ds.projectId))) return c.json({ error: "Not Found" }, 404);
       return c.json(await db.findSourceLinksByDataSource(id));
     } catch (e) {
       logger.error("SourceLinks list error", e instanceof Error ? e : undefined);

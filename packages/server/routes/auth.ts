@@ -43,9 +43,9 @@ const passwordSchema = z
 
 
 router.get("/user", describeRoute({
-	description: 'If the user is authenticated, returns the user information along with current token.',
+	description: 'If the user is authenticated (valid session cookie), returns the current user. Used by the SPA to hydrate auth state on load.',
 	responses: {
-		201: {
+		200: {
 			description: "Successful response",
 			content: {
 				"application/json": {
@@ -73,12 +73,13 @@ router.get("/user", describeRoute({
 }), (c) => {
 	try {
 		const user = c.get("user") || null;
-		console.log("user", user);
 		if (!user) {
 			return c.json({ error: "Unauthorized" }, 401);
 		}
-		const token = c.get("token") || null;
-		return c.json({ ...user, token }, 201);
+		// Return only the decoded session claims (userId, name, role, iat, exp).
+		// The raw JWT is intentionally NOT echoed: it lives solely in the httpOnly
+		// cookie so it can't be read/stolen by JS. axios sends it via withCredentials.
+		return c.json(user, 200);
 	} catch (error) {
 		logger.error(
 			"Failed to get user",
@@ -150,7 +151,6 @@ router.post("/register",
 
 			const existingUser = await db.findUserByEmail(email);
 			if (existingUser) {
-				console.log("User already exists with email", email);
 				logger.warn("Registration attempted with existing email", {
 					email: email.replace(/(.{2}).*@/, "$1***@"),
 				});
@@ -160,7 +160,6 @@ router.post("/register",
 			const user = await db.createUserByEmailAndPassword({ email, password });
 			const pin = await db.createCode(user.id, "ACTIVATION");
 
-			console.log("User registered, sending activation email", email);
 			logger.info("User registered, sending activation email", {
 				userId: user.id,
 				email: email.replace(/(.{2}).*@/, "$1***@"),
@@ -357,7 +356,9 @@ router.post("/resend",
 
 // LOGOUT
 
-router.get("/logout",
+// POST (not GET) so Hono's csrf() Origin check applies and a cross-site
+// top-level navigation / <img> can't silently log the user out.
+router.post("/logout",
 	describeRoute({
 		description: "Clear the access_token cookie and log the user out.",
 		responses: {
@@ -476,6 +477,13 @@ router.get(
 			return c.json({ error: "Invalid confirmation" }, 401);
 		}
 
+		// Per-account throttle against activation-PIN guessing (mirrors /verify).
+		const perUid = tryConsume("auth:confirm:uid", uid, { windowMs: 15 * 60 * 1000, max: 10 });
+		if (!perUid.ok) {
+			c.header("Retry-After", `${perUid.retryAfterSec}`);
+			return c.json({ error: "Too many attempts. Try again later." }, 429);
+		}
+
 		const user = c.get("user") as ParsedToken | null;
 		if (user && user.userId !== uid) {
 			logger.warn("Email confirmation attempted with mismatched user", {
@@ -528,6 +536,15 @@ router.post(
 	zValidator("json", resetPasswordSchema),
 	async (c) => {
 		const { uid, code, password } = c.req.valid("json");
+
+		// Per-account throttle: the recovery PIN is only 6 digits, so cap guesses
+		// per uid even if the attacker rotates IPs (mirrors /verify).
+		const perUid = tryConsume("auth:reset:uid", uid, { windowMs: 15 * 60 * 1000, max: 10 });
+		if (!perUid.ok) {
+			c.header("Retry-After", `${perUid.retryAfterSec}`);
+			logger.warn("Reset-password rate-limited by uid", { userId: uid, retryAfterSec: perUid.retryAfterSec });
+			return c.json({ error: "Too many attempts. Try again later." }, 429);
+		}
 
 		const dbUser = await db.findUserById(uid);
 		if (!dbUser) {

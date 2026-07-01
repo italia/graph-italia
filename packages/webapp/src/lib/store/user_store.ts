@@ -2,65 +2,78 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 
-// Define the session duration in milliseconds (e.g., 1 hour)
-// const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
-
 export interface User {
   exp: number;
   iat: number;
   name: string;
-  token: string;
   userId: string;
   role: "USER" | "ADMIN";
 }
 
+// 'unknown' until the app has hydrated auth from the session cookie on load.
+export type AuthStatus = 'unknown' | 'authenticated' | 'anonymous';
+
 interface UserState {
   user: User | null;
+  status: AuthStatus;
   setUser: (user: User) => void;
   clearUser: () => void;
-  checkSession: () => void; // Renamed for clarity, as it actively checks and clears
+  checkSession: () => void; // clears the user locally once the token has expired
 }
 
 export const useUserStore = create<UserState>()(
-  // The persist middleware wraps your store's definition
   devtools(
     persist(
       (set, get) => ({
         user: null,
-        setUser: (user) => {
-          // const exp = new Date().getTime() + SESSION_DURATION;
-          set({ user: { ...user } });
-        },
-        /**
-         * Clears the current user from the state.
-         */
+        status: 'unknown',
+        setUser: (user) => set({ user, status: 'authenticated' }),
         clearUser: () => {
-          console.log('Clear User');
-          set({ user: null });
+          set({ user: null, status: 'anonymous' });
         },
-
         /**
-         * Checks if the current user's session has expired.
-         * If the session is expired, it clears the user from the state.
+         * Local expiry check: if the current token is past its `exp`, drop the
+         * user. The httpOnly cookie remains the real source of truth (re-checked
+         * by AuthProvider and the global 401 interceptor).
          */
         checkSession: () => {
           const { user } = get();
-          if (user) {
-            // console.log('Now', Date.now());
-            // console.log('exp', user!.exp * 1000);
-            if (Date.now() > user.exp * 1000) {
-              // Session has expired, clear the user
-              set({ user: null });
-              console.log('User session expired. User has been logged out.');
-            }
+          if (user && Date.now() > user.exp * 1000) {
+            set({ user: null, status: 'anonymous' });
           }
         },
       }),
       {
-        // Configuration for the persist middleware
-        name: 'user-storage', // Unique name for the localStorage key
-        storage: createJSONStorage(() => sessionStorage), // Use localStorage for persistence
+        name: 'user-storage',
+        // localStorage (not sessionStorage) so the cached identity is shared
+        // across browser tabs — a new tab is no longer treated as logged-out.
+        // The httpOnly access_token cookie stays the real credential; the token
+        // itself is never stored in JS.
+        storage: createJSONStorage(() => localStorage),
+        // Persist only the identity, not the transient auth status.
+        partialize: (state) => ({ user: state.user }),
+        onRehydrateStorage: () => (state) => {
+          // A restored cached user counts as authenticated immediately (avoids a
+          // loading flash); AuthProvider still re-validates against the cookie.
+          if (state?.user) state.status = 'authenticated';
+        },
       }
     )
   )
 );
+
+/**
+ * Route-guard decision derived from the store, resilient to the async cookie
+ * hydration on first load:
+ *   - 'authed'  → a user is present (persisted or hydrated) → render.
+ *   - 'loading' → no user yet and hydration hasn't resolved → show a spinner
+ *                 (do NOT redirect, or a valid tab bounces to /login).
+ *   - 'anon'    → hydration resolved with no session → redirect to /login.
+ */
+export function useAuthGate(): 'loading' | 'authed' | 'anon' {
+  const user = useUserStore((s) => s.user);
+  const status = useUserStore((s) => s.status);
+  if (user) return 'authed';
+  if (status === 'unknown') return 'loading';
+  return 'anon';
+}

@@ -6,6 +6,11 @@ import type { User } from "@prisma/client";
 import { logger } from "./logger";
 
 const JWT_SECRET = process?.env["JWT_SECRET"] || "";
+// Fail fast in production rather than signing/verifying with an empty key
+// (which would make every token trivially forgeable, incl. ADMIN tokens).
+if (!JWT_SECRET && process.env.NODE_ENV === "production") {
+	throw new Error("JWT_SECRET is not set — refusing to start (tokens would be forgeable).");
+}
 // const EXPIRE = 60; //seconds
 const EXPIRE = "1d";
 
@@ -60,13 +65,19 @@ export function hashToken(token: string) {
 
 export function setAccessTokenCookie(c: Context, token: string) {
 	const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-	const isProduction = process.env.NODE_ENV === "production";
+	// Secure everywhere except explicit local dev — so test/staging (which run over
+	// HTTPS but set NODE_ENV=test) also get a Secure cookie, not only production.
+	// Local dev (NODE_ENV=development or unset → http://localhost) stays non-secure.
+	const insecureCookie =
+		process.env.NODE_ENV === "development" ||
+		!process.env.NODE_ENV ||
+		process.env.COOKIE_INSECURE === "true";
 
 	setCookie(c, "access_token", token, {
 		expires,
 		httpOnly: true,
 		sameSite: "Lax",
-		secure: isProduction,
+		secure: !insecureCookie,
 		path: "/",
 	});
 	logger.debug("Access token cookie set", { expires: expires.toISOString() });

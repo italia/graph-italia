@@ -3,7 +3,7 @@ import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
-import { canModify, checkAuth, requireAuth } from "../lib/middlewares";
+import { canModify, canRead, checkAuth, requireAuth } from "../lib/middlewares";
 import type { AppVariables, ParsedToken } from "../types";
 
 type Env = { Variables: AppVariables };
@@ -181,7 +181,8 @@ router.get(
 		try {
 			const id = c.req.valid("param").id;
 			const result = await db.findKpiGroupById(id);
-			if (!result) return c.json({ message: "KPI Group not found" }, 404);
+			// 404 on missing OR unauthorized (no cross-tenant read / id enumeration).
+			if (!result || !(await canRead(c, result.projectId))) return c.json({ message: "KPI Group not found" }, 404);
 			const { name, description, config, data: dataSource } = result;
 			return c.json({ data: { name, description, config, dataSource } });
 		} catch (err) {

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { findDashboardById, type DashboardDetail } from "../api.ts";
+import { showDashboard, type DashboardDetail } from "../api.ts";
 
 type TChartRef = { id: string };
 
@@ -46,7 +46,10 @@ const useDashboardViewStore = create<DashboardViewState>((set) => ({
   charts: {},
   load: async (id: string) => {
     try {
-      const data = (await findDashboardById(id)) as DashboardDetail;
+      // Public display/embed: read via the publish-gated public endpoint so a
+      // shared dashboard renders for anonymous / cross-project viewers (the
+      // authenticated /dashboards/:id now enforces project membership).
+      const data = (await showDashboard(id)) as DashboardDetail;
 
       if (data) {
         const layout = data.slots.map(
