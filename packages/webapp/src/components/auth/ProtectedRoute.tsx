@@ -1,26 +1,31 @@
 // src/components/auth/ProtectedRoute.tsx
 import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useUserStore } from '../../lib/store/user_store';
+import { useUserStore, useAuthGate } from '../../lib/store/user_store';
+import AuthLoading from './AuthLoading';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, checkSession } = useUserStore();
+  const checkSession = useUserStore((s) => s.checkSession);
+  const gate = useAuthGate();
 
+  // Local expiry sweep; cookie hydration/interceptor handle the authoritative case.
   useEffect(() => {
-    if (user) checkSession();
-  }, []);
+    checkSession();
+  }, [checkSession]);
 
-  if (!user) {
-    // If no user is logged in, redirect to the /login page
-    // 'replace' prevents the user from navigating back to the protected route
+  // Wait for cookie hydration before deciding — otherwise the first render would
+  // redirect a valid (cookie-authenticated) tab to /login before getUser resolves.
+  if (gate === 'loading') return <AuthLoading />;
+
+  if (gate === 'anon') {
+    // 'replace' prevents navigating back into the protected route.
     return <Navigate to='/login' replace />;
   }
 
-  // If a user is logged in, render the child component
   return <>{children}</>;
 };
 

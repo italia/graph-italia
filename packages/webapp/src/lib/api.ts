@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useUserStore } from "./store/user_store";
+import { broadcastAuth } from "./authChannel";
 axios.defaults.withCredentials = true;
 
 // Prevents duplicate in-flight mutation requests for the same resource.
@@ -22,6 +24,36 @@ axios.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Global session-loss handling. A 401 from a protected endpoint means the
+// session cookie is gone/expired: clear local state, notify other tabs, and
+// send the user to /login.
+//
+// NOT every 401 is a session-expiry, so we exclude:
+//  - /auth/*  : login / verify / bootstrap-hydration flows report their own 401s.
+//  - /show/   : PUBLIC publish-gated reads (an unpublished chart/dashboard returns
+//               401 meaning "not public", not "you were logged out").
+//  - /display/ and /embed/ pages: public share/iframe views must never be yanked
+//    to /login on any 401 (defense-in-depth beyond the /show/ URL check).
+// Missing these caused valid users (and public embeds) to be force-logged-out.
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const url: string = error?.config?.url ?? "";
+    const isNonSessionAuthFailure = url.includes("/auth/") || url.includes("/show/");
+    const path = typeof window !== "undefined" ? window.location.pathname : "";
+    const onPublicViewPage = path.startsWith("/display/") || path.startsWith("/embed/");
+    if (status === 401 && !isNonSessionAuthFailure && !onPublicViewPage) {
+      useUserStore.getState().clearUser();
+      broadcastAuth("logout");
+      if (typeof window !== "undefined" && path !== "/login") {
+        window.location.assign("/login");
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 
 // Runtime configuration loaded from ConfigMap (in Kubernetes) or from /config.json
@@ -55,9 +87,6 @@ export async function getSuggestions(inputData: (string | number)[][]) {
   const data = JSON.stringify(inputData.slice(0, 5));
   const response = await axios.post(url, data);
   console.log("hints", response.status);
-  if (response.status === 401) {
-    return logout();
-  }
   if (response.status === 200) {
     return response.data;
   }
@@ -68,10 +97,6 @@ export async function getSuggestions(inputData: (string | number)[][]) {
 export async function getCharts() {
   const response = await axios.get(`${getServerUrlWithApi()}/charts`);
 
-  if (response.status === 401) {
-    // return auth.logout();
-    return logout();
-  }
   if (response.status === 200) {
     return response.data;
   } else {
@@ -124,9 +149,6 @@ export async function upsertChart(payload: any, id?: string) {
 export async function deleteChart(id: string) {
   const response = await axios.delete(`${getServerUrlWithApi()}/charts/${id}`);
   console.log("deleteChart", response.status);
-  if (response.status === 401) {
-    return logout();
-  }
   if (response.status === 200) {
     return response.data;
   }
@@ -262,7 +284,9 @@ export async function resendActivation(email: string) {
 }
 /** logout */
 export function logout() {
-  return axios.get(`${getServerUrlWithApi()}/auth/logout`);
+  // POST (not GET) so the server's CSRF Origin check applies and a cross-site
+  // navigation / prefetch can't silently end the session.
+  return axios.post(`${getServerUrlWithApi()}/auth/logout`);
 }
 
 /** DAHSBOARDS calls */
@@ -298,6 +322,20 @@ export async function getDashboards() {
 
 export async function findDashboardById(id: string) {
   const response = await axios.get(`${getServerUrlWithApi()}/dashboards/${id}`);
+  if (response.status === 200) {
+    return response.data as DashboardDetail;
+  }
+  throw new Error("Server error");
+}
+
+/**
+ * Public read of a PUBLISHED dashboard (no project membership required),
+ * mirroring showChart -> /charts/show/:id. Used by the display/embed views so
+ * shared dashboard links keep working for anonymous / cross-project viewers.
+ * Returns 401 when the dashboard exists but isn't published.
+ */
+export async function showDashboard(id: string) {
+  const response = await axios.get(`${getServerUrlWithApi()}/dashboards/show/${id}`);
   if (response.status === 200) {
     return response.data as DashboardDetail;
   }

@@ -21,11 +21,19 @@ export interface ChartProviderProps {
   rowHeight?: number;
   /** Optional label shown in the PoweredBy footer. */
   poweredByLabel?: string;
+  /** When true, renders the PoweredBy footer. Defaults to false. */
+  showPoweredBy?: boolean;
   /**
    * When true, renders the chart inside ChartWrapper (tabs, download,
-   * data table, info panel). Defaults to false.
+   * data table, info panel). Defaults to true.
    */
   withWrapper?: boolean;
+  /**
+   * When true, the data table tab and the data download use a transposed
+   * version of the chart data (rows/columns swapped). The chart itself
+   * always renders the data untransposed. Defaults to false.
+   */
+  showDataTransposed?: boolean;
   /**
    * Extra info passed to ChartWrapper when withWrapper is true.
    * The chart's name and description are used as defaults for title/subTitle.
@@ -134,6 +142,8 @@ function ChartContent({
   hFactor,
   rowHeight,
   poweredByLabel,
+  showPoweredBy,
+  showDataTransposed,
 }: {
   chart: FieldDataType;
   withWrapper: boolean;
@@ -141,6 +151,8 @@ function ChartContent({
   hFactor?: number;
   rowHeight?: number;
   poweredByLabel?: string;
+  showPoweredBy?: boolean;
+  showDataTransposed?: boolean;
 }) {
   if (withWrapper) {
     const info: InfosType = {
@@ -156,6 +168,8 @@ function ChartContent({
         info={info}
         hFactor={hFactor}
         rowHeight={rowHeight}
+        showPoweredBy={showPoweredBy}
+        showDataTransposed={showDataTransposed}
       />
     );
   }
@@ -165,7 +179,6 @@ function ChartContent({
       {...chart}
       hFactor={hFactor}
       rowHeight={rowHeight}
-      poweredByLabel={poweredByLabel}
     />
   );
 }
@@ -201,7 +214,9 @@ export function ChartProvider({
   hFactor,
   rowHeight,
   poweredByLabel,
+  showPoweredBy = false,
   withWrapper = false,
+  showDataTransposed = false,
   wrapperInfo = {},
   detectUserPrefColorsSchema = false,
   loadingElement,
@@ -261,6 +276,8 @@ export function ChartProvider({
       hFactor={hFactor}
       rowHeight={rowHeight}
       poweredByLabel={poweredByLabel}
+      showPoweredBy={showPoweredBy}
+      showDataTransposed={showDataTransposed}
     />
   );
 

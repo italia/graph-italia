@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
+import { broadcastAuth } from "../../lib/authChannel.ts";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import { useUserStore } from "../../lib/store/user_store.ts";
 import type { MenuSubItem } from "../../router";
@@ -37,6 +38,7 @@ export default function Header() {
       console.error("Logout error:", error);
     } finally {
       clearUser();
+      broadcastAuth("logout"); // sign out every other open tab too
     }
     window.location.href = "/";
   };

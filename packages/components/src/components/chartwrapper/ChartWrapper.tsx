@@ -1,6 +1,7 @@
 import type { EChartsType } from "echarts";
 import React, { useEffect, useRef, useState } from "react";
 import { dataToCSV, downloadCSV, downloadPng } from "../../lib/downloadUtils";
+import { transposeData } from "../../lib/utils";
 import { FieldDataType, InfosType } from "../../types";
 import DataTable from "../dataTable/DataTable";
 import RenderChart from "../RenderChart";
@@ -25,7 +26,15 @@ export type ChartWrapperProps = {
   enableDownloadImage?: boolean;
   enableDownloadData?: boolean;
   shareFunction?: (id: string) => void;
-  showHeading?: boolean
+  showHeading?: boolean;
+  /** When true, renders the PoweredBy footer. Defaults to false. */
+  showPoweredBy?: boolean;
+  /**
+   * When true, the data table tab and the data download use a transposed
+   * version of data.data (rows/columns swapped). The chart itself always
+   * renders data.data untransposed. Defaults to false.
+   */
+  showDataTransposed?: boolean;
 };
 export default function ChartWrapper(props: ChartWrapperProps) {
 
@@ -38,7 +47,9 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     enableDownloadData = true,
     enableDownloadImage = true,
     spritePath = "/sprites.svg",
-    showHeading = true
+    showHeading = true,
+    showPoweredBy = false,
+    showDataTransposed = false
   } = props;
 
   let { id = (Math.random() + 1).toString(36).substring(7) } = props;
@@ -72,7 +83,8 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   );
   const [activeTab, setActiveTab] = useState<number>(0);
 
-  const csvData = dataToCSV(data.data);
+  const tableData = showDataTransposed && data.data ? transposeData(data.data) : data.data;
+  const csvData = dataToCSV(tableData);
 
   const formattedUpdatedAt = formatUpdatedAt(data.updatedAt);
   const infoClean = cleanupInfoText(text);
@@ -155,7 +167,6 @@ export default function ChartWrapper(props: ChartWrapperProps) {
                 hFactor={hFactor}
                 rowHeight={chartAreaRowHeight}
                 getInstance={setEchartInstance}
-                poweredByLabel=""
               />
             </div>
             {chartFooterText && (
@@ -172,7 +183,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             aria-hidden={activeTab !== 1}
             className={`cw-tabpanel ${activeTab === 1 ? "is-active" : ""}`}
           >
-            <DataTable id={id} data={data.data as any[]} poweredByLabel="" />
+            <DataTable id={id} data={tableData as any[]} poweredByLabel="" />
           </div>
 
           <div
@@ -273,7 +284,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
         </div>
       </div>
 
-      <PoweredBy label={poweredByLabel} />
+      {showPoweredBy && <PoweredBy label={poweredByLabel} />}
     </div>
   );
 }
