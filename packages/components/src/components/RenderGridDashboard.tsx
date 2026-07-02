@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import type { FieldDataType } from "../types";
+import type { FieldDataType, InfosType } from "../types";
 import RenderChart from "./RenderChart";
 import ChartWrapper from "./chartwrapper/ChartWrapper";
+import type { WrapperFuncts } from "./RenderDashboard";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -47,6 +48,18 @@ export interface RenderDashboardProps {
    * the data untransposed. Defaults to false.
    */
   showDataTransposed?: boolean;
+  /**
+   * Extra info merged into each chart's ChartWrapper info (labels, source
+   * text, footer text, etc.). Applied on top of the per-chart name/description
+   * defaults. Only used when withWrapper is true.
+   */
+  wrapperLabels?: Partial<InfosType>;
+  /**
+   * ChartWrapper behavior flags/handlers applied to every chart:
+   * enableDownloadImage, enableDownloadData, shareFunction, showHeading.
+   * Only used when withWrapper is true.
+   */
+  wrapperFuncts?: WrapperFuncts;
 }
 
 // ── Responsive breakpoints ────────────────────────────────────────────────────
@@ -83,6 +96,8 @@ export function RenderGridDashboard({
   withWrapper = false,
   showPoweredBy = false,
   showDataTransposed = false,
+  wrapperLabels = {},
+  wrapperFuncts = {},
 }: RenderDashboardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(1200);
@@ -164,11 +179,13 @@ export function RenderGridDashboard({
                     text: chart.description ?? "",
                     title: chart.name ?? "",
                     subTitle: "",
+                    ...wrapperLabels,
                   }}
                   rowHeight={slotHeight}
                   hFactor={1}
                   showPoweredBy={showPoweredBy}
                   showDataTransposed={showDataTransposed}
+                  {...wrapperFuncts}
                 />
               ) : (
                 <RenderChart

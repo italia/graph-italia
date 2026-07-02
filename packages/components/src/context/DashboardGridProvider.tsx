@@ -1,6 +1,8 @@
 import React, { useEffect, useReducer } from "react";
 import RenderGridDashboard from "../components/RenderGridDashboard";
 import type { DashboardData } from "../components/RenderGridDashboard";
+import type { WrapperFuncts } from "../components/RenderDashboard";
+import type { InfosType } from "../types";
 import { ColorSchemeProvider } from "./ColorSchemeContext";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -35,6 +37,18 @@ export interface DashboardGridProviderProps {
    * the data untransposed. Defaults to false.
    */
   showDataTransposed?: boolean;
+  /**
+   * Extra info merged into each chart's ChartWrapper info (labels, source
+   * text, footer text, etc.). Applied on top of the per-chart name/description
+   * defaults. Only used when withWrapper is true.
+   */
+  wrapperLabels?: Partial<InfosType>;
+  /**
+   * ChartWrapper behavior flags/handlers applied to every chart:
+   * enableDownloadImage, enableDownloadData, shareFunction, showHeading.
+   * Only used when withWrapper is true.
+   */
+  wrapperFuncts?: WrapperFuncts;
   /** Custom loading element. Renders a minimal spinner by default. */
   loadingElement?: React.ReactNode;
   /** Custom error renderer. Receives the error message string. */
@@ -138,6 +152,8 @@ export function DashboardGridProvider({
   withWrapper = true,
   showPoweredBy = false,
   showDataTransposed = false,
+  wrapperLabels = {},
+  wrapperFuncts = {},
   loadingElement,
   errorElement,
 }: DashboardGridProviderProps) {
@@ -197,6 +213,8 @@ export function DashboardGridProvider({
       withWrapper={withWrapper}
       showPoweredBy={showPoweredBy}
       showDataTransposed={showDataTransposed}
+      wrapperLabels={wrapperLabels}
+      wrapperFuncts={wrapperFuncts}
     />
   );
 

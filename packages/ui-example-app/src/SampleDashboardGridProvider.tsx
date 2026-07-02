@@ -20,6 +20,11 @@ export default function SampleDashboardGridProvider() {
         margin={16}
         // detectUserPrefColorsSchema
         withWrapper
+        wrapperLabels={{
+          labelDownloadData: "Esporta",
+          labelDownloadImage: "Scarica Immagine"
+        }}
+        showDataTransposed
       />
     </div>
   );
