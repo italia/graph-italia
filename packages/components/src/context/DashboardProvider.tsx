@@ -25,6 +25,15 @@ export interface DashboardProviderProps {
    * the user's prefers-color-scheme media query. Defaults to false.
    */
   detectUserPrefColorsSchema?: boolean;
+  withWrapper?: boolean;
+  /** When true, renders the PoweredBy footer on each chart. Defaults to false. */
+  showPoweredBy?: boolean;
+  /**
+   * When true, the data table tab and the data download of each chart use a
+   * transposed version of the chart data. The chart itself always renders
+   * the data untransposed. Defaults to false.
+   */
+  showDataTransposed?: boolean;
   /** Custom loading element. Renders a minimal spinner by default. */
   loadingElement?: React.ReactNode;
   /** Custom error renderer. Receives the error message string. */
@@ -47,8 +56,8 @@ type Action =
 function reducer(_: State, action: Action): State {
   switch (action.type) {
     case "FETCH": return { status: "loading" };
-    case "OK":    return { status: "success", dashboard: action.dashboard };
-    case "ERR":   return { status: "error", message: action.message };
+    case "OK": return { status: "success", dashboard: action.dashboard };
+    case "ERR": return { status: "error", message: action.message };
   }
 }
 
@@ -145,6 +154,9 @@ export function DashboardProvider({
   margin,
   showHeading,
   detectUserPrefColorsSchema = false,
+  withWrapper = true,
+  showPoweredBy = false,
+  showDataTransposed = false,
   loadingElement,
   errorElement,
 }: DashboardProviderProps) {
@@ -201,6 +213,9 @@ export function DashboardProvider({
       rowHeight={rowHeight}
       margin={margin}
       showHeading={showHeading}
+      withWrapper={withWrapper}
+      showPoweredBy={showPoweredBy}
+      showDataTransposed={showDataTransposed}
     />
   );
 

@@ -15,7 +15,7 @@ import SampleWrapperGeomap from "./SampleWrapperGeomap";
 import SampleWrapperLine from "./SampleWrapperLine";
 import SampleWrapperPie from "./SampleWrapperPie";
 import SampleChartProvider from "./SampleChartProvider";
-import SampleDashboardProvider from "./SampleDashboardProvider";
+// import SampleDashboardProvider from "./SampleDashboardProvider";
 import SampleDashboardGridProvider from "./SampleDashboardGridProvider";
 
 export default function App() {
@@ -86,6 +86,7 @@ export default function App() {
           <h3>Table</h3>
           <SampleTable />
         </div>
+
         <div style={{ marginTop: 50, height: 700 }}>
           <h3>GEO Map</h3>
           <SampleGeomapchart />
@@ -112,21 +113,23 @@ export default function App() {
           <SampleMap />
         </div>
 
-        <div style={{ marginTop: 50, marginBottom: 50 }}>
+        {/* <div style={{ marginTop: 50, marginBottom: 50 }}>
           <h3>ChartProvider</h3>
           <SampleChartProvider />
-        </div>
+        </div> */}
 
-        <div style={{ marginTop: 50, marginBottom: 50 }}>
+        {/* <div style={{ marginTop: 50, marginBottom: 50 }}>
           <h3>DashboardProvider</h3>
           <SampleDashboardProvider />
-        </div>
-
-        <div style={{ marginTop: 50, marginBottom: 50 }}>
-          <h3>DashboardGridProvider</h3>
-          <SampleDashboardGridProvider />
+        </div> */}
+        <div style={{ display: "block", position: "relative" }}>
+          <div style={{ marginTop: 50, marginBottom: 50, height: 800 }}>
+            <h3>DashboardGridProvider</h3>
+            <SampleDashboardGridProvider />
+          </div>
         </div>
       </div>
+
     </ColorSchemeProvider>
   );
 }

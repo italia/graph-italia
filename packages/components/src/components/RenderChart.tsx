@@ -8,14 +8,12 @@ import GeoMapChart from "./charts/GeoMapChart";
 import PieChart from "./charts/PieChart";
 import KpiGroup from "./kpi/KpiGroup";
 import ClusterMap from "./maps/ClusterMap";
-import PoweredBy from "./PoweredBy";
 
 type RenderProps = FieldDataType & {
   rowHeight?: number;
   hFactor?: number;
   getPicture?: (dataUrl: string) => void;
   getInstance?: (instance: EChartsType) => void;
-  poweredByLabel?: string;
 };
 function RenderChart(props: RenderProps) {
   const [loading, setLoading] = useState(false);
@@ -26,7 +24,7 @@ function RenderChart(props: RenderProps) {
     }, 1000);
   }, [props.config]);
 
-  const { rowHeight, hFactor = 1, poweredByLabel } = props;
+  const { rowHeight, hFactor = 1 } = props;
   const wrapRef = useRef(null);
   const [echartInstance, setEchartInstance] = useState<EChartsType | null>(
     null,
@@ -88,10 +86,12 @@ function RenderChart(props: RenderProps) {
   //   }
   // };
 
+  const altText = [props.name, props.description].filter(Boolean).join(". ");
+
   /** Render  */
   return (
     <div style={chartWrapStyle}>
-      <div ref={wrapRef}>
+      <div ref={wrapRef} role="img" aria-label={altText || undefined}>
         {props && (
           <>
             {(props.chart === "bar" || props.chart === "line") && (
@@ -141,7 +141,6 @@ function RenderChart(props: RenderProps) {
           </>
         )}
       </div>
-      <PoweredBy label={poweredByLabel} />
     </div>
   );
 }
