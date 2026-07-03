@@ -10,7 +10,7 @@
     "graph-italia",
     "echarts"
   ],
-  "license": "gpl-3.0",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "module": "dist/index.esm.js",
   "main": "dist/index.js",
