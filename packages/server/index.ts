@@ -1,17 +1,18 @@
 import { Hono } from "hono";
+import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { csrf } from "hono/csrf";
 import { HTTPException } from "hono/http-exception";
-import { rateLimiter } from "hono-rate-limiter";
 // Routes
 import adminRoutes from "./routes/admin.ts";
-import authRoutes from "./routes/auth.ts";
 import apiKeyRoutes from "./routes/apikeys.ts";
+import authRoutes from "./routes/auth.ts";
 import chartRoutes from "./routes/charts.ts";
 import dashRoutes from "./routes/dashboards.ts";
 import dataSourceRoutes from "./routes/datasources.ts";
 import suggestionsRoutes from "./routes/hints.ts";
 import kpiGroupRoutes from "./routes/kpi-group.ts";
+import oidcRoutes from "./routes/oidc.ts";
 import orgRoutes from "./routes/orgs.ts";
 import projectRoutes from "./routes/projects.ts";
 
@@ -20,8 +21,8 @@ import { httpLogger, logStartup, logger } from "./lib/logger.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
 import { apiKeyUsageLogger } from "./lib/middlewares.ts";
 
-import { openAPIRouteHandler } from "hono-openapi"
 import { Scalar } from "@scalar/hono-api-reference";
+import { openAPIRouteHandler } from "hono-openapi";
 
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 3003;
@@ -114,7 +115,7 @@ app.use(
 		origin: isDev
 			? [...whitelist]
 			: process.env.HOST,
-	}),
+	})
 );
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -272,18 +273,50 @@ app.onError((err, c) => {
 let rootApp: Hono;
 
 
+const oidcApp = new Hono()
+oidcApp.use('*', cors({
+	origin: whitelist,
+	credentials: true,
+}))
+
+// Fix cookie Secure per sviluppo locale
+oidcApp.use('*', async (c, next) => {
+	await next()
+	if (!isDev) return
+
+	const setCookieHeaders = c.res.headers.getSetCookie?.()
+		?? [c.res.headers.get('set-cookie') ?? ''].filter(Boolean)
+
+	if (setCookieHeaders.length === 0) return
+
+	c.res.headers.delete('set-cookie')
+
+	for (const cookie of setCookieHeaders) {
+		const fixed = cookie
+			.replace(/;\s*Secure/gi, '')
+			.replace(/;\s*Path=[^;]*/gi, '; Path=/')
+		c.res.headers.append('set-cookie', fixed)
+		console.log('→ oidcApp cookie fixato:', fixed)
+	}
+})
+//TODO: need to be changed in IAM-Proxy-Italia config
+oidcApp.route('/api/oidc', oidcRoutes) // route oidc/login, oidc/callback, oidc/logout
+
 
 if (ROUTES_PREFIX) {
 	// Create a separate app for metrics (no auth, no prefix)
 	rootApp = new Hono();
 	// Mount metrics at /metrics (outside of /api prefix)
 	rootApp.route("/metrics", metricsRouter);
+	// Mount oidc at /oidc (outside of /api prefix)
+	rootApp.route("/", oidcApp);
 	// Mount the main app
 	rootApp.route("/", app);
 
 } else {
 	// If no ROUTES_PREFIX, use the main app as root
 	app.route("/metrics", metricsRouter);
+	app.route("/", oidcApp);
 	rootApp = app;
 }
 
@@ -296,6 +329,7 @@ logStartup();
 
 const server = {
 	port: PORT,
+	hostname: '0.0.0.0',
 	fetch: rootApp.fetch,
 };
 

@@ -289,6 +289,11 @@ export function logout() {
   return axios.post(`${getServerUrlWithApi()}/auth/logout`);
 }
 
+export function redirectToLoginOidc() {
+  //TODO: needed to be adjusted
+  return `${getServerUrl()}/api/oidc/login`
+}
+
 /** DAHSBOARDS calls */
 
 export interface DashboardDetail {

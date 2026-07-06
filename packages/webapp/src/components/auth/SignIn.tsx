@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
-import { HOME_ROUTE } from "../../router";
-import { useUserStore } from "../../lib/store/user_store";
 import { broadcastAuth } from "../../lib/authChannel";
+import { useUserStore } from "../../lib/store/user_store";
+import { HOME_ROUTE } from "../../router";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { t } = useTranslation("components", {
@@ -177,6 +177,37 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
               </form>
             </div>
 
+            {/*
+            
+            <div>
+              <div>
+                <button
+                  type="button"
+                  className="btn btn-link w-full"
+                  onClick={async () => {
+                    window.location.href = api.redirectToLoginOidc();
+
+                    // const r = await fetch(
+                    //   "http://localhost:3003/api/auth/oidc/login",
+                    //   {
+                    //     credentials: "include",
+                    //   },
+                    // );
+
+                    // if (r.ok) {
+                    //   console.log("ok");
+                    //   const user = await r.json();
+                    //   console.log(user);
+                    //   return;
+                    // }
+                    // console.log("ko");
+                  }}
+                >
+                  OIDC {api.redirectToLoginOidc()}
+                </button>
+              </div>
+            </div>
+ */}
             <div className="mt-10">
               <div className="relative">
                 <div

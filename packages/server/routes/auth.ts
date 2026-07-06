@@ -1,18 +1,85 @@
 import * as bcrypt from "bcrypt";
 import { Hono } from "hono";
-import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
+import {
+	describeRoute,
+	resolver,
+	validator as zValidator,
+} from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
-import { checkAuth, requireUser } from "../lib/middlewares";
-import { rateLimit, tryConsume } from "../lib/rateLimit";
+
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
+import { checkAuth, requireUser } from "../lib/middlewares";
+import { rateLimit, tryConsume } from "../lib/rateLimit";
 import type { ParsedToken } from "../types";
 
 const APP_URL = process.env.APP_URL || "/";
 
+const HOST = process.env.HOST || "http://localhost";
+const PORT = process.env.PORT || 3003;
+
+const isDev = process.env.NODE_ENV !== "production";
+
+
 const router = new Hono();
+
+// // ─── OIDC callback ────────────────────────────────────────────────────────────
+// router.get('/oidc/callback', async (c) => {
+// 	console.log('→ callback hit')
+// 	console.log('→ query params:', c.req.query())
+// 	console.log('→ cookies:', c.req.header('cookie'))
+// 	try {
+// 		await processOAuthCallback(c)
+// 		console.log('→ processOAuthCallback completato')
+// 	} catch (e) {
+// 		console.error('→ errore in processOAuthCallback:', e)
+// 		throw e
+// 	}
+// 	// Dopo il callback, getAuth() ha i dati dell'utente OIDC
+// 	const oidcAuth = await getAuth(c)
+// 	if (!oidcAuth?.email) return c.json({ error: 'OIDC auth failed' }, 401)
+
+// 	// Trova o crea l'utente nel tuo DB
+// 	let user = await db.findUserByEmail(oidcAuth.email)
+// 	if (!user) {
+// 		user = await db.createUserByEmailAndPassword({
+// 			email: oidcAuth.email,
+// 			password: crypto.randomUUID(), // password casuale, non usata
+// 		})
+// 		await db.setVerifyed(user.id) // già verificato via OIDC
+// 	}
+
+// 	// Crea la sessione con il tuo sistema JWT esistente
+// 	const { accessToken } = generateTokens(user)
+// 	setAccessTokenCookie(c, accessToken)
+
+// 	logger.info('User logged in via OIDC', { userId: user.id, email: oidcAuth.email })
+
+// 	return c.redirect(APP_URL)
+// })
+
+// // ─── OIDC login ───────────────────────────────────────────────────────────────
+// router.use('/oidc/login', (c, next) => {
+// 	setCookie(c, 'continue', APP_URL, {
+// 		path: '/',
+// 		httpOnly: true,
+// 		secure: !isDev,
+// 	})
+// 	return next()
+// })
+
+// router.use('/oidc/login', oidcAuthMiddleware())
+// router.get('/oidc/login', (c) => c.redirect(APP_URL))
+
+// // ─── OIDC logout ─────────────────────────────────────────────────────────────
+// router.get('/oidc/logout', async (c) => {
+// 	await revokeSession(c)         // revoca sessione OIDC
+// 	clearAccessTokenCookie(c)      // revoca sessione tua
+// 	logger.info('User logged out via OIDC')
+// 	return c.redirect(APP_URL)
+// })
 
 // Apply auth check middleware to all routes
 router.use("*", checkAuth);
@@ -599,5 +666,7 @@ router.put(
 		return c.body(null, 204);
 	},
 );
+
+
 
 export default router;
