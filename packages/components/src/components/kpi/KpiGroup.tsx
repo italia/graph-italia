@@ -13,7 +13,7 @@ export default function KpiGroup({
   hFactor: number;
   rowHeight?: number;
 }) {
-  const { id, config } = data;
+  const { id, config, name, description } = data;
   const dataSource: KpiItemType[] = data.dataSource as KpiItemType[] || data.data as any[] || [];
   const { direction, background } = config;
   const isVertical = direction === "vertical";
@@ -33,30 +33,33 @@ export default function KpiGroup({
   // When accent background is set at group level, propagate to items
   const items: KpiItemType[] = background === "accent"
     ? dataSource.map((item) => ({
-        ...item,
-        background_color: item.background_color || "accent",
-      }))
+      ...item,
+      background_color: item.background_color || "accent",
+    }))
     : dataSource;
 
   const resolvedTheme = useResolvedTheme();
 
   return (
-    <div
-      id={id}
-      className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
-      style={baseStyle}
-      role="list"
-      aria-label="Gruppo di KPI"
-    >
-      {items.map((item: KpiItemType, index: number) => (
-        <div
-          className={`${resolvedTheme} dv-kpi-group-item`}
-          key={`${index}-${item.title}`}
-          role="listitem"
-        >
-          <Kpi data={item} poweredByLabel="" />
-        </div>
-      ))}
+    <div>
+      {name && <h3 className="title">{name}</h3>}
+      <div
+        id={id}
+        className={`${resolvedTheme} dv-kpi-group ${kpiGroupClass}`}
+        style={baseStyle}
+        role="list"
+        aria-label="Gruppo di KPI"
+      >
+        {items.map((item: KpiItemType, index: number) => (
+          <div
+            className={`${resolvedTheme} dv-kpi-group-item`}
+            key={`${index}-${item.title}`}
+            role="listitem"
+          >
+            <Kpi data={item} poweredByLabel="" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
