@@ -84,8 +84,13 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   );
   const [activeTab, setActiveTab] = useState<number>(0);
 
-  const tableData = showDataTransposed && data.data ? transposeData(data.data) : data.data;
-  const csvData = tableData && Array.isArray(tableData) && dataToCSV(tableData);
+  const chartType = data.chart || "bar";
+  const hasData = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup") && Array.isArray(data.data) && data.data.length > 0;
+  const hasPic = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup");
+
+
+  const tableData = hasData && showDataTransposed && data.data ? transposeData(data.data) : data.data;
+  const csvData = hasData && tableData && Array.isArray(tableData) && dataToCSV(tableData);
 
   const formattedUpdatedAt = formatUpdatedAt(data.updatedAt);
   const infoClean = cleanupInfoText(text);
@@ -99,10 +104,6 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   const footerRef = useRef<HTMLDivElement | null>(null);
   const [chartAreaRowHeight, setChartAreaRowHeight] = useState<number>(400);
   const wrapRef = useRef(null);
-
-  const chartType = data.chart || "bar";
-  const hasData = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup") && Array.isArray(data.data) && data.data.length > 0;
-  const hasPic = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup");
 
   useEffect(() => {
     return observeElementHeight(
@@ -182,16 +183,16 @@ export default function ChartWrapper(props: ChartWrapperProps) {
           </div>
 
 
-          {hasData && <div
+          <div
             id={`tab2-${id}-content`}
             role="tabpanel"
             aria-labelledby={`tab2-${id}`}
             aria-hidden={activeTab !== 1}
             className={`cw-tabpanel ${activeTab === 1 ? "is-active" : ""}`}
           >
-            <DataTable id={id} data={tableData as any[]} poweredByLabel="" />
+            {hasData && <DataTable id={id} data={tableData as any[]} poweredByLabel="" />}
           </div>
-          }
+
 
           <div
             id={`tab3-${id}-content`}
