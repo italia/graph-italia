@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import type { FieldDataType } from "../types";
+import type { FieldDataType, InfosType } from "../types";
 import RenderChart from "./RenderChart";
+import ChartWrapper from "./chartwrapper/ChartWrapper";
+import type { WrapperFuncts } from "./RenderDashboard";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -33,6 +35,31 @@ export interface RenderDashboardProps {
   margin?: number;
   /** Show dashboard name and description heading. Defaults to true. */
   showHeading?: boolean;
+  /**
+   * When true, renders each chart inside ChartWrapper (tabs, download,
+   * data table, info panel) instead of a bare RenderChart. Defaults to false.
+   */
+  withWrapper?: boolean;
+  /** When true, renders the PoweredBy footer on each chart. Defaults to false. */
+  showPoweredBy?: boolean;
+  /**
+   * When true, the data table tab and the data download of each chart use a
+   * transposed version of the chart data. The chart itself always renders
+   * the data untransposed. Defaults to false.
+   */
+  showDataTransposed?: boolean;
+  /**
+   * Extra info merged into each chart's ChartWrapper info (labels, source
+   * text, footer text, etc.). Applied on top of the per-chart name/description
+   * defaults. Only used when withWrapper is true.
+   */
+  wrapperLabels?: Partial<InfosType>;
+  /**
+   * ChartWrapper behavior flags/handlers applied to every chart:
+   * enableDownloadImage, enableDownloadData, shareFunction, showHeading.
+   * Only used when withWrapper is true.
+   */
+  wrapperFuncts?: WrapperFuncts;
 }
 
 // ── Responsive breakpoints ────────────────────────────────────────────────────
@@ -66,6 +93,11 @@ export function RenderGridDashboard({
   rowHeight = 380,
   margin = 16,
   showHeading = true,
+  withWrapper = false,
+  showPoweredBy = false,
+  showDataTransposed = false,
+  wrapperLabels = {},
+  wrapperFuncts = {},
 }: RenderDashboardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(1200);
@@ -133,18 +165,35 @@ export function RenderGridDashboard({
               key={settings.i}
               style={{
                 gridColumn: `span ${colSpan}`,
-                overflow: "hidden",
+                overflow: withWrapper ? "visible" : "hidden",
                 borderRadius: 8,
                 border: "1px solid rgba(128,128,128,0.15)",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                height: slotHeight,
+                ...(withWrapper ? { minHeight: slotHeight } : { height: slotHeight }),
               }}
             >
-              <RenderChart
-                {...chart}
-                rowHeight={slotHeight}
-                hFactor={1}
-              />
+              {withWrapper ? (
+                <ChartWrapper
+                  data={chart}
+                  info={{
+                    text: chart.description ?? "",
+                    title: chart.name ?? "",
+                    subTitle: "",
+                    ...wrapperLabels,
+                  }}
+                  rowHeight={slotHeight}
+                  hFactor={1}
+                  showPoweredBy={showPoweredBy}
+                  showDataTransposed={showDataTransposed}
+                  {...wrapperFuncts}
+                />
+              ) : (
+                <RenderChart
+                  {...chart}
+                  rowHeight={slotHeight}
+                  hFactor={1}
+                />
+              )}
             </div>
           );
         })}

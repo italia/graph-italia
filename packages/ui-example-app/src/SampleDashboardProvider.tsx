@@ -7,12 +7,15 @@ const DASHBOARD_ID = import.meta.env.VITE_DASHBOARD_ID ?? "your-dashboard-id";
 
 export default function SampleDashboardProvider() {
   return (
-    <DashboardProvider
-      apiKey={API_KEY}
-      endpoint={ENDPOINT}
-      dashboardId={DASHBOARD_ID}
-      showHeading
-      detectUserPrefColorsSchema
-    />
+    <div className="my-4 flex flex-col gap-4  p-4">
+      <h4 style={{ marginBottom: 12 }}>ChartProvider — bare render</h4>
+      <DashboardProvider
+        apiKey={API_KEY}
+        endpoint={ENDPOINT}
+        dashboardId={DASHBOARD_ID}
+        showHeading
+      // detectUserPrefColorsSchema
+      />
+    </div>
   );
 }

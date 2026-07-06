@@ -1,7 +1,7 @@
 {
   "name": "graph-italia-components",
   "description": "A simple React component library.",
-  "version": "0.3.25",
+  "version": "0.3.27",
   "keywords": [
     "react",
     "typescript",
@@ -10,7 +10,7 @@
     "graph-italia",
     "echarts"
   ],
-  "license": "gpl-3.0",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "module": "dist/index.esm.js",
   "main": "dist/index.js",

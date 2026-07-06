@@ -2,7 +2,7 @@
   "name": "graph-italia-webapp",
   "version": "0.0.1",
   "type": "module",
-  "license": "gpl-3.0",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "dev": "vite --port 3000",
     "bdev": "bunx --bun vite",

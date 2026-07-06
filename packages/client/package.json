@@ -1,7 +1,7 @@
 {
   "name": "graph-italia-cli",
   "version": "0.0.01",
-  "license": "gpl-3.0",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

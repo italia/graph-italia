@@ -1308,15 +1308,15 @@ La dashboard è disponibile in `charts/graph-italia/dashboards/graph-italia-dash
 
 Gli alert sono definiti in `charts/graph-italia/templates/prometheusrule.yaml`:
 
-| Alert                       | Condizione                   | Severità |
-| --------------------------- | ---------------------------- | -------- |
-| `GraphItaliaDown`           | Nessun pod running per 2 min | Critical |
-| `GraphItaliaHighErrorRate`  | 5xx > 10% per 5 min          | Critical |
-| `GraphItaliaDatabaseErrors` | Errori DB > 0.5/s per 3 min  | Critical |
-| `GraphItaliaCrashLooping`   | > 5 restart in 30 min        | Critical |
+| Alert                       | Condizione                                          | Severità |
+| --------------------------- | --------------------------------------------------- | -------- |
+| `GraphItaliaDown`           | Nessun pod running per 2 min                        | Critical |
+| `GraphItaliaHighErrorRate`  | 5xx > 10% per 5 min                                 | Critical |
+| `GraphItaliaDatabaseErrors` | Errori DB > 0.5/s per 3 min                         | Critical |
+| `GraphItaliaCrashLooping`   | > 5 restart in 30 min                               | Critical |
 | `GraphItaliaHighWAFBlocks`  | 4xx > 30% **e** > 5 req/s (solo prod ns) per 10 min | Warning  |
-| `GraphItaliaUnresponsive`   | p95 latency > 30s            | Critical |
-| `GraphItaliaOutOfMemory`    | Memory > 95% per 5 min       | Critical |
+| `GraphItaliaUnresponsive`   | p95 latency > 30s                                   | Critical |
+| `GraphItaliaOutOfMemory`    | Memory > 95% per 5 min                              | Critical |
 
 #### Configurazione Email Alerting
 
@@ -1475,4 +1475,4 @@ Il sistema supporta un workflow completo: dall'upload dati, alla configurazione 
 
 Copyright© 2023-present - Presidenza del Consiglio dei Ministri
 
-The source code is released under the GNU General Public License v3 (SPDX code: GPL-3.0-only)
+The source code is released under the GNU Affero General Public License (SPDX code: AGPL-3.0-only)

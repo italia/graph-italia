@@ -59,8 +59,6 @@ export const ROUTES = {
   editOrgs: "/private/edit/orgs",
   editSettings: "/private/edit/settings",
   godModeOn: "/private/god-mode-on",
-
-
   // Display / embed
   viewChart: (id: string) => `/display/charts/${id}`,
   embedChart: (id: string) => `/embed/charts/${id}`,
