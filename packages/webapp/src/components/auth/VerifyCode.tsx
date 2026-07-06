@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import * as api from "../../lib/api";
 import { useUserStore } from "../../lib/store/user_store";
+import { broadcastAuth } from "../../lib/authChannel";
 
 export default function VerifyCodeComponent({
   uid = "",
@@ -47,6 +48,7 @@ export default function VerifyCodeComponent({
         console.log("get user");
         const user = await api.getUser();
         setUser(user);
+        broadcastAuth("login"); // let other open tabs pick up the new session
       } catch (e) {
         console.log("get user error", e);
       }

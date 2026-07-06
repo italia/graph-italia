@@ -8,71 +8,72 @@ import { canUserModifyProject, getDefaultProjectId } from "./db/projectDb";
 import { verifyAccessToken } from "./jwt";
 import { logger } from "./logger";
 
-// Middleware to check authentication and attach user to context
+// Resolve the caller (session JWT cookie or "dv_" API key) and attach user/apiKey
+// to the context. An invalid / expired / revoked credential is treated as
+// ANONYMOUS and NEVER throws — so public endpoints and /auth/login keep working
+// even when the browser sends a stale cookie or a client sends a dead API key.
+// Protected routes are enforced downstream by requireUser/requireAuth/requireAdmin.
 export const checkAuth = createMiddleware(async (c: Context, next) => {
-	let accessToken: string | undefined;
 	try {
-		// Try cookie first
-		accessToken = getCookie(c, "access_token");
-
-		// Fallback to Bearer token
+		// Cookie first, then Authorization: Bearer fallback.
+		let accessToken = getCookie(c, "access_token");
 		if (!accessToken) {
 			const authHeader = c.req.header("Authorization") || "";
 			const bearer = authHeader.replace(/^Bearer\s+/, "");
 			if (bearer) accessToken = bearer;
 		}
 
-		if (accessToken) {
-			// API keys are prefixed with "dv_"
-			if (accessToken.startsWith("dv_")) {
-				const apiKey = await findApiKeyByRawKey(accessToken);
-				if (!apiKey) {
-					throw new HTTPException(401, { message: "Invalid API key" });
-				}
-				if (apiKey.revokedAt) {
-					throw new HTTPException(401, { message: "API key revoked" });
-				}
-				// Check expiry: expire field is in days from createdAt
+		if (accessToken?.startsWith("dv_")) {
+			// API key path — accept only a live (non-revoked, non-expired) key.
+			let apiKey = await findApiKeyByRawKey(accessToken);
+			if (apiKey) {
 				const expiresAt = new Date(apiKey.createdAt);
-				expiresAt.setDate(expiresAt.getDate() + apiKey.expire);
-				if (new Date() > expiresAt) {
-					throw new HTTPException(401, { message: "API key expired" });
-				}
-				c.set("apiKey", apiKey);
-				c.set("user", null);
-			} else {
+				expiresAt.setDate(expiresAt.getDate() + apiKey.expire); // expire is in days
+				if (apiKey.revokedAt || new Date() > expiresAt) apiKey = null;
+			}
+			c.set("apiKey", apiKey ?? null);
+			c.set("user", null);
+		} else if (accessToken) {
+			// Session JWT path — an unverifiable token just means "anonymous".
+			try {
 				const payload = verifyAccessToken(accessToken);
 				c.set("user", payload);
 				c.set("token", accessToken);
+			} catch {
+				c.set("user", null);
 			}
 		}
-		await next();
 	} catch (error) {
-		if (error instanceof HTTPException) throw error;
-		logger.warn("Auth failed", {
+		// Auth *resolution* failure (e.g. DB hiccup on API-key lookup) must not
+		// take down the request — fall back to anonymous and let guards decide.
+		logger.warn("Auth resolution failed", {
 			error: error instanceof Error ? error.message : "Unknown error",
 			path: c.req.path,
 		});
 		c.set("user", null);
-		throw new HTTPException(401, { message: "Unauthorized" });
+		c.set("apiKey", null);
 	}
+
+	// Run the handler OUTSIDE the try/catch so genuine handler errors propagate to
+	// app.onError as 500 instead of being silently rewritten to 401.
+	await next();
 });
 
 // Middleware to require authenticated user
 export const requireUser = createMiddleware(async (c, next) => {
-	try {
-		const user = c.get("user");
-		if (!user) {
-			throw new HTTPException(401, { message: "Unauthorized." });
-		}
-		await next();
-	} catch (error) {
-		if (error instanceof HTTPException) throw error;
+	const user = c.get("user");
+	if (!user) {
 		throw new HTTPException(401, { message: "Unauthorized." });
 	}
+	await next();
 });
 
-// Middleware to require an authenticated user with the ADMIN role
+// Middleware to require an authenticated user with the ADMIN role.
+// NOTE: role is read from the (stateless, up-to-24h) token, so a demotion lags
+// until the token expires. The durable fix is a server-side token/session
+// version checked in checkAuth (tracked as B7 in the auth-hardening plan, which
+// needs a User.tokenVersion migration); done there so demotion/deletion/logout
+// invalidate outstanding tokens immediately for requireUser too, not just admin.
 export const requireAdmin = createMiddleware(async (c, next) => {
 	const user = c.get("user") as { userId: string; role?: string } | null;
 	if (!user) {
@@ -182,5 +183,21 @@ export async function canModify(c: Context, projectId: string): Promise<boolean>
 	const apiKey = c.get("apiKey") as { role: string; projectId: string } | null;
 	if (user) return canUserModifyProject(user.userId, projectId);
 	if (apiKey) return apiKey.role === "READWRITE" && apiKey.projectId === projectId;
+	return false;
+}
+
+/**
+ * Route-handler helper — read authorization for a project.
+ *
+ * Read is broader than write: any project member (user) OR any API key scoped to
+ * the project (READONLY *or* READWRITE) may read. Use this to gate GET-by-id
+ * handlers so they don't leak other tenants' resources, without breaking
+ * legitimate read-only callers. Returns false (never throws) for anonymous.
+ */
+export async function canRead(c: Context, projectId: string): Promise<boolean> {
+	const user = c.get("user") as { userId: string } | null;
+	const apiKey = c.get("apiKey") as { projectId: string } | null;
+	if (user) return canUserModifyProject(user.userId, projectId);
+	if (apiKey) return apiKey.projectId === projectId;
 	return false;
 }

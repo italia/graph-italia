@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
 import { useUserStore } from "../../lib/store/user_store";
 import { HOME_ROUTE } from "../../router";
+import { broadcastAuth } from "../../lib/authChannel";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { t } = useTranslation("components", {
@@ -34,6 +35,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
         const user = await api.getUser();
         // console.log(user);
         setUser(user);
+        broadcastAuth("login"); // let other open tabs pick up the new session
         navigate(HOME_ROUTE);
       } else {
         setMessage("Error while logging in");
