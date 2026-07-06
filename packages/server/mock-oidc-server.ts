@@ -24,6 +24,7 @@ app.get('/.well-known/openid-configuration', (c) => {
         issuer: ISSUER,
         authorization_endpoint: `${ISSUER}/authorize`,
         token_endpoint: `${ISSUER}/token`,
+        userinfo_endpoint: `${ISSUER}/userinfo`,
         jwks_uri: `${ISSUER}/jwks`,
         revocation_endpoint: `${ISSUER}/revoke`,
         response_types_supported: ['code'],
@@ -83,6 +84,18 @@ app.post('/token', async (c) => {
         expires_in: 3600,
         id_token: idToken,
         refresh_token: crypto.randomUUID(),
+    })
+})
+
+// ─── UserInfo ─────────────────────────────────────────────────────────────────
+// Attributi SPID/CIE-like restituiti SOLO via userinfo (non nell'ID token), per
+// esercitare il fallback userinfo del claims hook come fa IAM Proxy Italia.
+app.get('/userinfo', (c) => {
+    return c.json({
+        sub: 'user-1',
+        given_name: 'Mario',
+        family_name: 'Rossi',
+        fiscal_number: 'RSSMRA80A01H501U',
     })
 })
 
