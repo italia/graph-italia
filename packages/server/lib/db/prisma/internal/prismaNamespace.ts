@@ -1548,6 +1548,7 @@ export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  sub: 'sub',
   password: 'password',
   verified: 'verified',
   role: 'role',

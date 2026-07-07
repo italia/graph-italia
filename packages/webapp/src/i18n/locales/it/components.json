@@ -90,6 +90,9 @@
                             "success": "Email di attivazione inviata. Controlla la tua casella di posta.",
                             "tooMany": "Troppi tentativi. Riprova più tardi.",
                             "error": "Impossibile inviare l'email. Riprova più tardi."
+                        },
+                        "oidc": {
+                            "label": "Accedi con SPID / CIE"
                         }
                     }
                 },

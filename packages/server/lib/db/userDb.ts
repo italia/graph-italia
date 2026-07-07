@@ -61,9 +61,25 @@ export function findUserByEmail(email: string) {
 	});
 }
 
-export async function createUserByEmailAndPassword({ email, password }: { email: string; password: string }) {
+export function findUserBySub(sub: string) {
+	return prisma.user.findUnique({
+		where: {
+			sub,
+		},
+	});
+}
+
+export async function createUserByEmailAndPassword({
+	email,
+	password,
+	sub,
+}: {
+	email: string;
+	password: string;
+	sub?: string;
+}) {
 	const passwordHash = bcrypt.hashSync(password, 12);
-	const created = await prisma.user.create({ data: { email, password: passwordHash } });
+	const created = await prisma.user.create({ data: { email, password: passwordHash, sub } });
 	await createDefaultProject(created.id, created.email);
 	return created;
 }

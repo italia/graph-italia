@@ -41,7 +41,8 @@ axios.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     const url: string = error?.config?.url ?? "";
-    const isNonSessionAuthFailure = url.includes("/auth/") || url.includes("/show/");
+    const isNonSessionAuthFailure =
+      url.includes("/auth/") || url.includes("/oidc/") || url.includes("/show/");
     const path = typeof window !== "undefined" ? window.location.pathname : "";
     const onPublicViewPage = path.startsWith("/display/") || path.startsWith("/embed/");
     if (status === 401 && !isNonSessionAuthFailure && !onPublicViewPage) {
@@ -292,6 +293,40 @@ export function logout() {
 export function redirectToLoginOidc() {
   //TODO: needed to be adjusted
   return `${getServerUrl()}/api/oidc/login`
+}
+
+export interface OidcSignupStatus {
+  registered: boolean;
+  email: string;
+  given_name: string;
+  family_name: string;
+}
+
+/**
+ * Checks — via the server-side OIDC session — whether the current OIDC user (by `sub`)
+ * has already completed signup, and returns claims to prefill the form. The `t` query
+ * param (the sub) is passed for reference only; the server derives identity from the
+ * session. Throws on 401 (no active OIDC session).
+ */
+export async function getOidcSignupStatus(t?: string | null): Promise<OidcSignupStatus> {
+  const url = `${getServerUrl()}/api/oidc/signup/status${t ? `?t=${encodeURIComponent(t)}` : ""}`;
+  const response = await axios.get(url);
+  return response.data;
+}
+
+/** Completes OIDC signup: creates the account linked to the session `sub` and logs in. */
+export async function oidcSignup({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}): Promise<{ auth: boolean }> {
+  const response = await axios.post(`${getServerUrl()}/api/oidc/signup`, {
+    email,
+    password,
+  });
+  return response.data;
 }
 
 /** DAHSBOARDS calls */

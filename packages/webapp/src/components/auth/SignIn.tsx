@@ -177,37 +177,17 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
               </form>
             </div>
 
-            {/*
-            
-            <div>
-              <div>
-                <button
-                  type="button"
-                  className="btn btn-link w-full"
-                  onClick={async () => {
-                    window.location.href = api.redirectToLoginOidc();
-
-                    // const r = await fetch(
-                    //   "http://localhost:3003/api/auth/oidc/login",
-                    //   {
-                    //     credentials: "include",
-                    //   },
-                    // );
-
-                    // if (r.ok) {
-                    //   console.log("ok");
-                    //   const user = await r.json();
-                    //   console.log(user);
-                    //   return;
-                    // }
-                    // console.log("ko");
-                  }}
-                >
-                  OIDC {api.redirectToLoginOidc()}
-                </button>
-              </div>
+            <div className="mt-6">
+              <button
+                type="button"
+                className="btn btn-outline btn-primary w-full"
+                onClick={() => {
+                  window.location.href = api.redirectToLoginOidc();
+                }}
+              >
+                {t(`form.actions.oidc.label`)}
+              </button>
             </div>
- */}
             <div className="mt-10">
               <div className="relative">
                 <div

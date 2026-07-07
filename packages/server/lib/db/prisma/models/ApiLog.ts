@@ -475,10 +475,6 @@ export type ApiLogUncheckedUpdateManyWithoutApiKeyNestedInput = {
   deleteMany?: Prisma.ApiLogScalarWhereInput | Prisma.ApiLogScalarWhereInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type ApiLogCreateWithoutApiKeyInput = {
   id?: string
   method: string

@@ -7,6 +7,10 @@
             "checkEmail": {
                 "label": "Controlla la tua email per attivare il tuo account"
             }
+        },
+        "oidc": {
+            "loading": "Verifica del tuo account in corso…",
+            "alreadyRegistered": "Hai già completato la registrazione. Accesso in corso…"
         }
     },
     "charts": {

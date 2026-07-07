@@ -2,6 +2,7 @@ import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AboutPage from "./pages/about";
 import AuthPage from "./pages/auth/AuthPage";
+import OidcSignupPage from "./pages/auth/OidcSignupPage";
 import RecoverPage from "./pages/auth/RecoverPage";
 import VerifyPage from "./pages/auth/VerifyPage";
 import EditChartPage from "./pages/private/EditChart";
@@ -44,6 +45,7 @@ export const ROUTES = {
   terms: "/terms-of-service",
   // Auth
   login: "/login",
+  oidcSignup: "/oidc/signup",
   recoverPassword: "/recover-password",
   changePassword: "/change-password",
   verify: (uid: string) => `/verify/${uid}`,
@@ -259,6 +261,10 @@ const routes = [
   {
     path: "/login",
     element: <AuthPage />,
+  },
+  {
+    path: "/oidc/signup",
+    element: <OidcSignupPage />,
   },
   {
     path: "/verify/:uid",

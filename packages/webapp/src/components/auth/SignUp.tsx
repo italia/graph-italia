@@ -7,6 +7,9 @@ import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { z as zod } from "zod";
 import * as api from "../../lib/api";
+import { broadcastAuth } from "../../lib/authChannel";
+import { useUserStore } from "../../lib/store/user_store";
+import { HOME_ROUTE } from "../../router";
 
 const getSignupSchema = (
   z: typeof zod,
@@ -51,11 +54,16 @@ const getSignupSchema = (
 function SignUp({
   setLogin,
   handleRegistered,
+  oidc,
 }: {
-  setLogin: (login: boolean) => void;
-  handleRegistered: () => void;
+  setLogin?: (login: boolean) => void;
+  handleRegistered?: () => void;
+  // When present the form runs in OIDC mode: it completes signup against the
+  // server-side OIDC session (`sub`) and logs the user in directly.
+  oidc?: { sub?: string; defaultEmail?: string };
 }) {
   const navigate = useNavigate();
+  const { setUser } = useUserStore();
   const { t } = useTranslation("components", {
     keyPrefix: "components.auth.signup",
   });
@@ -69,23 +77,30 @@ function SignUp({
     reset,
   } = useForm({
     resolver: zodResolver(signupSchema),
+    defaultValues: { email: oidc?.defaultEmail ?? "" },
   });
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");
-
-    const isValid = signupSchema.parse(submittedData);
-    console.log("isValid", isValid);
-
-    console.log(submittedData);
     try {
       const { email, password } = submittedData;
+
+      if (oidc) {
+        const result = await api.oidcSignup({ email, password });
+        if (result?.auth) {
+          const user = await api.getUser();
+          setUser(user);
+          broadcastAuth("login"); // let other open tabs pick up the new session
+          navigate(HOME_ROUTE);
+        } else {
+          setMessage("Error while registering");
+        }
+        return;
+      }
+
       const result = await api.register({ email, password });
-      console.log("Registration result", result);
       if (result?.uid) {
-        // const path = `/verify/${result.uid}?action=init`;
-        // navigate(path);
-        handleRegistered();
+        handleRegistered?.();
       } else {
         setMessage("Error while registering");
       }
@@ -281,16 +296,18 @@ function SignUp({
                   </button>
                 </div>
               </form>
-              <div className="text-sm leading-6 my-4">
-                {t(`bottom.label`)} &nbsp;
-                <button
-                  type="button"
-                  onClick={() => setLogin(true)}
-                  className="link font-semibold text-primary"
-                >
-                  {t(`bottom.actions.signin.label`)}
-                </button>
-              </div>
+              {setLogin && (
+                <div className="text-sm leading-6 my-4">
+                  {t(`bottom.label`)} &nbsp;
+                  <button
+                    type="button"
+                    onClick={() => setLogin(true)}
+                    className="link font-semibold text-primary"
+                  >
+                    {t(`bottom.actions.signin.label`)}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
