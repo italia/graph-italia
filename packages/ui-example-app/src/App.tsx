@@ -14,7 +14,7 @@ import SampleWrapperBar from "./SampleWrapperBar";
 import SampleWrapperGeomap from "./SampleWrapperGeomap";
 import SampleWrapperLine from "./SampleWrapperLine";
 import SampleWrapperPie from "./SampleWrapperPie";
-import SampleChartProvider from "./SampleChartProvider";
+// import SampleChartProvider from "./SampleChartProvider";
 // import SampleDashboardProvider from "./SampleDashboardProvider";
 import SampleDashboardGridProvider from "./SampleDashboardGridProvider";
 

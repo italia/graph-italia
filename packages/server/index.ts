@@ -274,13 +274,19 @@ let rootApp: Hono;
 
 
 const oidcApp = new Hono()
-oidcApp.use('*', cors({
+// Scoped to /api/oidc/* (not '*'): oidcApp is mounted at "/" BEFORE the main app,
+// so a global use('*') here would run for every route and, on OPTIONS, short-circuit
+// the preflight with this restricted whitelist — stripping Access-Control-Allow-Origin
+// from cross-origin preflights to /api/dashboards, /api/charts, etc. Scoping keeps the
+// credentialed OIDC CORS on its own routes and lets publicCors answer everything else.
+oidcApp.use('/api/oidc/*', cors({
 	origin: whitelist,
 	credentials: true,
 }))
 
-// Fix cookie Secure per sviluppo locale
-oidcApp.use('*', async (c, next) => {
+// Fix cookie Secure per sviluppo locale — solo per il cookie di sessione oidc-auth
+// impostato da @hono/oidc-auth su /api/oidc/login e /api/oidc/callback.
+oidcApp.use('/api/oidc/*', async (c, next) => {
 	await next()
 	if (!isDev) return
 

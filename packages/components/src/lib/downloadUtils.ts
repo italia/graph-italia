@@ -43,6 +43,9 @@ export function generateCSV(dataSource: any) {
 }
 
 export function dataToCSV(data: any) {
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return "";
+  }
   const rows = data.map((r: any) => {
     return r.join(",");
   });

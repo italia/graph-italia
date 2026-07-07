@@ -15,6 +15,7 @@ import {
   formatUpdatedAt,
   observeElementHeight,
 } from "./utils";
+import { isArray } from "echarts/types/src/export/api/util.js";
 
 export type ChartWrapperProps = {
   id?: string;
@@ -83,8 +84,13 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   );
   const [activeTab, setActiveTab] = useState<number>(0);
 
-  const tableData = showDataTransposed && data.data ? transposeData(data.data) : data.data;
-  const csvData = dataToCSV(tableData);
+  const chartType = data.chart || "bar";
+  const hasData = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup") && Array.isArray(data.data) && data.data.length > 0;
+  const hasPic = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup");
+
+
+  const tableData = hasData && showDataTransposed && data.data ? transposeData(data.data) : data.data;
+  const csvData = hasData && tableData && Array.isArray(tableData) && dataToCSV(tableData);
 
   const formattedUpdatedAt = formatUpdatedAt(data.updatedAt);
   const infoClean = cleanupInfoText(text);
@@ -176,6 +182,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             )}
           </div>
 
+
           <div
             id={`tab2-${id}-content`}
             role="tabpanel"
@@ -183,8 +190,9 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             aria-hidden={activeTab !== 1}
             className={`cw-tabpanel ${activeTab === 1 ? "is-active" : ""}`}
           >
-            <DataTable id={id} data={tableData as any[]} poweredByLabel="" />
+            {hasData && <DataTable id={id} data={tableData as any[]} poweredByLabel="" />}
           </div>
+
 
           <div
             id={`tab3-${id}-content`}
@@ -219,7 +227,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
         )}
 
         <div className="cw-actions">
-          {enableDownloadData && (
+          {enableDownloadData && hasData && (
             <button
               type="button"
               className="cw-btn cw-btn--primary"
@@ -239,7 +247,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
             </button>
           )}
 
-          {enableDownloadImage && (
+          {enableDownloadImage && hasPic && (
             <button
               type="button"
               className="cw-btn cw-btn--primary"

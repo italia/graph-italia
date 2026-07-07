@@ -159,7 +159,6 @@ export function RenderGridDashboard({
           const colSpan = toColSpan(settings.w, bp);
           const slotHeight =
             rowHeight * settings.h + margin * (settings.h - 1);
-
           return (
             <div
               key={settings.i}

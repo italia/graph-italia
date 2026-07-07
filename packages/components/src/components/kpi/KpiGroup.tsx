@@ -33,9 +33,9 @@ export default function KpiGroup({
   // When accent background is set at group level, propagate to items
   const items: KpiItemType[] = background === "accent"
     ? dataSource.map((item) => ({
-        ...item,
-        background_color: item.background_color || "accent",
-      }))
+      ...item,
+      background_color: item.background_color || "accent",
+    }))
     : dataSource;
 
   const resolvedTheme = useResolvedTheme();
