@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useUserStore } from "./store/user_store";
 import { broadcastAuth } from "./authChannel";
+import { useUserStore } from "./store/user_store";
 axios.defaults.withCredentials = true;
 
 // Prevents duplicate in-flight mutation requests for the same resource.
@@ -284,10 +284,14 @@ export async function resendActivation(email: string) {
   }
 }
 /** logout */
-export function logout() {
+export async function logout() {
   // POST (not GET) so the server's CSRF Origin check applies and a cross-site
   // navigation / prefetch can't silently end the session.
-  return axios.post(`${getServerUrlWithApi()}/auth/logout`);
+
+  return Promise.all([
+    axios.get(`${getServerUrlWithApi()}/oidc/logout`),
+    axios.post(`${getServerUrlWithApi()}/auth/logout`)
+  ]);
 }
 
 export function redirectToLoginOidc() {
