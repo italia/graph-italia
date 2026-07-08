@@ -168,7 +168,22 @@ router.get(
     describeRoute(({
         description: 'Reports whether the OIDC user (by sub) has already completed signup',
         responses: {
-            200: { description: "Get the claims for the OIDC user", content: { "application/json": { schema: { type: "object", properties: { auth: { type: "boolean" } } } } } },
+            200: {
+                description: "Get the claims for the OIDC user",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                registered: { type: "boolean" },
+                                email: { type: "string" },
+                                given_name: { type: "string" },
+                                family_name: { type: "string" },
+                            }
+                        }
+                    }
+                }
+            },
             401: {
                 description: "Unauthorized: OIDC session required, missing sub", content: {
                     "application/json": {
@@ -202,7 +217,19 @@ router.post(
     describeRoute(({
         description: 'Completes OIDC signup: creates the account linked to sub and logs in',
         "responses": {
-            200: { description: "User registered via OIDC", content: { "application/json": { schema: { type: "object", properties: { auth: { type: "boolean" } } } } } },
+            200: {
+                description: "User registered via OIDC",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                auth: { type: "boolean" }
+                            }
+                        }
+                    }
+                }
+            },
             401: {
                 description: "Unauthorized: OIDC session required, missing sub",
                 content: {
