@@ -7,6 +7,10 @@
             "checkEmail": {
                 "label": "Check your email to activate your account"
             }
+        },
+        "oidc": {
+            "loading": "Checking your account…",
+            "alreadyRegistered": "You have already completed registration. Signing you in…"
         }
     },
     "charts": {

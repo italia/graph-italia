@@ -113,6 +113,7 @@ model Membership {
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
+  sub      String? @unique // OIDC subject identifier (SPID/CIE); null for email/password users
   password String
   verified Boolean @default(false)
   role     Role    @default(USER)

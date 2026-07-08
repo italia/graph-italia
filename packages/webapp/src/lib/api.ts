@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useUserStore } from "./store/user_store";
 import { broadcastAuth } from "./authChannel";
+import { useUserStore } from "./store/user_store";
 axios.defaults.withCredentials = true;
 
 // Prevents duplicate in-flight mutation requests for the same resource.
@@ -41,7 +41,8 @@ axios.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     const url: string = error?.config?.url ?? "";
-    const isNonSessionAuthFailure = url.includes("/auth/") || url.includes("/show/");
+    const isNonSessionAuthFailure =
+      url.includes("/auth/") || url.includes("/oidc/") || url.includes("/show/");
     const path = typeof window !== "undefined" ? window.location.pathname : "";
     const onPublicViewPage = path.startsWith("/display/") || path.startsWith("/embed/");
     if (status === 401 && !isNonSessionAuthFailure && !onPublicViewPage) {
@@ -283,15 +284,53 @@ export async function resendActivation(email: string) {
   }
 }
 /** logout */
-export function logout() {
+export async function logout() {
   // POST (not GET) so the server's CSRF Origin check applies and a cross-site
   // navigation / prefetch can't silently end the session.
-  return axios.post(`${getServerUrlWithApi()}/auth/logout`);
+
+  return Promise.all([
+    axios.get(`${getServerUrlWithApi()}/oidc/logout`),
+    axios.post(`${getServerUrlWithApi()}/auth/logout`)
+  ]);
 }
 
 export function redirectToLoginOidc() {
   //TODO: needed to be adjusted
   return `${getServerUrl()}/api/oidc/login`
+}
+
+export interface OidcSignupStatus {
+  registered: boolean;
+  email: string;
+  given_name: string;
+  family_name: string;
+}
+
+/**
+ * Checks — via the server-side OIDC session — whether the current OIDC user (by `sub`)
+ * has already completed signup, and returns claims to prefill the form. The `t` query
+ * param (the sub) is passed for reference only; the server derives identity from the
+ * session. Throws on 401 (no active OIDC session).
+ */
+export async function getOidcSignupStatus(t?: string | null): Promise<OidcSignupStatus> {
+  const url = `${getServerUrl()}/api/oidc/signup/status${t ? `?t=${encodeURIComponent(t)}` : ""}`;
+  const response = await axios.get(url);
+  return response.data;
+}
+
+/** Completes OIDC signup: creates the account linked to the session `sub` and logs in. */
+export async function oidcSignup({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}): Promise<{ auth: boolean }> {
+  const response = await axios.post(`${getServerUrl()}/api/oidc/signup`, {
+    email,
+    password,
+  });
+  return response.data;
 }
 
 /** DAHSBOARDS calls */

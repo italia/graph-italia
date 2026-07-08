@@ -90,6 +90,9 @@
                             "success": "Activation email sent. Check your inbox.",
                             "tooMany": "Too many attempts. Try again later.",
                             "error": "Could not send the email. Try again later."
+                        },
+                        "oidc": {
+                            "label": "Sign in with SPID / CIE"
                         }
                     }
                 },
