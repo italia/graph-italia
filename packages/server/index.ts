@@ -180,57 +180,6 @@ app.route("/hints", suggestionsRoutes);
 app.route("/orgs", orgRoutes);
 app.route("/projects", projectRoutes);
 
-app.get("/openapi.json", openAPIRouteHandler(app, {
-	documentation: {
-		info: {
-			title: "Graph Italia API",
-			version: "1.0.0",
-			description: "API documentation for the Graph Italia application"
-		},
-		components: {
-			securitySchemes: {
-				// cookieSchema: {
-				// 	type: "apiKey",
-				// 	in: "cookie",
-				// 	name: "access_token",
-				// },
-				bearerAuth: {
-					type: "http",
-					scheme: "bearer",
-					bearerFormat: "JWT",
-				}
-			},
-		},
-		security: [
-			{
-				bearerAuth: [],
-			},
-		],
-		servers: [
-			{
-				url: "http://localhost:3000",
-				description: "Local server",
-			},
-			{
-				url: "https://graph-test.developers.italia.it",
-				description: "Staging server",
-			},
-			{
-				url: "https://graph.developers.italia.it",
-				description: "Production server",
-			},
-
-		],
-	}
-}));
-
-app.get(
-	"/docs",
-	Scalar({
-		theme: "saturn",
-		url: `${ROUTES_PREFIX}/openapi.json`,
-	})
-);
 // ═══════════════════════════════════════════════════════════════════════════════
 // ❌ ERROR HANDLING
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -325,6 +274,66 @@ if (ROUTES_PREFIX) {
 	app.route("/", oidcApp);
 	rootApp = app;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 📖 OPENAPI / DOCS
+// ═══════════════════════════════════════════════════════════════════════════════
+// Registered on rootApp (not app) and AFTER assembly so the generator introspects
+// the fully-mounted tree: the OIDC routes live on oidcApp, a sibling of app mounted
+// on rootApp, so openAPIRouteHandler(app) would never see them. hono-openapi walks
+// hono.routes and unwraps nested .route() mounts, so rootApp yields every route at
+// its true prefixed path. rootApp has no basePath, so the paths are prefixed manually.
+rootApp.get(`${ROUTES_PREFIX}/openapi.json`, openAPIRouteHandler(rootApp, {
+	documentation: {
+		info: {
+			title: "Graph Italia API",
+			version: "1.0.0",
+			description: "API documentation for the Graph Italia application"
+		},
+		components: {
+			securitySchemes: {
+				// cookieSchema: {
+				// 	type: "apiKey",
+				// 	in: "cookie",
+				// 	name: "access_token",
+				// },
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+				}
+			},
+		},
+		security: [
+			{
+				bearerAuth: [],
+			},
+		],
+		servers: [
+			{
+				url: "http://localhost:3000",
+				description: "Local server",
+			},
+			{
+				url: "https://graph-test.developers.italia.it",
+				description: "Staging server",
+			},
+			{
+				url: "https://graph.developers.italia.it",
+				description: "Production server",
+			},
+
+		],
+	}
+}));
+
+rootApp.get(
+	`${ROUTES_PREFIX}/docs`,
+	Scalar({
+		theme: "saturn",
+		url: `${ROUTES_PREFIX}/openapi.json`,
+	})
+);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🚀 SERVER STARTUP
