@@ -1,6 +1,16 @@
-import { getAuth, oidcAuthMiddleware, processOAuthCallback, revokeSession, type IDToken, type OidcAuth, type OidcClaimsHook, type TokenEndpointResponses } from "@hono/oidc-auth";
+import {
+    getAuth,
+    oidcAuthMiddleware,
+    processOAuthCallback,
+    revokeSession,
+    type IDToken,
+    type OidcAuth,
+    type OidcClaimsHook,
+    type TokenEndpointResponses
+} from "@hono/oidc-auth";
 import { Hono, type Context } from "hono";
-import { describeRoute } from "hono-openapi";
+import { describeRoute, resolver } from "hono-openapi";
+import * as z from "zod";
 import db from "../lib/db";
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
@@ -13,6 +23,10 @@ declare module 'hono' {
         fiscal_number?: string
     }
 }
+
+const errorMessageSchema = z.object({
+    error: z.string(),
+});
 
 // Il claims hook viene invocato da @hono/oidc-auth con (orig, claims, response):
 // `claims` sono i claims dell'ID token, `response.access_token` è l'access token del
@@ -69,7 +83,18 @@ const router = new Hono();
 router.get(
     '/callback',
     describeRoute(({
-        description: 'Endpoint that gets the code from the ID provider and exchanges it for tokens'
+        description: 'Endpoint that gets the code from the ID provider and exchanges it for tokens',
+        responses: {
+            302: { description: "Redirect to the application URL or to the signup page" },
+            500: {
+                description: "OIDC token exchange failed",
+                content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            }
+        }
     })),
     async (c) => {
         try {
@@ -94,7 +119,18 @@ router.use('/login', oidcAuthMiddleware())
 router.get(
     '/login',
     describeRoute(({
-        description: 'Starts the OIDC flow and, once authenticated, issues the application session'
+        description: 'Starts the OIDC flow and, once authenticated, issues the application session',
+        "responses": {
+            302: { description: "Redirect to the application URL or to the signup page" },
+            401: {
+                description: "Unauthorized: OIDC session required, missing sub",
+                content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            }
+        }
     })),
     async (c) => {
         const oidcAuth = await resolveOidcAuth(c)
@@ -130,7 +166,17 @@ router.get(
 router.get(
     '/signup/status',
     describeRoute(({
-        description: 'Reports whether the OIDC user (by sub) has already completed signup'
+        description: 'Reports whether the OIDC user (by sub) has already completed signup',
+        responses: {
+            200: { description: "Get the claims for the OIDC user", content: { "application/json": { schema: { type: "object", properties: { auth: { type: "boolean" } } } } } },
+            401: {
+                description: "Unauthorized: OIDC session required, missing sub", content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            },
+        }
     })),
     async (c) => {
         const oidcAuth = await resolveOidcAuth(c)
@@ -154,7 +200,34 @@ router.get(
 router.post(
     '/signup',
     describeRoute(({
-        description: 'Completes OIDC signup: creates the account linked to sub and logs in'
+        description: 'Completes OIDC signup: creates the account linked to sub and logs in',
+        "responses": {
+            200: { description: "User registered via OIDC", content: { "application/json": { schema: { type: "object", properties: { auth: { type: "boolean" } } } } } },
+            401: {
+                description: "Unauthorized: OIDC session required, missing sub",
+                content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            },
+            400: {
+                description: "Invalid request body",
+                content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            },
+            409: {
+                description: "Email already in use",
+                content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            }
+        }
     })),
     async (c) => {
         const oidcAuth = await resolveOidcAuth(c)
@@ -198,7 +271,10 @@ router.post(
 router.get(
     '/logout',
     describeRoute(({
-        description: 'Endpoint that logs the users out'
+        description: 'Endpoint that logs the users out',
+        responses: {
+            302: { description: "Redirect to the application URL" },
+        }
     })),
     async (c) => {
         await revokeSession(c)         // revoca sessione OIDC
