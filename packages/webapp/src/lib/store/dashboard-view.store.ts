@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { showDashboard, type DashboardDetail } from "../api.ts";
+import { findDashboardById, isPublishingEnabled, showDashboard, type DashboardDetail } from "../api.ts";
 
 type TChartRef = { id: string };
 
@@ -49,7 +49,13 @@ const useDashboardViewStore = create<DashboardViewState>((set) => ({
       // Public display/embed: read via the publish-gated public endpoint so a
       // shared dashboard renders for anonymous / cross-project viewers (the
       // authenticated /dashboards/:id now enforces project membership).
-      const data = (await showDashboard(id)) as DashboardDetail;
+      // When public publishing is disabled on this instance, /display/* becomes an
+      // authenticated-only preview instead (gated by PublishGate in router.tsx), so
+      // read via the normal project-scoped endpoint — the public one would always
+      // 401 once nothing can be publish:true.
+      const data = isPublishingEnabled()
+        ? ((await showDashboard(id)) as DashboardDetail)
+        : ((await findDashboardById(id)) as DashboardDetail);
 
       if (data) {
         const layout = data.slots.map(

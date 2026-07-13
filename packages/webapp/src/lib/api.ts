@@ -80,6 +80,18 @@ const getServerUrl = (): string => {
 const getServerUrlWithApi = (): string => {
   return `${getServerUrl()}/api`;
 };
+
+// Same runtime-config-with-fallback pattern as getServerUrl: instance operators can
+// disable public chart/dashboard sharing (publish toggle, /display/*, /embed/*) without
+// a rebuild, via ConfigMap (/config.json) in Kubernetes or VITE_ENABLE_PUBLIC_PUBLISHING
+// at build time. Defaults to enabled (only "false" turns it off) to preserve prior behavior
+// for self-hosted deployments that never set the flag.
+export const isPublishingEnabled = (): boolean => {
+  const raw =
+    (typeof window !== "undefined" && window.__ENV__?.VITE_ENABLE_PUBLIC_PUBLISHING) ||
+    import.meta.env.VITE_ENABLE_PUBLIC_PUBLISHING;
+  return raw !== "false";
+};
 // let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
 /** getSuggestions */

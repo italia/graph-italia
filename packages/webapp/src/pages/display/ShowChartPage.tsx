@@ -8,12 +8,24 @@ import { useSettingsStore } from "../../lib/store/settings_store";
 
 function ShowChartPage() {
   const { id } = useParams();
-  const { data, error, isLoading } = useSWR(`${id}`, api.showChart);
+  const previewMode = !api.isPublishingEnabled();
+  const { data, error, isLoading } = useSWR(
+    `${id}`,
+    previewMode ? api.getChart : api.showChart,
+  );
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
   return (
     <Layout>
       <div className="">
+        {previewMode && (
+          <div role="status" className="alert alert-info mb-4">
+            <span>
+              Public publishing is disabled on this instance — you're viewing an
+              authenticated preview, not a public page.
+            </span>
+          </div>
+        )}
         {isLoading && <Loading />}
         {error && (
           <div role="alert" className="alert alert-error">

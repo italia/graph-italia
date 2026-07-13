@@ -44,7 +44,7 @@ export default function EditDataSource() {
   const [loading, setLoading] = useState(true);
   const [dsName, setDsName] = useState("");
   const [dsDescription, setDsDescription] = useState("");
-  const [dsPublish, setDsPublish] = useState(true);
+  const [dsPublish, setDsPublish] = useState(api.isPublishingEnabled());
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState("");
@@ -68,7 +68,7 @@ export default function EditDataSource() {
             loadItem({ ...ds, id: paramId });
             setDsName(ds.name ?? "");
             setDsDescription(ds.description ?? "");
-            setDsPublish(ds.publish ?? true);
+            setDsPublish(api.isPublishingEnabled() ? (ds.publish ?? true) : false);
             if (ds.data && Array.isArray(ds.data) && ds.data.length > 0) {
               send({ type: "CONFIG" });
             }
@@ -82,7 +82,7 @@ export default function EditDataSource() {
         resetItem();
         setDsName("");
         setDsDescription("");
-        setDsPublish(true);
+        setDsPublish(api.isPublishingEnabled());
         setLoading(false);
       }
     }
@@ -123,7 +123,7 @@ export default function EditDataSource() {
     const payload = {
       name: finalName,
       description: dsDescription,
-      publish: dsPublish,
+      publish: api.isPublishingEnabled() ? dsPublish : false,
       data: data ?? [],
       isRemote,
       remoteUrl,
@@ -225,27 +225,29 @@ export default function EditDataSource() {
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
                   <div className="flex flex-col space-y-2">
-                    <div className="flex items-center gap-4">
-                      <input
-                        id="ds_visibility"
-                        type="checkbox"
-                        role="switch"
-                        checked={dsPublish}
-                        onChange={() => {
-                          setHasUnsavedChanges(true);
-                          setDsPublish((v) => !v);
-                        }}
-                        className="toggle toggle-sm toggle-primary cursor-pointer"
-                      />
-                      <label htmlFor="ds_visibility" className="text-sm text-base-content/70 cursor-pointer">
-                        {t("body.options.setup.form.fields.visibility.label")}
-                      </label>
-                      <span className="text-sm text-base-content font-bold">
-                        {t(
-                          `body.options.setup.form.fields.visibility.values.${dsPublish ? "public" : "private"}`,
-                        )}
-                      </span>
-                    </div>
+                    {api.isPublishingEnabled() && (
+                      <div className="flex items-center gap-4">
+                        <input
+                          id="ds_visibility"
+                          type="checkbox"
+                          role="switch"
+                          checked={dsPublish}
+                          onChange={() => {
+                            setHasUnsavedChanges(true);
+                            setDsPublish((v) => !v);
+                          }}
+                          className="toggle toggle-sm toggle-primary cursor-pointer"
+                        />
+                        <label htmlFor="ds_visibility" className="text-sm text-base-content/70 cursor-pointer">
+                          {t("body.options.setup.form.fields.visibility.label")}
+                        </label>
+                        <span className="text-sm text-base-content font-bold">
+                          {t(
+                            `body.options.setup.form.fields.visibility.values.${dsPublish ? "public" : "private"}`,
+                          )}
+                        </span>
+                      </div>
+                    )}
                     <label htmlFor="ds_title" className="mt-4 text-base-content/70">
                       {t("body.options.setup.form.fields.title.label")}
                     </label>

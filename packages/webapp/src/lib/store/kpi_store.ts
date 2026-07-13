@@ -83,7 +83,7 @@ type EditKpiGroupStore = EditKpiGroupActions & EditKpiGroupState;
 const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
     name: "",
     description: "",
-    publish: true,
+    publish: api.isPublishingEnabled(),
     kpiGroup: defaultKpiGroupData,
     isLoading: true,
     loaded: false,
@@ -191,7 +191,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
                 set({
                     name: name || "",
                     description: description || "",
-                    publish: publish ?? true,
+                    publish: api.isPublishingEnabled() ? (publish ?? true) : false,
                     isLoading: false,
                     loaded: true,
                     id,
@@ -223,7 +223,7 @@ const useEditKpiGroupStore = create<EditKpiGroupStore>()((set, get) => ({
             payload: {
                 name,
                 description,
-                publish,
+                publish: api.isPublishingEnabled() ? publish : false,
                 config: kpiGroup.config,
                 dataSource: kpiGroup.dataSource,
             },

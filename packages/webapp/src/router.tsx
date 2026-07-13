@@ -19,6 +19,8 @@ import EditOrgsPage from "./pages/private/EditOrgs";
 import EditSettingsPage from "./pages/private/EditSettings";
 import GodModeOnPage from "./pages/private/GodModeOn";
 import AdminRoute from "./components/auth/AdminRoute";
+import PublishGate from "./components/auth/PublishGate";
+import EmbedGate from "./components/embed/EmbedGate";
 import QuickStartPage from "./pages/QuickStartPage";
 
 
@@ -301,19 +303,35 @@ const routes = [
   // DISPLAY / EMBED PART
   {
     path: "/display/charts/:id",
-    element: <ShowChartPage />,
+    element: (
+      <PublishGate>
+        <ShowChartPage />
+      </PublishGate>
+    ),
   },
   {
     path: "/embed/charts/:id",
-    element: <EmbedChartPage />,
+    element: (
+      <EmbedGate>
+        <EmbedChartPage />
+      </EmbedGate>
+    ),
   },
   {
     path: "/display/dashboards/:id",
-    element: <DashboardViewPage />,
+    element: (
+      <PublishGate>
+        <DashboardViewPage />
+      </PublishGate>
+    ),
   },
   {
     path: "/embed/dashboards/:id",
-    element: <EmbedDashboardPage />,
+    element: (
+      <EmbedGate>
+        <EmbedDashboardPage />
+      </EmbedGate>
+    ),
   },
 ] as RouteObject[];
 

@@ -3,5 +3,6 @@
 interface Window {
   __ENV__?: {
     VITE_SERVER_URL?: string;
+    VITE_ENABLE_PUBLIC_PUBLISHING?: string;
   };
 }

@@ -423,30 +423,32 @@ function DashboardEditPage() {
                   <div className="card bg-base-100 shadow-sm border border-base-300">
                     <div className="card-body">
                       <div className="flex flex-col space-y-2">
-                        <div className="flex items-center gap-4">
-                          <input
-                            id="chart_visibility"
-                            type="checkbox"
-                            checked={publish}
-                            onChange={() => {
-                              setPublish(!publish);
-                            }}
-                            className="toggle toggle-sm toggle-primary cursor-pointer"
-                          />
-                          <label
-                            htmlFor="chart_visibility"
-                            className="text-sm text-base-content/70 cursor-pointer"
-                          >
-                            {t(
-                              `body.options.setup.form.fields.visibility.label`,
-                            )}
-                          </label>
-                          <span className="text-sm text-base-content font-bold">
-                            {t(
-                              `body.options.setup.form.fields.visibility.values.${publish ? "public" : "private"}`,
-                            )}
-                          </span>
-                        </div>
+                        {api.isPublishingEnabled() && (
+                          <div className="flex items-center gap-4">
+                            <input
+                              id="chart_visibility"
+                              type="checkbox"
+                              checked={publish}
+                              onChange={() => {
+                                setPublish(!publish);
+                              }}
+                              className="toggle toggle-sm toggle-primary cursor-pointer"
+                            />
+                            <label
+                              htmlFor="chart_visibility"
+                              className="text-sm text-base-content/70 cursor-pointer"
+                            >
+                              {t(
+                                `body.options.setup.form.fields.visibility.label`,
+                              )}
+                            </label>
+                            <span className="text-sm text-base-content font-bold">
+                              {t(
+                                `body.options.setup.form.fields.visibility.values.${publish ? "public" : "private"}`,
+                              )}
+                            </span>
+                          </div>
+                        )}
                         <label
                           htmlFor="chart_title"
                           className="mt-4 text-base-content/70"
@@ -540,13 +542,15 @@ function DashboardEditPage() {
                     <span aria-hidden="true">+</span> {t(`slots.actions.addSlot.label`)}
                   </button>
 
-                  <a
-                    href={`${ROUTES.viewDashboard(id)}`}
-                    target="_blank"
-                    className="btn btn-outline"
-                  >
-                    {t(`slots.actions.viewChart.label`)}
-                  </a>
+                  {api.isPublishingEnabled() && publish && (
+                    <a
+                      href={`${ROUTES.viewDashboard(id)}`}
+                      target="_blank"
+                      className="btn btn-outline"
+                    >
+                      {t(`slots.actions.viewChart.label`)}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

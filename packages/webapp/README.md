@@ -3,9 +3,9 @@
 The main user-facing application for Graph Italia: a self-service tool for turning CSV/JSON data (local or remote) into accessible charts and dashboards, and publishing them (as a shareable link or an `<iframe>` embed) on any website. It's the full editor experience — `packages/components` is the rendering engine it (and everyone else) builds on, `packages/server` is the API it talks to.
 
 > [!IMPORTANT]
-> **Public "Display"/"Embed" pages are disabled on our hosted instance.** The `display/*` and `embed/*` routes (and the underlying `publish: true` / public "show" endpoints on `packages/server`) are part of the open source codebase and work if you self-host, but they are turned off on the Graph Italia instance run by the Dipartimento per la Trasformazione Digitale, for legal/data-governance reasons.
+> **Public "Display"/"Embed" pages are disabled on our hosted instance**, via the `VITE_ENABLE_PUBLIC_PUBLISHING` flag (see **Public publishing toggle** below) — set to `false` on the Graph Italia instance run by the Dipartimento per la Trasformazione Digitale, for legal/data-governance reasons. The `display/*` and `embed/*` routes (and the underlying `publish: true` / public "show" endpoints on `packages/server`) are part of the open source codebase and work normally if you self-host with the flag left at its default (`true`).
 >
-> On our hosted instance, the only supported way to use Graph Italia today is: **create charts/dashboards in this webapp, then consume them in your own website via `graph-italia-components` (`ChartProvider`/`DashboardProvider`/`DashboardGridProvider`) or `packages/client`, authenticated with a project API key.** See `packages/components/README.md` and `packages/client/README.md` for how that works. If you self-host `packages/server` yourself, the display/embed/public-URL features are available to you — this restriction is specific to our deployment, not a limitation of the software.
+> On our hosted instance, the only supported way to use Graph Italia today is: **create charts/dashboards in this webapp, then consume them in your own website via `graph-italia-components` (`ChartProvider`/`DashboardProvider`/`DashboardGridProvider`) or `packages/client`, authenticated with a project API key.** See `packages/components/README.md` and `packages/client/README.md` for how that works. If you self-host `packages/server` yourself, the display/embed/public-URL features are available to you by default — this restriction is specific to our deployment, not a limitation of the software.
 
 ## Purpose
 
@@ -23,7 +23,7 @@ Routes are defined centrally in [`src/router.tsx`](src/router.tsx) (the `ROUTES`
 | **Account & org settings** (behind `ProtectedRoute`) | `/private/edit/apikeys`, `/private/edit/orgs`, `/private/edit/settings` | Manage API keys (create/revoke/reinstate, view usage logs — see `packages/server`/`packages/client` READMEs for what a `dv_` key and its `READONLY`/`READWRITE` role actually gate), organizations and their members, and account settings. |
 | **Admin** (behind `AdminRoute`) | `/private/god-mode-on` | "God Mode" — instance-wide user management console, gated on the session's `ADMIN` role. See **Admin ("God Mode")** below. |
 | **Tools** | `/load-data`, `/generate-data`, `/generate-poi`, `/geo` | Standalone utilities: load data from a CSV/URL, generate sample datasets, generate point-of-interest data for cluster maps, and a GeoJSON/map utility page — useful for trying the platform without a saved project. |
-| **Display / embed** ⚠️ disabled on our hosted instance | `/display/charts/:id`, `/display/dashboards/:id`, `/embed/charts/:id`, `/embed/dashboards/:id` | Public-facing render pages: `display/*` is a full standalone page for a published chart/dashboard; `embed/*` is the `<iframe>`-friendly variant (theme via `?theme=` query param or `postMessage`, see `packages/components/README.md`'s theming section). Available in the open source project for self-hosted deployments; disabled on our own hosted instance (see the note at the top of this README) — use the components library or `packages/client` with an API key instead. |
+| **Display / embed** ⚠️ restricted on our hosted instance | `/display/charts/:id`, `/display/dashboards/:id`, `/embed/charts/:id`, `/embed/dashboards/:id` | Public-facing render pages: `display/*` is a full standalone page for a published chart/dashboard; `embed/*` is the `<iframe>`-friendly variant (theme via `?theme=` query param or `postMessage`, see `packages/components/README.md`'s theming section). Gated by `PublishGate`/`EmbedGate` on the `VITE_ENABLE_PUBLIC_PUBLISHING` flag — see **Public publishing toggle** below. Public by default for self-hosted deployments; restricted on our own hosted instance (see the note at the top of this README) — use the components library or `packages/client` with an API key instead. |
 
 ### Admin ("God Mode")
 
@@ -40,6 +40,16 @@ It's a single-page instance-wide user directory, backed by `routes/admin.ts` on 
 - Toast notifications on success/failure for every action; the user list is refetched/patched in place after activate/delete so the table stays consistent without a full reload.
 
 This is deliberately a blunt instrument for instance operators (e.g. the Dipartimento team running the hosted deployment), not a project-level admin tool — it has no concept of projects/orgs beyond displaying them for context, and every action is global (works on any user regardless of which projects they're in). For project- or org-scoped member management (adding/removing members, changing `ProjectRole`/`OrgRole`), see `/private/edit/orgs` and the root README's [Progetti, Organizzazioni e Ownership](../../README.md#progetti-organizzazioni-e-ownership) section instead.
+
+## Public publishing toggle
+
+Whether this instance allows public chart/dashboard sharing at all is controlled by a single runtime flag, `VITE_ENABLE_PUBLIC_PUBLISHING` (`sample.env`, read via `isPublishingEnabled()` in `src/lib/api.ts` — same runtime-config-with-fallback pattern as `VITE_SERVER_URL`: `window.__ENV__` from `/config.json` first, then `import.meta.env` at build time). It defaults to enabled (anything other than the literal string `"false"` counts as enabled) so self-hosted deployments that never set it keep today's behavior. Toggling it changes three things at once:
+
+1. **The "publish" toggle is hidden in every editor**, not just disabled — `EditChart`, `EditMap`, `EditKpiGroup`, `EditDashboard`, and `EditDataSource` all wrap their visibility `<input type="checkbox">` in an `isPublishingEnabled()` check. The underlying value also defaults to and is force-saved as `false` (in each page's save handler, and in `dashboard-edit.store.ts`/`kpi_store.ts` for the store-backed editors) — so even a chart that was `publish: true` before the flag was flipped off gets written back as `false` the next time it's saved, and there's no UI path to set it back to `true` while the flag is off.
+2. **`/embed/*` is disabled outright.** `EmbedGate` (`src/components/embed/EmbedGate.tsx`), wrapping both embed routes in `router.tsx`, renders a plain "public embedding is disabled" message instead of the page when the flag is off. Embedding is inherently a no-login `<iframe>` use case, so unlike `/display/*` it can't be turned into an authenticated preview — it's just turned off.
+3. **`/display/*` becomes an authenticated-only preview instead of a public page.** `PublishGate` (`src/components/auth/PublishGate.tsx`), wrapping both display routes, passes through unauthenticated when the flag is on (unchanged behavior); when it's off, it applies the same auth-gate as `ProtectedRoute` (redirect anonymous visitors to `/login`) and shows an inline "you're viewing an authenticated preview" banner. The pages themselves also switch their data source: `ShowChartPage` calls the authenticated `api.getChart` instead of the public `api.showChart`, and `useDashboardViewStore.load()` calls `findDashboardById` instead of `showDashboard` — both go through the same project-membership authorization as the editor, rather than the publish-gated public endpoint (which would always 401 once nothing can be `publish: true`).
+
+Deploying this: locally, set `VITE_ENABLE_PUBLIC_PUBLISHING="false"` in `.env`; on Kubernetes, set `webapp.config.enablePublicPublishing: "false"` in the Helm chart's `values.yaml` (rendered into the `webapp-configmap.yaml` ConfigMap consumed by `main.tsx` at startup — no rebuild needed).
 
 ## Stack
 
@@ -61,7 +71,7 @@ This is deliberately a blunt instrument for instance operators (e.g. the Diparti
 
 ```bash
 bun install
-cp sample.env .env   # sets VITE_SERVER_URL, defaults to http://127.0.0.1:3003
+cp sample.env .env   # sets VITE_SERVER_URL and VITE_ENABLE_PUBLIC_PUBLISHING
 bun run dev          # vite --port 3000, http://localhost:3000
 ```
 
@@ -75,7 +85,7 @@ bun run test:watch
 bun run test:ui
 ```
 
-In production/Kubernetes, runtime config (`VITE_SERVER_URL` and friends) is instead loaded from `/config.json` at startup (`main.tsx`, backed by a Kubernetes ConfigMap) so the same built image can run against different environments without a rebuild — see `CLAUDE.md`'s "Runtime config" note. Locally, `.env` (via `import.meta.env`) is the fallback.
+In production/Kubernetes, runtime config (`VITE_SERVER_URL`, `VITE_ENABLE_PUBLIC_PUBLISHING`, and friends) is instead loaded from `/config.json` at startup (`main.tsx`, backed by a Kubernetes ConfigMap, see `charts/graph-italia/templates/webapp-configmap.yaml`) so the same built image can run against different environments without a rebuild — see `CLAUDE.md`'s "Runtime config" note. Locally, `.env` (via `import.meta.env`) is the fallback.
 
 ## How to contribute
 

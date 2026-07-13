@@ -24,6 +24,7 @@ import GenericDialog from "../../components/layout/GenericDialog";
 import registerDarkTheme from "../../components/layout/DataTableDarkTheme";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges";
 import { HOME_ROUTE, ROUTES } from "../../router";
+import { isPublishingEnabled } from "../../lib/api";
 import useEditKpiGroupStore from "../../lib/store/kpi_store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 
@@ -324,28 +325,30 @@ function EditKpiGroupPage() {
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
                   <div className="flex flex-col space-y-2">
-                    <div className="flex items-center gap-4">
-                      <input
-                        id="kpigroup_visibility"
-                        type="checkbox"
-                        checked={publish ?? true}
-                        onChange={() =>
-                          setPublish(!(publish ?? true))
-                        }
-                        className="toggle toggle-sm toggle-primary cursor-pointer"
-                      />
-                      <label
-                        htmlFor="kpigroup_visibility"
-                        className="text-sm text-base-content/70 cursor-pointer"
-                      >
-                        {t("body.options.setup.form.fields.visibility.label")}
-                      </label>
-                      <span className="text-sm text-base-content font-bold">
-                        {t(
-                          `body.options.setup.form.fields.visibility.values.${(publish ?? true) ? "public" : "private"}`,
-                        )}
-                      </span>
-                    </div>
+                    {isPublishingEnabled() && (
+                      <div className="flex items-center gap-4">
+                        <input
+                          id="kpigroup_visibility"
+                          type="checkbox"
+                          checked={publish ?? true}
+                          onChange={() =>
+                            setPublish(!(publish ?? true))
+                          }
+                          className="toggle toggle-sm toggle-primary cursor-pointer"
+                        />
+                        <label
+                          htmlFor="kpigroup_visibility"
+                          className="text-sm text-base-content/70 cursor-pointer"
+                        >
+                          {t("body.options.setup.form.fields.visibility.label")}
+                        </label>
+                        <span className="text-sm text-base-content font-bold">
+                          {t(
+                            `body.options.setup.form.fields.visibility.values.${(publish ?? true) ? "public" : "private"}`,
+                          )}
+                        </span>
+                      </div>
+                    )}
                     <label
                       htmlFor="kpigroup_title"
                       className="mt-4 text-base-content/70"
@@ -440,7 +443,7 @@ function EditKpiGroupPage() {
             {kpiGroup.dataSource.length > 0 ? (
 
               <>
-                {publish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
+                {isPublishingEnabled() && publish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
                 <ThemeSwitcherComponent
                   currentTheme={previewScheme}
                   handleChange={(value: ChartColorScheme) =>

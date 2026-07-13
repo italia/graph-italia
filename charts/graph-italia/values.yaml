@@ -94,6 +94,10 @@ webapp:
     # Runtime configuration via ConfigMap
     # This allows using the same build image across different environments
     serverUrl: ""  # e.g., "http://graph-italia-server:3003" or "https://api.example.com"
+    # Set to "false" to disable public chart/dashboard publishing on this deployment:
+    # hides the publish toggle in the editors, disables /embed/*, and turns /display/*
+    # into an authenticated-only preview. See packages/webapp/README.md.
+    enablePublicPublishing: "true"
   resources:
     limits:
       cpu: 500m

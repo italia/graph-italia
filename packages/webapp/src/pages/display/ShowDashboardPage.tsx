@@ -7,6 +7,7 @@ import Loading from "../../components/layout/Loading";
 import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
+import { isPublishingEnabled } from "../../lib/api";
 
 const TOTAL_COLS = 12;
 const ALL_COLS = { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 };
@@ -84,6 +85,15 @@ function DashboardViewPage() {
   return (
     <Layout>
       <div className="p-4">
+
+        {!isPublishingEnabled() && (
+          <div role="status" className="alert alert-info mb-4">
+            <span>
+              Public publishing is disabled on this instance — you're viewing an
+              authenticated preview, not a public page.
+            </span>
+          </div>
+        )}
 
         {isLoading && <Loading />}
         {error && (

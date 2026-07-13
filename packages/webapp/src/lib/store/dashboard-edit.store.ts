@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { findDashboardById, updateDashboard, updateSlots, type DashboardDetail } from '../api.ts';
+import { findDashboardById, isPublishingEnabled, updateDashboard, updateSlots, type DashboardDetail } from '../api.ts';
 
 type TChartRef = { id: string };
 type TItem = `item-${number}`;
@@ -76,7 +76,7 @@ function* itemGenerator(
 const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   name: '',
   description: '',
-  publish: true,
+  publish: isPublishingEnabled(),
   breakpoint: 'lg',
   layout: [],
   show: false,
@@ -175,7 +175,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
           layout,
           name,
           description,
-          publish,
+          publish: isPublishingEnabled() ? publish : false,
           isLoading: false,
           loaded: true,
           id,
@@ -195,7 +195,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
 
     const { layout, charts, id, name, description, publish } = get();
 
-    await updateDashboard(id!, { name, description, publish });
+    await updateDashboard(id!, { name, description, publish: isPublishingEnabled() ? publish : false });
 
     const body = {
       slots: layout.map((l) => ({

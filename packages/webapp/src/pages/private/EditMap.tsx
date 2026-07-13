@@ -53,7 +53,7 @@ export default function EditMapPage() {
   const [loading, setLoading] = useState(true);
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
-  const [chartPublish, setChartPublish] = useState<boolean>(true);
+  const [chartPublish, setChartPublish] = useState<boolean>(api.isPublishingEnabled());
   const [isSaving, setIsSaving] = useState(false);
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
@@ -88,7 +88,7 @@ export default function EditMapPage() {
             setChart("cmap");
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
-            setChartPublish(chartData.publish ?? true);
+            setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
 
             // Go to config step only if chart already has data loaded
             const hasExistingData =
@@ -108,7 +108,7 @@ export default function EditMapPage() {
         setChart("cmap");
         setChartName("");
         setChartDescription("");
-        setChartPublish(true);
+        setChartPublish(api.isPublishingEnabled());
         setLoading(false);
       }
     }
@@ -133,7 +133,7 @@ export default function EditMapPage() {
     const payload = {
       name: finalName,
       description: chartDescription,
-      publish: chartPublish,
+      publish: api.isPublishingEnabled() ? chartPublish : false,
       chart: chart || "cmap",
       config,
       data,
@@ -233,29 +233,31 @@ export default function EditMapPage() {
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
                   <div className="flex flex-col space-y-2">
-                    <div className="flex items-center gap-4">
-                      <input
-                        id="chart_visibility"
-                        type="checkbox"
-                        checked={chartPublish}
-                        onChange={() => {
-                          setHasUnsavedChanges(true);
-                          setChartPublish(!chartPublish);
-                        }}
-                        className="toggle toggle-sm toggle-primary cursor-pointer"
-                      />
-                      <label
-                        htmlFor="chart_visibility"
-                        className="text-sm text-base-content/70 cursor-pointer"
-                      >
-                        {t(`body.options.setup.form.fields.visibility.label`)}
-                      </label>
-                      <span className="text-sm text-base-content font-bold">
-                        {t(
-                          `body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
-                        )}
-                      </span>
-                    </div>
+                    {api.isPublishingEnabled() && (
+                      <div className="flex items-center gap-4">
+                        <input
+                          id="chart_visibility"
+                          type="checkbox"
+                          checked={chartPublish}
+                          onChange={() => {
+                            setHasUnsavedChanges(true);
+                            setChartPublish(!chartPublish);
+                          }}
+                          className="toggle toggle-sm toggle-primary cursor-pointer"
+                        />
+                        <label
+                          htmlFor="chart_visibility"
+                          className="text-sm text-base-content/70 cursor-pointer"
+                        >
+                          {t(`body.options.setup.form.fields.visibility.label`)}
+                        </label>
+                        <span className="text-sm text-base-content font-bold">
+                          {t(
+                            `body.options.setup.form.fields.visibility.values.${chartPublish ? "public" : "private"}`,
+                          )}
+                        </span>
+                      </div>
+                    )}
                     <label
                       htmlFor="chart_title"
                       className="mt-4 text-base-content/70"
@@ -385,7 +387,7 @@ export default function EditMapPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/charts/${id}/view`} target="_blank" className="btn btn-outline">view published chart</a></div>}
+                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/charts/${id}/view`} target="_blank" className="btn btn-outline">view published chart</a></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>
