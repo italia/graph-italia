@@ -15,15 +15,21 @@ Il progetto è strutturato come **monorepo** per massimizzare la riusabilità de
 - **Come è nato** Deriva da una esigenza interna di visualizzare dati e cruscotti su siti istituzionali che gestiamo, avendo cura di rispettare principi di accessibilità, identity e trasparenza che denotano i siti in questione.
 
 - **Come è Articolato** E' composto da diversi tool:
-  - una Libreria per la visualizzazione dei grafici, che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
-  - una componente Server che sovraintende alle Api per il controllo accesso e salvataggio dati nel db e rimpiazza il Plugin
-  - una Web App per permettere di creare grafici a partire dal caricamento di file dati formattati ad hoc, anche questa parte rimpiazza il Plugin.
+  - una Libreria per la visualizzazione dei grafici (`packages/components`), che rappresenta il vero core del progetto ed è stata la prima cosa realizzata nel 2023 insiame ad un Plugin per DatoCMS dove salvare i dati per il sito innovazione.gov.it.
+  - una componente Server (`packages/server`) che sovraintende alle Api per il controllo accesso e salvataggio dati nel db e rimpiazza il Plugin
+  - una Web App (`packages/webapp`) per permettere di creare grafici a partire dal caricamento di file dati formattati ad hoc, anche questa parte rimpiazza il Plugin.
+  - un Client Api tipizzato (`packages/client`, `graph-italia-cli`), generato dallo spec OpenAPI del server, per consumare/integrare i dati da un frontend proprio senza passare dalla Web App.
+  - una App di esempio (`packages/ui-example-app`) che dimostra l'uso della libreria componenti e del client.
 
 - **Creazione Grafici**: Upload file dati CSV (max 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
 - **Dashboards**: Creazione di dashboard a partire dai grafici creati, combinando più grafici in un'unica vista
-- **Integrazione e Condivisione**: E' possibile integrare i chart creati all'interno di siti web tramite l'utilizzo delle Api, e utilizzando apposite chiavi per ogni progetto. Ogni progetto può avere N grafici e Dashboard. E' presente anche la possibilità di flaggare i grafici come pubblici e visualizzarli ad un url corrispondente all'identificativo alfanumerico del grafico, ma per adesso questa funzionalità è disabilitatà sulla nostra istanza per motivi legali. Questa Modalità permette anche l'embedding di grafici e dashboard tramite l'utilizzo di iframes all'interno di terzi siti web.
+- **Progetti, Organizzazioni e Collaborazione**: Ogni grafico/dashboard/datasource appartiene a un `Project`; i progetti possono avere più membri e possono essere associati a una `Org` per far collaborare un intero team. Vedi la sezione dedicata [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership) più avanti per il dettaglio di ruoli e permessi.
+- **Integrazione e Condivisione**: E' possibile integrare i chart creati all'interno di siti web tramite l'utilizzo delle Api, e utilizzando apposite chiavi (`ApiKey`) per ogni progetto. Ogni progetto può avere N grafici e Dashboard. E' presente anche la possibilità di flaggare i grafici come pubblici e visualizzarli ad un url corrispondente all'identificativo alfanumerico del grafico; questa modalità permetterebbe anche l'embedding di grafici e dashboard tramite l'utilizzo di iframes all'interno di terzi siti web.
+
+  > [!IMPORTANT]
+  > Sebbene il progetto sia stato pensato fin dall'origine per la condivisione e pubblicazione pubblica dei grafici (rotte `display/*`, `embed/*` e gli endpoint pubblici `show`), **nella versione attualmente ospitata online dal Dipartimento per la Trasformazione Digitale questa funzionalità è disabilitata per motivi legali/di data-governance**. Sulla nostra istanza l'unico modo supportato per condividere un grafico/dashboard e i relativi dati è tramite il **client (`packages/client`) o la libreria componenti (`packages/components`), autenticandosi con una API Key di progetto**. Chi si autoospita (self-hosted) `packages/server` mantiene invece piena disponibilità delle funzionalità di pubblicazione/embed via iframe, che restano parte del codice open source.
 - **Persistenza e Gestione**: Vengono salvati soltanto i dati caricati e selezionati dagli utenti. Nel caso di url remoti viene mantenuta in cache l'ultima versione valida , mentre viene effettuata una nuova richiesta se i dati sono più vecchi di tot ore (24 attualmente), e i dati vengono sostituiti se la nuova chiamata ha successo.
-- **Autenticazione Utenti**: Sistema di autenticazione tramite registrazione email e password, funzionalità di recupero password tramite invio email, attivazione account post verifica email. In corso di integrazione login con SPID, CIE etc...
+- **Autenticazione Utenti**: Sistema di autenticazione tramite registrazione email e password, funzionalità di recupero password tramite invio email, attivazione account post verifica email. In corso di integrazione login OIDC-based (SPID, CIE etc — vedi `routes/oidc.ts`, work in progress).
 - **Suggerimenti AI**:Funzionalità parcheggiata,e attualmente disabilitata: una volta caricati e filtrati i dati di interesse, è possibile richiederne un'analisi ad un llm con prompt opportuno che propone possibili grafici e opportune trasformazioni, aggragazioni dei dati attuali se necesario. La funzionalità è in attesa di verifica di approvazione dal reparto legal.
 
 ## Panoramica Generale
@@ -36,10 +42,11 @@ Il progetto utilizza **Bun workspaces** per gestire i pacchetti multipli. La con
 
 ### Pacchetti Principali
 
-1. **`packages/components`** - Libreria React di componenti riutilizzabili
-2. **`packages/server`** - Backend API server (Hono + Bun)
-3. **`packages/webapp`** - Applicazione web principale (React + Vite)
-4. **`packages/ui-example-app`** - App di esempio per dimostrare l'uso dei componenti
+1. **`packages/components`** (`graph-italia-components`) - Libreria React di componenti riutilizzabili
+2. **`packages/server`** (`graph-italia-server`) - Backend API server (Hono + Bun)
+3. **`packages/webapp`** (`graph-italia-webapp`) - Applicazione web principale (React + Vite)
+4. **`packages/client`** (`graph-italia-cli`) - Client Api TypeScript/axios generato dallo spec OpenAPI del server
+5. **`packages/ui-example-app`** - App di esempio per dimostrare l'uso dei componenti e del client
 
 ---
 
@@ -134,21 +141,19 @@ Server Hono che gestisce autenticazione, persistenza dati, e API per charts e da
 - **Observability**: Pino (logging JSON), Prometheus metrics
 - **API Docs**: OpenAPI + Scalar
 
-#### Ruoli Utente
-
-Il sistema supporta due ruoli:
-
-- **`USER`**: Utente standard (default)
-- **`ADMIN`**: Amministratore con privilegi estesi
-
 #### Descrizione Modelli principali
 
-- **`User`**: Gestione utenti con autenticazione email/password, verifica account tramite codici PIN, ruolo assegnabile
-- **`Project`**: Contenitore a cui si possono associare grafici e dashboard, è possibile condividere i Progetti con altri utenti e Organizzazioni
+- **`User`**: Gestione utenti con autenticazione email/password, verifica account tramite codici PIN, ruolo globale assegnabile (`Role`)
+- **`Project`**: Contenitore a cui si possono associare grafici, dashboard e datasource. Ha un owner (`ownerId`) e può avere più membri (`ProjectMember`) e/o essere associato a una o più Org (`OrgProject`)
+- **`Org`**: Raggruppa più utenti (`Membership`) e più progetti (`OrgProject`), per far collaborare un team su uno o più progetti
 - **`Chart`**: Configurazione grafici (tipo, dati, configurazione), supporto per dati remoti, pubblicazione pubblica, preview come immagine
 - **`Dashboard`**: Raccolta di grafici organizzati in "slots", pubblicazione pubblica, layout personalizzabile
-- **`ApiKey`**: Chiavi utilizzabili come bearers tokens per accedere tramite api ai grafici e le Dashboard
-- **`Slot`**: Collegamento tra Dashboard e Chart con configurazioni personalizzate per ogni slot
+- **`DataSource`**: Dati caricati (CSV o URL remoto) collegabili a uno o più `Chart` tramite `SourceLink`
+- **`ApiKey`**: Chiavi (prefisso `dv_`) utilizzabili come bearer token per accedere tramite api ai grafici, dashboard e datasource di un singolo progetto
+- **`Slot`**: Collegamento tra `Dashboard` e `Chart` con configurazioni personalizzate per ogni slot
+- **`VerificationCode`**: Codici PIN a scadenza usati per attivazione account (`ACTIVATION`) e recupero password (`RECOVERY`)
+
+La spiegazione completa di ownership, ruoli e collaborazione tra utenti/progetti/org è nella sezione [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership) più avanti in questo documento.
 
 #### Schema modelli prisma.
 
@@ -327,17 +332,62 @@ erDiagram
 
 ### Middleware
 
-- `checkAuth`: Verifica JWT token
-- `requireUser`: Richiede utente autenticato
-- `validateRequest`: Validazione con Zod
-- `errorHandler`: Gestione errori
-- `notFound`: 404 handler
+- `checkAuth`: Risolve la credenziale (cookie `access_token` o header `Authorization: Bearer`) in un utente di sessione (JWT) o in una API Key (`dv_`-prefixed); non lancia mai eccezioni, in assenza/invalidità risolve ad "anonimo" così le rotte pubbliche restano accessibili
+- `requireUser`: Richiede una sessione utente (JWT) — usato dalle rotte di gestione (progetti, org, api keys, admin, hints AI)
+- `requireAuth`: Richiede sessione **o** API Key, e risolve il `projectId` nel contesto della request (usato da charts/dashboards/datasources)
+- `requireAdmin`: Richiede sessione con ruolo globale `ADMIN` (usato da `/admin/*`)
+- `canRead` / `canModify`: Verificano, dato il `projectId` risolto, se la request (sessione o API Key) ha i permessi di lettura/scrittura sul progetto
+- `validateRequest` (Zod, per-route con `zValidator`): Validazione input
+- `errorHandler` / `notFound`: Gestione errori e 404 handler
 
 ### Funzionalità Avanzate
 
 - **Dati Remoti**: Aggiornamento automatico ogni 24h per charts remoti
-- **Sicurezza**: Helmet, CORS configurato, validazione input
+- **Sicurezza**: Helmet, CORS configurato, rate limiting (globale + più stretto su `/auth/*`), validazione input
 - **Email**: Invio email di attivazione e reset password
+
+---
+
+## Progetti, Organizzazioni e Ownership
+
+Questa sezione spiega, indipendentemente dal singolo pacchetto, **come funzionano insieme utenti, progetti e organizzazioni**: chi possiede cosa, chi può modificare cosa, e come si collabora — sia lato API (`packages/server`) sia lato interfaccia (`packages/webapp`).
+
+### Concetti chiave
+
+- **`User`**: un account. Ha un ruolo globale (`Role`: `USER`/`ADMIN`) che riguarda l'amministrazione della piattaforma nel suo complesso (vedi tabella ruoli sotto), non i singoli progetti.
+- **`Project`**: l'unità di isolamento dei dati. Ogni `Chart`, `Dashboard`, `DataSource` e `ApiKey` appartiene a **esattamente un** progetto. Un progetto ha:
+  - un **owner** (`Project.ownerId`) — l'utente che lo ha creato. È l'unico che può eliminarlo o rimuovere l'associazione con una Org;
+  - zero o più **membri diretti** (`ProjectMember`, con un `ProjectRole`);
+  - zero o più **Org associate** (`OrgProject`) — tutti i membri di quelle Org ottengono accesso al progetto.
+- **`Org`**: un raggruppamento di utenti (`Membership`, con un `OrgRole`) pensato per far collaborare un team su uno o più progetti condivisi, senza dover aggiungere ogni singolo utente a ogni singolo progetto.
+- **Progetto "personale" vs "di Org"**: un progetto creato da un utente nasce come progetto personale (nessuna Org associata). `GET /projects/personal` (webapp: selettore progetti) elenca solo questi. Non appena un progetto viene associato a una Org, tutti i membri dell'Org lo vedranno tra i propri progetti (`GET /projects`, che unisce progetti posseduti, progetti con membership diretta, e progetti raggiungibili tramite una Org di cui si è membri).
+
+### Come "trasferire" un progetto a un'Org (condivisione, non cambio di owner)
+
+Non esiste un'operazione di "cambio proprietario": l'`ownerId` di un `Project` non cambia mai automaticamente. Quello che il prodotto chiama, in pratica, "portare un progetto in Org" è un'**associazione** (condivisione) tra un progetto esistente e un'Org esistente:
+
+1. Lato API: `POST /projects/:projectId/orgs` con `{ orgId }` (richiede di poter già modificare il progetto — owner, membro `ADMIN`, o già membro di un'Org associata) crea la riga `OrgProject`. Da quel momento ogni membro dell'Org può vedere e modificare il progetto secondo le stesse regole di un `ProjectMember`.
+2. Lato webapp: dalla pagina di gestione progetto/organizzazioni (`/private/edit/orgs`) si sceglie l'Org a cui associare il progetto; l'operazione è reversibile con `DELETE /projects/:projectId/orgs/:orgId` (solo l'owner del progetto può rimuovere l'associazione).
+3. L'owner originale resta owner (e resta l'unico che può eliminare il progetto o disassociarlo da un'Org) anche dopo l'associazione — "trasferire ad un'Org" quindi significa "condividere con tutto il team", non "cedere la proprietà".
+
+Se invece serve **condividere il progetto con un singolo altro utente** (senza passare da un'Org), si usa `POST /projects/:projectId/members` con `{ userId, role }`, che crea una riga `ProjectMember` diretta.
+
+### Collaborare lato frontend (webapp)
+
+- Il progetto "attivo" è tenuto in `localStorage` (`currentProjectId`, vedi `CLAUDE.md`) e inviato su ogni richiesta come header `x-project-id`; se assente, il server usa il progetto più vecchio posseduto/di cui si è membri.
+- La pagina `/private/edit/orgs` è dove si gestisce la collaborazione: creare/rinominare un'Org, invitare membri per email (se l'utente non esiste ancora, viene creato con password casuale e gli viene inviata una email di attivazione — vedi `routes/orgs.ts`), cambiare il ruolo di un membro, associare/disassociare progetti.
+- La pagina `/private/edit/apikeys` è dove si generano le API Key di progetto usate per l'integrazione via `packages/client`/`packages/components` (vedi nota importante più sotto).
+- Chiunque abbia accesso al progetto (owner, membro diretto, o membro di un'Org associata) vede gli stessi Chart/Dashboard/DataSource nell'editor — non esiste, oggi, una vista "solo mia" filtrata per singolo utente all'interno di un progetto condiviso.
+
+### Ruoli: tabella riassuntiva
+
+| Ruolo (enum Prisma) | Dove si applica | Valori | A cosa serve |
+|---|---|---|---|
+| `Role` | `User.role` | `USER` (default) / `ADMIN` | Ruolo **globale** della piattaforma. `ADMIN` sblocca le rotte `/admin/*` (elenco/eliminazione utenti, forzatura attivazione, reset password altrui) tramite il middleware `requireAdmin`. Non ha alcun effetto sui permessi all'interno di un singolo progetto. |
+| `ProjectRole` | `ProjectMember.role` | `USER` (default) / `ADMIN` | Ruolo di un utente **all'interno di un progetto** a cui è stato aggiunto come membro diretto. Nota: nell'implementazione attuale (`canUserModifyProject` in `lib/db/projectDb.ts`) l'accesso in scrittura è concesso a **qualsiasi** membro del progetto (o membro di un'Org associata), non solo a chi ha `ProjectRole: ADMIN` — il campo è già modellato per un controllo più granulare futuro ma oggi non discrimina i permessi. |
+| `OrgRole` | `Membership.role` | `USER` (default) / `ADMIN` | Ruolo di un utente **all'interno di un'Org**. A differenza di `ProjectRole`, qui è enforced: solo i membri con `OrgRole: ADMIN` possono rinominare/eliminare l'Org, invitare/rimuovere membri o cambiarne il ruolo (`isOrgAdmin` in `lib/db/orgDb.ts`). |
+| `ApiKeyRole` | `ApiKey.role` | `READONLY` (default) / `READWRITE` | Scope di una **API Key**, non di un utente. Una key è legata a un solo progetto alla creazione; `READONLY` consente solo le operazioni di lettura su quel progetto, `READWRITE` aggiunge create/update/delete (`canRead`/`canModify` in `lib/middlewares.ts`). Non è mai più ampia del progetto per cui è stata creata, indipendentemente dagli altri progetti dell'utente che l'ha generata. |
+| `CodeType` | `VerificationCode.type` | `ACTIVATION` / `RECOVERY` | Non è un ruolo di accesso ma il tipo di un PIN a scadenza: attivazione account post-registrazione o recupero password. |
 
 ---
 
@@ -350,12 +400,13 @@ Applicazione React completa per creare, modificare e visualizzare grafici e dash
 ### Tecnologie
 
 - **Build Tool**: Vite
-- **Framework**: React v19.1.0 + React Router v6
-- **Styling**: TailwindCSS + DaisyUI
-- **State Management**: Zustand + XState (per macchine a stati)
-- **Data Fetching**: SWR
+- **Framework**: React v19.1.0 + React Router v7
+- **Styling**: TailwindCSS v4 + DaisyUI v5
+- **State Management**: Zustand (uno store per dominio: chart, dashboard, datasource, project, user, settings, KPI) + XState (per la wizard multi-step di creazione grafico)
+- **Data Fetching**: axios (interceptor che inietta `x-project-id` da `localStorage`) + SWR per il fetching a livello di componente
 - **Form Handling**: React Hook Form + Zod
-- **Layout**: react-grid-layout (per dashboard drag-and-drop)
+- **Layout**: react-grid-layout (per dashboard drag-and-drop) + `@hello-pangea/dnd` (altri riordini via drag-and-drop)
+- **Test**: Vitest + Testing Library + `happy-dom`, con test di accessibilità via `vitest-axe` (WCAG)
 - **Dipendenze**: Usa `graph-italia-components` come workspace dependency
 
 ### Funzionalità Principali
@@ -392,12 +443,13 @@ flowchart TD
     Save -->|No| Config
 
     SaveDB --> Publish{Pubblicare?}
-    Publish -->|Sì| Public[Pubblica Pubblicamente]
+    Publish -->|Sì| Public["Pubblica Pubblicamente<br/>(disabilitato sulla nostra istanza hosted,<br/>vedi nota importante)"]
     Publish -->|No| Private[Salva Privato]
 
     Public --> Share[Condividi URL]
     Private --> List[Lista Charts]
     Share --> List
+    List --> ApiShare["Condividi via API Key<br/>(packages/client / packages/components)"]
 ```
 
 1. **Caricamento Dati**:
@@ -426,41 +478,77 @@ flowchart TD
 - Registrazione con verifica email
 - Login/logout
 - Reset/change password
-- Protezione area privata con `ProtectedRoute`
+- Protezione area privata con `ProtectedRoute` (utente autenticato) e `AdminRoute` (ruolo `ADMIN`, per `/private/god-mode-on`)
+
+#### Progetti, Organizzazioni e API Key
+
+- `/private/edit/orgs`: gestione organizzazioni e membership, associazione/rimozione progetti a un'Org (vedi [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership))
+- `/private/edit/apikeys`: creazione/revoca/riattivazione delle API Key di progetto e consultazione dei log di utilizzo
+- `/private/edit/settings`: impostazioni account
 
 #### Utility Pages
 
 - `/load-data`: Caricamento dati da CSV/URL
-- `/generate-data`: Generazione dati di esempio
+- `/generate-data`, `/generate-poi`: Generazione dati/punti di interesse di esempio
 - `/geo`: Utility per mappe geografiche
+
+#### Display / Embed pubblico
+
+- `/display/charts/:id`, `/display/dashboards/:id`, `/embed/charts/:id`, `/embed/dashboards/:id`: pagine pubbliche di rendering di un chart/dashboard pubblicato, l'ultima pensata per l'uso in `<iframe>` (tema via query param `?theme=` o `postMessage`).
+- Disponibili nel codice open source per chi si autoospita; **disabilitate sulla nostra istanza hosted** — vedi la nota importante nella sezione [Scope](#scope) e in [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership).
 
 ---
 
-## 4. Packages/UI-Example-App - App di Esempio
+## 4. Packages/Client - Client Api TypeScript
 
 ### Descrizione
 
-Applicazione React minimalista per dimostrare l'uso dei componenti `graph-italia-components`.
+`graph-italia-cli` (`packages/client`) è un client TypeScript/axios **generato** (via [Orval](https://orval.dev/)) dallo spec OpenAPI esposto dal server (`/openapi.json`). Fornisce una funzione tipizzata per ogni endpoint REST (auth, charts, dashboards, datasources, kpi-group, orgs, projects, apikeys, admin) più i tipi di richiesta/risposta corrispondenti — utile per costruire un frontend proprio (o un'integrazione server-to-server) senza passare dalla Web App, ed è esattamente il meccanismo con cui, sulla nostra istanza hosted, si condividono grafici/dashboard e i loro dati al posto della pubblicazione via URL pubblico (vedi nota nella sezione [Scope](#scope)).
+
+### Come funziona
+
+- **Nessun codice scritto a mano**: `src/client.ts` e `src/model/` sono interamente generati da `graphitalia-openapi.yml`; non vanno editati manualmente, si rigenerano.
+- **Flusso di aggiornamento**: modifica una rotta del server → esporta lo spec (`GET /openapi.json`) → `bun run convert` (JSON→YAML) → `bun run generate` (Orval rigenera client + model) → `bun run build`.
+- **Autenticazione**: sempre via header `Authorization: Bearer <token>` — o una sessione JWT (per operazioni di gestione: progetti, org, api key, admin, hints AI) o una API Key `dv_`-prefixed (per charts/dashboards/datasources/kpi-group), con lo stesso schema di ruoli descritto in [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership).
+- **Non è ancora pubblicato su npm**: consumabile come workspace dependency interna al monorepo (`"graph-italia-cli": "workspace:*"`), come tarball (`npm pack`), o pubblicandolo autonomamente su un registry a scelta.
+
+```ts
+import axios from "axios";
+import { getGraphItaliaAPI } from "graph-italia-cli";
+
+const client = getGraphItaliaAPI(
+  axios.create({ baseURL: "https://your-server.example.com", headers: { Authorization: "Bearer dv_..." } })
+);
+const { data: chart } = await client.getApiChartsById("chart-id");
+```
+
+Vedi [`packages/client/README.md`](packages/client/README.md) per l'elenco completo delle funzioni generate, la checklist di manutenzione e come usarlo insieme a `graph-italia-components` (`ChartProvider`/`DashboardProvider`/`DashboardGridProvider` sono l'alternativa "batteries included" quando basta il fetch di un singolo chart/dashboard per ID).
+
+---
+
+## 5. Packages/UI-Example-App - App di Esempio
+
+### Descrizione
+
+Applicazione React minimalista per dimostrare l'uso dei componenti `graph-italia-components` e del client `graph-italia-cli`.
 
 ### Funzionalità
 
 - Esempi di utilizzo per ogni tipo di grafico
 - Componenti di esempio:
-  - `SampleBarchart`
-  - `SampleLinechart`
-  - `SamplePiechart`
-  - `SampleGeomapchart`
+  - `SampleBarchart`, `SampleLinechart`, `SamplePiechart`, `SampleGeomapchart`
   - `SampleMap` (cluster map)
   - `SampleKpis`
   - `SampleTable`
-  - `SampleWrapper`
+  - `SampleWrapper` (e varianti `SampleWrapperBar/Line/Pie/Geomap`)
+  - `SampleChartProvider`, `SampleDashboardProvider`, `SampleDashboardGridProvider`: fetch-and-render da un server live tramite `ChartProvider`/`DashboardProvider`/`DashboardGridProvider` (API key + endpoint)
 
 ### Integrazione
 
-Usa `graph-italia-components` tramite link locale:
+Usa `graph-italia-components` come dipendenza workspace (buildata da `packages/components/dist`):
 
 ```json
-"graph-italia-components": "link:graph-italia-components"
+"graph-italia-components": "workspace:*"
 ```
 
 ---
@@ -473,13 +561,17 @@ Usa `graph-italia-components` tramite link locale:
 graph TB
     Webapp[Webapp<br/>React + Vite]
     Components[Components<br/>React Library]
+    Client[Client<br/>graph-italia-cli]
     Server[Server<br/>Hono + Bun]
     DB[(PostgreSQL<br/>Prisma ORM)]
 
     Webapp -->|usa| Components
     Webapp <-->|HTTP API| Server
     Server -->|query| DB
-    Components -.->|può chiamare| Server
+    Components -.->|può chiamare<br/>ChartProvider/DashboardProvider| Server
+    Client -->|typed axios calls| Server
+    ExternalApp[App/sito terzo<br/>self-hosted frontend] -->|usa| Client
+    ExternalApp -->|usa| Components
 ```
 
 ### Architettura Monorepo
@@ -491,11 +583,14 @@ graph LR
     Root --> Components[packages/components<br/>React Component Library<br/>Pubblicabile su npm]
     Root --> Server[packages/server<br/>Backend API<br/>Hono + Bun]
     Root --> Webapp[packages/webapp<br/>Web Application<br/>React + Vite]
-    Root --> Example[packages/ui-example-app<br/>Example App<br/>Demo Components]
+    Root --> Client[packages/client<br/>graph-italia-cli<br/>Typed API SDK]
+    Root --> Example[packages/ui-example-app<br/>Example App<br/>Demo Components + Client]
 
     Webapp -->|workspace:*| Components
-    Example -->|link:| Components
+    Example -->|workspace:*| Components
+    Client -->|spec derivato da| Server
     Webapp <-->|HTTP REST API| Server
+    Client <-->|HTTP REST API<br/>via API Key| Server
 ```
 
 ### Dipendenze Workspace
@@ -512,21 +607,24 @@ graph LR
 2. **UI-Example-App → Components**:
 
    ```json
-   "graph-italia-components": "link:graph-italia-components"
+   "graph-italia-components": "workspace:*"
    ```
 
-   - Link locale per sviluppo
+   - Dipendenza workspace come per Webapp — richiede `packages/components` buildato almeno una volta
 
-3. **Server**:
+3. **Client → Server**:
+   - `packages/client` non ha una dipendenza workspace da `packages/server`, ma il suo codice è **generato** dallo spec OpenAPI esposto dal server (`GET /openapi.json`) — vanno tenuti sincronizzati rigenerando il client dopo ogni modifica alle rotte (vedi sezione dedicata sopra)
+
+4. **Server**:
    - Indipendente, fornisce API REST
-   - Comunica con webapp tramite HTTP
+   - Comunica con webapp (e con chiunque usi `packages/client` o le `*Provider` di `packages/components`) tramite HTTP
 
 ### Scripts di Build
 
 Dal `package.json` root:
 
 - `bun run dev`: Avvia webapp + server in parallelo
-- `bun run build`: Builda tutti i pacchetti
+- `bun run build`: Builda tutti i pacchetti (incluso `packages/client`)
 - `bun run build:components`: Builda solo la libreria
 - `bun run build:webapp`: Builda solo l'app web
 
@@ -1187,46 +1285,22 @@ Esegue `bun run --filter '*' build` che:
 
 1. `packages/components` (nessuna dipendenza interna)
 2. `packages/webapp` (dipende da components)
-3. `packages/server` (indipendente)
-4. `packages/ui-example-app` (dipende da components)
+3. `packages/client` (indipendente, generato dallo spec OpenAPI del server — non una dipendenza workspace)
+4. `packages/server` (indipendente)
+5. `packages/ui-example-app` (dipende da components)
 
 ### Test Applicativi
 
-**Stato Attuale**: ❌ **Nessun test implementato**
+Il progetto include test automatizzati per server e webapp (non ancora per `components`/`client`/`ui-example-app`):
 
-Il progetto **non include** framework di testing configurati:
+| Pacchetto | Framework | Cosa copre | Comando |
+|---|---|---|---|
+| `packages/server` | Bun test runner (`bun test`) | Route Hono (auth, charts, dashboards, datasources, orgs, projects, apikeys, rate limiting, middleware) — Prisma e servizi esterni (email, S3, OpenAI) sono mockati con `mock.module(...)`, nessun test tocca un database reale | `bun test` (o `bun test tests/<file>.test.ts` per un singolo file), da `packages/server` |
+| `packages/webapp` | Vitest + Testing Library + `happy-dom` | Test di accessibilità (`vitest-axe`, WCAG) su componenti/pagine chiave — form labels, heading, messaggi di stato, etichette interattive, paginazione da tastiera, pagina org, landing page, dialog, ecc. (`src/tests/a11y/`) | `bun run test` (once), `bun run test:watch`, `bun run test:ui`, da `packages/webapp` o dalla root |
 
-- ❌ Nessun test unitario
-- ❌ Nessun test di integrazione
-- ❌ Nessun test end-to-end
-- ❌ Nessun framework configurato (Jest, Vitest, Playwright, Cypress)
+CI (`ci.yml`) esegue oggi solo la build su tutti i pacchetti, non l'intera suite di test come gate — i test dei singoli pacchetti restano comunque la rete di sicurezza per chi modifica quel codice e vanno eseguiti localmente prima di aprire una PR (vedi `packages/server/README.md` e `packages/webapp/README.md`, sezioni "come contribuire").
 
-**Evidenze**:
-
-- Nessun file `.test.ts`, `.spec.ts` nel codebase
-- Nessuna configurazione Jest/Vitest nei `package.json`
-- Rollup config esclude pattern di test (`**/__tests__/**`, `**/*.test.tsx`) ma non esistono
-- CI workflow esegue solo build, non test
-
-**Raccomandazioni per Implementazione Futura**:
-
-1. **Test Unitari** (Components):
-   - Framework: Vitest o Jest
-   - Target: Componenti React isolati
-   - Libreria: React Testing Library
-
-2. **Test API** (Server):
-   - Framework: Vitest o Jest
-   - Target: Route Hono, middleware, logica business
-   - Libreria: Supertest per HTTP testing
-
-3. **Test E2E** (Webapp):
-   - Framework: Playwright o Cypress
-   - Target: Flussi utente completi
-
-4. **Test di Integrazione**:
-   - Test database con Prisma
-   - Test autenticazione end-to-end
+Aree ancora senza test dedicati: `packages/components` (nessun test di componenti React), `packages/client` (codice generato, non testato direttamente), test end-to-end cross-pacchetto.
 
 ### Sicurezza CI/CD
 
@@ -1377,10 +1451,12 @@ monitoring:
 | **Maps**     | OpenLayers 10                    |
 | **Styling**  | TailwindCSS, DaisyUI             |
 | **State**    | Zustand, XState                  |
-| **Build**    | Rollup (components), Vite (apps) |
-| **Auth**     | JWT, bcrypt                      |
+| **Build**    | Rollup (components, client), Vite (apps) |
+| **Auth**     | JWT, bcrypt, API Key (`dv_`-prefixed)    |
 | **Email**    | Resend                           |
 | **AI**       | OpenAI API                       |
+| **API client** | axios + Orval (codegen da OpenAPI) — `packages/client` |
+| **Testing**  | Bun test runner (server), Vitest + Testing Library + `vitest-axe` (webapp) |
 
 ---
 
@@ -1462,8 +1538,8 @@ kubectl run -n graph-italia db-delete-user --rm -it --restart=Never \
 
 Il progetto **Graph Italia** è un sistema completo e modulare per la creazione e gestione di visualizzazioni dati. La struttura monorepo permette:
 
-1. **Riutilizzo**: Componenti React pubblicabili come libreria npm
-2. **Separazione**: Backend e frontend completamente separati
+1. **Riutilizzo**: Componenti React pubblicabili come libreria npm, e un client Api tipizzato (`graph-italia-cli`) generato direttamente dallo spec del server
+2. **Separazione**: Backend, frontend e client API completamente separati e componibili indipendentemente
 3. **Scalabilità**: Facile aggiungere nuovi pacchetti o funzionalità
 4. **Manutenibilità**: Codice organizzato e tipizzato
 
@@ -1471,8 +1547,41 @@ Il sistema supporta un workflow completo: dall'upload dati, alla configurazione 
 
 ---
 
-## License
+## Open Source
 
-Copyright© 2023-present - Presidenza del Consiglio dei Ministri
+**Graph Italia** è un progetto open source del Dipartimento per la Trasformazione Digitale, sviluppato e mantenuto come parte dell'ecosistema [italia](https://github.com/italia) su GitHub, nell'ambito dell'iniziativa [Developers Italia](https://developers.italia.it/) per il software open source della Pubblica Amministrazione. I metadati di catalogazione sono in [`publiccode.yml`](publiccode.yml).
 
-The source code is released under the GNU Affero General Public License (SPDX code: AGPL-3.0-only)
+### Licenze
+
+Copyright © 2023-present Presidenza del Consiglio dei Ministri.
+
+Tutti i pacchetti del monorepo sono rilasciati sotto la stessa licenza, dichiarata nel campo `license` di ogni `package.json` e in `publiccode.yml`:
+
+| Pacchetto | Licenza |
+|---|---|
+| `packages/components` (`graph-italia-components`) | `AGPL-3.0-only` |
+| `packages/server` (`graph-italia-server`) | `AGPL-3.0-only` |
+| `packages/webapp` (`graph-italia-webapp`) | `AGPL-3.0-only` |
+| `packages/client` (`graph-italia-cli`) | `AGPL-3.0-only` |
+| `packages/ui-example-app` | `AGPL-3.0-only` |
+
+**GNU Affero General Public License v3.0 only** (SPDX: `AGPL-3.0-only`). A differenza della GPL "semplice", l'AGPL estende l'obbligo di redistribuire il codice sorgente (comprese le modifiche) anche a chi fa girare una versione modificata del software **come servizio di rete**, senza distribuire binari — è la clausola rilevante se pensi di forkare `packages/server`/`packages/webapp` e offrirli come servizio ad altri. Se ti limiti a *consumare* `graph-italia-components` o `graph-italia-cli` come dipendenza da un'applicazione separata (senza modificarne il codice), questo non ti obbliga a rilasciare il codice della tua applicazione — ma se modifichi uno di questi pacchetti e distribuisci/servi la versione modificata, quella modifica va resa disponibile allo stesso modo.
+
+### Come contribuire
+
+1. **Issue**: usa i template in `.github/ISSUE_TEMPLATE/` (segnalazione bug in italiano/inglese) per aprire una issue su GitHub — è il canale con cui i maintainer tracciano bug e richieste.
+2. **Branching e PR**: parti sempre da `main` aggiornato, crea un branch `feature/<nome>`, apri la PR verso `develop` (che si deploya automaticamente sull'ambiente di test) — vedi la sezione [GitFlow e Branching Strategy](#gitflow-e-branching-strategy) più sopra per il flusso completo fino al rilascio in produzione via tag semantico.
+3. **Dove intervenire per singolo pacchetto**: ogni pacchetto ha una sezione "come contribuire"/"taking part in development" nel proprio README con le convenzioni specifiche — [`packages/server/README.md`](packages/server/README.md) (rotte, schema Prisma, test Bun), [`packages/webapp/README.md`](packages/webapp/README.md) (routing, stato Zustand/XState, i18n, accessibilità), [`packages/components/README.md`](packages/components/README.md) (peer dependency, build Rollup, release npm), [`packages/client/README.md`](packages/client/README.md) (rigenerazione via Orval, mai editare `src/client.ts`/`src/model/` a mano).
+4. **Test prima della PR**: `bun test` da `packages/server`, `bun run test` da `packages/webapp`, e `bun run build` dalla root per verificare che tutti i pacchetti si buildino — è quello che verifica anche la CI (`ci.yml`).
+5. **Accessibilità**: essendo un progetto per siti della PA, la conformità WCAG lato webapp non è opzionale — se tocchi markup o componenti condivisi, verifica/estendi i test in `packages/webapp/src/tests/a11y/`.
+6. **Segreti**: non committare mai `.env`/credenziali reali; il repo ha GitGuardian (`.gitguardian.yaml`) configurato per intercettarli, ma resta responsabilità di chi contribuisce non introdurli.
+
+### Come adottare il progetto
+
+Graph Italia è pensato per essere forkato/self-hosted, non solo letto. A seconda di cosa ti serve, tre livelli di adozione:
+
+1. **Solo la libreria di rendering**: installa `graph-italia-components` da npm e renderizza il tuo JSON di chart/dashboard — non serve nessun altro pacchetto di questo monorepo.
+2. **Stack completo, dati tuoi**: fai girare `packages/server` (Hono + Prisma/PostgreSQL) contro un tuo database e punta la webapp (`VITE_SERVER_URL`) alla tua istanza — vedi `CLAUDE.md` per le variabili d'ambiente e `charts/graph-italia/` per il chart Helm se distribuisci su Kubernetes. In questa configurazione, a differenza della nostra istanza hosted, hai piena disponibilità delle funzionalità di pubblicazione pubblica/embed via iframe (vedi nota importante nella sezione [Scope](#scope)).
+3. **Frontend tuo, server esistente**: usa `packages/client` (SDK tipizzato) o chiamate REST dirette contro l'API documentata (`/docs`) di un'istanza di `packages/server`, e costruisci la tua interfaccia al posto della webapp — è esattamente la separazione che rende `packages/client` e `packages/components` utili in modo indipendente.
+
+Essendo il fork di un progetto specifico della Pubblica Amministrazione italiana, aspettati alcuni default legati a quel contesto (localizzazione italiana, pagine legali, stile vicino a Bootstrap Italia/Italia design system) da riconfigurare o rimuovere per un uso generico. Per contatti di manutenzione vedi `publiccode.yml`.
