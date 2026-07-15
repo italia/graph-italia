@@ -182,10 +182,11 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
     const { charts, lastCreated, selectedChart } = get();
 
     set({
-      charts: {
-        ...charts,
-        [lastCreated as string]: selectedChart as ChartLookup,
-      },
+      // Closing without picking a chart must not write an undefined entry
+      charts:
+        lastCreated && selectedChart
+          ? { ...charts, [lastCreated]: selectedChart as ChartLookup }
+          : charts,
       show: false,
       lastCreated: undefined,
       selectedChart: undefined,
@@ -274,10 +275,14 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
     await updateDashboard(id!, { name, description, publish: publishValue });
 
     const body = {
-      slots: layout.map((l) => ({
-        chartId: nextTexts[l.i]?.chartId ?? charts[l.i]?.id,
-        settings: { i: l.i, w: l.w, h: l.h, x: l.x, y: l.y },
-      })),
+      // A slot row requires a chartId: slots still without content stay in
+      // the editor but are skipped here instead of failing the whole save.
+      slots: layout
+        .filter((l) => nextTexts[l.i]?.chartId ?? charts[l.i]?.id)
+        .map((l) => ({
+          chartId: nextTexts[l.i]?.chartId ?? charts[l.i]?.id,
+          settings: { i: l.i, w: l.w, h: l.h, x: l.x, y: l.y },
+        })),
     };
     const ok = await updateSlots(id!, body).then((r) => Boolean(r));
 

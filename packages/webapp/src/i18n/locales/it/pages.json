@@ -141,11 +141,15 @@
                     "back": {
                         "label": "Torna alla lista"
                     },
+                    "reset": {
+                        "label": "Reimposta"
+                    },
                     "save": {
                         "default": "Salva",
                         "isSaving": "Salvataggio...",
                         "success": "Dashboard salvata con successo",
-                        "error": "Errore durante il salvataggio della dashboard"
+                        "error": "Errore durante il salvataggio della dashboard",
+                        "skippedEmpty": "Gli slot senza contenuto non vengono salvati"
                     }
                 }
             },
@@ -179,8 +183,10 @@
                 }
             },
             "slots": {
-                "title": "Modifica dashboard slots",
-                "description": "Crea uno slot e assegnalo al grafico",
+                "title": "Componi la dashboard",
+                "description": "Aggiungi slot con grafici o blocchi di testo e disponili nella griglia",
+                "hint": "Trascina uno slot dalla sua barra superiore per spostarlo, oppure usa i controlli L (larghezza), A (altezza) e le frecce.",
+                "empty": "Nessuno slot: usa “Aggiungi slot” per un grafico o “Aggiungi testo” per un blocco di testo.",
                 "actions": {
                     "addSlot": {
                         "label": "Aggiungi slot"
@@ -214,16 +220,26 @@
                     }
                 },
                 "slotToolbar": {
+                    "dragHint": "Trascina per spostare lo slot",
                     "width": {
-                        "label": "Larghezza"
+                        "label": "Larghezza",
+                        "short": "L"
                     },
                     "height": {
-                        "label": "Altezza"
+                        "label": "Altezza",
+                        "short": "A"
+                    },
+                    "move": {
+                        "label": "Sposta slot",
+                        "left": "Sposta a sinistra",
+                        "up": "Sposta in alto",
+                        "down": "Sposta in basso",
+                        "right": "Sposta a destra"
                     },
                     "actions": {
                         "change": {
                             "label": "Cambia",
-                            "title": "Assegna Grafico"
+                            "title": "Assegna grafico"
                         },
                         "remove": {
                             "label": "Rimuovi",
@@ -238,6 +254,11 @@
                     },
                     "placeholder": "Scrivi in Markdown: # Titolo, **grassetto**, - elenchi…",
                     "ariaLabel": "Contenuto del blocco di testo"
+                }
+            },
+            "modals": {
+                "selectChart": {
+                    "title": "Scegli un grafico"
                 }
             }
         },

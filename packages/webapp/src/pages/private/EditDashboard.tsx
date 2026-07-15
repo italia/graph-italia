@@ -9,6 +9,7 @@ import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FaInfo, FaThLarge } from "react-icons/fa";
+import { FaGripVertical, FaTrashCan } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import EditStepComponent from "../../components/EditStepComponent";
 import TextSlot from "../../components/TextSlot";
@@ -236,133 +237,108 @@ function SlotToolbar({
   const { t } = useTranslation("pages", {
     keyPrefix: `charts.editDashboard`,
   });
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
   return (
     <div
-      className="rgl-drag-handle flex items-center gap-1 px-2 bg-base-200 border-b shrink-0 cursor-move select-none"
+      className="rgl-drag-handle flex items-center gap-2 px-2 bg-base-200 border-b border-base-300 shrink-0 cursor-grab active:cursor-grabbing select-none"
       style={{ height: TOOLBAR_HEIGHT }}
+      title={t(`components.slotToolbar.dragHint`, "Trascina per spostare lo slot")}
     >
-      <span className="badge badge-error badge-xs font-mono">{item.i}</span>
+      <FaGripVertical
+        className="shrink-0 text-base-content/50"
+        aria-hidden="true"
+      />
 
-      <div
-        role="group"
-        aria-label={t(`components.slotToolbar.width.label`)}
-        className="flex items-center gap-1"
+      <label
+        className="flex items-center gap-1 text-xs text-base-content/70 cursor-default"
+        title={t(`components.slotToolbar.width.label`)}
+        onMouseDown={stop}
       >
-        <span className="text-xs opacity-50 ml-1" aria-hidden="true">
-          {t(`components.slotToolbar.width.label`)}
-        </span>
-        {[1, 2, 3].map((span) => (
-          <button
-            key={span}
-            type="button"
-            aria-label={t(`components.slotToolbar.width.option`, {
-              value: span,
-              defaultValue: `Larghezza {{value}}`,
-            })}
-            aria-pressed={item.w === span}
-            className={`btn btn-xs ${item.w === span ? "btn-primary" : "btn-ghost"}`}
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => onSizeChange(span, item.h)}
-          >
-            {span}
-          </button>
-        ))}
-      </div>
+        {t(`components.slotToolbar.width.short`, "L")}
+        <select
+          className="select select-bordered select-xs w-12 bg-base-100"
+          value={item.w}
+          aria-label={t(`components.slotToolbar.width.label`)}
+          onChange={(e) => onSizeChange(Number(e.target.value), item.h)}
+        >
+          {[1, 2, 3].map((span) => (
+            <option key={span} value={span}>
+              {span}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <div
-        role="group"
-        aria-label={t(`components.slotToolbar.height.label`)}
-        className="flex items-center gap-1"
+      <label
+        className="flex items-center gap-1 text-xs text-base-content/70 cursor-default"
+        title={t(`components.slotToolbar.height.label`)}
+        onMouseDown={stop}
       >
-        <span className="text-xs opacity-50 ml-1" aria-hidden="true">
-          {t(`components.slotToolbar.height.label`)}
-        </span>
-        {[1, 2, 3, 4].map((rows) => (
-          <button
-            key={rows}
-            type="button"
-            aria-label={t(`components.slotToolbar.height.option`, {
-              value: rows,
-              defaultValue: `Altezza {{value}}`,
-            })}
-            aria-pressed={item.h === rows}
-            className={`btn btn-xs ${item.h === rows ? "btn-primary" : "btn-ghost"}`}
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => onSizeChange(item.w, rows)}
-          >
-            {rows}
-          </button>
-        ))}
-      </div>
+        {t(`components.slotToolbar.height.short`, "A")}
+        <select
+          className="select select-bordered select-xs w-12 bg-base-100"
+          value={item.h}
+          aria-label={t(`components.slotToolbar.height.label`)}
+          onChange={(e) => onSizeChange(item.w, Number(e.target.value))}
+        >
+          {[1, 2, 3, 4].map((rows) => (
+            <option key={rows} value={rows}>
+              {rows}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <div
         role="group"
         aria-label={t(`components.slotToolbar.move.label`, { defaultValue: "Sposta slot" })}
-        className="flex items-center gap-1 ml-1"
+        className="flex items-center"
       >
-        <button
-          type="button"
-          className="btn btn-xs btn-ghost"
-          aria-label={t(`components.slotToolbar.move.left`, { defaultValue: "Sposta a sinistra" })}
-          title={t(`components.slotToolbar.move.left`, { defaultValue: "Sposta a sinistra" })}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => onMove(-1, 0)}
-        >
-          <span aria-hidden="true">←</span>
-        </button>
-        <button
-          type="button"
-          className="btn btn-xs btn-ghost"
-          aria-label={t(`components.slotToolbar.move.up`, { defaultValue: "Sposta in alto" })}
-          title={t(`components.slotToolbar.move.up`, { defaultValue: "Sposta in alto" })}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => onMove(0, -1)}
-        >
-          <span aria-hidden="true">↑</span>
-        </button>
-        <button
-          type="button"
-          className="btn btn-xs btn-ghost"
-          aria-label={t(`components.slotToolbar.move.down`, { defaultValue: "Sposta in basso" })}
-          title={t(`components.slotToolbar.move.down`, { defaultValue: "Sposta in basso" })}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => onMove(0, 1)}
-        >
-          <span aria-hidden="true">↓</span>
-        </button>
-        <button
-          type="button"
-          className="btn btn-xs btn-ghost"
-          aria-label={t(`components.slotToolbar.move.right`, { defaultValue: "Sposta a destra" })}
-          title={t(`components.slotToolbar.move.right`, { defaultValue: "Sposta a destra" })}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => onMove(1, 0)}
-        >
-          <span aria-hidden="true">→</span>
-        </button>
+        {(
+          [
+            ["←", -1, 0, "left", "Sposta a sinistra"],
+            ["↑", 0, -1, "up", "Sposta in alto"],
+            ["↓", 0, 1, "down", "Sposta in basso"],
+            ["→", 1, 0, "right", "Sposta a destra"],
+          ] as const
+        ).map(([arrow, dx, dy, key, fallback]) => (
+          <button
+            key={key}
+            type="button"
+            className="btn btn-xs btn-ghost px-1.5"
+            aria-label={t(`components.slotToolbar.move.${key}`, { defaultValue: fallback })}
+            title={t(`components.slotToolbar.move.${key}`, { defaultValue: fallback })}
+            onMouseDown={stop}
+            onClick={() => onMove(dx, dy)}
+          >
+            <span aria-hidden="true">{arrow}</span>
+          </button>
+        ))}
       </div>
 
-      {onAddChart && (
+      <div className="ml-auto flex items-center gap-1">
+        {onAddChart && (
+          <button
+            type="button"
+            className="btn btn-xs btn-outline btn-primary"
+            title={t(`components.slotToolbar.actions.change.title`)}
+            onMouseDown={stop}
+            onClick={onAddChart}
+          >
+            {t(`components.slotToolbar.actions.change.label`)}
+          </button>
+        )}
         <button
           type="button"
-          className="btn btn-xs btn-outline ml-1"
-          title={t(`components.slotToolbar.actions.change.title`)}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={onAddChart}
+          className="btn btn-xs btn-error btn-square"
+          title={t(`components.slotToolbar.actions.remove.title`)}
+          aria-label={t(`components.slotToolbar.actions.remove.title`)}
+          onMouseDown={stop}
+          onClick={onDelete}
         >
-          {t(`components.slotToolbar.actions.change.label`)}
+          <FaTrashCan aria-hidden="true" />
         </button>
-      )}
-      <button
-        type="button"
-        className="btn btn-xs btn-error ml-auto"
-        title={t(`components.slotToolbar.actions.remove.title`)}
-        aria-label={t(`components.slotToolbar.actions.remove.title`)}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={onDelete}
-      >
-        <span aria-hidden="true">✕</span>
-      </button>
+      </div>
     </div>
   );
 }
@@ -405,10 +381,25 @@ function DashboardEditPage() {
   async function saveHandler() {
     setIsSaving(true);
     try {
+      // Slots without a chart or text block cannot be persisted (a slot row
+      // requires a chartId): they stay in the editor but are skipped on save.
+      const emptySlots = layout.filter(
+        (l) => !charts[l.i] && !texts[l.i],
+      ).length;
       const ok = await save();
       if (ok) {
-        reload();
+        // Reloading would drop unsaved empty slots from the editor
+        if (emptySlots === 0) reload();
         toast.success(t("header.actions.save.success", "Dashboard salvata con successo"));
+        if (emptySlots > 0) {
+          toast(
+            t(
+              "header.actions.save.skippedEmpty",
+              "Gli slot senza contenuto non vengono salvati",
+            ),
+            { icon: "⚠️" },
+          );
+        }
       } else {
         toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
       }
@@ -451,9 +442,9 @@ function DashboardEditPage() {
         <h1 className="text-xl font-bold">
           {id ? t(`header.pageTitle.edit`) : t(`header.pageTitle.new`)}
         </h1>
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 flex items-center gap-2">
           <button type="button" onClick={reload} className="btn btn-outline">
-            Reset
+            {t(`header.actions.reset.label`, "Reimposta")}
           </button>
           <button
             type="button"
@@ -472,7 +463,7 @@ function DashboardEditPage() {
           </button>
         </div>
       </div>
-      <div className="p-4">
+      <div className="px-4 lg:px-10 pb-10">
         {isLoading && <Loading />}
         {error && (
           <div role="alert" className="alert alert-error">
@@ -480,20 +471,18 @@ function DashboardEditPage() {
           </div>
         )}
         {loaded && (
-          <div className="w-full">
-            <div className="w-full grid grid-cols-2 xl:grid-cols-6  gap-4">
-              <div className="space-y-1 xl:col-span-2">
-                <EditStepComponent
-                  title={t(`body.options.setup.title`)}
-                  description={t(`body.options.setup.description`)}
-                  Icon={FaInfo}
-                  isOpen={false}
-                  isDisabled={false}
-                  index={0}
-                >
-                  <div className="card bg-base-100 shadow-sm border border-base-300">
-                    <div className="card-body">
-                      <div className="flex flex-col space-y-2">
+          <div className="w-full space-y-4">
+            <EditStepComponent
+              title={t(`body.options.setup.title`)}
+              description={t(`body.options.setup.description`)}
+              Icon={FaInfo}
+              isOpen={false}
+              isDisabled={false}
+              index={0}
+            >
+              <div className="pt-1 max-w-3xl">
+                <div>
+                  <div className="flex flex-col space-y-2">
                         {api.isPublishingEnabled() && (
                           <div className="flex items-center gap-4">
                             <input
@@ -559,63 +548,43 @@ function DashboardEditPage() {
                       </div>
                     </div>
                   </div>
-                </EditStepComponent>
-              </div>
-
-              {/* Right column: Preview */}
-              <section
-                aria-labelledby="dashboard-preview-heading"
-                className="xl:col-span-4 flex flex-col h-full p-4 bg-base-100  border border-base-300 rounded-lg"
-              >
-                <div className="bg-base-100 bl-2 flex flex-col gap-4">
-                  <h2
-                    id="dashboard-preview-heading"
-                    className="text-2xl font-bold"
-                  >
-                    {t(`header.preview.heading`)}
-                    {name ? `: ${name}` : ""}
-                  </h2>
-                  <div className="text-base-content/80">
-                    {description ? (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: description.replace(/\n/g, "<br />"),
-                        }}
-                      />
-                    ) : (
-                      <p className="italic text-base-content">{""}</p>
-                    )}
-                  </div>
-                </div>
-              </section>
-            </div>
+            </EditStepComponent>
 
             <div className="card bg-base-100 shadow-sm border border-base-300">
               <div className="card-body">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center" aria-hidden="true">
-                  <span className="text-primary font-bold">
-                    <FaThLarge />
-                  </span>
-                </div>
-                <div>
-                  <h2 className="card-title text-xl">{t(`slots.title`)}</h2>
-                  <p className="text-sm text-base-content/60">
-                    {t(`slots.description`)}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0" aria-hidden="true">
+                    <span className="text-primary font-bold">
+                      <FaThLarge />
+                    </span>
+                  </div>
+                  <div>
+                    <h2 className="card-title text-xl">{t(`slots.title`)}</h2>
+                    <p className="text-sm text-base-content/60">
+                      {t(`slots.description`)}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="w-full flex align-center justify-between">
+                <p className="text-sm text-base-content/70">
+                  {t(
+                    `slots.hint`,
+                    "Trascina uno slot dalla sua barra superiore per spostarlo, oppure usa i controlli L (larghezza), A (altezza) e le frecce.",
+                  )}
+                </p>
+
+                <div className="w-full flex align-center justify-between mt-2">
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      className="btn btn-primary mb-4"
+                      className="btn btn-primary"
                       onClick={addItem}
                     >
                       <span aria-hidden="true">+</span> {t(`slots.actions.addSlot.label`)}
                     </button>
                     <button
                       type="button"
-                      className="btn btn-outline btn-primary mb-4"
+                      className="btn btn-outline btn-primary"
                       onClick={addTextItem}
                     >
                       <span aria-hidden="true">+</span> {t(`slots.actions.addText.label`, "Aggiungi testo")}
@@ -634,8 +603,16 @@ function DashboardEditPage() {
                 </div>
               </div>
             </div>
-            {/* Max-width container — ResponsiveGrid measures this element's width */}
-            <div style={{ margin: "0 auto" }} className="bg-base-300">
+            {/* Working area — ResponsiveGrid measures this element's width */}
+            <div className="rounded-lg border border-dashed border-base-300 bg-base-200/60 p-2 min-h-[160px]">
+              {layout.length === 0 && (
+                <div className="flex items-center justify-center h-36 text-base-content/60">
+                  {t(
+                    `slots.empty`,
+                    "Nessuno slot: usa “Aggiungi slot” per un grafico o “Aggiungi testo” per un blocco di testo.",
+                  )}
+                </div>
+              )}
               <ResponsiveGrid
                 layouts={layouts}
                 breakpoints={BREAKPOINTS}
@@ -718,8 +695,18 @@ function DashboardEditPage() {
         )}
 
         {show && (
-          <Dialog toggle={show} title="Select a chart" callback={closeAddModal}>
-            <ChartSelection charts={charts} onSelect={setSelectedChart} />
+          <Dialog
+            toggle={show}
+            title={t(`modals.selectChart.title`, "Scegli un grafico")}
+            callback={closeAddModal}
+          >
+            <ChartSelection
+              charts={charts}
+              onSelect={(chart) => {
+                setSelectedChart(chart);
+                closeAddModal();
+              }}
+            />
           </Dialog>
         )}
       </div>

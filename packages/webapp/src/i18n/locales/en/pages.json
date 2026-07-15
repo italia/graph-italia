@@ -141,11 +141,15 @@
                     "back": {
                         "label": "Back to list"
                     },
+                    "reset": {
+                        "label": "Reset"
+                    },
                     "save": {
                         "default": "Save",
                         "isSaving": "Saving...",
                         "success": "Dashboard saved successfully",
-                        "error": "Error saving dashboard"
+                        "error": "Error saving dashboard",
+                        "skippedEmpty": "Slots without content are not saved"
                     }
                 }
             },
@@ -179,8 +183,10 @@
                 }
             },
             "slots": {
-                "title": "Edit dashboard slots",
-                "description": "Create a slot and assign it to a chart",
+                "title": "Compose the dashboard",
+                "description": "Add slots with charts or text blocks and arrange them on the grid",
+                "hint": "Drag a slot by its top bar to move it, or use the W (width), H (height) controls and the arrows.",
+                "empty": "No slots yet: use “Add Slot” for a chart or “Add text” for a text block.",
                 "actions": {
                     "addSlot": {
                         "label": "Add Slot"
@@ -214,20 +220,30 @@
                     }
                 },
                 "slotToolbar": {
+                    "dragHint": "Drag to move the slot",
                     "width": {
-                        "label": "Width"
+                        "label": "Width",
+                        "short": "W"
                     },
                     "height": {
-                        "label": "Height"
+                        "label": "Height",
+                        "short": "H"
+                    },
+                    "move": {
+                        "label": "Move slot",
+                        "left": "Move left",
+                        "up": "Move up",
+                        "down": "Move down",
+                        "right": "Move right"
                     },
                     "actions": {
                         "change": {
                             "label": "Change",
-                            "title": "Assign Chart"
+                            "title": "Assign chart"
                         },
                         "remove": {
                             "label": "Remove",
-                            "title": "Remove Slot"
+                            "title": "Remove slot"
                         }
                     }
                 },
@@ -238,6 +254,11 @@
                     },
                     "placeholder": "Write in Markdown: # Title, **bold**, - lists…",
                     "ariaLabel": "Text block content"
+                }
+            },
+            "modals": {
+                "selectChart": {
+                    "title": "Pick a chart"
                 }
             }
         },
