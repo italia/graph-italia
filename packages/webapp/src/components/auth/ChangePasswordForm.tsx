@@ -5,29 +5,14 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z as zod } from "zod";
 import * as api from "../../lib/api";
+import { getPasswordSchema } from "./passwordRules";
+import PasswordRequirements from "./PasswordRequirements";
 
 const getUpdatePasswordSchema = (
   z: typeof zod,
   t: TFunction<"translation", undefined>,
 ) => {
-  const passwordSchema = z
-    .string()
-    .min(8, {
-      message: t(`form.fields.password.errors.minLength`),
-    })
-    // .max(20, { message: maxLengthErrorMessage })
-    .refine((password) => /[A-Z]/.test(password), {
-      message: t(`form.fields.password.errors.uppercase`),
-    })
-    .refine((password) => /[a-z]/.test(password), {
-      message: t(`form.fields.password.errors.lowercase`),
-    })
-    .refine((password) => /[0-9]/.test(password), {
-      message: t(`form.fields.password.errors.number`),
-    })
-    .refine((password) => /[^A-Za-z0-9]/.test(password), {
-      message: t(`form.fields.password.errors.specialChar`),
-    });
+  const passwordSchema = getPasswordSchema(z, t);
 
   const updatePasswordSchema = z
     .object({
@@ -45,6 +30,7 @@ const getUpdatePasswordSchema = (
 function ChangePassword({ onDone }: { onDone: () => void }) {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const { t } = useTranslation("components", {
     keyPrefix: "components.auth.changePasswordForm",
   });
@@ -52,6 +38,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(updatePasswordSchema),
@@ -103,9 +90,10 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                       <input
                         id="hs-toggle-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter a new password"
+                        placeholder={t(`form.fields.password.placeholder`)}
                         className="input input-bordered w-full"
                         {...register("password")}
+                        onFocus={() => setPasswordFocused(true)}
                       />
                       <button
                         type="button"
@@ -162,9 +150,10 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                     className='w-full rounded-md'
                     {...register('password')}
                   /> */}
-                    {errors["password"] && (
-                      <p className="text-error">{errors["password"].message}</p>
-                    )}
+                    <PasswordRequirements
+                      password={watch("password") ?? ""}
+                      visible={passwordFocused}
+                    />
                   </div>
                 </div>
 
