@@ -478,7 +478,8 @@
             "title": "Your Projects",
             "personal": "Personal Projects",
             "selectPrompt": "Select Project",
-            "newBtn": "New Project"
+            "newBtn": "New Project",
+            "help": "Projects group charts, dashboards and data sources. The active project determines what you see and where new items are saved."
         },
         "body": {
             "actions": {
@@ -507,6 +508,23 @@
                 "labels": {
                     "confirm": "Select an option above",
                     "cancel": "Close"
+                },
+                "items": {
+                    "chart": {
+                        "description": "A single chart (bars, lines, pie…) built from your data."
+                    },
+                    "kpi": {
+                        "description": "A group of summary numeric indicators (KPIs), shown as side-by-side tiles."
+                    },
+                    "map": {
+                        "description": "A geographic map of Italy with data by region, province or points."
+                    },
+                    "dash": {
+                        "description": "A composable grid of charts and text blocks, to share or embed in other sites."
+                    },
+                    "datasource": {
+                        "description": "A data source (CSV file or remote URL) reusable across charts."
+                    }
                 }
             },
             "cancel": "Cancel",
@@ -654,6 +672,11 @@
             "reinstated": "API key reinstated",
             "reinstateError": "Error reinstating API key",
             "copyError": "Could not copy to clipboard"
+        },
+        "help": {
+            "intro": "API keys let external applications (scripts, websites, integrations) access a project's data without logging in. Each key is bound to a single project: with the READONLY role it only allows reading charts, dashboards and data sources, with READWRITE it also allows creating and editing them.",
+            "secret": "The full key is shown only once, at creation time: store it somewhere safe. When in doubt, revoke it and create a new one.",
+            "exampleLabel": "Usage example:"
         }
     },
     "orgs": {
@@ -723,6 +746,11 @@
             "projectRevokeError": "Error revoking project",
             "projectTransferred": "Project transferred successfully",
             "projectTransferError": "Error transferring project"
+        },
+        "help": {
+            "intro": "Organizations let a group of people collaborate on the same projects: every member can view and edit the charts, dashboards and data sources of the projects associated with the organization. Whoever creates the organization is its admin and can invite members by email, change their role and associate or revoke projects.",
+            "members": "Members with the ADMIN role can invite or remove members and manage the organization; USER members access the associated projects without admin powers.",
+            "projects": "“Transfer Project” associates one of your personal projects with this organization: every member will be able to view and edit it. It is not an ownership transfer — you remain the owner and can revoke the association at any time (⇄ icon next to the project); on revoke the project becomes personal again."
         }
     }
 }

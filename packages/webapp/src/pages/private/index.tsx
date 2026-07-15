@@ -345,6 +345,12 @@ function Home() {
                 role="menu"
                 className={`${projectDropdownOpen ? "block" : "hidden"} absolute left-0 top-full z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto`}
               >
+                <li className="px-2 py-1 text-xs text-base-content/60 pointer-events-none">
+                  {t(
+                    "projectSwitcher.help",
+                    "I progetti raggruppano grafici, dashboard e sorgenti dati. Il progetto attivo determina cosa vedi e dove viene salvato ciò che crei.",
+                  )}
+                </li>
                 {personalProjects.length > 0 && (
                   <>
                     <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{t("projectSwitcher.personal", "Personal Projects")}</li>
@@ -557,6 +563,9 @@ function Home() {
               )}
               <span className="font-semibold">
                 {isCreatingNewChart === 1 ? "Creating..." : label}
+              </span>
+              <span className="text-xs text-base-content/60 text-center leading-snug">
+                {t(`modals.createNew.items.${key}.description`)}
               </span>
             </button>
           ))}

@@ -77,7 +77,7 @@ const getServerUrl = (): string => {
 
 // Use a getter function instead of a constant to ensure it's recalculated
 // when window.__ENV__ is updated after config.json is loaded
-const getServerUrlWithApi = (): string => {
+export const getServerUrlWithApi = (): string => {
   return `${getServerUrl()}/api`;
 };
 

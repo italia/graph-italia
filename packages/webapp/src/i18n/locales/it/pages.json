@@ -477,7 +477,8 @@
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
             "selectPrompt": "Seleziona Progetto",
-            "newBtn": "Nuovo Progetto"
+            "newBtn": "Nuovo Progetto",
+            "help": "I progetti raggruppano grafici, dashboard e sorgenti dati. Il progetto attivo determina cosa vedi e dove viene salvato ciò che crei."
         },
         "body": {
             "actions": {
@@ -507,6 +508,23 @@
                 "labels": {
                     "confirm": "Seleziona un'opzione sopra",
                     "cancel": "Chiudi"
+                },
+                "items": {
+                    "chart": {
+                        "description": "Un singolo grafico (barre, linee, torta…) creato a partire dai tuoi dati."
+                    },
+                    "kpi": {
+                        "description": "Un gruppo di indicatori numerici di sintesi (KPI), mostrati come riquadri affiancati."
+                    },
+                    "map": {
+                        "description": "Una mappa geografica dell'Italia con dati per regione, provincia o punti sul territorio."
+                    },
+                    "dash": {
+                        "description": "Una griglia componibile di grafici e blocchi di testo, da condividere o incorporare in altri siti."
+                    },
+                    "datasource": {
+                        "description": "Una sorgente dati (file CSV o URL remoto) riutilizzabile in più grafici."
+                    }
                 }
             },
             "cancel": "Annulla",
@@ -638,6 +656,11 @@
             "reinstated": "Chiave API riattivata",
             "reinstateError": "Errore durante la riattivazione della chiave API",
             "copyError": "Impossibile copiare negli appunti"
+        },
+        "help": {
+            "intro": "Le chiavi API permettono ad applicazioni esterne (script, siti web, integrazioni) di accedere ai dati di un progetto senza effettuare il login. Ogni chiave è legata a un solo progetto: con ruolo READONLY consente solo la lettura di grafici, dashboard e sorgenti dati, con READWRITE anche la loro creazione e modifica.",
+            "secret": "La chiave completa viene mostrata una sola volta, al momento della creazione: conservala in un luogo sicuro. In caso di dubbio puoi revocarla e crearne una nuova.",
+            "exampleLabel": "Esempio d'uso:"
         }
     },
     "orgs": {
@@ -706,6 +729,11 @@
             "projectRevokeError": "Errore durante la revoca del progetto",
             "projectTransferred": "Progetto trasferito con successo",
             "projectTransferError": "Errore durante il trasferimento del progetto"
+        },
+        "help": {
+            "intro": "Le organizzazioni servono a far collaborare un gruppo di persone sugli stessi progetti: tutti i membri vedono e possono modificare grafici, dashboard e sorgenti dati dei progetti associati all'organizzazione. Chi crea l'organizzazione ne è amministratore e può invitare membri via email, cambiarne il ruolo e associare o revocare progetti.",
+            "members": "I membri con ruolo ADMIN possono invitare o rimuovere membri e gestire l'organizzazione; i membri USER accedono ai progetti associati senza poteri di amministrazione.",
+            "projects": "“Trasferisci Progetto” associa un tuo progetto personale a questa organizzazione: tutti i membri potranno vederlo e modificarlo. Non è una cessione di proprietà — resti proprietario e puoi revocare l'associazione in qualsiasi momento (icona ⇄ accanto al progetto); con la revoca il progetto torna personale."
         }
     }
 }

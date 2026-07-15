@@ -75,6 +75,12 @@ function LoadSource({
             </label>
           )}
         </div>
+        <p className="text-xs text-base-content/60 mt-1">
+          {t(
+            "hint",
+            "Il grafico resta collegato alla fonte: quando è pubblico, il server aggiorna automaticamente i dati dall'URL se la copia salvata è più vecchia di 24 ore.",
+          )}
+        </p>
       </div>
 
       <button
