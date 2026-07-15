@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaTrash, FaPlus, FaCopy, FaCheck, FaKey, FaBan, FaRotateLeft } from "react-icons/fa6";
 import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";
@@ -67,9 +68,11 @@ export default function EditApiKeysPage() {
         setShowCreateModal(false);
         setRevealedKey(created.rawKey);
         await fetchKeys();
+        toast.success(t("toasts.created", "Chiave API creata con successo"));
       }
     } catch (e) {
       console.error("Failed to create API key:", e);
+      toast.error(t("toasts.createError", "Errore durante la creazione della chiave API"));
     } finally {
       setIsCreating(false);
     }
@@ -80,8 +83,10 @@ export default function EditApiKeysPage() {
     try {
       await api.deleteApiKey(pendingDeleteId);
       setKeys((prev) => prev.filter((k) => k.id !== pendingDeleteId));
+      toast.success(t("toasts.deleted", "Chiave API eliminata"));
     } catch (e) {
       console.error("Failed to delete API key:", e);
+      toast.error(t("toasts.deleteError", "Errore durante l'eliminazione della chiave API"));
     } finally {
       setPendingDeleteId(null);
     }
@@ -90,25 +95,39 @@ export default function EditApiKeysPage() {
   const handleRevoke = async (id: string) => {
     try {
       const updated = await api.revokeApiKey(id);
-      if (updated) setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, ...updated } : k)));
+      if (updated) {
+        setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, ...updated } : k)));
+        toast.success(t("toasts.revoked", "Chiave API revocata"));
+      }
     } catch (e) {
       console.error("Failed to revoke API key:", e);
+      toast.error(t("toasts.revokeError", "Errore durante la revoca della chiave API"));
     }
   };
 
   const handleReinstate = async (id: string) => {
     try {
       const updated = await api.reinstateApiKey(id);
-      if (updated) setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, ...updated } : k)));
+      if (updated) {
+        setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, ...updated } : k)));
+        toast.success(t("toasts.reinstated", "Chiave API riattivata"));
+      }
     } catch (e) {
       console.error("Failed to reinstate API key:", e);
+      toast.error(t("toasts.reinstateError", "Errore durante la riattivazione della chiave API"));
     }
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        toast.error(t("toasts.copyError", "Impossibile copiare negli appunti"));
+      });
   };
 
   // ── Helpers ──────────────────────────────────────────────────────────────────

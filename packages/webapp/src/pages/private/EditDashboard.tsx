@@ -6,6 +6,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FaInfo, FaThLarge } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -341,9 +342,15 @@ function DashboardEditPage() {
     setIsSaving(true);
     try {
       const ok = await save();
-      if (ok) reload();
+      if (ok) {
+        reload();
+        toast.success(t("header.actions.save.success", "Dashboard salvata con successo"));
+      } else {
+        toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
+      }
     } catch (error) {
       console.log(error);
+      toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
     } finally {
       setIsSaving(false);
     }

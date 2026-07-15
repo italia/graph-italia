@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaTrash, FaPlus, FaUsers, FaUserPlus, FaShieldHalved, FaBuilding, FaChevronRight, FaChevronDown, FaFolderTree, FaRightLeft } from "react-icons/fa6";
 
 import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";
@@ -117,8 +118,10 @@ export default function EditOrgsPage() {
       fetchOrgs();
       setShowCreateModal(false);
       setNewOrgName("");
+      toast.success(t("toasts.orgCreated", "Organizzazione creata con successo"));
     } catch (error) {
       console.error("Failed to create organization:", error);
+      toast.error(t("toasts.orgCreateError", "Errore durante la creazione dell'organizzazione"));
     } finally {
       setIsCreating(false);
     }
@@ -130,8 +133,10 @@ export default function EditOrgsPage() {
       await api.deleteOrg(pendingDeleteOrgId);
       if (selectedOrgId === pendingDeleteOrgId) setSelectedOrgId(null);
       fetchOrgs();
+      toast.success(t("toasts.orgDeleted", "Organizzazione eliminata"));
     } catch (error) {
       console.error("Failed to delete organization:", error);
+      toast.error(t("toasts.orgDeleteError", "Errore durante l'eliminazione dell'organizzazione"));
     } finally {
       setPendingDeleteOrgId(null);
     }
@@ -145,8 +150,10 @@ export default function EditOrgsPage() {
       fetchMembers(selectedOrgId);
       setShowAddMemberModal(false);
       setNewMemberEmail("");
+      toast.success(t("toasts.memberAdded", "Membro aggiunto con successo"));
     } catch (error) {
       console.error("Failed to add member:", error);
+      toast.error(t("toasts.memberAddError", "Errore durante l'aggiunta del membro"));
     } finally {
       setIsAddingMember(false);
     }
@@ -158,8 +165,10 @@ export default function EditOrgsPage() {
     try {
       await api.removeOrgMember(selectedOrgId, pendingRemoveUserId);
       fetchMembers(selectedOrgId);
+      toast.success(t("toasts.memberRemoved", "Membro rimosso"));
     } catch (error) {
       console.error("Failed to remove member:", error);
+      toast.error(t("toasts.memberRemoveError", "Errore durante la rimozione del membro"));
     } finally {
       setPendingRemoveUserId(null);
     }
@@ -170,8 +179,10 @@ export default function EditOrgsPage() {
     try {
       await api.updateOrgMemberRole(selectedOrgId, userId, role);
       fetchMembers(selectedOrgId);
+      toast.success(t("toasts.roleUpdated", "Ruolo aggiornato"));
     } catch (error) {
       console.error("Failed to update member role:", error);
+      toast.error(t("toasts.roleUpdateError", "Errore durante l'aggiornamento del ruolo"));
     }
   };
 
@@ -180,8 +191,10 @@ export default function EditOrgsPage() {
     try {
       await api.revokeOrgFromProject(pendingRevokeProjectId, selectedOrgId);
       setProjects((prev) => prev.filter((p) => p.id !== pendingRevokeProjectId));
+      toast.success(t("toasts.projectRevoked", "Accesso al progetto revocato"));
     } catch (error) {
       console.error("Failed to revoke project from org:", error);
+      toast.error(t("toasts.projectRevokeError", "Errore durante la revoca del progetto"));
     } finally {
       setPendingRevokeProjectId(null);
     }
@@ -195,8 +208,10 @@ export default function EditOrgsPage() {
       fetchOrgProjects(selectedOrgId);
       setShowTransferModal(false);
       setSelectedProjectIdToTransfer("");
+      toast.success(t("toasts.projectTransferred", "Progetto trasferito con successo"));
     } catch (error) {
       console.error("Failed to transfer project:", error);
+      toast.error(t("toasts.projectTransferError", "Errore durante il trasferimento del progetto"));
     } finally {
       setIsTransferring(false);
     }

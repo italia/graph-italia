@@ -13,6 +13,7 @@ import {
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ChartTable from "../../components/ChartTable.tsx";
@@ -148,9 +149,11 @@ function Home() {
         setCurrentProjectId(project.id);
         setShowCreateProjectDialog(false);
         setNewProjectName("");
+        toast.success(t("toasts.projectCreated", "Progetto creato con successo"));
       }
     } catch (error) {
       console.error("Failed to create project:", error);
+      toast.error(t("toasts.projectCreateError", "Errore durante la creazione del progetto"));
     } finally {
       setIsCreatingProject(false);
     }
@@ -165,8 +168,10 @@ function Home() {
       setShowRenameProjectDialog(false);
       setProjectToRename(null);
       setRenameProjectName("");
+      toast.success(t("toasts.projectRenamed", "Progetto rinominato con successo"));
     } catch (error) {
       console.error("Failed to rename project:", error);
+      toast.error(t("toasts.projectRenameError", "Errore durante la rinomina del progetto"));
     } finally {
       setIsRenamingProject(false);
     }
@@ -208,6 +213,11 @@ function Home() {
       .deleteChart(pendingDeleteId)
       .then(() => fetchCharts())
       .then(() => send({ type: "IDLE" }))
+      .then(() => toast.success(t("toasts.chartDeleted", "Grafico eliminato")))
+      .catch((error) => {
+        console.error(error);
+        toast.error(t("toasts.chartDeleteError", "Errore durante l'eliminazione del grafico"));
+      })
       .finally(() => setPendingDeleteId(null));
   }
 
@@ -298,6 +308,7 @@ function Home() {
       navigateToEdit(key, response.id);
     } catch (error) {
       console.error(`Error creating ${key} :`, error);
+      toast.error(t("toasts.createError", "Errore durante la creazione"));
       setIsCreatingNewChart(0);
     }
   }
@@ -636,6 +647,11 @@ function Home() {
           api
             .deleteDashaboard(pendingDeleteDashboardId)
             .then(() => fetchDashboards())
+            .then(() => toast.success(t("toasts.dashboardDeleted", "Dashboard eliminata")))
+            .catch((error) => {
+              console.error(error);
+              toast.error(t("toasts.dashboardDeleteError", "Errore durante l'eliminazione della dashboard"));
+            })
             .finally(() => setPendingDeleteDashboardId(null));
         }}
         cancelCb={() => setPendingDeleteDashboardId(null)}
@@ -653,6 +669,11 @@ function Home() {
           api
             .deleteDatasource(pendingDeleteDatasourceId)
             .then(() => fetchDatasources())
+            .then(() => toast.success(t("toasts.datasourceDeleted", "Sorgente dati eliminata")))
+            .catch((error) => {
+              console.error(error);
+              toast.error(t("toasts.datasourceDeleteError", "Errore durante l'eliminazione della sorgente dati"));
+            })
             .finally(() => setPendingDeleteDatasourceId(null));
         }}
         cancelCb={() => setPendingDeleteDatasourceId(null)}

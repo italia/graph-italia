@@ -131,7 +131,9 @@
                     },
                     "save": {
                         "default": "Salva",
-                        "isSaving": "Salvataggio..."
+                        "isSaving": "Salvataggio...",
+                        "success": "Dashboard salvata con successo",
+                        "error": "Errore durante il salvataggio della dashboard"
                     }
                 }
             },
@@ -560,6 +562,19 @@
                     }
                 }
             }
+        },
+        "toasts": {
+            "projectCreated": "Progetto creato con successo",
+            "projectCreateError": "Errore durante la creazione del progetto",
+            "projectRenamed": "Progetto rinominato con successo",
+            "projectRenameError": "Errore durante la rinomina del progetto",
+            "chartDeleted": "Grafico eliminato",
+            "chartDeleteError": "Errore durante l'eliminazione del grafico",
+            "dashboardDeleted": "Dashboard eliminata",
+            "dashboardDeleteError": "Errore durante l'eliminazione della dashboard",
+            "datasourceDeleted": "Sorgente dati eliminata",
+            "datasourceDeleteError": "Errore durante l'eliminazione della sorgente dati",
+            "createError": "Errore durante la creazione"
         }
     },
     "verify": {
@@ -612,6 +627,17 @@
         "form": {
             "role": "Ruolo",
             "expire": "Scadenza (minuti)"
+        },
+        "toasts": {
+            "created": "Chiave API creata con successo",
+            "createError": "Errore durante la creazione della chiave API",
+            "deleted": "Chiave API eliminata",
+            "deleteError": "Errore durante l'eliminazione della chiave API",
+            "revoked": "Chiave API revocata",
+            "revokeError": "Errore durante la revoca della chiave API",
+            "reinstated": "Chiave API riattivata",
+            "reinstateError": "Errore durante la riattivazione della chiave API",
+            "copyError": "Impossibile copiare negli appunti"
         }
     },
     "orgs": {
@@ -664,6 +690,22 @@
             "project": "Progetto",
             "selectProject": "Seleziona un progetto",
             "noPersonalProjects": "Nessun progetto personale trovato"
+        },
+        "toasts": {
+            "orgCreated": "Organizzazione creata con successo",
+            "orgCreateError": "Errore durante la creazione dell'organizzazione",
+            "orgDeleted": "Organizzazione eliminata",
+            "orgDeleteError": "Errore durante l'eliminazione dell'organizzazione",
+            "memberAdded": "Membro aggiunto con successo",
+            "memberAddError": "Errore durante l'aggiunta del membro",
+            "memberRemoved": "Membro rimosso",
+            "memberRemoveError": "Errore durante la rimozione del membro",
+            "roleUpdated": "Ruolo aggiornato",
+            "roleUpdateError": "Errore durante l'aggiornamento del ruolo",
+            "projectRevoked": "Accesso al progetto revocato",
+            "projectRevokeError": "Errore durante la revoca del progetto",
+            "projectTransferred": "Progetto trasferito con successo",
+            "projectTransferError": "Errore durante il trasferimento del progetto"
         }
     }
 }

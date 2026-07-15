@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
@@ -22,6 +23,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const [message, setMessage] = useState("");
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [resendInfo, setResendInfo] = useState<string | null>(null);
+  const [resendFailed, setResendFailed] = useState(false);
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");
@@ -64,14 +66,19 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
     if (!unverifiedEmail) return;
     try {
       await api.resendActivation(unverifiedEmail);
-      setResendInfo(t(`form.actions.resend.success`));
+      const msg = t(`form.actions.resend.success`);
+      setResendInfo(msg);
+      setResendFailed(false);
+      toast.success(msg);
     } catch (error) {
       const status = (error as AxiosError).response?.status;
-      setResendInfo(
+      const msg =
         status === 429
           ? t(`form.actions.resend.tooMany`)
-          : t(`form.actions.resend.error`),
-      );
+          : t(`form.actions.resend.error`);
+      setResendInfo(msg);
+      setResendFailed(true);
+      toast.error(msg);
     }
   }
 
@@ -152,7 +159,11 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                       {t(`form.actions.resend.label`)}
                     </button>
                     {resendInfo && (
-                      <p className="mt-2 text-info">{resendInfo}</p>
+                      <p
+                        className={`mt-2 ${resendFailed ? "text-error" : "text-info"}`}
+                      >
+                        {resendInfo}
+                      </p>
                     )}
                   </div>
                 )}

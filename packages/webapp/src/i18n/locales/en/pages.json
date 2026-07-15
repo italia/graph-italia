@@ -131,7 +131,9 @@
                     },
                     "save": {
                         "default": "Save",
-                        "isSaving": "Saving..."
+                        "isSaving": "Saving...",
+                        "success": "Dashboard saved successfully",
+                        "error": "Error saving dashboard"
                     }
                 }
             },
@@ -570,6 +572,19 @@
                     }
                 }
             }
+        },
+        "toasts": {
+            "projectCreated": "Project created successfully",
+            "projectCreateError": "Error creating project",
+            "projectRenamed": "Project renamed successfully",
+            "projectRenameError": "Error renaming project",
+            "chartDeleted": "Chart deleted",
+            "chartDeleteError": "Error deleting chart",
+            "dashboardDeleted": "Dashboard deleted",
+            "dashboardDeleteError": "Error deleting dashboard",
+            "datasourceDeleted": "Data source deleted",
+            "datasourceDeleteError": "Error deleting data source",
+            "createError": "Error while creating"
         }
     },
     "verify": {
@@ -628,6 +643,17 @@
             "selectProject": "Select a project",
             "personal": "Personal",
             "expire": "Expiration (minutes)"
+        },
+        "toasts": {
+            "created": "API key created successfully",
+            "createError": "Error creating API key",
+            "deleted": "API key deleted",
+            "deleteError": "Error deleting API key",
+            "revoked": "API key revoked",
+            "revokeError": "Error revoking API key",
+            "reinstated": "API key reinstated",
+            "reinstateError": "Error reinstating API key",
+            "copyError": "Could not copy to clipboard"
         }
     },
     "orgs": {
@@ -681,6 +707,22 @@
             "project": "Project",
             "selectProject": "Select a project",
             "noPersonalProjects": "No personal projects found"
+        },
+        "toasts": {
+            "orgCreated": "Organization created successfully",
+            "orgCreateError": "Error creating organization",
+            "orgDeleted": "Organization deleted",
+            "orgDeleteError": "Error deleting organization",
+            "memberAdded": "Member added successfully",
+            "memberAddError": "Error adding member",
+            "memberRemoved": "Member removed",
+            "memberRemoveError": "Error removing member",
+            "roleUpdated": "Role updated",
+            "roleUpdateError": "Error updating role",
+            "projectRevoked": "Project access revoked",
+            "projectRevokeError": "Error revoking project",
+            "projectTransferred": "Project transferred successfully",
+            "projectTransferError": "Error transferring project"
         }
     }
 }
