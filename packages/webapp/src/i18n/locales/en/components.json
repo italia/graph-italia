@@ -287,7 +287,8 @@
                         "default": "Load remote CSV data",
                         "loading": "Loading..."
                     }
-                }
+                },
+                "hint": "The chart stays linked to its source: when public, the server automatically refreshes the data from the URL if the saved copy is older than 24 hours."
             },
             "loadRemoteJsonData": {
                 "errors": {
@@ -302,7 +303,8 @@
                         "default": "Load remote JSON data",
                         "loading": "Loading..."
                     }
-                }
+                },
+                "hint": "The chart stays linked to its source: when public, the server automatically refreshes the data from the URL if the saved copy is older than 24 hours."
             },
             "transformData": {
                 "header": {

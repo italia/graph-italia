@@ -287,7 +287,8 @@
                         "default": "Carica dati CSV remoti",
                         "loading": "Caricamento..."
                     }
-                }
+                },
+                "hint": "Il grafico resta collegato alla fonte: quando è pubblico, il server aggiorna automaticamente i dati dall'URL se la copia salvata è più vecchia di 24 ore."
             },
             "loadRemoteJsonData": {
                 "errors": {
@@ -302,7 +303,8 @@
                         "default": "Carica dati JSON remoti",
                         "loading": "Caricamento..."
                     }
-                }
+                },
+                "hint": "Il grafico resta collegato alla fonte: quando è pubblico, il server aggiorna automaticamente i dati dall'URL se la copia salvata è più vecchia di 24 ore."
             },
             "transformData": {
                 "header": {

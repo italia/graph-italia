@@ -239,6 +239,14 @@ export default function EditOrgsPage() {
         </button>
       </div>
 
+      {/* How orgs relate to projects/charts (Osservatorio feedback) */}
+      <div className="mx-6 mb-2 rounded-lg bg-base-200 border border-base-300 p-4 text-sm text-base-content/80">
+        {t(
+          "help.intro",
+          "Le organizzazioni servono a far collaborare un gruppo di persone sugli stessi progetti: tutti i membri vedono e possono modificare grafici, dashboard e sorgenti dati dei progetti associati all'organizzazione. Chi crea l'organizzazione ne è amministratore e può invitare membri via email, cambiarne il ruolo e associare o revocare progetti.",
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
         {/* Orgs List */}
         <div className="lg:col-span-1 space-y-4">
@@ -340,6 +348,12 @@ export default function EditOrgsPage() {
 
                 {activeTab === "members" ? (
                   <>
+                    <p className="text-sm text-base-content/70 mb-4">
+                      {t(
+                        "help.members",
+                        "I membri con ruolo ADMIN possono invitare o rimuovere membri e gestire l'organizzazione; i membri USER accedono ai progetti associati senza poteri di amministrazione.",
+                      )}
+                    </p>
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">{t("membersTitle", "Members")}</h3>
                       {selectedOrgId && isAdminOf(selectedOrgId) && (
@@ -416,6 +430,12 @@ export default function EditOrgsPage() {
                   </>
                 ) : (
                   <>
+                    <p className="text-sm text-base-content/70 mb-4">
+                      {t(
+                        "help.projects",
+                        "“Trasferisci Progetto” associa un tuo progetto personale a questa organizzazione: tutti i membri potranno vederlo e modificarlo. Non è una cessione di proprietà — resti proprietario e puoi revocare l'associazione in qualsiasi momento (icona ⇄ accanto al progetto); con la revoca il progetto torna personale.",
+                      )}
+                    </p>
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-semibold">{t("projectsTitle", "Organization Projects")}</h3>
                       <button type="button" className="btn btn-sm btn-outline btn-primary" onClick={() => { fetchPersonalProjects(); setShowTransferModal(true); }}>

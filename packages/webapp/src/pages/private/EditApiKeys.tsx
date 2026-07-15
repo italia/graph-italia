@@ -167,6 +167,26 @@ export default function EditApiKeysPage() {
         </button>
       </div>
 
+      {/* What API keys are and how to use them (Osservatorio feedback) */}
+      <div className="mx-6 mb-4 rounded-lg bg-base-200 border border-base-300 p-4 text-sm text-base-content/80 space-y-2">
+        <p>
+          {t(
+            "help.intro",
+            "Le chiavi API permettono ad applicazioni esterne (script, siti web, integrazioni) di accedere ai dati di un progetto senza effettuare il login. Ogni chiave è legata a un solo progetto: con ruolo READONLY consente solo la lettura di grafici, dashboard e sorgenti dati, con READWRITE anche la loro creazione e modifica.",
+          )}
+        </p>
+        <p>
+          {t(
+            "help.secret",
+            "La chiave completa viene mostrata una sola volta, al momento della creazione: conservala in un luogo sicuro. In caso di dubbio puoi revocarla e crearne una nuova.",
+          )}
+        </p>
+        <p className="font-medium">{t("help.exampleLabel", "Esempio d'uso:")}</p>
+        <pre className="bg-base-300 rounded p-2 overflow-x-auto text-xs">
+          <code>{`curl -H "Authorization: Bearer dv_xxxxxxxx" ${api.getServerUrlWithApi()}/charts`}</code>
+        </pre>
+      </div>
+
       {/* Keys table */}
       <div className="p-6">
         {loading ? (
