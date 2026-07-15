@@ -14,7 +14,7 @@ function AuthPage() {
       <div className="flex flex-col  min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
         {welcome && (
           <>
-            <div role="alert" className="alert alert-success mb-2">
+            <div role="alert" className="alert alert-success mt-6 mb-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6 shrink-0 stroke-current"
