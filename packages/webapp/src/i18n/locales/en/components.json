@@ -414,11 +414,24 @@
                     "label": "Value series (numeric columns)",
                     "hint": "The values to plot on the chart. Only columns containing exclusively numbers are offered. Each row of the dataset becomes a point on the chart: data should be loaded already aggregated (e.g. one total per category).",
                     "multiSelect": "Ctrl+click (Cmd+click on Mac) for multiple selection",
-                    "empty": "No numeric column found in the dataset. To create a chart you need at least one column containing only numeric values (e.g. one total per category): aggregate your data before loading it."
+                    "empty": "No numeric column found in the dataset. To create a chart you need at least one column containing only numeric values (e.g. one total per category): aggregate your data before loading it, or use the automatic aggregation suggested above if the category column contains repeated values."
                 },
                 "warnings": {
-                    "duplicateCategories": "The \"{{column}}\" column contains repeated values: {{rows}} rows but only {{unique}} distinct values. Each row becomes a point on the chart: for a readable result, load pre-aggregated data (e.g. one total per value of \"{{column}}\").",
+                    "duplicateCategories": "The \"{{column}}\" column contains repeated values: {{rows}} rows but only {{unique}} distinct values. Each row becomes a point on the chart: for a readable result you need aggregated data (e.g. one total per value of \"{{column}}\").",
                     "tooManyCategories": "The \"{{column}}\" column has {{rows}} distinct values: a chart with this many categories will be hard to read. Consider filtering or aggregating your data before loading it."
+                },
+                "aggregate": {
+                    "suggestion": "I can automatically aggregate the data by grouping it by \"{{column}}\":",
+                    "fnLabel": "Aggregation type",
+                    "fn": {
+                        "count": "Row count",
+                        "sum": "Sum of numeric values",
+                        "mean": "Average of numeric values"
+                    },
+                    "apply": "Aggregate by \"{{column}}\"",
+                    "applied": "Data aggregated by \"{{column}}\" ({{fn}}): from {{from}} rows to {{to}} categories.",
+                    "undo": "Undo aggregation",
+                    "countColumn": "count"
                 },
                 "actions": {
                     "reset": {

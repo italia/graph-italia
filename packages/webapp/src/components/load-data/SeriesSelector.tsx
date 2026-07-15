@@ -9,6 +9,8 @@ type selectOptionType = {
   label: string;
 };
 
+type AggregationFn = "count" | "sum" | "mean";
+
 function cleanupValue(v: string | number) {
   if (!v) return 0;
   try {
@@ -67,6 +69,13 @@ export default function SeriesSelector({ setData, initialData }: {
   const [category, setCategory] = useState<selectOptionType | null>(null);
   const [series, setSeries] = useState<selectOptionType[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const [aggregationFn, setAggregationFn] = useState<AggregationFn>("count");
+  const [preAggregation, setPreAggregation] = useState<{
+    data: MatrixType;
+    category: selectOptionType | null;
+    series: selectOptionType[];
+    fn: AggregationFn;
+  } | null>(null);
 
   function isSameObject(a: object, b: object) {
     return JSON.stringify(a) === JSON.stringify(b);
@@ -114,6 +123,7 @@ export default function SeriesSelector({ setData, initialData }: {
     setRawData(null);
     setCategory(null);
     setSeries([]);
+    setPreAggregation(null);
   }
 
 
@@ -165,6 +175,73 @@ export default function SeriesSelector({ setData, initialData }: {
   }, [initialData, initialized]);
 
 
+  function aggregateData(fn: AggregationFn) {
+    if (!rawData || !category) return;
+    const catIdx = rawData[0].findIndex(
+      (c) => String(c).trim() === category.value
+    );
+    if (catIdx === -1) return;
+
+    const valueIdxs =
+      fn === "count"
+        ? []
+        : rawData[0]
+          .map((_, i) => i)
+          .filter((i) => i !== catIdx && isNumericColumn(rawData, i));
+    if (fn !== "count" && valueIdxs.length === 0) return;
+
+    // Insertion-ordered group-by on the category column
+    const groups = new Map<string, { count: number; sums: number[] }>();
+    for (let r = 1; r < rawData.length; r++) {
+      const key = String(rawData[r][catIdx] ?? "").trim();
+      let group = groups.get(key);
+      if (!group) {
+        group = { count: 0, sums: valueIdxs.map(() => 0) };
+        groups.set(key, group);
+      }
+      group.count++;
+      valueIdxs.forEach((colIdx, i) => {
+        group.sums[i] += cleanupValue(rawData[r][colIdx]);
+      });
+    }
+
+    const header =
+      fn === "count"
+        ? [category.value, t("aggregate.countColumn")]
+        : [category.value, ...valueIdxs.map((i) => rawData[0][i])];
+    const aggregated: MatrixType = [header];
+    for (const [key, group] of groups) {
+      if (fn === "count") {
+        aggregated.push([key, group.count]);
+      } else {
+        aggregated.push([
+          key,
+          ...group.sums.map((sum) =>
+            // Round to 2 decimals (also cuts float addition noise on sums)
+            Math.round((fn === "mean" ? sum / group.count : sum) * 100) / 100
+          ),
+        ]);
+      }
+    }
+
+    setPreAggregation({ data: rawData, category, series, fn });
+    setRawData(aggregated);
+    // Keep the user's series selection where possible, otherwise select all
+    const newCols = getCols(aggregated[0]).filter((_, i) => i !== 0);
+    const kept = newCols.filter((col) =>
+      series.some((s) => s.value === col.value)
+    );
+    setSeries(kept.length > 0 ? kept : newCols);
+  }
+
+  function undoAggregation() {
+    if (!preAggregation) return;
+    setRawData(preAggregation.data);
+    setCategory(preAggregation.category);
+    setSeries(preAggregation.series);
+    setPreAggregation(null);
+  }
+
   const MAX_READABLE_CATEGORIES = 100;
 
   function getCategoryWarning() {
@@ -203,6 +280,9 @@ export default function SeriesSelector({ setData, initialData }: {
   const numericCols = rawData
     ? getCols(rawData[0]).filter((_, i) => isNumericColumn(rawData, i))
     : [];
+  // Sum/mean need at least one numeric column; fall back to row count
+  const effectiveAggregationFn: AggregationFn =
+    numericCols.length === 0 ? "count" : aggregationFn;
 
   return (
     <div className="space-y-4">
@@ -273,18 +353,82 @@ export default function SeriesSelector({ setData, initialData }: {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     ></path>
                   </svg>
-                  <span>
-                    {t(
-                      categoryWarning.type === "duplicates"
-                        ? "warnings.duplicateCategories"
-                        : "warnings.tooManyCategories",
-                      {
-                        column: category?.value,
-                        rows: categoryWarning.rows,
-                        unique: categoryWarning.unique,
-                      }
+                  <div className="flex flex-col gap-2 w-full">
+                    <span>
+                      {t(
+                        categoryWarning.type === "duplicates"
+                          ? "warnings.duplicateCategories"
+                          : "warnings.tooManyCategories",
+                        {
+                          column: category?.value,
+                          rows: categoryWarning.rows,
+                          unique: categoryWarning.unique,
+                        }
+                      )}
+                    </span>
+                    {categoryWarning.type === "duplicates" && (
+                      <>
+                        <span className="font-medium">
+                          {t("aggregate.suggestion", {
+                            column: category?.value,
+                          })}
+                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <label htmlFor="aggregation-fn" className="sr-only">
+                            {t("aggregate.fnLabel")}
+                          </label>
+                          <select
+                            id="aggregation-fn"
+                            className="select select-bordered select-sm w-auto"
+                            value={effectiveAggregationFn}
+                            onChange={(e) =>
+                              setAggregationFn(e.target.value as AggregationFn)
+                            }
+                          >
+                            <option value="count">
+                              {t("aggregate.fn.count")}
+                            </option>
+                            {numericCols.length > 0 && (
+                              <>
+                                <option value="sum">
+                                  {t("aggregate.fn.sum")}
+                                </option>
+                                <option value="mean">
+                                  {t("aggregate.fn.mean")}
+                                </option>
+                              </>
+                            )}
+                          </select>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-primary"
+                            onClick={() => aggregateData(effectiveAggregationFn)}
+                          >
+                            {t("aggregate.apply", { column: category?.value })}
+                          </button>
+                        </div>
+                      </>
                     )}
+                  </div>
+                </div>
+              )}
+              {preAggregation && (
+                <div role="status" className="alert alert-success mt-2 text-sm">
+                  <span>
+                    {t("aggregate.applied", {
+                      column: category?.value,
+                      fn: t(`aggregate.fn.${preAggregation.fn}`),
+                      from: preAggregation.data.length - 1,
+                      to: (rawData?.length ?? 1) - 1,
+                    })}
                   </span>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => undoAggregation()}
+                  >
+                    {t("aggregate.undo")}
+                  </button>
                 </div>
               )}
             </div>

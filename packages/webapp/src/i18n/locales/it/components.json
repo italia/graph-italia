@@ -414,11 +414,24 @@
                     "label": "Serie di valori (colonne numeriche)",
                     "hint": "I valori da rappresentare nel grafico. Sono proposte solo le colonne che contengono esclusivamente numeri. Ogni riga del dataset diventa un punto del grafico: i dati vanno caricati già aggregati (es. un totale per categoria).",
                     "multiSelect": "Ctrl+clic (Cmd+clic su Mac) per la selezione multipla",
-                    "empty": "Nessuna colonna numerica trovata nel dataset. Per creare un grafico serve almeno una colonna che contenga solo valori numerici (es. un totale per categoria): aggrega i dati prima di caricarli."
+                    "empty": "Nessuna colonna numerica trovata nel dataset. Per creare un grafico serve almeno una colonna che contenga solo valori numerici (es. un totale per categoria): aggrega i dati prima di caricarli, oppure usa l'aggregazione automatica suggerita qui sopra se la colonna delle categorie contiene valori ripetuti."
                 },
                 "warnings": {
-                    "duplicateCategories": "La colonna \"{{column}}\" contiene valori ripetuti: {{rows}} righe ma solo {{unique}} valori distinti. Ogni riga diventa un punto del grafico: per un risultato leggibile carica dati già aggregati (es. un totale per ogni valore di \"{{column}}\").",
+                    "duplicateCategories": "La colonna \"{{column}}\" contiene valori ripetuti: {{rows}} righe ma solo {{unique}} valori distinti. Ogni riga diventa un punto del grafico: per un risultato leggibile servono dati aggregati (es. un totale per ogni valore di \"{{column}}\").",
                     "tooManyCategories": "La colonna \"{{column}}\" ha {{rows}} valori distinti: un grafico con così tante categorie sarà difficilmente leggibile. Valuta di filtrare o aggregare i dati prima di caricarli."
+                },
+                "aggregate": {
+                    "suggestion": "Posso aggregare automaticamente i dati raggruppandoli per \"{{column}}\":",
+                    "fnLabel": "Tipo di aggregazione",
+                    "fn": {
+                        "count": "Conteggio delle righe",
+                        "sum": "Somma dei valori numerici",
+                        "mean": "Media dei valori numerici"
+                    },
+                    "apply": "Aggrega per \"{{column}}\"",
+                    "applied": "Dati aggregati per \"{{column}}\" ({{fn}}): da {{from}} righe a {{to}} categorie.",
+                    "undo": "Annulla aggregazione",
+                    "countColumn": "conteggio"
                 },
                 "actions": {
                     "reset": {
