@@ -175,6 +175,9 @@
                     },
                     "viewChart": {
                         "label": "View Chart"
+                    },
+                    "addText": {
+                        "label": "Add text"
                     }
                 }
             },
@@ -215,6 +218,14 @@
                             "title": "Remove Slot"
                         }
                     }
+                },
+                "textSlot": {
+                    "tabs": {
+                        "write": "Write",
+                        "preview": "Preview"
+                    },
+                    "placeholder": "Write in Markdown: # Title, **bold**, - lists…",
+                    "ariaLabel": "Text block content"
                 }
             }
         },

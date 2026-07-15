@@ -175,6 +175,9 @@
                     },
                     "viewChart": {
                         "label": "Visualizza grafico"
+                    },
+                    "addText": {
+                        "label": "Aggiungi testo"
                     }
                 }
             },
@@ -215,6 +218,14 @@
                             "title": "Rimuovi slot"
                         }
                     }
+                },
+                "textSlot": {
+                    "tabs": {
+                        "write": "Scrivi",
+                        "preview": "Anteprima"
+                    },
+                    "placeholder": "Scrivi in Markdown: # Titolo, **grassetto**, - elenchi…",
+                    "ariaLabel": "Contenuto del blocco di testo"
                 }
             }
         },

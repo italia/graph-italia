@@ -4,6 +4,7 @@ import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { useParams } from "react-router-dom";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
+import TextSlot from "../../components/TextSlot";
 import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
@@ -118,7 +119,10 @@ function DashboardViewPage() {
                 isResizable={false}
               >
                 {layout.map((item) => {
-                  const currentChart = charts[item.i] as FieldDataType;
+                  const currentChart = charts[item.i] as FieldDataType & {
+                    chart?: string;
+                    config?: { content?: string };
+                  };
                   const chartHeight = ((ROW_HEIGHT * item.h) - (MARGIN * (item.h)) - TABBAR);
 
                   return (
@@ -127,13 +131,17 @@ function DashboardViewPage() {
                       className="overflow-hidden rounded-lg bg-base-100 border border-base-200 shadow-sm"
                     >
                       {currentChart && (
-                        <ColorSchemeProvider scheme={scheme}>
-                          <RenderChart
-                            {...currentChart}
-                            rowHeight={chartHeight}
-                            hFactor={1}
-                          />
-                        </ColorSchemeProvider>
+                        currentChart.chart === "text" ? (
+                          <TextSlot content={currentChart.config?.content ?? ""} />
+                        ) : (
+                          <ColorSchemeProvider scheme={scheme}>
+                            <RenderChart
+                              {...currentChart}
+                              rowHeight={chartHeight}
+                              hFactor={1}
+                            />
+                          </ColorSchemeProvider>
+                        )
                       )}
                     </div>
                   );

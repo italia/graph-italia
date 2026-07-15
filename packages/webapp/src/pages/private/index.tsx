@@ -108,7 +108,8 @@ function Home() {
     setLoading(true);
     try {
       const data = await api.getCharts();
-      setList(data);
+      // "text" charts are hidden backing records for dashboard text slots
+      setList(data.filter((c: { chart?: string }) => c.chart !== "text"));
     } catch (error) {
       console.log(error);
     } finally {

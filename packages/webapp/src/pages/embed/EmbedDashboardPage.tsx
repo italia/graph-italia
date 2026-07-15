@@ -3,6 +3,7 @@ import { ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-ital
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import Loading from "../../components/layout/Loading";
+import TextSlot from "../../components/TextSlot";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
 
@@ -107,7 +108,10 @@ function EmbedDashboardPage() {
                 isResizable={false}
               >
                 {layout.map((item) => {
-                  const currentChart = charts[item.i] as FieldDataType;
+                  const currentChart = charts[item.i] as FieldDataType & {
+                    chart?: string;
+                    config?: { content?: string };
+                  };
                   const chartHeight = ROW_HEIGHT * item.h + MARGIN * (item.h - 1);
 
                   return (
@@ -116,11 +120,15 @@ function EmbedDashboardPage() {
                       className="overflow-hidden rounded-lg g-base-100 border border-base-200 shadow-sm"
                     >
                       {currentChart && (
-                        <RenderChart
-                          {...currentChart}
-                          rowHeight={chartHeight}
-                          hFactor={1}
-                        />
+                        currentChart.chart === "text" ? (
+                          <TextSlot content={currentChart.config?.content ?? ""} />
+                        ) : (
+                          <RenderChart
+                            {...currentChart}
+                            rowHeight={chartHeight}
+                            hFactor={1}
+                          />
+                        )
                       )}
                     </div>
                   );

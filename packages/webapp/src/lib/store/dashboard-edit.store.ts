@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { findDashboardById, isPublishingEnabled, updateDashboard, updateSlots, type DashboardDetail } from '../api.ts';
+import { deleteChart, findDashboardById, isPublishingEnabled, updateDashboard, updateSlots, upsertChart, type DashboardDetail } from '../api.ts';
 
 type TChartRef = { id: string };
 type TItem = `item-${number}`;
@@ -9,7 +9,15 @@ export interface ChartLookup extends TChartRef {
   description: string;
 }
 
+// A text block backed by a hidden chart of type "text" (content lives in the
+// chart's config). chartId is set after the first save.
+export interface TextLookup {
+  chartId?: string;
+  content: string;
+}
+
 type TChartMap = Record<TItem, ChartLookup>;
+type TTextMap = Record<TItem, TextLookup>;
 
 type TLayoutItem = {
   i: TItem;
@@ -26,6 +34,8 @@ interface DashboardEditSelectors {
   publish: boolean;
   layout: TLayoutItem[];
   charts: TChartMap;
+  texts: TTextMap;
+  removedTextChartIds: string[];
   isLoading: boolean;
   loaded: boolean;
   error?: {
@@ -42,6 +52,8 @@ interface DashboardEditActions {
   reload: () => void;
   save: () => Promise<boolean>;
   addItem: () => void;
+  addTextItem: () => void;
+  setTextContent: (id: string, content: string) => void;
   deleteItem: (id: string) => void;
   updateItemSize: (id: string, w: number, h: number) => void;
   updateItemPosition: (id: string, dx: number, dy: number) => void;
@@ -83,6 +95,8 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   lastCreated: undefined,
   selectedChart: undefined,
   charts: {},
+  texts: {},
+  removedTextChartIds: [],
   isLoading: true,
   loaded: false,
   setBreakpoint: (breakpoint) => set({ breakpoint }),
@@ -105,6 +119,22 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
       layout: newLayout,
     });
   },
+  addTextItem: () => {
+    const { layout, texts } = get();
+    const yMax = layout.reduce((acc, cur) => (cur.y > acc ? cur.y : acc), 0);
+    const generator = itemGenerator(layout);
+    const i = generator.next().value;
+    set({
+      layout: [...layout, { i, x: 0, y: yMax, w: 1, h: 1 }],
+      texts: { ...texts, [i]: { content: '' } },
+    });
+  },
+  setTextContent: (id: string, content: string) => {
+    const { texts } = get();
+    const current = texts[id as TItem];
+    if (!current) return;
+    set({ texts: { ...texts, [id as TItem]: { ...current, content } } });
+  },
   updateItemSize: (id: string, w: number, h: number) => {
     const { layout } = get();
     set({ layout: layout.map((item) => item.i === id ? { ...item, w, h } : item) });
@@ -121,7 +151,12 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   },
   deleteItem: (id: string) => {
     console.log('delete', id);
-    const { layout, charts } = get();
+    const { layout, charts, texts, removedTextChartIds } = get();
+    // A removed text slot leaves its backing "text" chart orphaned: remember
+    // the id so save() can delete it once the slot row is gone.
+    const removedText = texts[id as TItem];
+    const nextTexts = { ...texts };
+    delete nextTexts[id as TItem];
     set({
       layout: layout.filter((i) => i.i !== id),
       charts: (Object.keys(charts) as Array<TItem>).reduce<TChartMap>(
@@ -134,6 +169,10 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
         },
         {}
       ),
+      texts: nextTexts,
+      removedTextChartIds: removedText?.chartId
+        ? [...removedTextChartIds, removedText.chartId]
+        : removedTextChartIds,
     });
   },
   showAddModal: (i: string) => {
@@ -163,15 +202,29 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
           })
         );
 
-        const charts = data.slots.reduce<TChartMap>(
-          (p, c) => ({ ...p, [c.settings.i]: c.chart as ChartLookup }),
-          {}
-        );
+        // Split slots between real charts and "text" pseudo-charts (markdown
+        // blocks persisted as charts, see save()).
+        const charts: TChartMap = {};
+        const texts: TTextMap = {};
+        for (const slot of data.slots) {
+          const chart = slot.chart as ChartLookup & {
+            chart?: string;
+            config?: { content?: string };
+          };
+          const key = (slot.settings as TLayoutItem).i;
+          if (chart?.chart === 'text') {
+            texts[key] = { chartId: chart.id, content: chart.config?.content ?? '' };
+          } else {
+            charts[key] = chart;
+          }
+        }
 
         const { name, description, publish } = data;
 
         set({
           charts,
+          texts,
+          removedTextChartIds: [],
           layout,
           name,
           description,
@@ -193,17 +246,50 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   },
   save: async () => {
 
-    const { layout, charts, id, name, description, publish } = get();
+    const { layout, charts, texts, removedTextChartIds, id, name, description, publish } = get();
+    const publishValue = isPublishingEnabled() ? publish : false;
 
-    await updateDashboard(id!, { name, description, publish: isPublishingEnabled() ? publish : false });
+    // Persist text blocks first: each one is stored as a chart of type "text"
+    // (markdown in config.content), so updateSlots below can reference a real
+    // chartId and server/schema stay untouched.
+    const nextTexts: TTextMap = { ...texts };
+    for (const l of layout) {
+      const text = texts[l.i];
+      if (!text) continue;
+      const result = await upsertChart(
+        {
+          name: `dashboard-text-${l.i}`,
+          chart: 'text',
+          config: { content: text.content },
+          publish: publishValue,
+        },
+        text.chartId,
+      );
+      const chartId = text.chartId ?? result?.id;
+      if (!chartId) return false;
+      nextTexts[l.i] = { ...text, chartId };
+    }
+    set({ texts: nextTexts });
+
+    await updateDashboard(id!, { name, description, publish: publishValue });
 
     const body = {
       slots: layout.map((l) => ({
-        chartId: charts[l.i]?.id,
+        chartId: nextTexts[l.i]?.chartId ?? charts[l.i]?.id,
         settings: { i: l.i, w: l.w, h: l.h, x: l.x, y: l.y },
       })),
     };
-    return await updateSlots(id!, body).then((r) => Boolean(r));
+    const ok = await updateSlots(id!, body).then((r) => Boolean(r));
+
+    // Text charts of deleted slots can only be removed after updateSlots has
+    // dropped the slot rows that reference them.
+    if (ok && removedTextChartIds.length > 0) {
+      await Promise.all(
+        removedTextChartIds.map((chartId) => deleteChart(chartId).catch(() => null)),
+      );
+      set({ removedTextChartIds: [] });
+    }
+    return ok;
   },
 }));
 

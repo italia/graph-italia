@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { FaInfo, FaThLarge } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import EditStepComponent from "../../components/EditStepComponent";
+import TextSlot from "../../components/TextSlot";
 import AppLayout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
 import Loading from "../../components/layout/Loading";
@@ -123,8 +124,9 @@ function ChartSelection({
     const usedIds = new Set(Object.values(assignedCharts).map((c) => c.id));
     api
       .getCharts()
-      .then((list: ChartLookup[]) =>
-        setAvailable(list.filter((c) => !usedIds.has(c.id))),
+      .then((list: Array<ChartLookup & { chart?: string }>) =>
+        // "text" charts back dashboard text slots — never selectable here
+        setAvailable(list.filter((c) => c.chart !== "text" && !usedIds.has(c.id))),
       )
       .catch(console.error);
   }, [assignedCharts]);
@@ -160,6 +162,63 @@ function ChartSelection({
   );
 }
 
+// ─── TextSlotEditor ───────────────────────────────────────────────────────────
+// Markdown editor for text slots, with a write/preview toggle. The preview
+// reuses the same TextSlot component used by the public dashboard pages.
+function TextSlotEditor({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const { t } = useTranslation("pages", {
+    keyPrefix: `charts.editDashboard`,
+  });
+  const [showPreview, setShowPreview] = useState(false);
+  return (
+    <div className="flex flex-col h-full">
+      <div className="tabs tabs-boxed tabs-sm self-end m-2 mb-0">
+        <button
+          type="button"
+          aria-pressed={!showPreview}
+          className={`tab ${!showPreview ? "tab-active" : ""}`}
+          onClick={() => setShowPreview(false)}
+        >
+          {t(`components.textSlot.tabs.write`, "Scrivi")}
+        </button>
+        <button
+          type="button"
+          aria-pressed={showPreview}
+          className={`tab ${showPreview ? "tab-active" : ""}`}
+          onClick={() => setShowPreview(true)}
+        >
+          {t(`components.textSlot.tabs.preview`, "Anteprima")}
+        </button>
+      </div>
+      {showPreview ? (
+        <div className="flex-1 overflow-hidden">
+          <TextSlot content={value} />
+        </div>
+      ) : (
+        <textarea
+          className="textarea textarea-bordered font-mono text-sm flex-1 m-2 resize-none"
+          value={value}
+          placeholder={t(
+            `components.textSlot.placeholder`,
+            "Scrivi in Markdown: # Titolo, **grassetto**, - elenchi…",
+          )}
+          aria-label={t(
+            `components.textSlot.ariaLabel`,
+            "Contenuto del blocco di testo",
+          )}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </div>
+  );
+}
+
 // ─── SlotToolbar ──────────────────────────────────────────────────────────────
 function SlotToolbar({
   item,
@@ -170,7 +229,7 @@ function SlotToolbar({
 }: {
   item: TLayoutItem;
   onDelete: () => void;
-  onAddChart: () => void;
+  onAddChart?: () => void;
   onSizeChange: (colSpan: number, rowSpan: number) => void;
   onMove: (dx: number, dy: number) => void;
 }) {
@@ -283,15 +342,17 @@ function SlotToolbar({
         </button>
       </div>
 
-      <button
-        type="button"
-        className="btn btn-xs btn-outline ml-1"
-        title={t(`components.slotToolbar.actions.change.title`)}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={onAddChart}
-      >
-        {t(`components.slotToolbar.actions.change.label`)}
-      </button>
+      {onAddChart && (
+        <button
+          type="button"
+          className="btn btn-xs btn-outline ml-1"
+          title={t(`components.slotToolbar.actions.change.title`)}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={onAddChart}
+        >
+          {t(`components.slotToolbar.actions.change.label`)}
+        </button>
+      )}
       <button
         type="button"
         className="btn btn-xs btn-error ml-auto"
@@ -322,6 +383,9 @@ function DashboardEditPage() {
     setSelectedChart,
     setLayout,
     addItem,
+    addTextItem,
+    setTextContent,
+    texts,
     deleteItem,
     updateItemSize,
     updateItemPosition,
@@ -541,13 +605,22 @@ function DashboardEditPage() {
                 </div>
 
                 <div className="w-full flex align-center justify-between">
-                  <button
-                    type="button"
-                    className="btn btn-primary mb-4"
-                    onClick={addItem}
-                  >
-                    <span aria-hidden="true">+</span> {t(`slots.actions.addSlot.label`)}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-primary mb-4"
+                      onClick={addItem}
+                    >
+                      <span aria-hidden="true">+</span> {t(`slots.actions.addSlot.label`)}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-primary mb-4"
+                      onClick={addTextItem}
+                    >
+                      <span aria-hidden="true">+</span> {t(`slots.actions.addText.label`, "Aggiungi testo")}
+                    </button>
+                  </div>
 
                   {api.isPublishingEnabled() && publish && (
                     <a
@@ -586,6 +659,7 @@ function DashboardEditPage() {
               >
                 {layout.map((item) => {
                   const currentChart = charts[item.i] as FieldDataType;
+                  const textItem = texts[item.i];
                   // Height of the chart area = total slot height minus toolbar
                   const chartHeight =
                     ROW_HEIGHT * item.h +
@@ -601,14 +675,21 @@ function DashboardEditPage() {
                       <SlotToolbar
                         item={item}
                         onDelete={() => deleteItem(item.i)}
-                        onAddChart={() => showAddModal(item.i)}
+                        onAddChart={
+                          textItem ? undefined : () => showAddModal(item.i)
+                        }
                         onSizeChange={(colSpan, rowSpan) =>
                           updateItemSize(item.i, colSpan, rowSpan)
                         }
                         onMove={(dx, dy) => updateItemPosition(item.i, dx, dy)}
                       />
                       <div style={{ height: chartHeight, overflow: "hidden" }}>
-                        {currentChart ? (
+                        {textItem ? (
+                          <TextSlotEditor
+                            value={textItem.content}
+                            onChange={(v) => setTextContent(item.i, v)}
+                          />
+                        ) : currentChart ? (
                           <ColorSchemeProvider scheme={scheme}>
                             <RenderChart
                               {...currentChart}
