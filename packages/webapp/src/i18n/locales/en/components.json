@@ -9,6 +9,7 @@
                     "fields": {
                         "password": {
                             "label": "Password",
+                            "placeholder": "Enter a new password",
                             "errors": {
                                 "required": "This field is required",
                                 "minLength": "Password must be at least 8 characters long",
@@ -33,6 +34,19 @@
                             "label": "Change Password"
                         }
                     }
+                }
+            },
+            "passwordRequirements": {
+                "items": {
+                    "minLength": "At least 8 characters",
+                    "uppercase": "One uppercase letter",
+                    "lowercase": "One lowercase letter",
+                    "number": "One number",
+                    "specialChar": "One special character"
+                },
+                "status": {
+                    "met": "met",
+                    "unmet": "not met"
                 }
             },
             "recoverPwdForm": {
@@ -119,6 +133,7 @@
                         },
                         "password": {
                             "label": "Password",
+                            "placeholder": "Enter a new password",
                             "errors": {
                                 "required": "This field is required",
                                 "minLength": "Password must be at least 8 characters long",

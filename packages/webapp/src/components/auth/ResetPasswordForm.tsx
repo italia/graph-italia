@@ -7,18 +7,14 @@ import { useTranslation } from "react-i18next";
 import { PinInput } from "react-input-pin-code";
 import { z as zod } from "zod";
 import * as api from "../../lib/api";
+import { getPasswordSchema } from "./passwordRules";
+import PasswordRequirements from "./PasswordRequirements";
 
 const getResetPasswordSchema = (
   z: typeof zod,
   t: TFunction<"translation", undefined>,
 ) => {
-  const passwordSchema = z
-    .string()
-    .min(8, { message: t(`form.fields.password.errors.minLength`) })
-    .refine((p) => /[A-Z]/.test(p), { message: t(`form.fields.password.errors.uppercase`) })
-    .refine((p) => /[a-z]/.test(p), { message: t(`form.fields.password.errors.lowercase`) })
-    .refine((p) => /[0-9]/.test(p), { message: t(`form.fields.password.errors.number`) })
-    .refine((p) => /[!@#$%^&*]/.test(p), { message: t(`form.fields.password.errors.specialChar`) });
+  const passwordSchema = getPasswordSchema(z, t);
 
   return z
     .object({ password: passwordSchema, confirmPassword: passwordSchema })
@@ -46,10 +42,12 @@ function ResetPasswordForm({
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const schema = getResetPasswordSchema(zod, t);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
@@ -110,9 +108,10 @@ function ResetPasswordForm({
                   <input
                     id="reset-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter a new password"
+                    placeholder={t(`form.fields.password.placeholder`)}
                     className="input input-bordered w-full"
                     {...register("password")}
+                    onFocus={() => setPasswordFocused(true)}
                   />
                   <button
                     type="button"
@@ -140,9 +139,10 @@ function ResetPasswordForm({
                     </svg>
                   </button>
                 </div>
-                {errors["password"] && (
-                  <p className="text-error">{errors["password"].message}</p>
-                )}
+                <PasswordRequirements
+                  password={watch("password") ?? ""}
+                  visible={passwordFocused}
+                />
               </div>
             </div>
 

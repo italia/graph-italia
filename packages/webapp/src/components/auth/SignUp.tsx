@@ -10,29 +10,14 @@ import * as api from "../../lib/api";
 import { broadcastAuth } from "../../lib/authChannel";
 import { useUserStore } from "../../lib/store/user_store";
 import { HOME_ROUTE } from "../../router";
+import { getPasswordSchema } from "./passwordRules";
+import PasswordRequirements from "./PasswordRequirements";
 
 const getSignupSchema = (
   z: typeof zod,
   t: TFunction<"translation", undefined>,
 ) => {
-  const passwordSchema = z
-    .string()
-    .min(8, {
-      message: t(`form.fields.password.errors.minLength`),
-    })
-    // .max(20, { message: maxLengthErrorMessage })
-    .refine((password) => /[A-Z]/.test(password), {
-      message: t(`form.fields.password.errors.uppercase`),
-    })
-    .refine((password) => /[a-z]/.test(password), {
-      message: t(`form.fields.password.errors.lowercase`),
-    })
-    .refine((password) => /[0-9]/.test(password), {
-      message: t(`form.fields.password.errors.number`),
-    })
-    .refine((password) => /[^A-Za-z0-9]/.test(password), {
-      message: t(`form.fields.password.errors.specialChar`),
-    });
+  const passwordSchema = getPasswordSchema(z, t);
 
   const signupSchema = z
     .object({
@@ -69,10 +54,12 @@ function SignUp({
   });
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const signupSchema = getSignupSchema(zod, t);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
     reset,
   } = useForm({
@@ -163,9 +150,10 @@ function SignUp({
                       <input
                         id="hs-toggle-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter a new password"
+                        placeholder={t(`form.fields.password.placeholder`)}
                         className="input input-bordered w-full"
                         {...register("password")}
+                        onFocus={() => setPasswordFocused(true)}
                       />
                       <button
                         type="button"
@@ -222,9 +210,10 @@ function SignUp({
                     className='w-full rounded-md'
                     {...register('password')}
                   /> */}
-                    {errors["password"] && (
-                      <p className="text-error">{errors["password"].message}</p>
-                    )}
+                    <PasswordRequirements
+                      password={watch("password") ?? ""}
+                      visible={passwordFocused}
+                    />
                   </div>
                 </div>
 
