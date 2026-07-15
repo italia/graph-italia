@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type RenameTableHeadersFormProps = {
   initialValues: string[];
@@ -11,17 +12,20 @@ export default function RenameTableHeadersForm({
   onApply,
   onCancel,
 }: RenameTableHeadersFormProps) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.dataMngTable.renameForm",
+  });
   const [values, setValues] = useState<string[]>(initialValues);
 
   return (
     <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-      <h4 className="text-sm font-semibold mb-3">Rename column headers</h4>
+      <h4 className="text-sm font-semibold mb-3">{t("title")}</h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {values.map((val, i) => (
           <div key={i} className="form-control">
             <label htmlFor={`col-rename-${i}`} className="label py-0.5">
               <span className="label-text text-xs text-base-content/50">
-                Column {i + 1}
+                {t("column")} {i + 1}
               </span>
             </label>
             <input
@@ -44,14 +48,14 @@ export default function RenameTableHeadersForm({
           className="btn btn-primary btn-sm"
           onClick={() => onApply(values)}
         >
-          Apply
+          {t("actions.apply.label")}
         </button>
         <button
           type="button"
           className="btn btn-ghost btn-sm"
           onClick={onCancel}
         >
-          Cancel
+          {t("actions.cancel.label")}
         </button>
       </div>
     </div>

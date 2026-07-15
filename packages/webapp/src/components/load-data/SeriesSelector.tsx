@@ -1,4 +1,5 @@
 import { startTransition, useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import DataMngTable from "../DataMngTable";
 import { moveDataColumn, transposeData } from "../../lib/utils";
 import type { MatrixType } from "../../types";
@@ -59,6 +60,9 @@ export default function SeriesSelector({ setData, initialData }: {
   setData: (data: MatrixType) => void;
   initialData?: MatrixType;
 }) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.seriesSelector",
+  });
   const [rawData, setRawData] = useState<MatrixType | null>(null);
   const [category, setCategory] = useState<selectOptionType | null>(null);
   const [series, setSeries] = useState<selectOptionType[]>([]);
@@ -136,12 +140,23 @@ export default function SeriesSelector({ setData, initialData }: {
   // Initialize with existing data (once only to prevent update loop)
   useEffect(() => {
     if (initialData && initialData.length > 0 && !initialized) {
-      const c = getFirstOfMatrix(initialData);
+      // Same filters as the selects below: category = first non-numeric
+      // column, series = numeric columns only
+      let catIndex = initialData[0].findIndex(
+        (_, i) => !isNumericColumn(initialData, i)
+      );
+      if (catIndex === -1) catIndex = 0;
+      const matrix =
+        catIndex === 0
+          ? initialData
+          : moveDataColumn(initialData, initialData[0][catIndex]);
+      const c = getFirstOfMatrix(matrix);
       const newCategory = { value: c, label: c };
-      const cols = getCols(initialData[0]);
-      const newSeries = cols.filter((i) => !isSameObject(i, newCategory));
+      const newSeries = getCols(matrix[0]).filter(
+        (_, i) => i !== 0 && isNumericColumn(matrix, i)
+      );
       startTransition(() => {
-        setRawData(initialData);
+        setRawData(matrix);
         setCategory(newCategory);
         setSeries(newSeries);
         setInitialized(true);
@@ -149,6 +164,28 @@ export default function SeriesSelector({ setData, initialData }: {
     }
   }, [initialData, initialized]);
 
+
+  const MAX_READABLE_CATEGORIES = 100;
+
+  function getCategoryWarning() {
+    if (!rawData || !category) return null;
+    const idx = rawData[0].findIndex(
+      (c) => String(c).trim() === category.value
+    );
+    if (idx === -1) return null;
+    const unique = new Set<string>();
+    for (let i = 1; i < rawData.length; i++) {
+      unique.add(String(rawData[i][idx]).trim());
+    }
+    const rows = rawData.length - 1;
+    if (unique.size < rows) {
+      return { type: "duplicates" as const, rows, unique: unique.size };
+    }
+    if (rows > MAX_READABLE_CATEGORIES) {
+      return { type: "tooMany" as const, rows, unique: unique.size };
+    }
+    return null;
+  }
 
   function handleComplete() {
     console.log("rawData:", rawData);
@@ -162,6 +199,11 @@ export default function SeriesSelector({ setData, initialData }: {
     }
   }
 
+  const categoryWarning = getCategoryWarning();
+  const numericCols = rawData
+    ? getCols(rawData[0]).filter((_, i) => isNumericColumn(rawData, i))
+    : [];
+
   return (
     <div className="space-y-4">
       {rawData && (
@@ -172,7 +214,7 @@ export default function SeriesSelector({ setData, initialData }: {
       {rawData && (
         <div className="space-y-4 p-4 bg-base-200 rounded-lg">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">Configure columns</h4>
+            <h4 className="font-medium">{t("header.label")}</h4>
             <div className="flex gap-2">
               {/* <button
                 type="button"
@@ -186,7 +228,7 @@ export default function SeriesSelector({ setData, initialData }: {
                 className="btn btn-outline"
                 onClick={() => reset()}
               >
-                Reset
+                {t("actions.reset.label")}
               </button>
             </div>
           </div>
@@ -194,12 +236,13 @@ export default function SeriesSelector({ setData, initialData }: {
           <div className="grid grid-cols-1 gap-4">
             <div className="form-control">
               <label htmlFor="category" className="label">
-                <span className="label-text">Category column (X axis)</span>
+                <span className="label-text">{t("category.label")}</span>
               </label>
               <select
                 className="select select-bordered w-full"
                 name="category"
                 id="category"
+                aria-describedby="category-hint"
                 value={category?.value}
                 onChange={(e) => handleChangeCategory(e.target.value)}
               >
@@ -211,14 +254,53 @@ export default function SeriesSelector({ setData, initialData }: {
                     </option>
                   ))}
               </select>
+              <p id="category-hint" className="label-text-alt text-base-content/70 mt-1">
+                {t("category.hint")}
+              </p>
+              {categoryWarning && (
+                <div role="status" className="alert alert-warning mt-2 text-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="stroke-current shrink-0 w-5 h-5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    ></path>
+                  </svg>
+                  <span>
+                    {t(
+                      categoryWarning.type === "duplicates"
+                        ? "warnings.duplicateCategories"
+                        : "warnings.tooManyCategories",
+                      {
+                        column: category?.value,
+                        rows: categoryWarning.rows,
+                        unique: categoryWarning.unique,
+                      }
+                    )}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {category && (
+            {category && numericCols.length === 0 && (
+              <div role="status" className="alert alert-warning text-sm">
+                <span>{t("series.empty")}</span>
+              </div>
+            )}
+
+            {category && numericCols.length > 0 && (
               <div className="form-control">
                 <label htmlFor="series" className="label">
-                  <span className="label-text">Data series (values)</span>
+                  <span className="label-text">{t("series.label")}</span>
                   <span className="label-text-alt text-base-content/50">
-                    Ctrl+click for multiple selection
+                    {t("series.multiSelect")}
                   </span>
                 </label>
                 <select
@@ -226,6 +308,7 @@ export default function SeriesSelector({ setData, initialData }: {
                   className="select select-bordered w-full min-h-[100px]"
                   name="series"
                   id="series"
+                  aria-describedby="series-hint"
                   multiple={true}
                   value={series.map((s) => s.value)}
                   onChange={(e) =>
@@ -234,14 +317,15 @@ export default function SeriesSelector({ setData, initialData }: {
                     )
                   }
                 >
-                  {getCols(rawData[0])
-                    .filter((_, i) => isNumericColumn(rawData, i))
-                    .map((col) => (
-                      <option key={col.value} value={col.value}>
-                        {col.value}
-                      </option>
-                    ))}
+                  {numericCols.map((col) => (
+                    <option key={col.value} value={col.value}>
+                      {col.value}
+                    </option>
+                  ))}
                 </select>
+                <p id="series-hint" className="label-text-alt text-base-content/70 mt-1">
+                  {t("series.hint")}
+                </p>
               </div>
             )}
           </div>
@@ -252,7 +336,7 @@ export default function SeriesSelector({ setData, initialData }: {
             onClick={() => handleComplete()}
             disabled={!category || series.length === 0}
           >
-            Load data
+            {t("actions.submit.label")}
           </button>
         </div>
       )}

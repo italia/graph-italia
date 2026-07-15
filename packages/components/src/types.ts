@@ -75,6 +75,7 @@ export type ChartConfigType = {
   areaColor?: string;
   nameProperty?: string;
   nameGap?: string;
+  logScale?: boolean;
   preview?: string;
   title?: string;
   description?: string;

@@ -76,6 +76,7 @@ export type ChartConfigType = {
   showMapLabels?: boolean;
   areaColor?: string;
   nameProperty?: string;
+  logScale?: boolean;
 };
 
 export interface StoreStateType {

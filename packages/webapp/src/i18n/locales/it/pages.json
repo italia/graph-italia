@@ -41,7 +41,12 @@
                 },
                 "preview": {
                     "heading": "Anteprima",
-                    "untitled": "Grafico senza titolo"
+                    "untitled": "Grafico senza titolo",
+                    "actions": {
+                        "viewChart": {
+                            "label": "Apri il grafico"
+                        }
+                    }
                 },
                 "actions": {
                     "back": {
@@ -79,9 +84,9 @@
                     },
                     "configuration": {
                         "title": "Configura il grafico",
-                        "description": "Scegli il tipo di grafico e personalizza l'aspetto",
-                        "status": "Carica i dati per iniziare. Quando i dati saranno disponibili potrai scegliere il tipo di grafico e le opzioni.",
-                        "statusAwaitingSeries": "Dati caricati. Conferma la selezione delle serie nella sezione anteprima per abilitare la configurazione.",
+                        "description": "Scegli il tipo di grafico (barre, linee, torta, mappa) e personalizza l'aspetto",
+                        "status": "Il tipo di grafico si sceglie qui, dopo il caricamento dei dati: completa prima il passaggio 2 \"Carica i tuoi dati\".",
+                        "statusAwaitingSeries": "Dati caricati. Conferma la selezione delle colonne nella sezione Anteprima: potrai poi scegliere qui il tipo di grafico e le opzioni.",
                         "announcement": "Configurazione disponibile. Scegli il tipo di grafico e personalizza le opzioni."
                     },
                     "data": {

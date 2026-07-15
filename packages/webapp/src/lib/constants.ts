@@ -557,4 +557,14 @@ export const getFields = (availabelPalettes: string[], defaultPalette: string) =
     chartType: ['bar', 'line'],
     layout: '',
   },
+  {
+    label: 'Logarithmic Scale',
+    name: 'logScale',
+    type: 'checkbox',
+    options: [],
+    required: false,
+    chartType: ['bar', 'line'],
+    otherProps: {},
+    layout: '',
+  },
 ];

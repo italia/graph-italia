@@ -41,7 +41,12 @@
                 },
                 "preview": {
                     "heading": "Preview",
-                    "untitled": "Untitled chart"
+                    "untitled": "Untitled chart",
+                    "actions": {
+                        "viewChart": {
+                            "label": "View chart"
+                        }
+                    }
                 },
                 "actions": {
                     "back": {
@@ -79,9 +84,9 @@
                     },
                     "configuration": {
                         "title": "Configure the chart",
-                        "description": "Choose the chart type and customize its appearance",
-                        "status": "Load your data to get started. Once data is available you'll be able to pick the chart type and options.",
-                        "statusAwaitingSeries": "Data loaded. Confirm the series selection in the preview section to enable configuration.",
+                        "description": "Choose the chart type (bar, line, pie, map) and customize its appearance",
+                        "status": "The chart type is chosen here, after loading your data: complete step 2 \"Load your data\" first.",
+                        "statusAwaitingSeries": "Data loaded. Confirm the column selection in the Preview section: you will then be able to choose the chart type and options here.",
                         "announcement": "Configuration available. Choose the chart type and customize its options."
                     },
                     "data": {

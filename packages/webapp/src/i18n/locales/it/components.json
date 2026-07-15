@@ -331,7 +331,38 @@
                     },
                     "reset": {
                         "label": "Reimposta"
+                    },
+                    "filterColumns": {
+                        "label": "Filtra colonne",
+                        "show": "Filtra colonne",
+                        "hide": "Nascondi filtro colonne"
+                    },
+                    "reorderColumns": {
+                        "label": "Riordina colonne",
+                        "show": "Riordina colonne",
+                        "hide": "Nascondi riordino colonne"
+                    },
+                    "renameHeaders": {
+                        "label": "Rinomina intestazioni",
+                        "show": "Rinomina intestazioni",
+                        "hide": "Annulla rinomina"
+                    },
+                    "downloadCsv": {
+                        "label": "Scarica CSV"
+                    },
+                    "downloadJson": {
+                        "label": "Scarica JSON"
+                    },
+                    "cancel": {
+                        "label": "Annulla"
                     }
+                },
+                "resetDialog": {
+                    "title": "Reimposta dati",
+                    "description": "Questa operazione cancellerà definitivamente tutti i dati caricati e le trasformazioni. Tornerai al passaggio di caricamento dati.",
+                    "warning": "Questa azione non può essere annullata.",
+                    "cancel": "Annulla",
+                    "confirm": "Reimposta"
                 },
                 "table": {
                     "actions": {
@@ -347,7 +378,54 @@
                     },
                     "title": "Trasforma dati",
                     "sorting": {
-                        "label": "Ordinato per"
+                        "label": "Ordinato per",
+                        "direction": {
+                            "asc": "crescente",
+                            "desc": "decrescente"
+                        }
+                    }
+                }
+            },
+            "csvUpload": {
+                "label": "Carica file CSV",
+                "errors": {
+                    "emptyFile": "Il file è vuoto"
+                }
+            },
+            "jsonUpload": {
+                "label": "Carica file JSON",
+                "errors": {
+                    "emptyFile": "Il file è vuoto"
+                }
+            },
+            "sortColumns": {
+                "title": "Riordina colonne",
+                "hint": "Trascina le maniglie per riordinare le colonne."
+            },
+            "seriesSelector": {
+                "header": {
+                    "label": "Configura le colonne"
+                },
+                "category": {
+                    "label": "Colonna delle categorie (etichette)",
+                    "hint": "Le etichette dei dati: nei grafici a barre e a linee corrisponde all'asse X, nella torta alle fette, nella mappa alle aree geografiche. Sono proposte solo le colonne con valori testuali."
+                },
+                "series": {
+                    "label": "Serie di valori (colonne numeriche)",
+                    "hint": "I valori da rappresentare nel grafico. Sono proposte solo le colonne che contengono esclusivamente numeri. Ogni riga del dataset diventa un punto del grafico: i dati vanno caricati già aggregati (es. un totale per categoria).",
+                    "multiSelect": "Ctrl+clic (Cmd+clic su Mac) per la selezione multipla",
+                    "empty": "Nessuna colonna numerica trovata nel dataset. Per creare un grafico serve almeno una colonna che contenga solo valori numerici (es. un totale per categoria): aggrega i dati prima di caricarli."
+                },
+                "warnings": {
+                    "duplicateCategories": "La colonna \"{{column}}\" contiene valori ripetuti: {{rows}} righe ma solo {{unique}} valori distinti. Ogni riga diventa un punto del grafico: per un risultato leggibile carica dati già aggregati (es. un totale per ogni valore di \"{{column}}\").",
+                    "tooManyCategories": "La colonna \"{{column}}\" ha {{rows}} valori distinti: un grafico con così tante categorie sarà difficilmente leggibile. Valuta di filtrare o aggregare i dati prima di caricarli."
+                },
+                "actions": {
+                    "reset": {
+                        "label": "Reimposta"
+                    },
+                    "submit": {
+                        "label": "Carica dati"
                     }
                 }
             }
@@ -355,6 +433,90 @@
         "chartOptions": {
             "errors": {
                 "selectChart": "Seleziona un tipo di grafico per configurare le opzioni"
+            },
+            "sections": {
+                "Line Chart": "Grafico a linee",
+                "Bar Chart": "Grafico a barre",
+                "Pie Chart": "Grafico a torta",
+                "Map Chart": "Mappa geografica",
+                "General": "Generale",
+                "Tooltip": "Tooltip",
+                "Grid": "Griglia",
+                "Axes": "Assi"
+            },
+            "fields": {
+                "zoom": { "label": "Mostra zoom" },
+                "smooth": { "label": "Curvatura linee" },
+                "showArea": { "label": "Mostra area" },
+                "showAllSymbol": { "label": "Mostra tutti i punti" },
+                "direction": { "label": "Direzione" },
+                "stack": { "label": "Valori impilati" },
+                "totalLabel": { "label": "Etichetta del totale" },
+                "showPieLabels": { "label": "Mostra etichette" },
+                "labeLine": { "label": "Mostra linee delle etichette" },
+                "geoJsonUrl": { "label": "URL GeoJson" },
+                "nameProperty": { "label": "Proprietà di corrispondenza" },
+                "showMapLabels": { "label": "Mostra etichette" },
+                "serieName": { "label": "Nome della serie" },
+                "areaColor": { "label": "Colore di sfondo delle aree" },
+                "visualMap": { "label": "Mostra scala colori" },
+                "visualMapLeft": { "label": "Posizione scala colori" },
+                "visualMapOrient": { "label": "Orientamento scala colori" },
+                "palette": { "label": "Palette" },
+                "h": { "label": "Altezza grafico (px)" },
+                "responsive": { "label": "Adattivo (responsive)" },
+                "legend": { "label": "Mostra legenda" },
+                "legendPosition": { "label": "Posizione legenda" },
+                "tooltip": { "label": "Mostra tooltip" },
+                "valueFormatter": { "label": "Suffisso dei valori" },
+                "tooltipFormatter": { "label": "Formato dei valori" },
+                "tooltipTrigger": { "label": "Attivazione tooltip" },
+                "gridHeight": { "label": "Altezza" },
+                "gridWidth": { "label": "Larghezza" },
+                "gridLeft": { "label": "Margine sinistro (%/px)" },
+                "gridRight": { "label": "Margine destro (%/px)" },
+                "gridTop": { "label": "Margine superiore (%/px)" },
+                "gridBottom": { "label": "Margine inferiore (%/px)" },
+                "xLabel": { "label": "Etichetta asse X" },
+                "yLabel": { "label": "Etichetta asse Y" },
+                "nameGap": { "label": "Distanza etichette assi" },
+                "logScale": { "label": "Scala logaritmica" }
+            },
+            "fieldOptions": {
+                "zoom": {
+                    "none": "nessuno",
+                    "both_axis": "entrambi gli assi",
+                    "x_axis": "asse X",
+                    "y_axis": "asse Y"
+                },
+                "direction": {
+                    "horizontal": "orizzontale",
+                    "vertical": "verticale"
+                },
+                "visualMapLeft": {
+                    "right": "destra",
+                    "left": "sinistra"
+                },
+                "visualMapOrient": {
+                    "vertical": "verticale",
+                    "horizontal": "orizzontale"
+                },
+                "legendPosition": {
+                    "bottom": "in basso",
+                    "top": "in alto"
+                },
+                "tooltipFormatter": {
+                    "number": "numero",
+                    "currency": "valuta",
+                    "percentage": "percentuale"
+                },
+                "tooltipTrigger": {
+                    "item": "elemento",
+                    "axis": "asse"
+                },
+                "palette": {
+                    "theme": "Colori del tema"
+                }
             },
             "form": {
                 "errors": {

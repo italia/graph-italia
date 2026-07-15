@@ -278,6 +278,7 @@ function EditChartPage() {
               isOpen={true}
               isDisabled={false}
               index={0}
+              stepNumber={1}
             >
               <div className="card bg-base-100 shadow-sm border border-base-200">
                 <div className="card-body">
@@ -354,12 +355,37 @@ function EditChartPage() {
             </EditStepComponent>
 
             <EditStepComponent
+              title={t(`body.options.data.title`)}
+              description={t(`body.options.data.description`)}
+              Icon={FaDatabase}
+              isOpen={currentStepIndex === 0 ? true : false}
+              isDisabled={false}
+              index={1}
+              stepNumber={2}
+            >
+              {/* Step 2: Data loading */}
+              <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card-body">
+                  <ChooseLoader
+                    handleUpload={handleUpload}
+                    remoteUrl={remoteUrl}
+                    handleSetRemoteData={handleSetRemoteData}
+                  />
+
+
+
+                </div>
+              </div>
+            </EditStepComponent>
+
+            <EditStepComponent
               title={t(`body.options.configuration.title`)}
               description={t(`body.options.configuration.description`)}
               Icon={FaCog}
               isOpen={currentStepIndex > 0 ? true : false}
               isDisabled={currentStepIndex === 0 ? true : false}
               index={2}
+              stepNumber={3}
               headingRef={configurationHeadingRef}
             >
               <div>
@@ -394,29 +420,6 @@ function EditChartPage() {
                 )}
               </div>
             </EditStepComponent>
-
-            <EditStepComponent
-              title={t(`body.options.data.title`)}
-              description={t(`body.options.data.description`)}
-              Icon={FaDatabase}
-              isOpen={currentStepIndex === 0 ? true : false}
-              isDisabled={false}
-              index={1}
-            >
-              {/* Step 1: Data loading */}
-              <div className="card bg-base-100 shadow-sm border border-base-200">
-                <div className="card-body">
-                  <ChooseLoader
-                    handleUpload={handleUpload}
-                    remoteUrl={remoteUrl}
-                    handleSetRemoteData={handleSetRemoteData}
-                  />
-
-
-
-                </div>
-              </div>
-            </EditStepComponent>
           </div>
 
           {/* Right column: Preview */}
@@ -449,7 +452,7 @@ function EditChartPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
+                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">{t(`header.preview.actions.viewChart.label`)}</a></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>
