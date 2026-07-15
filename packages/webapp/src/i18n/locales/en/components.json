@@ -598,6 +598,37 @@
                 "title": "Data Matching Column"
             }
         },
+        "datasourceTable": {
+            "noDataComponent": "No data sources created",
+            "columns": {
+                "name": { "label": "Name" },
+                "visibility": {
+                    "label": "Visibility",
+                    "values": {
+                        "public": "Public",
+                        "private": "Private"
+                    }
+                },
+                "source": {
+                    "label": "Source",
+                    "values": {
+                        "remote": "Remote",
+                        "local": "Local"
+                    }
+                },
+                "createdAt": { "label": "Created" },
+                "updatedAt": { "label": "Updated" },
+                "actions": { "label": "Actions" }
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete"
+            },
+            "pagination": {
+                "rowsPerPage": "Rows per page:",
+                "rangeSeparator": "of"
+            }
+        },
         "dashboardTable": {
             "noDataComponent": "No dashboards created",
             "columns": {

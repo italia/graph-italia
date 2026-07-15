@@ -12,6 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import dataTableStyles from "./layout/dataTableStyles.ts";
 import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
@@ -149,8 +150,11 @@ export default function DashboardTable({
           selectAllRowsItem: false,
         }}
         {...paginationIcons}
+        customStyles={dataTableStyles}
         highlightOnHover
-        noDataComponent={t(`noDataComponent`)}
+        noDataComponent={
+          <div className="py-10 text-base-content/70">{t(`noDataComponent`)}</div>
+        }
       />
     </div>
   );

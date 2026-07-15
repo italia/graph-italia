@@ -440,7 +440,7 @@ function DashboardEditPage() {
         <title>{`${t(`head.title.label`)}`}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
+      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -590,7 +590,7 @@ function DashboardEditPage() {
               </section>
             </div>
 
-            <div className="card bg-base-100 shadow-sm border border-base-200">
+            <div className="card bg-base-100 shadow-sm border border-base-300">
               <div className="card-body">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center" aria-hidden="true">
                   <span className="text-primary font-bold">
@@ -670,7 +670,7 @@ function DashboardEditPage() {
                   return (
                     <div
                       key={item.i}
-                      className="flex flex-col overflow-hidden  rounded-lg bg-base-100  border border-base-200 shadow-sm"
+                      className="flex flex-col overflow-hidden  rounded-lg bg-base-100  border border-base-300 shadow-sm"
                     >
                       <SlotToolbar
                         item={item}

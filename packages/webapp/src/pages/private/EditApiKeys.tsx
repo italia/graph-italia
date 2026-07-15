@@ -148,7 +148,7 @@ export default function EditApiKeysPage() {
       </Helmet>
 
       {/* Header */}
-      <div className="w-full flex justify-between items-center gap-2 bg-base-300 py-4 px-8 rounded-lg mb-6">
+      <div className="w-full flex justify-between items-center gap-2 py-6 px-4 lg:px-10 mb-2">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <FaKey className="text-primary" />
@@ -168,7 +168,7 @@ export default function EditApiKeysPage() {
       </div>
 
       {/* What API keys are and how to use them (Osservatorio feedback) */}
-      <div className="mx-6 mb-4 rounded-lg bg-base-200 border border-base-300 p-4 text-sm text-base-content/80 space-y-2">
+      <div className="mx-4 lg:mx-10 mb-4 rounded-lg bg-base-100 border border-base-300 p-4 text-sm text-base-content/80 space-y-2 leading-relaxed max-w-4xl">
         <p>
           {t(
             "help.intro",
@@ -188,11 +188,11 @@ export default function EditApiKeysPage() {
       </div>
 
       {/* Keys table */}
-      <div className="p-6">
+      <div className="px-4 lg:px-10 py-6 pb-8">
         {loading ? (
           <Loading />
         ) : (
-          <div className="card bg-base-100 shadow-xl border border-base-200">
+          <div className="card bg-base-100 shadow-xl border border-base-300">
             <div className="card-body p-0">
               <div className="overflow-x-auto">
                 <table className="table w-full">
@@ -212,7 +212,7 @@ export default function EditApiKeysPage() {
                   <tbody>
                     {keys.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="text-center py-10 opacity-50">
+                        <td colSpan={9} className="text-center py-10 opacity-70">
                           {t("noKeys", "No API keys found.")}
                         </td>
                       </tr>

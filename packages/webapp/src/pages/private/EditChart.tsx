@@ -22,7 +22,7 @@ import Loading from "../../components/layout/Loading.tsx";
 import SelectChart from "../../components/SelectChart.tsx";
 import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
 import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
-import EditStepComponent from "../../components/EditStepComponent.tsx";
+import EditStepComponent, { type EditStepStatus } from "../../components/EditStepComponent.tsx";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
 import TransformDataTable from "../../components/load-data/TransformDataTable.tsx";
 import ThemeSwitcherComponent from "../../components/layout/ThemeSwitcher.tsx";
@@ -210,6 +210,20 @@ function EditChartPage() {
 
   const currentStepIndex = getCurrentStepIndex();
 
+  // Vertical stepper: config phase means data is already loaded and confirmed
+  const stepStatuses: [EditStepStatus, EditStepStatus, EditStepStatus] =
+    currentStepIndex > 0
+      ? ["completed", "completed", "active"]
+      : ["completed", "active", "locked"];
+  const stepStatusLabel = (s: EditStepStatus) =>
+    t(`body.steps.status.${s}`, {
+      defaultValue:
+        s === "completed" ? "completato" : s === "active" ? "in corso" : "bloccato",
+    });
+  const stepConnector = (
+    <div aria-hidden="true" className="w-px h-5 bg-base-300 ml-9" />
+  );
+
   if (loading) {
     return (
       <Layout>
@@ -236,7 +250,7 @@ function EditChartPage() {
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {stepAnnouncement}
       </div>
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
+      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -268,20 +282,22 @@ function EditChartPage() {
         </div>
       </div>
 
-      <div className="mx-auto">
+      <div className="mx-auto px-4 lg:px-10 pb-10">
         <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
-          <div className="space-y-1 xl:col-span-2">
+          <div className="xl:col-span-2">
             <EditStepComponent
               title={t(`body.options.setup.title`)}
               description={t(`body.options.setup.description`)}
               Icon={FaInfo}
-              isOpen={true}
+              isOpen={false}
               isDisabled={false}
               index={0}
               stepNumber={1}
+              status={stepStatuses[0]}
+              srStatusLabel={stepStatusLabel(stepStatuses[0])}
             >
-              <div className="card bg-base-100 shadow-sm border border-base-200">
-                <div className="card-body">
+              <div className="pt-1">
+                <div>
                   <div className="flex flex-col space-y-2">
                     {api.isPublishingEnabled() && (
                       <div className="flex items-center gap-4">
@@ -354,6 +370,8 @@ function EditChartPage() {
               </div>
             </EditStepComponent>
 
+            {stepConnector}
+
             <EditStepComponent
               title={t(`body.options.data.title`)}
               description={t(`body.options.data.description`)}
@@ -362,21 +380,20 @@ function EditChartPage() {
               isDisabled={false}
               index={1}
               stepNumber={2}
+              status={stepStatuses[1]}
+              srStatusLabel={stepStatusLabel(stepStatuses[1])}
             >
               {/* Step 2: Data loading */}
-              <div className="card bg-base-100 shadow-sm border border-base-200">
-                <div className="card-body">
-                  <ChooseLoader
-                    handleUpload={handleUpload}
-                    remoteUrl={remoteUrl}
-                    handleSetRemoteData={handleSetRemoteData}
-                  />
-
-
-
-                </div>
+              <div className="pt-1">
+                <ChooseLoader
+                  handleUpload={handleUpload}
+                  remoteUrl={remoteUrl}
+                  handleSetRemoteData={handleSetRemoteData}
+                />
               </div>
             </EditStepComponent>
+
+            {stepConnector}
 
             <EditStepComponent
               title={t(`body.options.configuration.title`)}
@@ -386,30 +403,30 @@ function EditChartPage() {
               isDisabled={currentStepIndex === 0 ? true : false}
               index={2}
               stepNumber={3}
+              status={stepStatuses[2]}
+              srStatusLabel={stepStatusLabel(stepStatuses[2])}
               headingRef={configurationHeadingRef}
             >
               <div>
                 {isConfigStep ? (
-                  <div className="card bg-base-100 shadow-sm border border-base-200">
-                    <div className="card-body">
-                      <SelectChart
-                        setChart={(value: string) => {
-                          setHasUnsavedChanges(true);
-                          setChart(value);
-                        }}
-                        chart={chart}
-                      />
-                      <div className="divider my-2"></div>
-                      <ChartOptions
-                        config={config}
-                        setConfig={(value) => {
-                          setHasUnsavedChanges(true);
-                          setConfig(value);
-                        }}
-                        chart={chart}
-                        numSeries={(data as MatrixType)?.length - 1 || 0}
-                      />
-                    </div>
+                  <div className="pt-1">
+                    <SelectChart
+                      setChart={(value: string) => {
+                        setHasUnsavedChanges(true);
+                        setChart(value);
+                      }}
+                      chart={chart}
+                    />
+                    <div className="divider my-2"></div>
+                    <ChartOptions
+                      config={config}
+                      setConfig={(value) => {
+                        setHasUnsavedChanges(true);
+                        setConfig(value);
+                      }}
+                      chart={chart}
+                      numSeries={(data as MatrixType)?.length - 1 || 0}
+                    />
                   </div>
                 ) : (
                   <div role="status">
@@ -513,7 +530,7 @@ function EditChartPage() {
                         ref={seriesSelectorRef}
                         tabIndex={-1}
                         aria-labelledby="series-selector-heading"
-                        className="card bg-base-100 shadow-sm border border-base-200"
+                        className="card bg-base-100 shadow-sm border border-base-300"
                       >
                         <div className="card-body">
                           <h3

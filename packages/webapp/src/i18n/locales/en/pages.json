@@ -59,6 +59,13 @@
                 }
             },
             "body": {
+                "steps": {
+                    "status": {
+                        "completed": "completed",
+                        "active": "in progress",
+                        "locked": "locked"
+                    }
+                },
                 "options": {
                     "setup": {
                         "title": "Setup Info",
@@ -488,7 +495,8 @@
             "chartsEmpty": "You haven't created any chart, map or KPI yet. Use \"Create new\" to start.",
             "dashboards": "My dashboards",
             "noDashboards": "My dashboards",
-            "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start."
+            "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start.",
+            "datasources": "Data sources"
         },
         "projectSwitcher": {
             "title": "Your Projects",
@@ -525,26 +533,53 @@
                     "confirm": "Select an option above",
                     "cancel": "Close"
                 },
+                "creating": "Creating…",
+                "details": {
+                    "description": "Give it a title and, optionally, a description. You can change them later.",
+                    "back": "Back",
+                    "create": "Create",
+                    "form": {
+                        "name": {
+                            "label": "Title"
+                        },
+                        "description": {
+                            "label": "Description (optional)",
+                            "placeholder": "Add a description"
+                        }
+                    }
+                },
                 "items": {
                     "chart": {
+                        "label": "Chart",
                         "description": "A single chart (bars, lines, pie…) built from your data."
                     },
                     "kpi": {
+                        "label": "KPI Group",
                         "description": "A group of summary numeric indicators (KPIs), shown as side-by-side tiles."
                     },
                     "map": {
+                        "label": "Map",
                         "description": "A geographic map of Italy with data by region, province or points."
                     },
                     "dash": {
+                        "label": "Dashboard",
                         "description": "A composable grid of charts and text blocks, to share or embed in other sites."
                     },
                     "datasource": {
+                        "label": "Data Source",
                         "description": "A data source (CSV file or remote URL) reusable across charts."
                     }
                 }
             },
             "cancel": "Cancel",
             "confirm": "Delete",
+            "irreversible": "This action cannot be undone.",
+            "deleteDashboard": {
+                "title": "Delete dashboard"
+            },
+            "deleteDataSource": {
+                "title": "Delete data source"
+            },
             "createProject": {
                 "title": "Create New Project",
                 "description": "Projects help you organize your charts and dashboards.",
@@ -650,6 +685,8 @@
         "noKeys": "No API keys found.",
         "table": {
             "id": "ID",
+            "prefix": "Prefix",
+            "status": "Status",
             "role": "Role",
             "project": "Project",
             "orgs": "Organizations",
@@ -657,6 +694,11 @@
             "created": "Created At",
             "expires": "Expires",
             "actions": "Actions"
+        },
+        "status": {
+            "active": "Active",
+            "expired": "Expired",
+            "revoked": "Revoked"
         },
         "modal": {
             "createTitle": "Create API Key",

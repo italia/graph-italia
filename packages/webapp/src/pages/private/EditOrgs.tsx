@@ -224,7 +224,7 @@ export default function EditOrgsPage() {
         <title>{t("title", "Organizations")}</title>
       </Helmet>
 
-      <div className="w-full flex justify-between items-center gap-2 bg-base-300 py-4 px-8 rounded-lg mb-6">
+      <div className="w-full flex justify-between items-center gap-2 py-6 px-4 lg:px-10 mb-2">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <FaBuilding className="text-primary" aria-hidden="true" />
@@ -240,14 +240,14 @@ export default function EditOrgsPage() {
       </div>
 
       {/* How orgs relate to projects/charts (Osservatorio feedback) */}
-      <div className="mx-6 mb-2 rounded-lg bg-base-200 border border-base-300 p-4 text-sm text-base-content/80">
+      <div className="mx-4 lg:mx-10 mb-2 rounded-lg bg-base-100 border border-base-300 p-4 text-sm text-base-content/80 leading-relaxed max-w-4xl">
         {t(
           "help.intro",
           "Le organizzazioni servono a far collaborare un gruppo di persone sugli stessi progetti: tutti i membri vedono e possono modificare grafici, dashboard e sorgenti dati dei progetti associati all'organizzazione. Chi crea l'organizzazione ne è amministratore e può invitare membri via email, cambiarne il ruolo e associare o revocare progetti.",
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 lg:px-10 py-6 pb-8">
         {/* Orgs List */}
         <div className="lg:col-span-1 space-y-4">
           <h2 className="text-lg font-semibold px-2">{t("listTitle", "Your Organizations")}</h2>
@@ -266,7 +266,7 @@ export default function EditOrgsPage() {
                     <div
                       className={`card card-compact border transition-all ${isSelected
                         ? "bg-primary text-primary-content border-primary"
-                        : "bg-base-100 hover:bg-base-200 border-base-200"
+                        : "bg-base-100 hover:bg-base-200 border-base-300"
                         }`}
                     >
                       <div className="card-body flex-row items-center justify-between gap-2">
@@ -319,7 +319,7 @@ export default function EditOrgsPage() {
                 name: orgs.find((o) => o.id === selectedOrgId)?.name ?? "",
                 defaultValue: `Dettagli organizzazione ${orgs.find((o) => o.id === selectedOrgId)?.name ?? ""}`,
               })}
-              className="card bg-base-100 shadow-xl border border-base-200"
+              className="card bg-base-100 shadow-xl border border-base-300"
             >
               <div className="card-body">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
@@ -378,7 +378,7 @@ export default function EditOrgsPage() {
                           <tbody>
                             {members.length === 0 ? (
                               <tr>
-                                <td colSpan={3} className="text-center py-10 opacity-50">
+                                <td colSpan={3} className="text-center py-10 opacity-70">
                                   {t("noMembers", "No members found in this organization.")}
                                 </td>
                               </tr>
@@ -388,7 +388,7 @@ export default function EditOrgsPage() {
                                   <td>
                                     <div className="flex flex-col">
                                       <span className="font-semibold">{member.user?.email || member.userId}</span>
-                                      {member.user?.email && <span className="text-[10px] opacity-40 font-mono uppercase tracking-tighter">{member.userId}</span>}
+                                      {member.user?.email && <span className="text-xs opacity-60 font-mono">{member.userId}</span>}
                                     </div>
                                   </td>
                                   <td>
@@ -459,7 +459,7 @@ export default function EditOrgsPage() {
                           <tbody>
                             {projects.length === 0 ? (
                               <tr>
-                                <td colSpan={4} className="text-center py-10 opacity-50">
+                                <td colSpan={4} className="text-center py-10 opacity-70">
                                   {t("noProjects", "No projects associated with this organization.")}
                                 </td>
                               </tr>
@@ -467,7 +467,7 @@ export default function EditOrgsPage() {
                               projects.map((project) => (
                                 <tr key={project.id} className="hover">
                                   <td className="font-semibold">{project.name}</td>
-                                  <td className="font-mono text-xs opacity-50">{project.id}</td>
+                                  <td className="font-mono text-xs opacity-70">{project.id}</td>
                                   <td>
                                     <div className="flex flex-col">
                                       <span className="text-xs">{project.owner?.email || t("unknownOwner", "Unknown")}</span>
@@ -500,8 +500,8 @@ export default function EditOrgsPage() {
 
           ) : (
             <div className="h-full flex flex-col items-center justify-center bg-base-200/50 rounded-2xl border-2 border-dashed border-base-300 min-h-[400px]">
-              <FaBuilding size={48} className="opacity-20 mb-4" aria-hidden="true" />
-              <p className="opacity-50 font-medium">{t("selectPrompt", "Select an organization to manage its members.")}</p>
+              <FaBuilding size={48} className="opacity-25 mb-4" aria-hidden="true" />
+              <p className="opacity-70 font-medium">{t("selectPrompt", "Select an organization to manage its members.")}</p>
             </div>
           )}
         </div>

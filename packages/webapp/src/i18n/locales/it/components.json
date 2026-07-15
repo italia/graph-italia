@@ -598,6 +598,37 @@
                 "title": "Colonna di corrispondenza dati"
             }
         },
+        "datasourceTable": {
+            "noDataComponent": "Nessuna sorgente dati creata",
+            "columns": {
+                "name": { "label": "Nome" },
+                "visibility": {
+                    "label": "Visibilità",
+                    "values": {
+                        "public": "Pubblica",
+                        "private": "Privata"
+                    }
+                },
+                "source": {
+                    "label": "Sorgente",
+                    "values": {
+                        "remote": "Remota",
+                        "local": "Locale"
+                    }
+                },
+                "createdAt": { "label": "Creata il" },
+                "updatedAt": { "label": "Aggiornata il" },
+                "actions": { "label": "Azioni" }
+            },
+            "actions": {
+                "edit": "Modifica",
+                "delete": "Elimina"
+            },
+            "pagination": {
+                "rowsPerPage": "Righe per pagina:",
+                "rangeSeparator": "di"
+            }
+        },
         "dashboardTable": {
             "noDataComponent": "Nessuna dashboard creata",
             "columns": {

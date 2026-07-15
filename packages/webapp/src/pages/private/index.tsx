@@ -56,6 +56,10 @@ function Home() {
     setCurrentProjectId
   } = useProjectStore();
   const [showCreateNewDialog, setShowCreateNewDialog] = useState(false);
+  // Second phase of the "Create new" dialog: title/description for the chosen type
+  const [pendingCreate, setPendingCreate] = useState<{ id: number; key: ItemTypeNames } | null>(null);
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemDescription, setNewItemDescription] = useState("");
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isCreatingProject, setIsCreatingProject] = useState(false);
@@ -282,30 +286,31 @@ function Home() {
   ];
 
   async function handleCreateFromDialog(id: number, key: ItemTypeNames) {
-    const name = generateName(key);
+    const name = newItemName.trim() || generateName(key);
+    const description = newItemDescription.trim() || undefined;
     setIsCreatingNewChart(id);
     let response = undefined;
     try {
-      // const response = await api.createChart({ name });
       switch (key) {
         case "kpi":
-          response = await api.createKpiGroup({ name, chart: "kpi" });
+          response = await api.createKpiGroup({ name, description, chart: "kpi" });
           break;
         case "dash":
-          response = await api.createDashboard({ name });
+          response = await api.createDashboard({ name, description });
           break;
         case "datasource":
-          response = await api.createDatasource({ name });
+          response = await api.createDatasource({ name, description });
           break;
         default:
           response = await api.createChart({
             name,
+            description,
             chart: key === "chart" ? "bar" : key === "map" ? "cmap" : key,
           });
           break;
       }
       if (!response) return;
-      setShowCreateNewDialog(false);
+      closeCreateNewDialog();
       navigateToEdit(key, response.id);
     } catch (error) {
       console.error(`Error creating ${key} :`, error);
@@ -314,13 +319,21 @@ function Home() {
     }
   }
 
+  function closeCreateNewDialog() {
+    setShowCreateNewDialog(false);
+    setPendingCreate(null);
+    setNewItemName("");
+    setNewItemDescription("");
+    setIsCreatingNewChart(0);
+  }
+
   return (
     <Layout>
       <Helmet>
         <title>{t(`header.title`)}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 bg-base-300 py-4 px-8 rounded-lg mb-6">
+      <div className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 py-6 px-4 lg:px-10 mb-2">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">{t(`header.title`)}</h1>
         </div>
@@ -452,18 +465,18 @@ function Home() {
 
 
 
-      <div className="p-6">
+      <div className="px-4 lg:px-10 pb-8">
         {loading ? (
           <Loading />
         ) : (
           <>
             <section
               aria-labelledby="charts-section-heading"
-              className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6"
+              className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
             >
               <h2
                 id="charts-section-heading"
-                className="text-lg mb-4 font-semibold"
+                className="text-xl mb-4 font-semibold"
               >
                 {t(`header.charts`)}
               </h2>
@@ -478,12 +491,12 @@ function Home() {
             </section>
             <section
               aria-labelledby="dashboards-section-heading"
-              className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6"
+              className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
             >
-              <div className="mt-10">
+              <div>
                 <h2
                   id="dashboards-section-heading"
-                  className="text-lg mb-4 font-semibold"
+                  className="text-xl mb-4 font-semibold"
                 >
                   {t(`header.dashboards`)}
                 </h2>
@@ -508,14 +521,14 @@ function Home() {
 
             <section
               aria-labelledby="datasources-section-heading"
-              className="card border border-base-200 bg-base-100 shadow-md p-4 mb-6"
+              className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
             >
-              <div className="mt-10">
+              <div>
                 <h2
                   id="datasources-section-heading"
-                  className="text-lg mb-4 font-semibold"
+                  className="text-xl mb-4 font-semibold"
                 >
-                  Data Sources
+                  {t("header.datasources", "Sorgenti dati")}
                 </h2>
                 {datasourceLoading ? (
                   <Loading />
@@ -534,43 +547,106 @@ function Home() {
         )}
       </div>
 
-      {/* Create New dialog */}
+      {/* Create New dialog — phase 1: pick a type; phase 2: title and description */}
       <GenericDialog
         toggle={showCreateNewDialog}
         title={t(`modals.createNew.title`)}
-        description={t(`modals.createNew.description`)}
+        description={
+          pendingCreate
+            ? t(
+                "modals.createNew.details.description",
+                "Dai un titolo e, se vuoi, una descrizione. Potrai modificarli anche in seguito.",
+              )
+            : t(`modals.createNew.description`)
+        }
         labels={{
-          cancel: t(`modals.createNew.labels.cancel`),
-          confirm: t(`modals.createNew.labels.confirm`),
+          cancel: pendingCreate
+            ? t("modals.createNew.details.back", "Indietro")
+            : t(`modals.createNew.labels.cancel`),
+          confirm: t("modals.createNew.details.create", "Crea"),
         }}
+        confirmCb={
+          pendingCreate
+            ? () => handleCreateFromDialog(pendingCreate.id, pendingCreate.key)
+            : undefined
+        }
+        confirmDisabled={isCreatingNewChart > 0}
         cancelCb={() => {
-          setShowCreateNewDialog(false);
-          setIsCreatingNewChart(0);
+          if (pendingCreate && isCreatingNewChart === 0) {
+            setPendingCreate(null);
+            return;
+          }
+          closeCreateNewDialog();
         }}
       >
-        <div className="grid grid-cols-2 gap-4 py-2">
-          {itemTypes.map(({ key, id, icon, label }) => (
-            <button
-              key={key}
-              type="button"
-              className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isCreatingNewChart < 1 ? false : true}
-              onClick={() => handleCreateFromDialog(id, key as ItemTypeNames)}
-            >
-              {isCreatingNewChart === id ? (
-                <span className="loading loading-spinner loading-md" />
-              ) : (
-                <span className="">{icon}</span>
+        {pendingCreate ? (
+          <div className="flex flex-col gap-2 py-2">
+            <span className="badge badge-outline badge-primary self-start">
+              {t(`modals.createNew.items.${pendingCreate.key}.label`)}
+            </span>
+            <label htmlFor="create-item-name" className="label pb-0">
+              <span className="label-text font-semibold">
+                {t("modals.createNew.details.form.name.label", "Titolo")}
+              </span>
+            </label>
+            <input
+              id="create-item-name"
+              type="text"
+              className="input input-bordered w-full"
+              placeholder={generateName(pendingCreate.key)}
+              value={newItemName}
+              onChange={(e) => setNewItemName(e.target.value)}
+              autoFocus
+            />
+            <label htmlFor="create-item-description" className="label pb-0">
+              <span className="label-text font-semibold">
+                {t(
+                  "modals.createNew.details.form.description.label",
+                  "Descrizione (facoltativa)",
+                )}
+              </span>
+            </label>
+            <textarea
+              id="create-item-description"
+              rows={3}
+              className="textarea textarea-bordered w-full"
+              placeholder={t(
+                "modals.createNew.details.form.description.placeholder",
+                "Aggiungi una descrizione",
               )}
-              <span className="font-semibold">
-                {isCreatingNewChart === 1 ? "Creating..." : label}
-              </span>
-              <span className="text-xs text-base-content/60 text-center leading-snug">
-                {t(`modals.createNew.items.${key}.description`)}
-              </span>
-            </button>
-          ))}
-        </div>
+              value={newItemDescription}
+              onChange={(e) => setNewItemDescription(e.target.value)}
+            />
+            {isCreatingNewChart > 0 && (
+              <div className="flex justify-center mt-2">
+                <span className="loading loading-spinner"></span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 py-2">
+            {itemTypes.map(({ key, id, icon, label }) => (
+              <button
+                key={key}
+                type="button"
+                className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-base-300 hover:border-primary hover:bg-base-200 transition-colors"
+                onClick={() => {
+                  setNewItemName("");
+                  setNewItemDescription("");
+                  setPendingCreate({ id, key: key as ItemTypeNames });
+                }}
+              >
+                <span className="">{icon}</span>
+                <span className="font-semibold">
+                  {t(`modals.createNew.items.${key}.label`, label)}
+                </span>
+                <span className="text-xs text-base-content/60 text-center leading-snug">
+                  {t(`modals.createNew.items.${key}.description`)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </GenericDialog>
 
       {/* Create Project Dialog */}
@@ -638,7 +714,7 @@ function Home() {
       <GenericDialog
         toggle={!!pendingDeleteId}
         title={t(`body.confirms.deleteChart.label`)}
-        description="This action cannot be undone."
+        description={t("modals.irreversible", "Questa azione non può essere annullata.")}
         labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
         confirmCb={confirmDeleteChart}
         cancelCb={() => setPendingDeleteId(null)}
@@ -649,8 +725,8 @@ function Home() {
 
       <GenericDialog
         toggle={!!pendingDeleteDashboardId}
-        title="Delete Dashboard"
-        description="This action cannot be undone."
+        title={t("modals.deleteDashboard.title", "Elimina dashboard")}
+        description={t("modals.irreversible", "Questa azione non può essere annullata.")}
         labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
         confirmCb={() => {
           if (!pendingDeleteDashboardId) return;
@@ -671,8 +747,8 @@ function Home() {
 
       <GenericDialog
         toggle={!!pendingDeleteDatasourceId}
-        title="Delete Data Source"
-        description="This action cannot be undone."
+        title={t("modals.deleteDataSource.title", "Elimina sorgente dati")}
+        description={t("modals.irreversible", "Questa azione non può essere annullata.")}
         labels={{ cancel: t(`modals.cancel`), confirm: t(`modals.confirm`) }}
         confirmCb={() => {
           if (!pendingDeleteDatasourceId) return;

@@ -11,6 +11,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import dataTableStyles from "./layout/dataTableStyles.ts";
 import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
@@ -62,17 +63,22 @@ export default function DataSourceTable({
     {
       name: t("columns.visibility.label", { defaultValue: "Visibility" }),
       cell: (row) => (
-        <span className="text-sm">{row.publish ? "Public" : "Private"}</span>
+        <span className="text-sm">
+          {row.publish
+            ? t("columns.visibility.values.public", { defaultValue: "Public" })
+            : t("columns.visibility.values.private", { defaultValue: "Private" })}
+        </span>
       ),
     },
     {
       name: t("columns.source.label", { defaultValue: "Source" }),
-      cell: (row) =>
-        row.isRemote ? (
-          <span className="badge badge-outline badge-sm">Remote</span>
-        ) : (
-          <span className="badge badge-outline badge-sm">Local</span>
-        ),
+      cell: (row) => (
+        <span className="badge badge-outline badge-sm">
+          {row.isRemote
+            ? t("columns.source.values.remote", { defaultValue: "Remote" })
+            : t("columns.source.values.local", { defaultValue: "Local" })}
+        </span>
+      ),
     },
     {
       name: t("columns.createdAt.label", { defaultValue: "Created" }),
@@ -130,8 +136,13 @@ export default function DataSourceTable({
           selectAllRowsItem: false,
         }}
         {...paginationIcons}
+        customStyles={dataTableStyles}
         highlightOnHover
-        noDataComponent={t("noDataComponent", { defaultValue: "No data sources found" })}
+        noDataComponent={
+          <div className="py-10 text-base-content/70">
+            {t("noDataComponent", { defaultValue: "No data sources found" })}
+          </div>
+        }
       />
     </div>
   );

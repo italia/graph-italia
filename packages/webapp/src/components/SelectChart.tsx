@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { FaCheck } from "react-icons/fa6";
 
 // Available chart types with icons and descriptions
 const CHART_TYPES = [
@@ -119,20 +120,30 @@ function SelectChart({
             type="button"
             onClick={() => setChart(type.value)}
             aria-pressed={chart === type.value}
-            className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all hover:border-primary/50 ${
+            className={`relative flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
               chart === type.value
-                ? "border-primary bg-primary/5 text-primary"
-                : "border-base-200 bg-base-100 text-base-content/70 hover:bg-base-50"
+                ? "border-primary bg-primary text-primary-content shadow-md"
+                : "border-base-300 bg-base-100 text-base-content/80 hover:border-primary/60 hover:bg-primary/5"
             }`}
           >
+            {chart === type.value && (
+              <span
+                aria-hidden="true"
+                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary-content text-primary flex items-center justify-center"
+              >
+                <FaCheck className="w-3 h-3" />
+              </span>
+            )}
             <div
               className={`${
-                chart === type.value ? "text-primary" : "text-base-content/50"
+                chart === type.value
+                  ? "text-primary-content"
+                  : "text-base-content/60"
               }`}
             >
               {type.icon}
             </div>
-            <span className="text-sm font-medium text-center">
+            <span className="text-sm font-semibold text-center">
               {t(type.label)}
             </span>
           </button>

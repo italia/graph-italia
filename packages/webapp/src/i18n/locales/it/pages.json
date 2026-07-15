@@ -59,6 +59,13 @@
                 }
             },
             "body": {
+                "steps": {
+                    "status": {
+                        "completed": "completato",
+                        "active": "in corso",
+                        "locked": "bloccato"
+                    }
+                },
                 "options": {
                     "setup": {
                         "title": "Informazioni",
@@ -488,7 +495,8 @@
             "chartsEmpty": "Non hai ancora creato grafici, mappe o KPI. Usa \"Crea nuovo\" per iniziare.",
             "dashboards": "Le mie dashboard",
             "noDashboards": "Le mie dashboard",
-            "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare."
+            "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare.",
+            "datasources": "Sorgenti dati"
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
@@ -525,26 +533,53 @@
                     "confirm": "Seleziona un'opzione sopra",
                     "cancel": "Chiudi"
                 },
+                "creating": "Creazione…",
+                "details": {
+                    "description": "Dai un titolo e, se vuoi, una descrizione. Potrai modificarli anche in seguito.",
+                    "back": "Indietro",
+                    "create": "Crea",
+                    "form": {
+                        "name": {
+                            "label": "Titolo"
+                        },
+                        "description": {
+                            "label": "Descrizione (facoltativa)",
+                            "placeholder": "Aggiungi una descrizione"
+                        }
+                    }
+                },
                 "items": {
                     "chart": {
+                        "label": "Grafico",
                         "description": "Un singolo grafico (barre, linee, torta…) creato a partire dai tuoi dati."
                     },
                     "kpi": {
+                        "label": "Gruppo KPI",
                         "description": "Un gruppo di indicatori numerici di sintesi (KPI), mostrati come riquadri affiancati."
                     },
                     "map": {
+                        "label": "Mappa",
                         "description": "Una mappa geografica dell'Italia con dati per regione, provincia o punti sul territorio."
                     },
                     "dash": {
+                        "label": "Dashboard",
                         "description": "Una griglia componibile di grafici e blocchi di testo, da condividere o incorporare in altri siti."
                     },
                     "datasource": {
+                        "label": "Sorgente dati",
                         "description": "Una sorgente dati (file CSV o URL remoto) riutilizzabile in più grafici."
                     }
                 }
             },
             "cancel": "Annulla",
             "confirm": "Elimina",
+            "irreversible": "Questa azione non può essere annullata.",
+            "deleteDashboard": {
+                "title": "Elimina dashboard"
+            },
+            "deleteDataSource": {
+                "title": "Elimina sorgente dati"
+            },
             "createProject": {
                 "title": "Crea Nuovo Progetto",
                 "description": "I progetti ti aiutano a organizzare i tuoi grafici e le tue dashboard.",
@@ -640,10 +675,20 @@
         "noKeys": "Nessuna API key trovata.",
         "table": {
             "id": "ID",
+            "prefix": "Prefisso",
+            "status": "Stato",
             "role": "Ruolo",
-            "created": "Creato il",
-            "expires": "Scadenza (min)",
+            "project": "Progetto",
+            "orgs": "Organizzazioni",
+            "owner": "Proprietario",
+            "created": "Creata il",
+            "expires": "Scadenza",
             "actions": "Azioni"
+        },
+        "status": {
+            "active": "Attiva",
+            "expired": "Scaduta",
+            "revoked": "Revocata"
         },
         "modal": {
             "createTitle": "Crea API Key",

@@ -443,7 +443,7 @@ export default function SeriesSelector({ setData, initialData }: {
               <div className="form-control">
                 <label htmlFor="series" className="label">
                   <span className="label-text">{t("series.label")}</span>
-                  <span className="label-text-alt text-base-content/50">
+                  <span className="label-text-alt text-base-content/70">
                     {t("series.multiSelect")}
                   </span>
                 </label>
