@@ -31,7 +31,7 @@
     },
     "packages/components": {
       "name": "graph-italia-components",
-      "version": "0.3.25",
+      "version": "0.3.29",
       "devDependencies": {
         "@rollup/plugin-commonjs": "^28.0.3",
         "@rollup/plugin-node-resolve": "^16.0.1",
@@ -124,6 +124,8 @@
         "react": "^19.1.0",
         "react-data-table-component": "^7.7.0",
         "react-dom": "^19.1.0",
+        "react-grid-layout": "^2.2.2",
+        "react-resizable": "^3.2.0",
         "styled-components": "^6.1.13",
       },
       "devDependencies": {

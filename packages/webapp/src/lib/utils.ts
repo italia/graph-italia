@@ -46,7 +46,7 @@ export function getPalette(palette: any) {
 }
 
 // move a column of the data matrix to first position
-export function moveDataColumn(data: any, columnName: string) {
+export function moveDataColumn(data: any, columnName: string | number) {
   const columnIndex = data[0].indexOf(columnName);
   const newData = data.map((row: any) => {
     const withouthCol = [
