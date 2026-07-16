@@ -493,42 +493,68 @@
                 "xLabel": { "label": "Etichetta asse X" },
                 "yLabel": { "label": "Etichetta asse Y" },
                 "nameGap": { "label": "Distanza etichette assi" },
-                "logScale": { "label": "Scala logaritmica" }
+                "logScale": {
+                    "label": "Scala logaritmica",
+                    "hint": "Comprime i valori grandi e dilata i piccoli: utile quando le serie hanno ordini di grandezza molto diversi. I valori pari a zero o negativi non sono rappresentabili su questa scala."
+                }
             },
             "fieldOptions": {
                 "zoom": {
-                    "none": "nessuno",
-                    "both_axis": "entrambi gli assi",
-                    "x_axis": "asse X",
-                    "y_axis": "asse Y"
+                    "none": "Nessuno",
+                    "both_axis": "Entrambi gli assi",
+                    "x_axis": "Asse X",
+                    "y_axis": "Asse Y"
                 },
                 "direction": {
-                    "horizontal": "orizzontale",
-                    "vertical": "verticale"
+                    "horizontal": "Orizzontale",
+                    "vertical": "Verticale"
                 },
                 "visualMapLeft": {
-                    "right": "destra",
-                    "left": "sinistra"
+                    "right": "Destra",
+                    "left": "Sinistra"
                 },
                 "visualMapOrient": {
-                    "vertical": "verticale",
-                    "horizontal": "orizzontale"
+                    "vertical": "Verticale",
+                    "horizontal": "Orizzontale"
                 },
                 "legendPosition": {
-                    "bottom": "in basso",
-                    "top": "in alto"
+                    "bottom": "In basso",
+                    "top": "In alto"
                 },
                 "tooltipFormatter": {
-                    "number": "numero",
-                    "currency": "valuta",
-                    "percentage": "percentuale"
+                    "number": "Numero",
+                    "currency": "Valuta",
+                    "percentage": "Percentuale"
                 },
                 "tooltipTrigger": {
-                    "item": "elemento",
-                    "axis": "asse"
+                    "item": "Elemento",
+                    "axis": "Asse"
                 },
                 "palette": {
-                    "theme": "Colori del tema"
+                    "theme": "Colori del tema",
+                    "categorica": "Categorica (10 colori)",
+                    "divergente": "Divergente blu–rosso",
+                    "divergente_b": "Divergente blu–arancio",
+                    "monocolore_a": "Monocromatica blu",
+                    "monocolore_b": "Monocromatica blu scuro",
+                    "monocolore_c": "Monocromatica grigio-blu",
+                    "monocolore_d": "Monocromatica verde acqua",
+                    "_1_a": "1 colore — Blu",
+                    "_1_b": "1 colore — Blu scuro",
+                    "_1_c": "1 colore — Grigio-blu",
+                    "_2_a": "2 colori — Blu e arancio",
+                    "_2_b": "2 colori — Blu e rosso",
+                    "_2_c": "2 colori — Verde e arancio",
+                    "_2_d": "2 colori — Verde e rosso",
+                    "_2_e": "2 colori — Arancio e turchese",
+                    "_3_a": "3 colori — Blu, rosso, arancio",
+                    "_3_b": "3 colori — Turchese, azzurro, arancio",
+                    "_3_c": "3 colori — Blu notte, azzurro, arancio",
+                    "_4_a": "4 colori — Blu, azzurro, arancio, rosso",
+                    "_4_b": "4 colori — Blu notte, grigio, rosso, arancio",
+                    "_4_c": "4 colori — Blu notte, turchese, azzurro, rosso",
+                    "_5_a": "5 colori — Blu, azzurro, arancio, rosso, grigio",
+                    "_5_b": "5 colori — Verde, turchese, azzurro, arancio, rosso"
                 }
             },
             "form": {

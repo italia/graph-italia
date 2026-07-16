@@ -493,42 +493,68 @@
                 "xLabel": { "label": "X axis label" },
                 "yLabel": { "label": "Y axis label" },
                 "nameGap": { "label": "Axis label gap" },
-                "logScale": { "label": "Logarithmic scale" }
+                "logScale": {
+                    "label": "Logarithmic scale",
+                    "hint": "Compresses large values and expands small ones: useful when series span very different orders of magnitude. Zero or negative values cannot be plotted on this scale."
+                }
             },
             "fieldOptions": {
                 "zoom": {
-                    "none": "none",
-                    "both_axis": "both axes",
+                    "none": "None",
+                    "both_axis": "Both axes",
                     "x_axis": "X axis",
                     "y_axis": "Y axis"
                 },
                 "direction": {
-                    "horizontal": "horizontal",
-                    "vertical": "vertical"
+                    "horizontal": "Horizontal",
+                    "vertical": "Vertical"
                 },
                 "visualMapLeft": {
-                    "right": "right",
-                    "left": "left"
+                    "right": "Right",
+                    "left": "Left"
                 },
                 "visualMapOrient": {
-                    "vertical": "vertical",
-                    "horizontal": "horizontal"
+                    "vertical": "Vertical",
+                    "horizontal": "Horizontal"
                 },
                 "legendPosition": {
-                    "bottom": "bottom",
-                    "top": "top"
+                    "bottom": "Bottom",
+                    "top": "Top"
                 },
                 "tooltipFormatter": {
-                    "number": "number",
-                    "currency": "currency",
-                    "percentage": "percentage"
+                    "number": "Number",
+                    "currency": "Currency",
+                    "percentage": "Percentage"
                 },
                 "tooltipTrigger": {
-                    "item": "item",
-                    "axis": "axis"
+                    "item": "Item",
+                    "axis": "Axis"
                 },
                 "palette": {
-                    "theme": "Theme colors"
+                    "theme": "Theme colors",
+                    "categorica": "Categorical (10 colors)",
+                    "divergente": "Diverging blue–red",
+                    "divergente_b": "Diverging blue–orange",
+                    "monocolore_a": "Monochrome blue",
+                    "monocolore_b": "Monochrome dark blue",
+                    "monocolore_c": "Monochrome gray-blue",
+                    "monocolore_d": "Monochrome teal",
+                    "_1_a": "1 color — Blue",
+                    "_1_b": "1 color — Dark blue",
+                    "_1_c": "1 color — Gray-blue",
+                    "_2_a": "2 colors — Blue and orange",
+                    "_2_b": "2 colors — Blue and red",
+                    "_2_c": "2 colors — Green and orange",
+                    "_2_d": "2 colors — Green and red",
+                    "_2_e": "2 colors — Orange and teal",
+                    "_3_a": "3 colors — Blue, red, orange",
+                    "_3_b": "3 colors — Teal, light blue, orange",
+                    "_3_c": "3 colors — Navy, light blue, orange",
+                    "_4_a": "4 colors — Blue, light blue, orange, red",
+                    "_4_b": "4 colors — Navy, gray, red, orange",
+                    "_4_c": "4 colors — Navy, teal, light blue, red",
+                    "_5_a": "5 colors — Blue, light blue, orange, red, gray",
+                    "_5_b": "5 colors — Green, teal, light blue, orange, red"
                 }
             },
             "form": {

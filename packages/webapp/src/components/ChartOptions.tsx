@@ -32,6 +32,28 @@ function ChartOptions({
     if (option === "") return option;
     return t(`fieldOptions.${fieldName}.${option}`, { defaultValue: option });
   }
+
+  // Optional per-field explanation (i18n `fields.<name>.hint`) rendered as a
+  // small "?" with a tooltip next to the label
+  function fieldHintBadge(field: { name: string }) {
+    const hint = t(`fields.${field.name}.hint`, { defaultValue: "" });
+    if (!hint) return null;
+    return (
+      <span
+        tabIndex={0}
+        aria-label={hint}
+        className="tooltip tooltip-top align-middle ml-1.5 cursor-help before:max-w-64 before:whitespace-normal before:text-left"
+        data-tip={hint}
+      >
+        <span
+          aria-hidden="true"
+          className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-base-300 text-base-content/70 text-[10px] font-bold"
+        >
+          ?
+        </span>
+      </span>
+    );
+  }
   const availabelPalettes =
     chart === "map" ? getMapPalettes() : getAvailablePalettes(numSeries);
   const defaultPalette = availabelPalettes[0];
@@ -144,7 +166,10 @@ function ChartOptions({
       return (
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
-            <span className="label-text font-medium">{label}</span>
+            <span className="label-text font-medium">
+              {label}
+              {fieldHintBadge(field)}
+            </span>
           </label>
           <input
             id={`opt-${field.name}`}
@@ -173,6 +198,7 @@ function ChartOptions({
           <label htmlFor={`opt-${field.name}`} className="label">
             <span className="label-text font-medium">
               {translateLabel(field)}
+              {fieldHintBadge(field)}
             </span>
           </label>
           <div className="h-12 flex items-center">
@@ -204,6 +230,7 @@ function ChartOptions({
           <label htmlFor={`opt-${field.name}`} className="label">
             <span className="label-text font-medium">
               {translateLabel(field)}
+              {fieldHintBadge(field)}
             </span>
           </label>
           <select
