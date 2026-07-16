@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { validateStructure } from "../../lib/validate";
 import type { MatrixType } from "../../types";
 
@@ -8,7 +9,9 @@ function UploadJSON({
 }: {
   setData: (d: MatrixType) => void;
 }) {
-
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.jsonUpload",
+  });
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -31,7 +34,7 @@ function UploadJSON({
     fileReader.onloadend = (e) => {
       const text = e.target?.result;
       if (!text) {
-        setError("The file is empty");
+        setError(t("errors.emptyFile"));
         return;
       }
       let data: undefined | MatrixType;
@@ -53,7 +56,7 @@ function UploadJSON({
     <div className="space-y-4">
       <div className="form-control">
         <label htmlFor="uploadFile" className="label">
-          <span className="label-text font-medium">Upload JSON file</span>
+          <span className="label-text font-medium">{t("label")}</span>
         </label>
         <input
           id="uploadFile"

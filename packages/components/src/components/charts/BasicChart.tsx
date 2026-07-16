@@ -118,6 +118,9 @@ function BasicChart({
       }
       : {};
 
+    // Log axis cannot represent zero/negative values: ECharts skips them
+    const valueAxisType = config.logScale ? "log" : "value";
+
     const axis =
       config.direction === "vertical"
         ? {
@@ -133,7 +136,7 @@ function BasicChart({
           yAxis: {
             ...yName,
             nameRotate: 90,
-            type: "value",
+            type: valueAxisType,
             axisTick: { show: false },
             axisLabel: { show: responsive ? !isMobile : true },
           },
@@ -149,7 +152,7 @@ function BasicChart({
           },
           xAxis: {
             ...yName,
-            type: "value",
+            type: valueAxisType,
             axisTick: { show: false },
             axisLabel: {
               hideOverlap: true,
@@ -190,7 +193,8 @@ function BasicChart({
       aria,
       series: data.dataSource?.series?.map((serie: any) => {
         let rest = {};
-        if (serie.type === "bar" && config.stack) {
+        // Stacking on a log axis produces wrong values, so log scale wins
+        if (serie.type === "bar" && config.stack && !config.logScale) {
           let stack: any = config.stack
             ? config.direction === "vertical"
               ? "x"

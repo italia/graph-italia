@@ -1,5 +1,6 @@
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import type { DropResult } from "@hello-pangea/dnd";
+import { useTranslation } from "react-i18next";
 
 type SortTableColumnsProps = {
   columnOrder: string[];
@@ -10,6 +11,9 @@ export default function SortTableColumns({
   columnOrder,
   onReorder,
 }: SortTableColumnsProps) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.sortColumns",
+  });
   function handleDragEnd(result: DropResult) {
     if (!result.destination || result.destination.index === result.source.index) return;
     const next = [...columnOrder];
@@ -20,10 +24,8 @@ export default function SortTableColumns({
 
   return (
     <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-      <h4 className="text-sm font-semibold mb-3">Reorder Columns</h4>
-      <p className="text-xs text-base-content/50 mb-3">
-        Drag the handles to reorder columns.
-      </p>
+      <h4 className="text-sm font-semibold mb-3">{t("title")}</h4>
+      <p className="text-xs text-base-content/50 mb-3">{t("hint")}</p>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="column-order" direction="horizontal">
           {(provided) => (

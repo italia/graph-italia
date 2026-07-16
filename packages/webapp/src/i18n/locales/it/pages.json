@@ -41,7 +41,12 @@
                 },
                 "preview": {
                     "heading": "Anteprima",
-                    "untitled": "Grafico senza titolo"
+                    "untitled": "Grafico senza titolo",
+                    "actions": {
+                        "viewChart": {
+                            "label": "Apri il grafico"
+                        }
+                    }
                 },
                 "actions": {
                     "back": {
@@ -54,6 +59,13 @@
                 }
             },
             "body": {
+                "steps": {
+                    "status": {
+                        "completed": "completato",
+                        "active": "in corso",
+                        "locked": "bloccato"
+                    }
+                },
                 "options": {
                     "setup": {
                         "title": "Informazioni",
@@ -79,9 +91,9 @@
                     },
                     "configuration": {
                         "title": "Configura il grafico",
-                        "description": "Scegli il tipo di grafico e personalizza l'aspetto",
-                        "status": "Carica i dati per iniziare. Quando i dati saranno disponibili potrai scegliere il tipo di grafico e le opzioni.",
-                        "statusAwaitingSeries": "Dati caricati. Conferma la selezione delle serie nella sezione anteprima per abilitare la configurazione.",
+                        "description": "Scegli il tipo di grafico (barre, linee, torta, mappa) e personalizza l'aspetto",
+                        "status": "Il tipo di grafico si sceglie qui, dopo il caricamento dei dati: completa prima il passaggio 2 \"Carica i tuoi dati\".",
+                        "statusAwaitingSeries": "Dati caricati. Conferma la selezione delle colonne nella sezione Anteprima: potrai poi scegliere qui il tipo di grafico e le opzioni.",
                         "announcement": "Configurazione disponibile. Scegli il tipo di grafico e personalizza le opzioni."
                     },
                     "data": {
@@ -129,11 +141,15 @@
                     "back": {
                         "label": "Torna alla lista"
                     },
+                    "reset": {
+                        "label": "Reimposta"
+                    },
                     "save": {
                         "default": "Salva",
                         "isSaving": "Salvataggio...",
                         "success": "Dashboard salvata con successo",
-                        "error": "Errore durante il salvataggio della dashboard"
+                        "error": "Errore durante il salvataggio della dashboard",
+                        "skippedEmpty": "Gli slot senza contenuto non vengono salvati"
                     }
                 }
             },
@@ -167,8 +183,10 @@
                 }
             },
             "slots": {
-                "title": "Modifica dashboard slots",
-                "description": "Crea uno slot e assegnalo al grafico",
+                "title": "Componi la dashboard",
+                "description": "Aggiungi slot con grafici o blocchi di testo e disponili nella griglia",
+                "hint": "Trascina uno slot dalla sua barra superiore per spostarlo, oppure usa i controlli L (larghezza), A (altezza) e le frecce.",
+                "empty": "Nessuno slot: usa “Aggiungi slot” per un grafico o “Aggiungi testo” per un blocco di testo.",
                 "actions": {
                     "addSlot": {
                         "label": "Aggiungi slot"
@@ -202,16 +220,26 @@
                     }
                 },
                 "slotToolbar": {
+                    "dragHint": "Trascina per spostare lo slot",
                     "width": {
-                        "label": "Larghezza"
+                        "label": "Larghezza",
+                        "short": "L"
                     },
                     "height": {
-                        "label": "Altezza"
+                        "label": "Altezza",
+                        "short": "A"
+                    },
+                    "move": {
+                        "label": "Sposta slot",
+                        "left": "Sposta a sinistra",
+                        "up": "Sposta in alto",
+                        "down": "Sposta in basso",
+                        "right": "Sposta a destra"
                     },
                     "actions": {
                         "change": {
                             "label": "Cambia",
-                            "title": "Assegna Grafico"
+                            "title": "Assegna grafico"
                         },
                         "remove": {
                             "label": "Rimuovi",
@@ -226,6 +254,11 @@
                     },
                     "placeholder": "Scrivi in Markdown: # Titolo, **grassetto**, - elenchi…",
                     "ariaLabel": "Contenuto del blocco di testo"
+                }
+            },
+            "modals": {
+                "selectChart": {
+                    "title": "Scegli un grafico"
                 }
             }
         },
@@ -483,7 +516,8 @@
             "chartsEmpty": "Non hai ancora creato grafici, mappe o KPI. Usa \"Crea nuovo\" per iniziare.",
             "dashboards": "Le mie dashboard",
             "noDashboards": "Le mie dashboard",
-            "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare."
+            "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare.",
+            "datasources": "Sorgenti dati"
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
@@ -520,26 +554,53 @@
                     "confirm": "Seleziona un'opzione sopra",
                     "cancel": "Chiudi"
                 },
+                "creating": "Creazione…",
+                "details": {
+                    "description": "Dai un titolo e, se vuoi, una descrizione. Potrai modificarli anche in seguito.",
+                    "back": "Indietro",
+                    "create": "Crea",
+                    "form": {
+                        "name": {
+                            "label": "Titolo"
+                        },
+                        "description": {
+                            "label": "Descrizione (facoltativa)",
+                            "placeholder": "Aggiungi una descrizione"
+                        }
+                    }
+                },
                 "items": {
                     "chart": {
+                        "label": "Grafico",
                         "description": "Un singolo grafico (barre, linee, torta…) creato a partire dai tuoi dati."
                     },
                     "kpi": {
+                        "label": "Gruppo KPI",
                         "description": "Un gruppo di indicatori numerici di sintesi (KPI), mostrati come riquadri affiancati."
                     },
                     "map": {
+                        "label": "Mappa",
                         "description": "Una mappa geografica dell'Italia con dati per regione, provincia o punti sul territorio."
                     },
                     "dash": {
+                        "label": "Dashboard",
                         "description": "Una griglia componibile di grafici e blocchi di testo, da condividere o incorporare in altri siti."
                     },
                     "datasource": {
+                        "label": "Sorgente dati",
                         "description": "Una sorgente dati (file CSV o URL remoto) riutilizzabile in più grafici."
                     }
                 }
             },
             "cancel": "Annulla",
             "confirm": "Elimina",
+            "irreversible": "Questa azione non può essere annullata.",
+            "deleteDashboard": {
+                "title": "Elimina dashboard"
+            },
+            "deleteDataSource": {
+                "title": "Elimina sorgente dati"
+            },
             "createProject": {
                 "title": "Crea Nuovo Progetto",
                 "description": "I progetti ti aiutano a organizzare i tuoi grafici e le tue dashboard.",
@@ -635,10 +696,20 @@
         "noKeys": "Nessuna API key trovata.",
         "table": {
             "id": "ID",
+            "prefix": "Prefisso",
+            "status": "Stato",
             "role": "Ruolo",
-            "created": "Creato il",
-            "expires": "Scadenza (min)",
+            "project": "Progetto",
+            "orgs": "Organizzazioni",
+            "owner": "Proprietario",
+            "created": "Creata il",
+            "expires": "Scadenza",
             "actions": "Azioni"
+        },
+        "status": {
+            "active": "Attiva",
+            "expired": "Scaduta",
+            "revoked": "Revocata"
         },
         "modal": {
             "createTitle": "Crea API Key",

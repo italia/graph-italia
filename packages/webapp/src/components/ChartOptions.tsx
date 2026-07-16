@@ -5,14 +5,6 @@ import { defaultConfig, getFields, palettes } from "../lib/constants";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
 import ShowPalette from "./ShowPalette";
 
-function translateLabel(label: string): string {
-  return label;
-}
-
-function translateSection(name: string): string {
-  return name;
-}
-
 function ChartOptions({
   config,
   setConfig,
@@ -27,6 +19,19 @@ function ChartOptions({
   const { t } = useTranslation("components", {
     keyPrefix: "components.chartOptions",
   });
+
+  function translateLabel(field: { name: string; label: string }): string {
+    return t(`fields.${field.name}.label`, { defaultValue: field.label });
+  }
+
+  function translateSection(name: string): string {
+    return t(`sections.${name}`, { defaultValue: name });
+  }
+
+  function translateOption(fieldName: string, option: string): string {
+    if (option === "") return option;
+    return t(`fieldOptions.${fieldName}.${option}`, { defaultValue: option });
+  }
   const availabelPalettes =
     chart === "map" ? getMapPalettes() : getAvailablePalettes(numSeries);
   const defaultPalette = availabelPalettes[0];
@@ -126,7 +131,7 @@ function ChartOptions({
       const layoutValue = field.layout ? Number(field.layout) : 1;
       const gridSpan = layoutValue === 2 ? "sm:col-span-2" : "";
 
-      let label = translateLabel(field.label);
+      let label = translateLabel(field);
       if (
         (field.name === "xLabel" || field.name === "yLabel") &&
         watchDirection === "horizontal"
@@ -167,7 +172,7 @@ function ChartOptions({
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
             <span className="label-text font-medium">
-              {translateLabel(field.label)}
+              {translateLabel(field)}
             </span>
           </label>
           <div className="h-12 flex items-center">
@@ -198,7 +203,7 @@ function ChartOptions({
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
             <span className="label-text font-medium">
-              {translateLabel(field.label)}
+              {translateLabel(field)}
             </span>
           </label>
           <select
@@ -209,9 +214,7 @@ function ChartOptions({
           >
             {(field.options ?? []).map((option: string) => (
               <option key={option} value={option}>
-                {field.name === "palette" && option === "theme"
-                  ? "Theme Colors"
-                  : option}
+                {translateOption(field.name, option)}
               </option>
             ))}
           </select>

@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import dataTableStyles from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
 import { paginationIcons } from "./layout/paginationIcons";
 
@@ -344,8 +345,11 @@ export default function ChartTable({
               selectAllRowsItem: false,
             }}
             {...paginationIcons}
+            customStyles={dataTableStyles}
             highlightOnHover
-            noDataComponent={t(`noDataComponent`)}
+            noDataComponent={
+              <div className="py-10 text-base-content/70">{t(`noDataComponent`)}</div>
+            }
           />
         </div>
       )}

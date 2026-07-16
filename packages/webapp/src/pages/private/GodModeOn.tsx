@@ -231,7 +231,7 @@ export default function GodModeOnPage() {
         <title>God Mode</title>
       </Helmet>
 
-      <div className="w-full flex justify-between items-center gap-2 bg-base-300 py-4 px-8 rounded-lg mb-6">
+      <div className="w-full flex justify-between items-center gap-2 py-6 px-4 lg:px-10 mb-2">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <FaShield className="text-error" />
@@ -246,7 +246,7 @@ export default function GodModeOnPage() {
       </div>
 
       <div className="p-6">
-        <div className="card bg-base-100 shadow-xl border border-base-200">
+        <div className="card bg-base-100 shadow-xl border border-base-300">
           <div className="card-body p-0">
             <DataTable
               columns={columns}

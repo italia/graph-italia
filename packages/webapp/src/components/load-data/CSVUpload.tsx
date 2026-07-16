@@ -1,5 +1,6 @@
 import Papa from "papaparse";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { MatrixType } from "../../types";
 
 function UploadCSV({
@@ -7,6 +8,9 @@ function UploadCSV({
 }: {
   setData: (d: MatrixType) => void;
 }) {
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.csvUpload",
+  });
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -17,7 +21,7 @@ function UploadCSV({
     setStatus(null);
     const file = e?.target?.files?.[0] || null;
     if (!file) {
-      setError("The file is empty");
+      setError(t("errors.emptyFile"));
       return;
     }
     uploadFile(e);
@@ -48,7 +52,7 @@ function UploadCSV({
     <div className="space-y-4">
       <div className="form-control">
         <label htmlFor="uploadFile" className="label">
-          <span className="label-text font-medium">Upload CSV file</span>
+          <span className="label-text font-medium">{t("label")}</span>
         </label>
         <input
           id="uploadFile"

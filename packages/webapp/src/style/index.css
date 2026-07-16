@@ -22,9 +22,11 @@
   default: true;
   prefersdark: false;
   color-scheme: light;
-  --color-base-100: oklch(99% 0 0);
-  --color-base-200: oklch(98% 0 0);
-  --color-base-300: oklch(97% 0 0);
+  /* Distinct surface steps: white cards, cool-gray page background,
+     visible borders/bands (were 99/98/97% — everything blended) */
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(97.5% 0.006 240);
+  --color-base-300: oklch(93% 0.008 240);
   --color-base-content: #212529;
   --color-primary: #0066cc;
   --color-primary-content: #ffffff;

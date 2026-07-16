@@ -282,7 +282,7 @@ function EditKpiGroupPage() {
       </Helmet>
 
       {/* Top bar */}
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
+      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -322,7 +322,7 @@ function EditKpiGroupPage() {
               isDisabled={false}
               index={0}
             >
-              <div className="card bg-base-100 shadow-sm border border-base-200">
+              <div className="card bg-base-100 shadow-sm border border-base-300">
                 <div className="card-body">
                   <div className="flex flex-col space-y-2">
                     {isPublishingEnabled() && (
@@ -391,7 +391,7 @@ function EditKpiGroupPage() {
               index={1}
             >
               {loaded && (
-                <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card bg-base-100 shadow-sm border border-base-300">
                   <div className="card-body">
                     <KpiConfigForm
                       ref={kpiConfigFormRef}

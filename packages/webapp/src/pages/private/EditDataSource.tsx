@@ -178,7 +178,7 @@ export default function EditDataSource() {
       </div>
 
       {/* Header bar */}
-      <div className="w-full flex justify-between items-center gap-2 mb-4 bg-base-300 py-4 px-10 rounded-lg">
+      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -222,7 +222,7 @@ export default function EditDataSource() {
               isDisabled={false}
               index={0}
             >
-              <div className="card bg-base-100 shadow-sm border border-base-200">
+              <div className="card bg-base-100 shadow-sm border border-base-300">
                 <div className="card-body">
                   <div className="flex flex-col space-y-2">
                     {api.isPublishingEnabled() && (
@@ -292,7 +292,7 @@ export default function EditDataSource() {
               headingRef={configurationHeadingRef}
             >
               {isConfigStep ? (
-                <div className="card bg-base-100 shadow-sm border border-base-200">
+                <div className="card bg-base-100 shadow-sm border border-base-300">
                   <div className="card-body space-y-4">
                     {/* isTrasposed toggle */}
                     <div className="flex items-center gap-4">
@@ -341,7 +341,7 @@ export default function EditDataSource() {
               isDisabled={false}
               index={1}
             >
-              <div className="card bg-base-100 shadow-sm border border-base-200">
+              <div className="card bg-base-100 shadow-sm border border-base-300">
                 <div className="card-body">
                   <ChooseLoader
                     handleUpload={handleUpload}
@@ -384,7 +384,7 @@ export default function EditDataSource() {
                       ref={seriesSelectorRef}
                       tabIndex={-1}
                       aria-labelledby="series-selector-heading"
-                      className="card bg-base-100 shadow-sm border border-base-200"
+                      className="card bg-base-100 shadow-sm border border-base-300"
                     >
                       <div className="card-body">
                         <h3 id="series-selector-heading" className="text-lg font-semibold">

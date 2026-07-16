@@ -331,7 +331,38 @@
                     },
                     "reset": {
                         "label": "Reset"
+                    },
+                    "filterColumns": {
+                        "label": "Filter columns",
+                        "show": "Filter columns",
+                        "hide": "Hide columns filter"
+                    },
+                    "reorderColumns": {
+                        "label": "Reorder columns",
+                        "show": "Reorder columns",
+                        "hide": "Hide column order"
+                    },
+                    "renameHeaders": {
+                        "label": "Rename headers",
+                        "show": "Rename headers",
+                        "hide": "Cancel rename"
+                    },
+                    "downloadCsv": {
+                        "label": "Download CSV"
+                    },
+                    "downloadJson": {
+                        "label": "Download JSON"
+                    },
+                    "cancel": {
+                        "label": "Cancel"
                     }
+                },
+                "resetDialog": {
+                    "title": "Reset data",
+                    "description": "This will permanently clear all loaded data and transformations. You will be taken back to the load data step.",
+                    "warning": "This action cannot be undone.",
+                    "cancel": "Cancel",
+                    "confirm": "Reset"
                 },
                 "table": {
                     "actions": {
@@ -347,7 +378,67 @@
                     },
                     "title": "Transform Data",
                     "sorting": {
-                        "label": "Sorted by"
+                        "label": "Sorted by",
+                        "direction": {
+                            "asc": "ascending",
+                            "desc": "descending"
+                        }
+                    }
+                }
+            },
+            "csvUpload": {
+                "label": "Upload CSV file",
+                "errors": {
+                    "emptyFile": "The file is empty"
+                }
+            },
+            "jsonUpload": {
+                "label": "Upload JSON file",
+                "errors": {
+                    "emptyFile": "The file is empty"
+                }
+            },
+            "sortColumns": {
+                "title": "Reorder columns",
+                "hint": "Drag the handles to reorder columns."
+            },
+            "seriesSelector": {
+                "header": {
+                    "label": "Configure columns"
+                },
+                "category": {
+                    "label": "Category column (labels)",
+                    "hint": "The data labels: the X axis in bar and line charts, the slices in a pie chart, the geographic areas on a map. Only columns with text values are offered."
+                },
+                "series": {
+                    "label": "Value series (numeric columns)",
+                    "hint": "The values to plot on the chart. Only columns containing exclusively numbers are offered. Each row of the dataset becomes a point on the chart: data should be loaded already aggregated (e.g. one total per category).",
+                    "multiSelect": "Ctrl+click (Cmd+click on Mac) for multiple selection",
+                    "empty": "No numeric column found in the dataset. To create a chart you need at least one column containing only numeric values (e.g. one total per category): aggregate your data before loading it, or use the automatic aggregation suggested above if the category column contains repeated values."
+                },
+                "warnings": {
+                    "duplicateCategories": "The \"{{column}}\" column contains repeated values: {{rows}} rows but only {{unique}} distinct values. Each row becomes a point on the chart: for a readable result you need aggregated data (e.g. one total per value of \"{{column}}\").",
+                    "tooManyCategories": "The \"{{column}}\" column has {{rows}} distinct values: a chart with this many categories will be hard to read. Consider filtering or aggregating your data before loading it."
+                },
+                "aggregate": {
+                    "suggestion": "I can automatically aggregate the data by grouping it by \"{{column}}\":",
+                    "fnLabel": "Aggregation type",
+                    "fn": {
+                        "count": "Row count",
+                        "sum": "Sum of numeric values",
+                        "mean": "Average of numeric values"
+                    },
+                    "apply": "Aggregate by \"{{column}}\"",
+                    "applied": "Data aggregated by \"{{column}}\" ({{fn}}): from {{from}} rows to {{to}} categories.",
+                    "undo": "Undo aggregation",
+                    "countColumn": "count"
+                },
+                "actions": {
+                    "reset": {
+                        "label": "Reset"
+                    },
+                    "submit": {
+                        "label": "Load data"
                     }
                 }
             }
@@ -355,6 +446,90 @@
         "chartOptions": {
             "errors": {
                 "selectChart": "Select a chart type to configure options"
+            },
+            "sections": {
+                "Line Chart": "Line chart",
+                "Bar Chart": "Bar chart",
+                "Pie Chart": "Pie chart",
+                "Map Chart": "Map chart",
+                "General": "General",
+                "Tooltip": "Tooltip",
+                "Grid": "Grid",
+                "Axes": "Axes"
+            },
+            "fields": {
+                "zoom": { "label": "Show zoom" },
+                "smooth": { "label": "Line smoothing" },
+                "showArea": { "label": "Show area" },
+                "showAllSymbol": { "label": "Show all symbols" },
+                "direction": { "label": "Direction" },
+                "stack": { "label": "Stack values" },
+                "totalLabel": { "label": "Total label" },
+                "showPieLabels": { "label": "Show labels" },
+                "labeLine": { "label": "Show label lines" },
+                "geoJsonUrl": { "label": "GeoJson URL" },
+                "nameProperty": { "label": "Matching property name" },
+                "showMapLabels": { "label": "Show labels" },
+                "serieName": { "label": "Series name" },
+                "areaColor": { "label": "Area overlay color" },
+                "visualMap": { "label": "Show color scale" },
+                "visualMapLeft": { "label": "Color scale position" },
+                "visualMapOrient": { "label": "Color scale orientation" },
+                "palette": { "label": "Palette" },
+                "h": { "label": "Chart height (px)" },
+                "responsive": { "label": "Responsive" },
+                "legend": { "label": "Show legend" },
+                "legendPosition": { "label": "Legend position" },
+                "tooltip": { "label": "Show tooltip" },
+                "valueFormatter": { "label": "Value suffix" },
+                "tooltipFormatter": { "label": "Value format" },
+                "tooltipTrigger": { "label": "Tooltip trigger" },
+                "gridHeight": { "label": "Height" },
+                "gridWidth": { "label": "Width" },
+                "gridLeft": { "label": "Left margin (%/px)" },
+                "gridRight": { "label": "Right margin (%/px)" },
+                "gridTop": { "label": "Top margin (%/px)" },
+                "gridBottom": { "label": "Bottom margin (%/px)" },
+                "xLabel": { "label": "X axis label" },
+                "yLabel": { "label": "Y axis label" },
+                "nameGap": { "label": "Axis label gap" },
+                "logScale": { "label": "Logarithmic scale" }
+            },
+            "fieldOptions": {
+                "zoom": {
+                    "none": "none",
+                    "both_axis": "both axes",
+                    "x_axis": "X axis",
+                    "y_axis": "Y axis"
+                },
+                "direction": {
+                    "horizontal": "horizontal",
+                    "vertical": "vertical"
+                },
+                "visualMapLeft": {
+                    "right": "right",
+                    "left": "left"
+                },
+                "visualMapOrient": {
+                    "vertical": "vertical",
+                    "horizontal": "horizontal"
+                },
+                "legendPosition": {
+                    "bottom": "bottom",
+                    "top": "top"
+                },
+                "tooltipFormatter": {
+                    "number": "number",
+                    "currency": "currency",
+                    "percentage": "percentage"
+                },
+                "tooltipTrigger": {
+                    "item": "item",
+                    "axis": "axis"
+                },
+                "palette": {
+                    "theme": "Theme colors"
+                }
             },
             "form": {
                 "errors": {
@@ -421,6 +596,37 @@
             },
             "columns": {
                 "title": "Data Matching Column"
+            }
+        },
+        "datasourceTable": {
+            "noDataComponent": "No data sources created",
+            "columns": {
+                "name": { "label": "Name" },
+                "visibility": {
+                    "label": "Visibility",
+                    "values": {
+                        "public": "Public",
+                        "private": "Private"
+                    }
+                },
+                "source": {
+                    "label": "Source",
+                    "values": {
+                        "remote": "Remote",
+                        "local": "Local"
+                    }
+                },
+                "createdAt": { "label": "Created" },
+                "updatedAt": { "label": "Updated" },
+                "actions": { "label": "Actions" }
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete"
+            },
+            "pagination": {
+                "rowsPerPage": "Rows per page:",
+                "rangeSeparator": "of"
             }
         },
         "dashboardTable": {

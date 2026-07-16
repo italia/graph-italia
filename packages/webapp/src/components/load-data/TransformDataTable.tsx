@@ -288,7 +288,9 @@ export default function TransformData({
             aria-controls="data-table-filter-columns"
             onClick={() => setShowFilterColumns((v) => !v)}
           >
-            {showFilterColumns ? "Hide Columns Filter" : "Filter Columns"}
+            {showFilterColumns
+              ? t(`actions.filterColumns.hide`)
+              : t(`actions.filterColumns.show`)}
           </button>
           <button
             type="button"
@@ -297,7 +299,9 @@ export default function TransformData({
             aria-controls="data-table-sort-columns"
             onClick={() => setShowSortColumns((v) => !v)}
           >
-            {showSortColumns ? "Hide Column Order" : "Reorder Columns"}
+            {showSortColumns
+              ? t(`actions.reorderColumns.hide`)
+              : t(`actions.reorderColumns.show`)}
           </button>
           <button
             type="button"
@@ -308,7 +312,9 @@ export default function TransformData({
               showRenameForm ? setShowRenameForm(false) : openRenameForm()
             }
           >
-            {showRenameForm ? "Cancel Rename" : "Rename Headers"}
+            {showRenameForm
+              ? t(`actions.renameHeaders.hide`)
+              : t(`actions.renameHeaders.show`)}
           </button>
           <button
             type="button" className="btn btn-outline"
@@ -325,7 +331,7 @@ export default function TransformData({
 
           {downloadCSV && (
             <button type="button" className="btn btn-outline" onClick={() => downloadCSV()}>
-              Download CSV
+              {t(`actions.downloadCsv.label`)}
             </button>
           )}
           {downloadJSON && (
@@ -334,7 +340,7 @@ export default function TransformData({
               className="btn btn-outline"
               onClick={() => downloadJSON()}
             >
-              Download JSON
+              {t(`actions.downloadJson.label`)}
             </button>
           )}
         </div>
@@ -395,7 +401,10 @@ export default function TransformData({
       {sortState && (
         <div className="mt-2 text-xs text-base-content/50">
           {t(`table.sorting.label`)} <strong>{sortState.columnKey}</strong> (
-          {sortState.direction})
+          {t(`table.sorting.direction.${sortState.direction}`, {
+            defaultValue: sortState.direction,
+          })}
+          )
         </div>
       )}
 
@@ -410,7 +419,7 @@ export default function TransformData({
               setSortState(null);
             }}
           >
-            {"cancel"}
+            {t(`actions.cancel.label`)}
           </button>
           <button
             type="button"
@@ -425,9 +434,12 @@ export default function TransformData({
 
       <GenericDialog
         toggle={showResetDialog}
-        title="Reset data"
-        description="This will permanently clear all loaded data and transformations. You will be taken back to the load data step."
-        labels={{ cancel: "Cancel", confirm: "Reset" }}
+        title={t(`resetDialog.title`)}
+        description={t(`resetDialog.description`)}
+        labels={{
+          cancel: t(`resetDialog.cancel`),
+          confirm: t(`resetDialog.confirm`),
+        }}
         confirmCb={() => {
           setShowResetDialog(false);
           if (onReset) onReset();
@@ -435,7 +447,9 @@ export default function TransformData({
         }}
         cancelCb={() => setShowResetDialog(false)}
       >
-        <p className="text-sm text-warning font-medium">This action cannot be undone.</p>
+        <p className="text-sm text-warning font-medium">
+          {t(`resetDialog.warning`)}
+        </p>
       </GenericDialog>
     </div >
   );

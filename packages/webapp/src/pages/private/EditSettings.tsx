@@ -15,7 +15,7 @@ export default function EditSettingsPage() {
         <title>{t("title", "Account Settings")}</title>
       </Helmet>
 
-      <div className="w-full flex items-center gap-2 bg-base-300 py-4 px-8 rounded-lg mb-6">
+      <div className="w-full flex items-center gap-2 py-6 px-4 lg:px-10 mb-2">
         <FaLock className="text-primary" />
         <div>
           <h1 className="text-2xl font-bold">{t("title", "Account Settings")}</h1>

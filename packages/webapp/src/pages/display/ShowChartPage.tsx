@@ -17,7 +17,9 @@ function ShowChartPage() {
   const scheme = settings?.preferredTheme ?? "light";
   return (
     <Layout>
-      <div className="">
+      {/* Aligned to the header gutters; min-height fills the space between
+          header and footer so the chart sits vertically centered */}
+      <div className="px-4 lg:px-10 py-10 min-h-[calc(100dvh-230px)] flex flex-col justify-center">
         {previewMode && (
           <div role="status" className="alert alert-info mb-4">
             <span>
