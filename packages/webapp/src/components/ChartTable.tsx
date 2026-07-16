@@ -28,7 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import dataTableStyles from "./layout/dataTableStyles.ts";
+import dataTableStyles, { TABLE_COL } from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
 import { paginationIcons } from "./layout/paginationIcons";
 
@@ -110,7 +110,7 @@ export default function ChartTable({
   const columns: TableColumn<FieldDataType>[] = [
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`),
-      maxWidth: "80px",
+      width: TABLE_COL.type,
       selector: (row: FieldDataType) => row.chart,
       sortable: true,
       cell: (row: FieldDataType) => {
@@ -165,6 +165,7 @@ export default function ChartTable({
 
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`),
+      width: TABLE_COL.remote,
       selector: (row: FieldDataType) => row.isRemote ?? false,
       cell: (row: FieldDataType) =>
         row.remoteUrl ? (
@@ -197,6 +198,7 @@ export default function ChartTable({
 
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.visibility.label`),
+      width: TABLE_COL.visibility,
       cell: (row: FieldDataType) => (
         <div>
           {row.publish ? (
@@ -218,23 +220,8 @@ export default function ChartTable({
     },
 
     {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
-      selector: (row: FieldDataType) => row.createdAt ?? "",
-      cell: (row: FieldDataType) =>
-        dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
-      sortable: true,
-    },
-
-    {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
-      selector: (row: FieldDataType) => row.updatedAt ?? "",
-      cell: (row: FieldDataType) =>
-        dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm"),
-      sortable: true,
-    },
-
-    {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
+      width: TABLE_COL.share,
       cell: (row: FieldDataType) => (
         <div className="flex gap-2">
           <button
@@ -267,7 +254,26 @@ export default function ChartTable({
     },
 
     {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
+      width: TABLE_COL.date,
+      selector: (row: FieldDataType) => row.createdAt ?? "",
+      cell: (row: FieldDataType) =>
+        dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
+      sortable: true,
+    },
+
+    {
+      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
+      width: TABLE_COL.date,
+      selector: (row: FieldDataType) => row.updatedAt ?? "",
+      cell: (row: FieldDataType) =>
+        dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm"),
+      sortable: true,
+    },
+
+    {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.actions.label`),
+      width: TABLE_COL.actions,
       cell: (row: FieldDataType) => (
         <div className="flex gap-2">
           <button

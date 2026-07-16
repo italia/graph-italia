@@ -12,7 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import dataTableStyles from "./layout/dataTableStyles.ts";
+import dataTableStyles, { TABLE_COL } from "./layout/dataTableStyles.ts";
 import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
@@ -64,12 +64,18 @@ export default function DashboardTable({
     },
     {
       name: t(`columns.visibility.label`),
+      width: TABLE_COL.visibility,
       cell: (row) => (
-        <span className="text-sm">{row.publish ? "Public" : "Private"}</span>
+        <span className="text-sm">
+          {row.publish
+            ? t(`columns.visibility.values.public`, { defaultValue: "Pubblico" })
+            : t(`columns.visibility.values.private`, { defaultValue: "Privato" })}
+        </span>
       ),
     },
     {
       name: t(`columns.createdAt.label`),
+      width: TABLE_COL.date,
       selector: (row) => row.createdAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -77,6 +83,7 @@ export default function DashboardTable({
     },
     {
       name: t(`columns.updatedAt.label`),
+      width: TABLE_COL.date,
       selector: (row) => row.updatedAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -84,6 +91,7 @@ export default function DashboardTable({
     },
     {
       name: t(`columns.actions.label`),
+      width: TABLE_COL.actions,
       cell: (row) => (
         <div className="flex gap-2">
           {/* <button

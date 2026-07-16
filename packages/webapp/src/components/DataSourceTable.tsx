@@ -11,7 +11,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import dataTableStyles from "./layout/dataTableStyles.ts";
+import dataTableStyles, { TABLE_COL } from "./layout/dataTableStyles.ts";
 import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
@@ -62,6 +62,7 @@ export default function DataSourceTable({
     },
     {
       name: t("columns.visibility.label", { defaultValue: "Visibility" }),
+      width: TABLE_COL.visibility,
       cell: (row) => (
         <span className="text-sm">
           {row.publish
@@ -72,6 +73,7 @@ export default function DataSourceTable({
     },
     {
       name: t("columns.source.label", { defaultValue: "Source" }),
+      width: TABLE_COL.source,
       cell: (row) => (
         <span className="badge badge-outline badge-sm">
           {row.isRemote
@@ -82,6 +84,7 @@ export default function DataSourceTable({
     },
     {
       name: t("columns.createdAt.label", { defaultValue: "Created" }),
+      width: TABLE_COL.date,
       selector: (row) => row.createdAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -89,6 +92,7 @@ export default function DataSourceTable({
     },
     {
       name: t("columns.updatedAt.label", { defaultValue: "Updated" }),
+      width: TABLE_COL.date,
       selector: (row) => row.updatedAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -96,6 +100,7 @@ export default function DataSourceTable({
     },
     {
       name: t("columns.actions.label", { defaultValue: "Actions" }),
+      width: TABLE_COL.actions,
       cell: (row) => (
         <div className="flex gap-2">
           <button

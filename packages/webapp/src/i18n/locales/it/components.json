@@ -636,7 +636,11 @@
                     "label": "Nome"
                 },
                 "visibility": {
-                    "label": "Visibilità"
+                    "label": "Visibilità",
+                    "values": {
+                        "public": "Pubblico",
+                        "private": "Privato"
+                    }
                 },
                 "createdAt": {
                     "label": "Creato il"
