@@ -238,7 +238,7 @@ export default function EditApiKeysPage() {
                                 {key.role}
                               </span>
                             </td>
-                            <td className="font-semibold text-sm">{key.project?.name || "---"}</td>
+                            <td className="text-base">{key.project?.name || "---"}</td>
                             <td className="text-sm opacity-80">{orgsList}</td>
                             <td className="text-xs opacity-70">{key.project?.owner?.email || "---"}</td>
                             <td className="text-xs">{new Date(key.createdAt).toLocaleString()}</td>

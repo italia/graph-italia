@@ -77,6 +77,20 @@ export type ChartConfigType = {
   areaColor?: string;
   nameProperty?: string;
   logScale?: boolean;
+  dataTransform?: DataTransformRecipe;
+};
+
+// How the editor shaped the loaded data (column selection + optional
+// aggregation). Saved in chart config so the server can replay it when it
+// refreshes remote-linked data (packages/server/lib/dataTransform.ts).
+export type DataTransformRecipe = {
+  version: 1;
+  category: string;
+  series: string[];
+  aggregation?: {
+    fn: "count" | "sum" | "mean";
+    countLabel?: string;
+  };
 };
 
 export interface StoreStateType {

@@ -15,7 +15,7 @@ export default function ToggleTableColumns({
 
   return (
     <div className="my-4">
-      <h4 className="text-sm font-semibold mb-2 text-base-content/70">
+      <h4 className="text-base mb-2 text-base-content/70">
         {t(`table.actions.toggleColumns.label`) || "Toggle Columns"}
       </h4>
       <div className="flex flex-wrap gap-2">

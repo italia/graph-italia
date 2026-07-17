@@ -2,7 +2,7 @@ import { startTransition, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DataMngTable from "../DataMngTable";
 import { moveDataColumn, transposeData } from "../../lib/utils";
-import type { MatrixType } from "../../types";
+import type { DataTransformRecipe, MatrixType } from "../../types";
 
 type selectOptionType = {
   value: string;
@@ -59,7 +59,7 @@ function cleanupData(matrix: MatrixType) {
 }
 
 export default function SeriesSelector({ setData, initialData }: {
-  setData: (data: MatrixType) => void;
+  setData: (data: MatrixType, transform?: DataTransformRecipe) => void;
   initialData?: MatrixType;
 }) {
   const { t } = useTranslation("components", {
@@ -265,13 +265,28 @@ export default function SeriesSelector({ setData, initialData }: {
   }
 
   function handleComplete() {
-    console.log("rawData:", rawData);
     if (rawData && category && series.length > 0) {
       const filtered = filterData(rawData, category, series);
       if (filtered) {
         const newData = (cleanupData(filtered));
-        console.log("Cleaned data:", newData);
-        setData(newData);
+        // Recipe describing how the raw source was shaped: saved in chart
+        // config so the server can replay it when refreshing remote data.
+        const transform: DataTransformRecipe = {
+          version: 1,
+          category: category.value,
+          series: series.map((s) => s.value),
+          ...(preAggregation
+            ? {
+                aggregation: {
+                  fn: preAggregation.fn,
+                  ...(preAggregation.fn === "count"
+                    ? { countLabel: String(rawData[0][1]).trim() }
+                    : {}),
+                },
+              }
+            : {}),
+        };
+        setData(newData, transform);
       }
     }
   }

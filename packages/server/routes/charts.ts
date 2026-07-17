@@ -12,6 +12,7 @@ import {
 	describeRoute,
 } from "hono-openapi";
 import parseCSV from "../lib/parseCSV";
+import { applyDataTransform, isDataTransform, type Matrix } from "../lib/dataTransform";
 
 type Env = { Variables: AppVariables };
 const router = new Hono<Env>();
@@ -162,6 +163,18 @@ router.get(
 						} else {
 							const csv = await parseCSV(response.data);
 							data = csv.data;
+						}
+						// Replay the editor recipe (column selection, aggregation) on the
+						// fresh download: storing the raw source would silently discard
+						// what the user built in the editor. If the recipe no longer fits
+						// (source changed shape), keep the existing data.
+						const transform = (result.config as { dataTransform?: unknown } | null)?.dataTransform;
+						if (data && isDataTransform(transform)) {
+							const transformed = applyDataTransform(data as Matrix, transform);
+							if (!transformed) {
+								logger.error(`Chart ${id}: remote source no longer matches its dataTransform recipe — keeping saved data`);
+							}
+							data = transformed;
 						}
 						if (data) {
 							await db.updateChart(id, { isRemote: result.isRemote, remoteUrl: result.remoteUrl, data });

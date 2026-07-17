@@ -24,7 +24,7 @@ export default function SortTableColumns({
 
   return (
     <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-      <h4 className="text-sm font-semibold mb-3">{t("title")}</h4>
+      <h4 className="text-base mb-3">{t("title")}</h4>
       <p className="text-xs text-base-content/50 mb-3">{t("hint")}</p>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="column-order" direction="horizontal">

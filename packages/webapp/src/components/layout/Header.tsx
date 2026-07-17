@@ -211,7 +211,7 @@ export default function Header() {
 
               {dropdownUserOpen && (
                 <ul className="absolute right-0 top-full mt-1 z-[1000] min-w-56 py-2 bg-base-100 text-base-content border border-base-300 rounded shadow-md list-none m-0 p-0 overflow-hidden">
-                  <li className="px-4 py-3 text-sm font-semibold bg-base-200/50 border-b border-base-300 select-none">
+                  <li className="px-4 py-3 text-base bg-base-200/50 border-b border-base-300 select-none">
                     <div className="flex flex-col">
                       <span className="text-base-content opacity-70 text-[10px] uppercase font-bold tracking-wider">{t("user.loggedAs", "Logged as")}</span>
                       <span className="truncate">{user.name}</span>

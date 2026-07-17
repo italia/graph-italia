@@ -241,7 +241,7 @@ export default function HeaderCompleta() {
               if ("subMenu" in item) {
                 return (
                   <li key={item.name} className="border-b border-primary-content/20">
-                    <span className="block py-3 text-sm font-semibold text-primary-content">
+                    <span className="block py-3 text-base text-primary-content">
                       {item.translationKey ? translateMenu(item.translationKey) : item.name}
                     </span>
                     <ul className="list-none m-0 ml-3 pb-2 p-0">

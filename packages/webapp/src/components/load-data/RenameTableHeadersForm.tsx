@@ -19,7 +19,7 @@ export default function RenameTableHeadersForm({
 
   return (
     <div className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200">
-      <h4 className="text-sm font-semibold mb-3">{t("title")}</h4>
+      <h4 className="text-base mb-3">{t("title")}</h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {values.map((val, i) => (
           <div key={i} className="form-control">

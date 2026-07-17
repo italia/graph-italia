@@ -279,7 +279,7 @@ export default function DataTable({
           </div>
 
           <div className="mt-6 mb-4">
-            <h4 className="text-sm font-semibold mb-2 text-base-content/70">
+            <h4 className="text-base mb-2 text-base-content/70">
               {t("toggle.title")}
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -319,7 +319,7 @@ export default function DataTable({
             >
               <h4
                 id="rename-headers-title"
-                className="text-sm font-semibold mb-3"
+                className="text-base mb-3"
               >
                 {t("renameForm.title")}
               </h4>

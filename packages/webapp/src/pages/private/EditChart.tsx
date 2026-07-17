@@ -27,6 +27,7 @@ import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
 import TransformDataTable from "../../components/load-data/TransformDataTable.tsx";
 import ThemeSwitcherComponent from "../../components/layout/ThemeSwitcher.tsx";
 import { defaultConfig } from "../../lib/constants.ts";
+import type { DataTransformRecipe } from "../../types.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
 import useStoreState from "../../lib/store/storeState.ts";
@@ -61,6 +62,9 @@ function EditChartPage() {
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(api.isPublishingEnabled());
+  // Recipe from SeriesSelector (column selection + aggregation): persisted in
+  // config so the server can replay it when refreshing remote-linked data
+  const [dataTransform, setDataTransform] = useState<DataTransformRecipe | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
@@ -100,6 +104,7 @@ function EditChartPage() {
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
             setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
+            setDataTransform(chartData.config?.dataTransform ?? null);
 
             // Go to config step only if chart already has data loaded
             const hasExistingData =
@@ -169,7 +174,9 @@ function EditChartPage() {
       description: chartDescription,
       publish: api.isPublishingEnabled() ? chartPublish : false,
       chart: chart || "bar",
-      config,
+      // ChartOptions rebuilds config from its form: merge the recipe at save
+      // time so it can't be dropped along the way
+      config: dataTransform ? { ...config, dataTransform } : config,
       data,
       isRemote,
       remoteUrl,
@@ -544,8 +551,9 @@ function EditChartPage() {
                           </p>
                           <SeriesSelector
                             initialData={currentData || data}
-                            setData={(d) => {
+                            setData={(d, transform) => {
                               setData(d);
+                              setDataTransform(transform ?? null);
                               setHasUnsavedChanges(true);
                               send({ type: "CONFIG" });
                             }}

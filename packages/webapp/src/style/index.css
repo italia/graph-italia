@@ -128,6 +128,17 @@
   --noise: 0;
 }
 
+/* daisyUI buttons ship at 0.875rem/600: bring default-size buttons to 16px
+   like the rest of the app's text (explicit size modifiers keep their scale)
+   and drop the semibold everywhere — emphasis comes from color, matching the
+   regular-weight Design System Italia buttons (.btn-italia). */
+.btn {
+  font-weight: 400;
+}
+.btn:not(.btn-xs):not(.btn-sm):not(.btn-lg):not(.btn-xl) {
+  font-size: 1rem;
+}
+
 /* react-data-table-component: the library renders its own SVG arrow overlaid on
    a <select appearance:none>, but @tailwindcss/forms adds a second arrow via a
    background-image rule on every <select>. Remove that background on the rdt
