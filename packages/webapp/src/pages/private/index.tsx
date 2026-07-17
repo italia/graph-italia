@@ -517,7 +517,7 @@ function Home() {
               >
                 {t(`header.charts`)}
               </h2>
-              <p className="text-base-content/60 -mt-3 mb-4">
+              <p className="text-base-content/70 -mt-3 mb-4">
                 {t(
                   "header.chartsDescription",
                   "Le visualizzazioni del progetto: grafici, mappe e indicatori numerici (KPI), pubblicabili e incorporabili in altri siti.",
@@ -543,7 +543,7 @@ function Home() {
                 >
                   {t(`header.dashboards`)}
                 </h2>
-                <p className="text-base-content/60 -mt-3 mb-4">
+                <p className="text-base-content/70 -mt-3 mb-4">
                   {t(
                     "header.dashboardsDescription",
                     "Pagine componibili che raccolgono più grafici e blocchi di testo, da condividere con un unico link.",
@@ -579,7 +579,7 @@ function Home() {
                 >
                   {t("header.datasources", "Sorgenti dati")}
                 </h2>
-                <p className="text-base-content/60 -mt-3 mb-4">
+                <p className="text-base-content/70 -mt-3 mb-4">
                   {t(
                     "header.datasourcesDescription",
                     "I dataset riutilizzabili del progetto: file CSV caricati o collegamenti a URL remoti, consultabili e aggiornabili anche via API REST.",
