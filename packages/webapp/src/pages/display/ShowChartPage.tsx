@@ -1,14 +1,17 @@
 import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import * as api from "../../lib/api";
 import { useSettingsStore } from "../../lib/store/settings_store";
+import { publicChartErrorMessage } from "../embed/EmbedChartPage";
 
 function ShowChartPage() {
   const { id } = useParams();
   const previewMode = !api.isPublishingEnabled();
+  const { t } = useTranslation("pages");
   const { data, error, isLoading } = useSWR(
     `${id}`,
     previewMode ? api.getChart : api.showChart,
@@ -44,7 +47,7 @@ function ShowChartPage() {
                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>{error.message}</span>
+            <span>{publicChartErrorMessage(error, t)}</span>
           </div>
         )}
         {data && (

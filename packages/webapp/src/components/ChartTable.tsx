@@ -226,7 +226,24 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
       width: TABLE_COL.share,
-      cell: (row: FieldDataType) => (
+      cell: (row: FieldDataType) =>
+        !row.publish ? (
+          // A private chart's public URL always answers 401: don't offer links
+          // that can never work.
+          <span
+            className="text-base-content/70"
+            title={t("actions.sharePrivateHint", {
+              defaultValue: "Per condividere, rendi pubblico il grafico",
+            })}
+          >
+            —
+            <span className="sr-only">
+              {t("actions.sharePrivateHint", {
+                defaultValue: "Per condividere, rendi pubblico il grafico",
+              })}
+            </span>
+          </span>
+        ) : (
         <div className="flex gap-2">
           <button
             type="button"
