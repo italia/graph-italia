@@ -50,9 +50,9 @@ export default function EditStepsSidebar({
 
       <aside
         aria-label={label}
-        className={`fixed inset-y-0 left-0 z-50 w-[min(90vw,26rem)] overflow-y-auto bg-base-200 p-4 shadow-xl transform transition-transform duration-200 ${
+        className={`fixed inset-y-0 left-0 z-50 w-[min(90vw,26rem)] overflow-y-auto bg-base-200 p-4 shadow-xl transition-transform duration-200 ${
           open ? "translate-x-0" : "-translate-x-full"
-        } xl:static xl:z-auto xl:col-span-2 xl:w-auto xl:transform-none xl:overflow-visible xl:bg-transparent xl:p-0 xl:shadow-none`}
+        } xl:static xl:z-auto xl:col-span-2 xl:w-auto xl:translate-x-0 xl:overflow-visible xl:bg-transparent xl:p-0 xl:shadow-none`}
       >
         <div className="flex justify-end xl:hidden mb-2">
           <button
