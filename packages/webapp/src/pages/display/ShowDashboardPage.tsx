@@ -69,6 +69,33 @@ function buildLayouts(items: TLayoutItem[]) {
 
 const ResponsiveGrid = WidthProvider(Responsive);
 
+// Full-width text slots flow outside the fixed-height grid so they take
+// their natural height instead of an entire 380px row; everything else
+// stays in grid segments that keep their relative layout.
+type Segment =
+  | { type: "text"; item: TLayoutItem }
+  | { type: "grid"; items: TLayoutItem[] };
+
+function segmentLayout(
+  layout: TLayoutItem[],
+  isFullWidthText: (item: TLayoutItem) => boolean,
+): Segment[] {
+  const sorted = [...layout].sort((a, b) =>
+    a.y !== b.y ? a.y - b.y : a.x - b.x,
+  );
+  const segments: Segment[] = [];
+  for (const item of sorted) {
+    if (isFullWidthText(item)) {
+      segments.push({ type: "text", item });
+    } else {
+      const last = segments[segments.length - 1];
+      if (last?.type === "grid") last.items.push(item);
+      else segments.push({ type: "grid", items: [item] });
+    }
+  }
+  return segments;
+}
+
 function DashboardViewPage() {
   const { id } = useParams();
   const { load, layout, charts, name, description, isLoading, loaded, error } =
@@ -81,11 +108,49 @@ function DashboardViewPage() {
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
 
-  const layouts = useMemo(() => buildLayouts(layout), [layout]);
+  const segments = useMemo(
+    () =>
+      segmentLayout(
+        layout,
+        (item) =>
+          (charts[item.i] as { chart?: string } | undefined)?.chart === "text" &&
+          item.w >= 3,
+      ),
+    [layout, charts],
+  );
+
+  function renderSlot(item: TLayoutItem) {
+    const currentChart = charts[item.i] as FieldDataType & {
+      chart?: string;
+      config?: { content?: string };
+    };
+    const chartHeight = ((ROW_HEIGHT * item.h) - (MARGIN * (item.h)) - TABBAR);
+
+    return (
+      <div
+        key={item.i}
+        className="overflow-hidden rounded-lg bg-base-100 border border-base-200 shadow-sm"
+      >
+        {currentChart && (
+          currentChart.chart === "text" ? (
+            <TextSlot content={currentChart.config?.content ?? ""} />
+          ) : (
+            <ColorSchemeProvider scheme={scheme}>
+              <RenderChart
+                {...currentChart}
+                rowHeight={chartHeight}
+                hFactor={1}
+              />
+            </ColorSchemeProvider>
+          )
+        )}
+      </div>
+    );
+  }
 
   return (
     <Layout>
-      <div className="p-4">
+      <div className="px-4 lg:px-10 py-6">
 
         {!isPublishingEnabled() && (
           <div role="status" className="alert alert-info mb-4">
@@ -105,48 +170,41 @@ function DashboardViewPage() {
 
         {loaded && (
           <div>
-            <h1 className="text-4xl font-bold">{name}</h1>
-            <h4 className="text-xl mb-4">{description}</h4>
+            <h1 className="text-2xl font-bold">{name}</h1>
+            {description && (
+              <p className="text-base-content/70 mt-1">{description}</p>
+            )}
 
-            <div style={{ margin: "0 auto" }}>
-              <ResponsiveGrid
-                layouts={layouts}
-                breakpoints={BREAKPOINTS}
-                cols={ALL_COLS}
-                rowHeight={ROW_HEIGHT}
-                margin={[MARGIN, MARGIN]}
-                isDraggable={false}
-                isResizable={false}
-              >
-                {layout.map((item) => {
-                  const currentChart = charts[item.i] as FieldDataType & {
-                    chart?: string;
-                    config?: { content?: string };
-                  };
-                  const chartHeight = ((ROW_HEIGHT * item.h) - (MARGIN * (item.h)) - TABBAR);
-
-                  return (
-                    <div
-                      key={item.i}
-                      className="overflow-hidden rounded-lg bg-base-100 border border-base-200 shadow-sm"
-                    >
-                      {currentChart && (
-                        currentChart.chart === "text" ? (
-                          <TextSlot content={currentChart.config?.content ?? ""} />
-                        ) : (
-                          <ColorSchemeProvider scheme={scheme}>
-                            <RenderChart
-                              {...currentChart}
-                              rowHeight={chartHeight}
-                              hFactor={1}
-                            />
-                          </ColorSchemeProvider>
-                        )
-                      )}
-                    </div>
-                  );
-                })}
-              </ResponsiveGrid>
+            <div className="mt-6 flex flex-col gap-4">
+              {segments.map((segment, index) =>
+                segment.type === "text" ? (
+                  <div
+                    key={segment.item.i}
+                    className="rounded-lg bg-base-100 border border-base-200 shadow-sm"
+                  >
+                    <TextSlot
+                      content={
+                        (charts[segment.item.i] as { config?: { content?: string } })
+                          ?.config?.content ?? ""
+                      }
+                    />
+                  </div>
+                ) : (
+                  <ResponsiveGrid
+                    key={`grid-${index}`}
+                    layouts={buildLayouts(segment.items)}
+                    breakpoints={BREAKPOINTS}
+                    cols={ALL_COLS}
+                    rowHeight={ROW_HEIGHT}
+                    margin={[MARGIN, MARGIN]}
+                    containerPadding={[0, 0]}
+                    isDraggable={false}
+                    isResizable={false}
+                  >
+                    {segment.items.map((item) => renderSlot(item))}
+                  </ResponsiveGrid>
+                ),
+              )}
             </div>
           </div>
         )}
