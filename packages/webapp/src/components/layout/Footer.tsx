@@ -8,7 +8,7 @@ export default function Footer() {
   const tagline = t(`brand.tagline`);
 
   return (
-    <footer className="footer bg-accent text-accent-content p-4">
+    <footer className="footer bg-accent text-accent-content p-4 lg:px-10 py-6">
       <div>
         <div className="flex items-center">
           <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`brand.title`)} />

@@ -31,7 +31,7 @@ import { FaFolderPlus, FaFolderOpen } from "react-icons/fa6";
 import { ROUTES } from "../../router.tsx";
 
 function Home() {
-  const { t } = useTranslation("pages", { keyPrefix: "home" });
+  const { t, i18n } = useTranslation("pages", { keyPrefix: "home" });
   const [state, send] = useMachine(stepMachine);
   const { loadItem } = useStoreState((state) => state);
 
@@ -244,12 +244,45 @@ function Home() {
     }
   }
 
-  function generateName(key: string) {
-    const timestamp = new Date()
-      .toISOString()
-      .replace(/[:.]/g, "-")
-      .slice(0, 19);
-    return `${key}-${timestamp}`;
+  // Fallback when the user leaves the title empty: a readable name based on
+  // the creation date ("Grafico del 17 luglio 2026", "(2)" on same-day clashes)
+  function generateName(key: ItemTypeNames) {
+    const date = new Date().toLocaleDateString(i18n.language, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    const base = {
+      chart: t("createDialog.defaultNames.chart", {
+        defaultValue: "Grafico del {{date}}",
+        date,
+      }),
+      kpi: t("createDialog.defaultNames.kpi", {
+        defaultValue: "Gruppo KPI del {{date}}",
+        date,
+      }),
+      map: t("createDialog.defaultNames.map", {
+        defaultValue: "Mappa del {{date}}",
+        date,
+      }),
+      dash: t("createDialog.defaultNames.dash", {
+        defaultValue: "Dashboard del {{date}}",
+        date,
+      }),
+      datasource: t("createDialog.defaultNames.datasource", {
+        defaultValue: "Sorgente dati del {{date}}",
+        date,
+      }),
+    }[key];
+    const existing =
+      key === "dash" ? dashboardList : key === "datasource" ? datasourceList : list;
+    const names = new Set(
+      existing.map((item: { name?: string }) => item.name),
+    );
+    if (!names.has(base)) return base;
+    let n = 2;
+    while (names.has(`${base} (${n})`)) n++;
+    return `${base} (${n})`;
   }
 
   const itemTypes = [
@@ -333,17 +366,21 @@ function Home() {
         <title>{t(`header.title`)}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex flex-col md:flex-row md:justify-between items-center gap-4 py-6 px-4 lg:px-10 mb-2">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">{t(`header.title`)}</h1>
-        </div>
-        <div>
+      <div className="w-full flex flex-col md:flex-row md:justify-between md:items-center gap-4 py-6 px-4 lg:px-10 mb-2">
+        {/* Title + project switcher: the switcher is the page context, so it
+            sits next to the title instead of floating in the middle */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 min-w-0">
+          <h1 className="text-xl font-bold shrink-0">{t(`header.title`)}</h1>
+          <span
+            className="hidden sm:block w-px h-6 bg-base-300 shrink-0"
+            aria-hidden="true"
+          ></span>
           {/* Project Switcher */}
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-2 min-w-0">
             <div className="relative" ref={projectDropdownRef}>
               <button
                 type="button"
-                className="btn btn-ghost btn-xl normal-case gap-2 px-1 opacity-70 hover:opacity-100"
+                className="btn btn-ghost btn-lg normal-case gap-2 px-1 opacity-70 hover:opacity-100"
                 aria-haspopup="menu"
                 aria-expanded={projectDropdownOpen}
                 aria-label={t("projectSwitcher.ariaLabel", { defaultValue: "Cambia progetto" })}
@@ -367,7 +404,7 @@ function Home() {
                 </li>
                 {personalProjects.length > 0 && (
                   <>
-                    <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{t("projectSwitcher.personal", "Personal Projects")}</li>
+                    <li className="menu-title text-base uppercase opacity-60">{t("projectSwitcher.personal", "Personal Projects")}</li>
                     {personalProjects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -401,7 +438,7 @@ function Home() {
                 {Object.entries(orgsWithProjects).map(([orgId, orgData]) => (
                   <div key={orgId}>
                     <div className="divider my-0 opacity-20"></div>
-                    <li className="menu-title text-[10px] uppercase opacity-50 font-bold">{orgData.name}</li>
+                    <li className="menu-title text-base uppercase opacity-60">{orgData.name}</li>
                     {orgData.projects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -476,7 +513,7 @@ function Home() {
             >
               <h2
                 id="charts-section-heading"
-                className="text-xl mb-4 font-semibold"
+                className="text-lg mb-4 font-normal"
               >
                 {t(`header.charts`)}
               </h2>
@@ -496,7 +533,7 @@ function Home() {
               <div>
                 <h2
                   id="dashboards-section-heading"
-                  className="text-xl mb-4 font-semibold"
+                  className="text-lg mb-4 font-normal"
                 >
                   {t(`header.dashboards`)}
                 </h2>
@@ -526,7 +563,7 @@ function Home() {
               <div>
                 <h2
                   id="datasources-section-heading"
-                  className="text-xl mb-4 font-semibold"
+                  className="text-lg mb-4 font-normal"
                 >
                   {t("header.datasources", "Sorgenti dati")}
                 </h2>

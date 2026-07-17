@@ -114,26 +114,30 @@ export default function ChartTable({
       selector: (row: FieldDataType) => row.chart,
       sortable: true,
       cell: (row: FieldDataType) => {
-        // let iconName = "";
         let IconComponent = FaRegSquare;
+        let typeLabel: string = row.chart;
         switch (row.chart) {
           case "bar":
             IconComponent = FaChartBar;
+            typeLabel = t("types.bar", { defaultValue: "Barre" });
             break;
           case "line":
             IconComponent = FaChartLine;
+            typeLabel = t("types.line", { defaultValue: "Linee" });
             break;
           case "pie":
             IconComponent = FaChartPie;
+            typeLabel = t("types.pie", { defaultValue: "Torta" });
             break;
           case "kpiGroup":
+          case "kpi":
             IconComponent = FaList;
+            typeLabel = t("types.kpi", { defaultValue: "KPI" });
             break;
           case "cmap":
-            IconComponent = FaMapLocationDot;
-            break;
           case "map":
-            IconComponent = FaMap;
+            IconComponent = row.chart === "cmap" ? FaMapLocationDot : FaMap;
+            typeLabel = t("types.map", { defaultValue: "Mappa" });
             break;
           default:
             IconComponent = FaRegSquare;
@@ -146,7 +150,7 @@ export default function ChartTable({
                 size={24}
                 aria-hidden="true"
               />
-              <span className="capitalize">{row.chart}</span>
+              <span className="whitespace-nowrap">{typeLabel}</span>
             </div>
           </div>
         );

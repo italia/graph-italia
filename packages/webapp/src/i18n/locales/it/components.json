@@ -236,6 +236,9 @@
                 "brand": {
                     "title": "Graph Italia"
                 },
+                "user": {
+                    "loggedAs": "Connesso come"
+                },
                 "actions": {
                     "login": {
                         "label": "Accedi"
@@ -568,6 +571,13 @@
         },
         "chartTable": {
             "noDataComponent": "Nessun grafico creato",
+            "types": {
+                "bar": "Barre",
+                "line": "Linee",
+                "pie": "Torta",
+                "kpi": "KPI",
+                "map": "Mappa"
+            },
             "columns": {
                 "type": {
                     "label": "Tipo"
