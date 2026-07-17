@@ -447,6 +447,9 @@
             "errors": {
                 "selectChart": "Select a chart type to configure options"
             },
+            "advanced": {
+                "title": "Advanced settings"
+            },
             "sections": {
                 "Line Chart": "Line chart",
                 "Bar Chart": "Bar chart",

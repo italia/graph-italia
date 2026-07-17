@@ -166,14 +166,14 @@ function ChartOptions({
       return (
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
-            <span className="label-text font-medium">
+            <span className="label-text text-base font-medium">
               {label}
               {fieldHintBadge(field)}
             </span>
           </label>
           <input
             id={`opt-${field.name}`}
-            className="input input-bordered w-full"
+            className="input input-bordered w-full text-base"
             type={field.type}
             {...field.otherProps}
             {...register(field.name, { required: field.required })}
@@ -196,7 +196,7 @@ function ChartOptions({
       return (
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
-            <span className="label-text font-medium">
+            <span className="label-text text-base font-medium">
               {translateLabel(field)}
               {fieldHintBadge(field)}
             </span>
@@ -228,14 +228,14 @@ function ChartOptions({
       return (
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
-            <span className="label-text font-medium">
+            <span className="label-text text-base font-medium">
               {translateLabel(field)}
               {fieldHintBadge(field)}
             </span>
           </label>
           <select
             id={`opt-${field.name}`}
-            className="select select-bordered w-full"
+            className="select select-bordered w-full text-base"
             {...field.otherProps}
             {...register(field.name, { required: field.required })}
           >
@@ -266,26 +266,47 @@ function ChartOptions({
     return null;
   }
 
+  function renderGroup(group: (typeof groups)[number]) {
+    return (
+      <fieldset
+        key={group.label}
+        className="border-none p-0 m-0 mt-4 first:mt-0"
+      >
+        <legend className="w-full pb-2">
+          <div className="flex items-center gap-2">
+            <span className="badge badge-neutral badge-lg text-base">
+              {translateSection(group.label)}
+            </span>
+            <div className="flex-1 h-px bg-base-200"></div>
+          </div>
+        </legend>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {group.fields.map(renderField)}
+        </div>
+      </fieldset>
+    );
+  }
+
+  // Tooltip/grid/axes tuning is rarely needed on a first pass: fold those
+  // sections behind a native (keyboard-accessible) disclosure.
+  const ADVANCED_SECTIONS = new Set(["Tooltip", "Grid", "Axes"]);
+  const basicGroups = groups.filter((g) => !ADVANCED_SECTIONS.has(g.label));
+  const advancedGroups = groups.filter((g) => ADVANCED_SECTIONS.has(g.label));
+
   return (
     <div className="space-y-4">
-      {groups.map((group) => (
-        <fieldset
-          key={group.label}
-          className="border-none p-0 m-0 mt-4 first:mt-0"
-        >
-          <legend className="w-full pb-2">
-            <div className="flex items-center gap-2">
-              <span className="badge badge-neutral">
-                {translateSection(group.label)}
-              </span>
-              <div className="flex-1 h-px bg-base-200"></div>
-            </div>
-          </legend>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {group.fields.map(renderField)}
+      {basicGroups.map(renderGroup)}
+
+      {advancedGroups.length > 0 && (
+        <details className="collapse collapse-arrow border border-base-300 bg-base-100">
+          <summary className="collapse-title min-h-0 py-3 text-base font-medium cursor-pointer focus-visible:outline-2 focus-visible:outline-primary">
+            {t("advanced.title", "Configurazioni avanzate")}
+          </summary>
+          <div className="collapse-content space-y-4">
+            {advancedGroups.map(renderGroup)}
           </div>
-        </fieldset>
-      ))}
+        </details>
+      )}
     </div>
   );
 }

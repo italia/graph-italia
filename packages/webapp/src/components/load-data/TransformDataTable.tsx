@@ -6,6 +6,7 @@ import { transposeData } from "../../lib/utils.ts";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import type { MatrixType } from "../../types.ts";
 import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
+import dataTableStyles from "../layout/dataTableStyles.ts";
 import { paginationIcons } from "../layout/paginationIcons";
 import GenericDialog from "../layout/GenericDialog.tsx";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
@@ -276,10 +277,8 @@ export default function TransformData({
   return (
     <div className="mt-10">
       {/* Transpose & Reset controls */}
-      <div className="mb-4 flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-base-content/70">
-          {t(`header.label`)}
-        </h4>
+      {/* The table below already carries the "Trasforma dati" title */}
+      <div className="mb-4 flex items-center justify-end">
         <div className="flex gap-2">
           <button
             type="button"
@@ -386,6 +385,7 @@ export default function TransformData({
             selectAllRowsItem: false,
           }}
           {...paginationIcons}
+          customStyles={dataTableStyles}
           dense
           highlightOnHover
           fixedHeader
@@ -399,7 +399,7 @@ export default function TransformData({
       </div>
 
       {sortState && (
-        <div className="mt-2 text-xs text-base-content/50">
+        <div className="mt-2 text-sm text-base-content/60">
           {t(`table.sorting.label`)} <strong>{sortState.columnKey}</strong> (
           {t(`table.sorting.direction.${sortState.direction}`, {
             defaultValue: sortState.direction,

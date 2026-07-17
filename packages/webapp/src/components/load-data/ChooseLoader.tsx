@@ -112,7 +112,7 @@ export default function ChooseLoader({
       </div>
 
       {/* Tab Description */}
-      <p className="text-sm text-base-content/60 px-1">
+      <p className="text-base text-base-content/70 px-1">
         {t(TABS[currentTab].description)}
       </p>
 

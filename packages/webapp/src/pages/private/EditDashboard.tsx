@@ -496,13 +496,13 @@ function DashboardEditPage() {
                             />
                             <label
                               htmlFor="chart_visibility"
-                              className="text-sm text-base-content/70 cursor-pointer"
+                              className="text-base text-base-content/70 cursor-pointer"
                             >
                               {t(
                                 `body.options.setup.form.fields.visibility.label`,
                               )}
                             </label>
-                            <span className="text-sm text-base-content font-bold">
+                            <span className="text-base text-base-content font-bold">
                               {t(
                                 `body.options.setup.form.fields.visibility.values.${publish ? "public" : "private"}`,
                               )}
@@ -523,7 +523,7 @@ function DashboardEditPage() {
                             setName(e.target.value);
                           }}
                           placeholder={name}
-                          className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                          className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/40"
                         />
                         <label
                           htmlFor="chart_description"
@@ -543,7 +543,7 @@ function DashboardEditPage() {
                           placeholder={t(
                             `body.options.setup.form.fields.description.placeholder`,
                           )}
-                          className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                          className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/40"
                         />
                       </div>
                     </div>

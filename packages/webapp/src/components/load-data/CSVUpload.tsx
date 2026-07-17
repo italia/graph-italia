@@ -51,12 +51,13 @@ function UploadCSV({
   return (
     <div className="space-y-4">
       <div className="form-control">
-        <label htmlFor="uploadFile" className="label">
-          <span className="label-text font-medium">{t("label")}</span>
+        {/* Visible description lives in ChooseLoader; keep the association for AT */}
+        <label htmlFor="uploadFile" className="sr-only">
+          {t("label")}
         </label>
         <input
           id="uploadFile"
-          className="file-input file-input-bordered file-input-primary w-full"
+          className="file-input file-input-bordered file-input-primary w-full text-base file:font-normal"
           type="file"
           name="file"
           accept=".csv"

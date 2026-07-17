@@ -447,6 +447,9 @@
             "errors": {
                 "selectChart": "Seleziona un tipo di grafico per configurare le opzioni"
             },
+            "advanced": {
+                "title": "Configurazioni avanzate"
+            },
             "sections": {
                 "Line Chart": "Grafico a linee",
                 "Bar Chart": "Grafico a barre",

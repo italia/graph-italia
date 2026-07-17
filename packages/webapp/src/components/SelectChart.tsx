@@ -108,34 +108,26 @@ function SelectChart({
   return (
     <fieldset className="space-y-3 border-none p-0 m-0">
       <legend className="label">
-        <span className="label-text font-medium">
+        <span className="label-text text-base font-medium">
           {t("fieldset.legend.label")}
         </span>
       </legend>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {CHART_TYPES.map((type) => (
           <button
             key={type.value}
             type="button"
             onClick={() => setChart(type.value)}
             aria-pressed={chart === type.value}
-            className={`relative flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
+            className={`relative flex items-center gap-3 px-3 py-2.5 rounded-lg border-2 text-left transition-all ${
               chart === type.value
                 ? "border-primary bg-primary text-primary-content shadow-md"
                 : "border-base-300 bg-base-100 text-base-content/80 hover:border-primary/60 hover:bg-primary/5"
             }`}
           >
-            {chart === type.value && (
-              <span
-                aria-hidden="true"
-                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary-content text-primary flex items-center justify-center"
-              >
-                <FaCheck className="w-3 h-3" />
-              </span>
-            )}
             <div
-              className={`${
+              className={`shrink-0 ${
                 chart === type.value
                   ? "text-primary-content"
                   : "text-base-content/60"
@@ -143,15 +135,23 @@ function SelectChart({
             >
               {type.icon}
             </div>
-            <span className="text-sm font-semibold text-center">
+            <span className="text-base whitespace-nowrap">
               {t(type.label)}
             </span>
+            {chart === type.value && (
+              <span
+                aria-hidden="true"
+                className="ml-auto w-5 h-5 shrink-0 rounded-full bg-primary-content text-primary flex items-center justify-center"
+              >
+                <FaCheck className="w-3 h-3" />
+              </span>
+            )}
           </button>
         ))}
       </div>
 
       {chart && (
-        <p className="text-sm text-base-content/60 px-1">
+        <p className="text-base text-base-content/60 px-1">
           {t(CHART_TYPES.find((t) => t.value === chart)?.description)}
         </p>
       )}

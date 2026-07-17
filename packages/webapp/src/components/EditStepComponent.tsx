@@ -53,13 +53,13 @@ export default function EditStepComponent(props: {
                 <span className="sr-only"> ({srStatusLabel})</span>
               )}
             </h2>
-            <p className="text-sm text-base-content/60">
+            <p className="text-base font-normal text-base-content/60">
               {description || ""}
             </p>
           </div>
         </div>
       </summary>
-      <div className="collapse-content text-sm ">
+      <div className="collapse-content text-base">
         {children}
       </div>
     </details>

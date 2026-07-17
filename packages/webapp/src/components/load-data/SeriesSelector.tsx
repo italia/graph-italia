@@ -294,7 +294,7 @@ export default function SeriesSelector({ setData, initialData }: {
       {rawData && (
         <div className="space-y-4 p-4 bg-base-200 rounded-lg">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">{t("header.label")}</h4>
+            <h4 className="text-base font-medium">{t("header.label")}</h4>
             <div className="flex gap-2">
               {/* <button
                 type="button"
@@ -316,10 +316,10 @@ export default function SeriesSelector({ setData, initialData }: {
           <div className="grid grid-cols-1 gap-4">
             <div className="form-control">
               <label htmlFor="category" className="label">
-                <span className="label-text">{t("category.label")}</span>
+                <span className="label-text text-base">{t("category.label")}</span>
               </label>
               <select
-                className="select select-bordered w-full"
+                className="select select-bordered w-full text-base"
                 name="category"
                 id="category"
                 aria-describedby="category-hint"
@@ -334,7 +334,7 @@ export default function SeriesSelector({ setData, initialData }: {
                     </option>
                   ))}
               </select>
-              <p id="category-hint" className="label-text-alt text-base-content/70 mt-1">
+              <p id="category-hint" className="text-sm text-base-content/70 mt-1">
                 {t("category.hint")}
               </p>
               {categoryWarning && (
@@ -442,14 +442,14 @@ export default function SeriesSelector({ setData, initialData }: {
             {category && numericCols.length > 0 && (
               <div className="form-control">
                 <label htmlFor="series" className="label">
-                  <span className="label-text">{t("series.label")}</span>
-                  <span className="label-text-alt text-base-content/70">
+                  <span className="label-text text-base">{t("series.label")}</span>
+                  <span className="text-sm text-base-content/70">
                     {t("series.multiSelect")}
                   </span>
                 </label>
                 <select
 
-                  className="select select-bordered w-full min-h-[100px]"
+                  className="select select-bordered w-full min-h-[100px] text-base"
                   name="series"
                   id="series"
                   aria-describedby="series-hint"
@@ -467,7 +467,7 @@ export default function SeriesSelector({ setData, initialData }: {
                     </option>
                   ))}
                 </select>
-                <p id="series-hint" className="label-text-alt text-base-content/70 mt-1">
+                <p id="series-hint" className="text-sm text-base-content/70 mt-1">
                   {t("series.hint")}
                 </p>
               </div>

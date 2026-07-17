@@ -17,15 +17,25 @@ export const TABLE_COL = {
 const dataTableStyles = {
   headCells: {
     style: {
-      fontSize: "0.8125rem",
+      fontSize: "0.875rem",
       fontWeight: 700,
       textTransform: "uppercase" as const,
       letterSpacing: "0.02em",
     },
   },
+  cells: {
+    style: {
+      fontSize: "1rem",
+    },
+  },
   rows: {
     style: {
       minHeight: "48px",
+    },
+  },
+  pagination: {
+    style: {
+      fontSize: "0.875rem",
     },
   },
 };
