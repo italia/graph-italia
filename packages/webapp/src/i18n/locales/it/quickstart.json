@@ -1,53 +1,69 @@
 {
-    "back": "Back to home",
-    "title": "Come creare grafici con Graph Italia",
-    "description": "Creare grafici usando Graph Italia è semplice e puoi farlo usando dati che possiedi oppure da una banca dati.",
-    "steps": {
-        "step1": {
-            "title": "1 - Accesso e creazione nuovo grafico",
-            "text": "Accedi al tuo account Graph Italia. Nella dashboard, clicca sul pulsante <strong>\"Create New Chart\"</strong> per iniziare un nuovo progetto.",
-            "listItems": {
-                "item1": "Log in to your Graph Italia account.",
-                "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
-            }
+    "back": "Torna alla home",
+    "title": "Come iniziare",
+    "description": "Dalla registrazione al primo grafico pubblicato: i passaggi essenziali per usare Graph Italia. Non è la documentazione completa — l'interfaccia ti guida passo passo — ma quello che serve per orientarsi.",
+    "guide": {
+        "account": {
+            "title": "Registrati e accedi",
+            "items": [
+                "Premi <strong>Accedi</strong> in alto a destra e crea un account con la tua email: riceverai un codice di verifica per attivarlo.",
+                "Ogni account parte con un progetto personale; potrai crearne altri e condividerli con altre persone tramite le <strong>organizzazioni</strong>."
+            ]
         },
-        "step2": {
-            "title": "2 - Carica i tuoi dati",
-            "text": "Se hai già una base dati per creare il grafico, carica il file in versione CSV. Se non hai ancora dei dati, puoi usare: <strong>Dati di esempio</strong>: usa la base dati fornita da Graph Italia (opzione <strong>\"Usa sample data”</strong>); oppure, <strong>Generare dati</strong>: vai nella sezione <strong>Tools</strong> e poi su <strong>Generate Data</strong> per creare automaticamente un file CSV da caricare sulla piattaforma. ",
-            "listItems": {
-                "item1": {
-                    "text": "If you don't have data yet, you can",
-                    "items": {
-                        "item1": "<strong>Sample data</strong>: use the datasets provided by Graph Italia (option \"Use Sample Data\").",
-                        "item2": "<strong>Generate data</strong>: from the Tools section → <a>Generate Data</a> to create a CSV automatically.",
-                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Graph Italia will parse it and display the data in a table."
-                    }
-                }
-            }
+        "create": {
+            "title": "Crea un nuovo elemento",
+            "items": [
+                "Dall'<strong>Area Privata</strong> premi <strong>Crea nuovo</strong> e scegli cosa creare: un grafico, un gruppo KPI, una mappa, una dashboard o una sorgente dati.",
+                "Assegna subito un titolo e, se vuoi, una descrizione (potrai sempre cambiarli): si aprirà l'editor."
+            ]
         },
-        "step3": {
-            "title": "3 - Scegli il tipo di grafico e configura",
-            "text": "Dopo aver caricato i dati, scegli la tipologia di grafico che vuoi creare: barre, linee, a torta o mappa (Bar, Line, Pie o Geomap). Puoi ",
-            "listItems": {
-                "item1": "After uploading your data, choose the chart type: Bar, Line, Pie, or Geomap.",
-                "item2": "Customize: select columns, X/Y axes, colors, and labels."
-            }
+        "data": {
+            "title": "Carica i tuoi dati",
+            "items": [
+                "Nel passaggio <strong>Carica i tuoi dati</strong> importi un file <strong>CSV</strong> o <strong>JSON</strong> dal computer, oppure colleghi un <strong>URL remoto</strong>.",
+                "Con un URL remoto il grafico resta collegato alla fonte: quando è pubblico, il server riscarica i dati se la copia salvata è più vecchia di 24 ore.",
+                "Dopo il caricamento puoi sistemare la tabella: filtrare e riordinare le colonne, rinominare le intestazioni, trasporre righe e colonne. Se i dati hanno righe ripetute, l'editor ti propone un'<strong>aggregazione</strong> (conteggio, somma o media)."
+            ]
         },
-        "step4": {
-            "title": "4 - Salva il tuo grafico",
-            "text": "Clicca su <strong>\"Save”</strong> per salvare il grafico nella tua dashboard.",
-            "listItems": {
-                "item1": "Click <strong>\"Save\"</strong> to save your chart to your dashboard.",
-                "item2": "You can reopen it, edit it, publish it, and get the embed code to add it to your website."
-            }
+        "configure": {
+            "title": "Configura il grafico",
+            "items": [
+                "Scegli il tipo di visualizzazione — <strong>barre, linee, torta o mappa geografica</strong> — e guarda l'anteprima aggiornarsi in tempo reale.",
+                "Dalle opzioni imposti direzione, palette di colori, legenda, altezza ed eventuale scala logaritmica; le <strong>Configurazioni avanzate</strong> raccolgono tooltip, griglia e assi."
+            ]
+        },
+        "publish": {
+            "title": "Salva, pubblica e condividi",
+            "items": [
+                "Premi <strong>Salva</strong>: l'elemento compare nelle liste della tua Area Privata.",
+                "Nella sezione <strong>Informazioni</strong> decidi la visibilità: un elemento <strong>pubblico</strong> è visibile a chiunque abbia il link e può essere incorporato in altri siti con il codice embed; un elemento <strong>privato</strong> resta visibile solo a te.",
+                "Nella colonna <strong>Condividi</strong> della lista trovi i pulsanti per copiare il link pubblico e il codice embed (iframe)."
+            ]
+        },
+        "dashboard": {
+            "title": "Componi una dashboard",
+            "items": [
+                "Una dashboard raccoglie più grafici e blocchi di testo in un'unica pagina: trascini gli slot nella griglia, ne regoli larghezza e altezza, scrivi i testi in markdown.",
+                "Anche la dashboard si condivide con un unico link pubblico."
+            ]
+        },
+        "api": {
+            "title": "Per chi sviluppa",
+            "items": [
+                "Dal menu utente generi una <strong>API key</strong> (in sola lettura o lettura/scrittura) per usare le API REST del progetto.",
+                "Le <strong>sorgenti dati</strong> sono dataset riutilizzabili aggiornabili anche via API: utili per alimentare i dati da uno script o da un sistema esterno."
+            ]
         }
     },
     "footer": {
-        "text": "Una volta salvato, potrai riaprirlo, modificarlo, pubblicarlo e ottenere la stringa di codice per inserirlo all'interno del tuo sito. "
+        "text": "Questo è quanto serve per iniziare: per tutto il resto, ogni sezione dell'applicazione contiene testi di aiuto contestuali."
     },
     "actions": {
         "getStarted": {
             "label": "Accedi"
+        },
+        "goToPrivateArea": {
+            "label": "Vai alla tua Area Privata"
         }
     }
 }

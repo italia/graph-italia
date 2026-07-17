@@ -1,53 +1,69 @@
 {
     "back": "Back to home",
-    "title": "Quick Start Guide: Creating Your First Chart with Graph Italia",
-    "description": "Follow this guide to visualize your data in minutes. You can use sample data or upload your own.",
-    "steps": {
-        "step1": {
-            "title": "Step 1: Click on \"Create New Chart\"",
-            "text": "",
-            "listItems": {
-                "item1": "Log in to your Graph Italia account.",
-                "item2": "On the dashboard, click the <strong>\"Create New Chart\"</strong> button to start a new project."
-            }
+    "title": "Getting started",
+    "description": "From signing up to your first published chart: the essential steps to use Graph Italia. This is not the full documentation — the interface guides you along the way — just what you need to find your bearings.",
+    "guide": {
+        "account": {
+            "title": "Sign up and log in",
+            "items": [
+                "Press <strong>Log in</strong> in the top right corner and create an account with your email: you will receive a verification code to activate it.",
+                "Every account starts with a personal project; you can create more and share them with other people through <strong>organizations</strong>."
+            ]
         },
-        "step2": {
-            "title": "Step 2: Upload your data",
-            "text": "",
-            "listItems": {
-                "item1": {
-                    "text": "If you don't have data yet, you can",
-                    "items": {
-                        "item1": "<strong>Sample data</strong>: use the datasets provided by Graph Italia (option \"Use Sample Data\").",
-                        "item2": "<strong>Generate data</strong>: from the Tools section → <a>Generate Data</a> to create a CSV automatically.",
-                        "item3": "<strong>Upload a CSV</strong>: upload your CSV file; Graph Italia will parse it and display the data in a table."
-                    }
-                }
-            }
+        "create": {
+            "title": "Create a new item",
+            "items": [
+                "From your <strong>private area</strong> press <strong>Create new</strong> and choose what to create: a chart, a KPI group, a map, a dashboard or a data source.",
+                "Give it a title and, optionally, a description right away (you can always change them later): the editor will open."
+            ]
         },
-        "step3": {
-            "title": "Step 3: Choose your chart type and configure (optional)",
-            "text": "",
-            "listItems": {
-                "item1": "After uploading your data, choose the chart type: Bar, Line, Pie, or Geomap.",
-                "item2": "Customize: select columns, X/Y axes, colors, and labels."
-            }
+        "data": {
+            "title": "Load your data",
+            "items": [
+                "In the <strong>Load your data</strong> step you can import a <strong>CSV</strong> or <strong>JSON</strong> file from your computer, or connect a <strong>remote URL</strong>.",
+                "With a remote URL the chart stays linked to its source: when public, the server re-downloads the data if the saved copy is older than 24 hours.",
+                "After loading you can clean the table up: filter and reorder columns, rename headers, transpose rows and columns. If the data has repeated rows, the editor suggests an <strong>aggregation</strong> (count, sum or mean)."
+            ]
         },
-        "step4": {
-            "title": "Step 4: Save your chart",
-            "text": "",
-            "listItems": {
-                "item1": "Click <strong>\"Save\"</strong> to save your chart to your dashboard.",
-                "item2": "You can reopen it, edit it, publish it, and get the embed code to add it to your website."
-            }
+        "configure": {
+            "title": "Configure the chart",
+            "items": [
+                "Choose the visualization type — <strong>bars, lines, pie or geographic map</strong> — and watch the preview update in real time.",
+                "The options let you set direction, color palette, legend, height and an optional logarithmic scale; <strong>Advanced settings</strong> group tooltip, grid and axes."
+            ]
+        },
+        "publish": {
+            "title": "Save, publish and share",
+            "items": [
+                "Press <strong>Save</strong>: the item appears in the lists of your private area.",
+                "In the <strong>Info</strong> section you decide its visibility: a <strong>public</strong> item is visible to anyone with the link and can be embedded in other websites; a <strong>private</strong> item stays visible to you only.",
+                "The <strong>Share</strong> column of the list has buttons to copy the public link and the embed code (iframe)."
+            ]
+        },
+        "dashboard": {
+            "title": "Compose a dashboard",
+            "items": [
+                "A dashboard gathers several charts and text blocks in a single page: drag the slots on the grid, adjust their width and height, write texts in markdown.",
+                "A dashboard is also shared with a single public link."
+            ]
+        },
+        "api": {
+            "title": "For developers",
+            "items": [
+                "From the user menu you can generate an <strong>API key</strong> (read-only or read/write) to use the project's REST APIs.",
+                "<strong>Data sources</strong> are reusable datasets that can also be updated via API: useful to feed data from a script or an external system."
+            ]
         }
     },
     "footer": {
-        "text": "That's it! Keep experimenting with datasets, chart types, and settings to get the most out of your visualizations."
+        "text": "That is all you need to get started: for everything else, each section of the application has contextual help texts."
     },
     "actions": {
         "getStarted": {
             "label": "Log in"
+        },
+        "goToPrivateArea": {
+            "label": "Go to your private area"
         }
     }
 }

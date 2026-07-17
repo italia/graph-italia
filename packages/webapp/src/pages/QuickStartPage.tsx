@@ -1,8 +1,27 @@
 import { Trans, useTranslation } from "react-i18next";
 import Layout from "../components/layout";
+import { useUserStore } from "../lib/store/user_store";
+import { HOME_ROUTE } from "../router";
+
+// Section keys, in order. "account" is skipped for logged-in users: telling
+// them to sign in is noise, and the final CTA points to their private area.
+const GUIDE_STEPS = [
+  "account",
+  "create",
+  "data",
+  "configure",
+  "publish",
+  "dashboard",
+  "api",
+] as const;
 
 export default function QuickStartPage() {
   const { t } = useTranslation("quickstart");
+  const { user } = useUserStore();
+  const loggedIn = Boolean(user);
+
+  const steps = GUIDE_STEPS.filter((key) => !(loggedIn && key === "account"));
+
   return (
     <Layout>
       <div className="quickstart-page relative isolate min-h-[60vh]">
@@ -54,120 +73,46 @@ export default function QuickStartPage() {
               {t("title")}
             </h1>
             <p className="lead">{t("description")}</p>
-            <h2 className="text-xl font-semibold text-base-content mt-10">
-              <Trans t={t} i18nKey="steps.step1.title" />
-            </h2>
-            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
-            {t("steps.step1.text") ? (
-              <Trans
-                t={t}
-                i18nKey="steps.step1.text"
-                components={{ strong: <strong /> }}
-              />
-            ) : (
-              <ul>
-                <li>{t("steps.step1.listItems.item1")}</li>
-                <li>
-                  <Trans
-                    t={t}
-                    i18nKey="steps.step1.listItems.item2"
-                    components={{ strong: <strong /> }}
-                  />
-                </li>
-              </ul>
-            )}
-            <h2 className="text-xl font-semibold text-base-content mt-8">
-              {t("steps.step2.title")}
-            </h2>
-            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
-            {t("steps.step2.text") ? (
-              <Trans
-                t={t}
-                i18nKey="steps.step2.text"
-                components={{ strong: <strong /> }}
-              />
-            ) : (
-              <ul>
-                <li>
-                  {t("steps.step2.listItems.item1.text")}:
+
+            {steps.map((key, index) => {
+              const items = t(`guide.${key}.items`, {
+                returnObjects: true,
+                defaultValue: [],
+              }) as string[];
+              return (
+                <section key={key}>
+                  <h2 className="text-xl font-normal text-base-content mt-10">
+                    {index + 1} · {t(`guide.${key}.title`)}
+                  </h2>
                   <ul>
-                    <li>
-                      <Trans
-                        t={t}
-                        i18nKey="steps.step2.listItems.item1.items.item1"
-                        components={{ strong: <strong /> }}
-                      />
-                    </li>
-                    <li>
-                      <Trans
-                        t={t}
-                        i18nKey="steps.step2.listItems.item1.items.item2"
-                        components={{
-                          strong: <strong />,
-                          a: (
-                            <a
-                              href="/generate-data"
-                              className="link link-primary"
-                            />
-                          ),
-                        }}
-                      />
-                    </li>
-                    <li>
-                      <Trans
-                        t={t}
-                        i18nKey="steps.step2.listItems.item1.items.item3"
-                        components={{ strong: <strong /> }}
-                      />
-                    </li>
+                    {items.map((_, i) => (
+                      <li key={i}>
+                        <Trans
+                          t={t}
+                          i18nKey={`guide.${key}.items.${i}`}
+                          components={{ strong: <strong /> }}
+                        />
+                      </li>
+                    ))}
                   </ul>
-                </li>
-              </ul>
-            )}
-            <h2 className="text-xl font-semibold text-base-content mt-8">
-              {t("steps.step3.title")}
-            </h2>
-            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
-            {t("steps.step3.text") ? (
-              <Trans
-                t={t}
-                i18nKey="steps.step3.text"
-                components={{ strong: <strong /> }}
-              />
-            ) : (
-              <ul>
-                <li>{t("steps.step3.listItems.item1")}</li>
-                <li>{t("steps.step3.listItems.item2")}</li>
-              </ul>
-            )}
-            <h2 className="text-xl font-semibold text-base-content mt-8">
-              {t("steps.step4.title")}
-            </h2>
-            {/* al momento la traduzione en e quella it hanno due strutture diverse */}
-            {t("steps.step4.text") ? (
-              <Trans
-                t={t}
-                i18nKey="steps.step4.text"
-                components={{ strong: <strong /> }}
-              />
-            ) : (
-              <ul>
-                <li>
-                  <Trans
-                    t={t}
-                    i18nKey="steps.step4.listItems.item1"
-                    components={{ strong: <strong /> }}
-                  />
-                </li>
-                <li>{t("steps.step4.listItems.item2")}</li>
-              </ul>
-            )}
+                </section>
+              );
+            })}
+
             <hr className="my-8" />
             <p>{t("footer.text")}</p>
             <p className="mt-8">
-              <a href="/login" className="btn-italia btn-italia-primary">
-                {t("actions.getStarted.label")}
-              </a>
+              {loggedIn ? (
+                <a href={HOME_ROUTE} className="btn-italia btn-italia-primary">
+                  {t("actions.goToPrivateArea.label", {
+                    defaultValue: "Vai alla tua Area Privata",
+                  })}
+                </a>
+              ) : (
+                <a href="/login" className="btn-italia btn-italia-primary">
+                  {t("actions.getStarted.label")}
+                </a>
+              )}
             </p>
           </article>
         </div>
