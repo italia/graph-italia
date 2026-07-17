@@ -1,7 +1,7 @@
 {
     "back": "Back to home",
     "title": "Getting started",
-    "description": "From signing up to your first published chart: the essential steps to use Graph Italia. This is not the full documentation — the interface guides you along the way — just what you need to find your bearings.",
+    "description": "From signing up to your first published chart: the essential steps to use Graph Italia. This is not the full documentation, just what you need to find your bearings: for everything else the interface guides you along the way.",
     "guide": {
         "account": {
             "title": "Sign up and log in",
@@ -28,7 +28,7 @@
         "configure": {
             "title": "Configure the chart",
             "items": [
-                "Choose the visualization type — <strong>bars, lines, pie or geographic map</strong> — and watch the preview update in real time.",
+                "Choose the visualization type (<strong>bars, lines, pie or geographic map</strong>) and watch the preview update in real time.",
                 "The options let you set direction, color palette, legend, height and an optional logarithmic scale; <strong>Advanced settings</strong> group tooltip, grid and axes."
             ]
         },

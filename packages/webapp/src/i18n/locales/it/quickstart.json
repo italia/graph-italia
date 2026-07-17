@@ -1,7 +1,7 @@
 {
     "back": "Torna alla home",
     "title": "Come iniziare",
-    "description": "Dalla registrazione al primo grafico pubblicato: i passaggi essenziali per usare Graph Italia. Non è la documentazione completa — l'interfaccia ti guida passo passo — ma quello che serve per orientarsi.",
+    "description": "Dalla registrazione al primo grafico pubblicato: i passaggi essenziali per usare Graph Italia. Non è la documentazione completa, ma quello che serve per orientarsi: per il resto l'interfaccia ti guida passo passo.",
     "guide": {
         "account": {
             "title": "Registrati e accedi",
@@ -28,7 +28,7 @@
         "configure": {
             "title": "Configura il grafico",
             "items": [
-                "Scegli il tipo di visualizzazione — <strong>barre, linee, torta o mappa geografica</strong> — e guarda l'anteprima aggiornarsi in tempo reale.",
+                "Scegli il tipo di visualizzazione (<strong>barre, linee, torta o mappa geografica</strong>) e guarda l'anteprima aggiornarsi in tempo reale.",
                 "Dalle opzioni imposti direzione, palette di colori, legenda, altezza ed eventuale scala logaritmica; le <strong>Configurazioni avanzate</strong> raccolgono tooltip, griglia e assi."
             ]
         },
