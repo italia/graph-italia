@@ -47,7 +47,7 @@ function ChartOptions({
       >
         <span
           aria-hidden="true"
-          className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-base-300 text-base-content/70 text-[10px] font-bold"
+          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-base-300 text-base-content/70 text-base font-bold"
         >
           ?
         </span>

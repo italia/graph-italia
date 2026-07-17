@@ -6,7 +6,7 @@
 // trailing columns (dates, actions) align pixel-perfect across the tables.
 export const TABLE_COL = {
   type: "110px",
-  remote: "110px",
+  remote: "125px",
   visibility: "130px",
   source: "130px",
   date: "170px",
@@ -17,7 +17,7 @@ export const TABLE_COL = {
 const dataTableStyles = {
   headCells: {
     style: {
-      fontSize: "0.875rem",
+      fontSize: "1rem",
       fontWeight: 700,
       textTransform: "uppercase" as const,
       letterSpacing: "0.02em",
@@ -35,7 +35,7 @@ const dataTableStyles = {
   },
   pagination: {
     style: {
-      fontSize: "0.875rem",
+      fontSize: "1rem",
     },
   },
 };

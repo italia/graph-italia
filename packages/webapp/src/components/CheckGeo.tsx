@@ -194,7 +194,7 @@ export default function CheckGeo() {
           >
             <div
               key="geoJsonUrl"
-              style={{ fontSize: 14, padding: 4, margin: 4 }}
+              style={{ fontSize: 16, padding: 4, margin: 4 }}
             >
               <label>{t("form.fields.geoJsonUrl.label")}</label>
               <input

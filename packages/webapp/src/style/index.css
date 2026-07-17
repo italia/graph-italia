@@ -11,6 +11,13 @@
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
+
+  /* 16px minimum type everywhere: the small steps of the scale are remapped
+     to 1rem, so every text-xs / text-sm in the app renders at 16px. */
+  --text-xs: 1rem;
+  --text-xs--line-height: 1.5rem;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5rem;
 }
 
 @plugin "daisyui" {
@@ -128,15 +135,43 @@
   --noise: 0;
 }
 
-/* daisyUI buttons ship at 0.875rem/600: bring default-size buttons to 16px
-   like the rest of the app's text (explicit size modifiers keep their scale)
-   and drop the semibold everywhere — emphasis comes from color, matching the
-   regular-weight Design System Italia buttons (.btn-italia). */
+/* 16px minimum, part two: daisyUI components hardcode sizes below 1rem, so
+   the remapped Tailwind tokens above don't reach them. Buttons also drop the
+   semibold — emphasis comes from color, matching the regular-weight Design
+   System Italia buttons (.btn-italia). */
 .btn {
   font-weight: 400;
 }
-.btn:not(.btn-xs):not(.btn-sm):not(.btn-lg):not(.btn-xl) {
+/* Floor, not a cap: large button sizes keep their own scale */
+.btn:not(.btn-lg):not(.btn-xl) {
   font-size: 1rem;
+}
+.badge {
+  font-size: 1rem;
+  height: auto;
+}
+.label-text,
+.label-text-alt,
+.input,
+.select,
+.textarea,
+.file-input,
+.tab,
+.menu,
+.menu-title,
+.table {
+  font-size: 1rem;
+}
+.tooltip:before {
+  font-size: 1rem;
+}
+/* react-data-table-component (home lists, transform table, public data
+   tables from graph-italia-components) */
+.rdt_TableCell,
+.rdt_TableCol,
+.rdt_Pagination,
+.rdt_Pagination select {
+  font-size: 1rem !important;
 }
 
 /* react-data-table-component: the library renders its own SVG arrow overlaid on
