@@ -1,6 +1,9 @@
 {
     "menu": {
         "items": {
+            "quickStart": {
+                "label": "Getting started"
+            },
             "examples": {
                 "label": "Examples"
             },

@@ -97,6 +97,18 @@ export const MENU: readonly MenuItem[] = [
   //   link: ROUTES.home,
   // },
   {
+    name: "Quick Start",
+    requireAuth: false,
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.quickStart.label`,
+    link: ROUTES.quickStart,
+  },
+  {
+    name: "Documentation",
+    requireAuth: false,
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.docs.label`,
+    link: ROUTES.docs(),
+  },
+  {
     name: "Examples",
     requireAuth: false,
     translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.examples.label`,
@@ -119,12 +131,6 @@ export const MENU: readonly MenuItem[] = [
         link: ROUTES.generatePoi,
       },
     ],
-  },
-  {
-    name: "Documentation",
-    requireAuth: false,
-    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.docs.label`,
-    link: ROUTES.docs(),
   },
   {
     name: "Settings",
