@@ -208,7 +208,7 @@ export default function EditDataSource() {
         </div>
       </div>
 
-      <div className="mx-auto">
+      <div className="mx-auto px-4 lg:px-10 pb-10">
         <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
           {/* Left column — steps */}
           <div className="space-y-1 xl:col-span-2">

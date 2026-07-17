@@ -11,7 +11,7 @@ import {
 } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import { useTranslation } from "react-i18next";
-import { FaCog, FaInfo, FaPlus } from "react-icons/fa";
+import { FaCog, FaInfo } from "react-icons/fa";
 import { FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { Helmet } from "react-helmet";
 import { useNavigate, useParams } from "react-router-dom";
@@ -306,12 +306,12 @@ function EditKpiGroupPage() {
       </div>
 
       {error && (
-        <div role="alert" className="alert alert-error mb-4">
+        <div role="alert" className="alert alert-error mb-4 mx-4 lg:mx-10">
           {error.message}
         </div>
       )}
 
-      <div className="mx-auto">
+      <div className="mx-auto px-4 lg:px-10 pb-10">
         <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
           {/* Left: Info + Config steps */}
           <div className="space-y-1 xl:col-span-2">
@@ -321,6 +321,10 @@ function EditKpiGroupPage() {
               isOpen={false}
               isDisabled={false}
               index={0}
+              status="completed"
+              srStatusLabel={t("body.steps.status.completed", {
+                defaultValue: "completato",
+              })}
             >
               <div className="card bg-base-100 shadow-sm border border-base-300">
                 <div className="card-body">
@@ -389,6 +393,11 @@ function EditKpiGroupPage() {
               isOpen={false}
               isDisabled={!loaded}
               index={1}
+              status={loaded ? "active" : "locked"}
+              srStatusLabel={t(
+                loaded ? "body.steps.status.active" : "body.steps.status.locked",
+                { defaultValue: loaded ? "in corso" : "bloccato" },
+              )}
             >
               {loaded && (
                 <div className="card bg-base-100 shadow-sm border border-base-300">
@@ -481,22 +490,6 @@ function EditKpiGroupPage() {
                 />
               </div>
             )}
-
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
-                aria-hidden="true"
-              >
-                <span className="text-primary font-bold">
-                  <FaPlus />
-                </span>
-              </div>
-              <div>
-                <h2 tabIndex={-1} className="card-title text-xl">
-                  {t("body.actions.addKpi.label")}
-                </h2>
-              </div>
-            </div>
 
             <div className="h-full lg:py-10 lg:min-h-[500px] ">
               <KpiForm

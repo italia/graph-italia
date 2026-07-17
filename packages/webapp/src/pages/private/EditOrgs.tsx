@@ -226,7 +226,7 @@ export default function EditOrgsPage() {
 
       <div className="w-full flex justify-between items-center gap-2 py-6 px-4 lg:px-10 mb-2">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-xl font-bold flex items-center gap-2">
             <FaBuilding className="text-primary" aria-hidden="true" />
             {t("title", "Organizations")}
           </h1>
@@ -250,7 +250,7 @@ export default function EditOrgsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 lg:px-10 py-6 pb-8">
         {/* Orgs List */}
         <div className="lg:col-span-1 space-y-4">
-          <h2 className="text-lg font-semibold px-2">{t("listTitle", "Your Organizations")}</h2>
+          <h2 className="text-lg font-normal px-2">{t("listTitle", "Your Organizations")}</h2>
           {loading ? (
             <Loading />
           ) : orgs.length === 0 ? (
@@ -264,43 +264,41 @@ export default function EditOrgsPage() {
                 return (
                   <li key={org.id}>
                     <div
-                      className={`card card-compact border transition-all ${isSelected
+                      className={`flex items-center justify-between gap-1 rounded-lg border transition-all ${isSelected
                         ? "bg-primary text-primary-content border-primary"
                         : "bg-base-100 hover:bg-base-200 border-base-300"
                         }`}
                     >
-                      <div className="card-body flex-row items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        aria-expanded={isSelected}
+                        aria-controls={`org-panel-${org.id}`}
+                        onClick={() => setSelectedOrgId(org.id)}
+                        className="flex items-center gap-3 overflow-hidden grow text-left bg-transparent border-0 cursor-pointer py-3 pl-4 pr-2 text-base"
+                      >
+                        {isSelected ? (
+                          <FaChevronDown aria-hidden="true" className="shrink-0" />
+                        ) : (
+                          <FaChevronRight aria-hidden="true" className="shrink-0" />
+                        )}
+                        <span className="truncate">{org.name}</span>
+                      </button>
+                      {isAdminOf(org.id) && (
                         <button
                           type="button"
-                          aria-expanded={isSelected}
-                          aria-controls={`org-panel-${org.id}`}
-                          onClick={() => setSelectedOrgId(org.id)}
-                          className="flex items-center gap-3 overflow-hidden flex-grow text-left bg-transparent border-0 p-0 cursor-pointer"
+                          aria-label={t("actions.deleteOrg", {
+                            name: org.name,
+                            defaultValue: `Elimina organizzazione ${org.name}`,
+                          })}
+                          className={`btn btn-ghost btn-sm btn-square shrink-0 mr-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${isSelected ? "text-primary-content hover:bg-primary-content/15" : "text-error hover:bg-error/10"}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPendingDeleteOrgId(org.id);
+                          }}
                         >
-                          {isSelected ? (
-                            <FaChevronDown aria-hidden="true" />
-                          ) : (
-                            <FaChevronRight aria-hidden="true" />
-                          )}
-                          <span className="font-bold truncate">{org.name}</span>
+                          <FaTrash aria-hidden="true" />
                         </button>
-                        {isAdminOf(org.id) && (
-                          <button
-                            type="button"
-                            aria-label={t("actions.deleteOrg", {
-                              name: org.name,
-                              defaultValue: `Elimina organizzazione ${org.name}`,
-                            })}
-                            className={`btn btn-outline btn-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${isSelected ? "text-primary-content" : "text-base-content"}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPendingDeleteOrgId(org.id);
-                            }}
-                          >
-                            <FaTrash aria-hidden="true" />
-                          </button>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </li>
                 );
@@ -355,7 +353,7 @@ export default function EditOrgsPage() {
                       )}
                     </p>
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold">{t("membersTitle", "Members")}</h3>
+                      <h3 className="text-lg font-normal">{t("membersTitle", "Members")}</h3>
                       {selectedOrgId && isAdminOf(selectedOrgId) && (
                         <button type="button" className="btn btn-sm btn-outline btn-primary" onClick={() => setShowAddMemberModal(true)}>
                           <FaUserPlus aria-hidden="true" /> {t("addMemberBtn", "Add Member")}
@@ -387,14 +385,14 @@ export default function EditOrgsPage() {
                                 <tr key={member.userId} className="hover">
                                   <td>
                                     <div className="flex flex-col">
-                                      <span className="font-semibold">{member.user?.email || member.userId}</span>
+                                      <span>{member.user?.email || member.userId}</span>
                                       {member.user?.email && <span className="text-xs opacity-60 font-mono">{member.userId}</span>}
                                     </div>
                                   </td>
                                   <td>
                                     {selectedOrgId && isAdminOf(selectedOrgId) ? (
                                       <select
-                                        className="select select-ghost select-xs font-bold"
+                                        className="select select-ghost select-sm"
                                         value={member.role}
                                         onChange={(e) => handleUpdateMemberRole(member.userId, e.target.value as "USER" | "ADMIN")}
                                       >
@@ -402,7 +400,7 @@ export default function EditOrgsPage() {
                                         <option value="ADMIN">ADMIN</option>
                                       </select>
                                     ) : (
-                                      <span className="text-xs font-bold opacity-70">{member.role}</span>
+                                      <span className="opacity-70">{member.role}</span>
                                     )}
                                   </td>
                                   <td className="text-right">
@@ -413,7 +411,7 @@ export default function EditOrgsPage() {
                                           email: member.user?.email || member.userId,
                                           defaultValue: `Rimuovi membro ${member.user?.email || member.userId}`,
                                         })}
-                                        className="btn btn-outline btn-xs"
+                                        className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"
                                         onClick={() => setPendingRemoveUserId(member.userId)}
                                       >
                                         <FaTrash aria-hidden="true" />
@@ -437,7 +435,7 @@ export default function EditOrgsPage() {
                       )}
                     </p>
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold">{t("projectsTitle", "Organization Projects")}</h3>
+                      <h3 className="text-lg font-normal">{t("projectsTitle", "Organization Projects")}</h3>
                       <button type="button" className="btn btn-sm btn-outline btn-primary" onClick={() => { fetchPersonalProjects(); setShowTransferModal(true); }}>
                         <FaRightLeft aria-hidden="true" /> {t("transferProjectBtn", "Transfer Project")}
                       </button>
@@ -466,7 +464,7 @@ export default function EditOrgsPage() {
                             ) : (
                               projects.map((project) => (
                                 <tr key={project.id} className="hover">
-                                  <td className="font-semibold">{project.name}</td>
+                                  <td>{project.name}</td>
                                   <td className="font-mono text-xs opacity-70">{project.id}</td>
                                   <td>
                                     <div className="flex flex-col">
@@ -477,7 +475,7 @@ export default function EditOrgsPage() {
                                     {project.ownerId === user?.userId && (
                                       <button
                                         type="button"
-                                        className="btn btn-outline btn-xs"
+                                        className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"
                                         title={t("actions.revokeProject", "Revoke org access")}
                                         onClick={() => setPendingRevokeProjectId(project.id)}
                                       >
