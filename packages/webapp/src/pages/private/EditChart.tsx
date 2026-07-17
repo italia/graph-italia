@@ -18,6 +18,7 @@ import { HOME_ROUTE, ROUTES } from "../../router.tsx";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import ChartOptions from "../../components/ChartOptions.tsx";
 import Layout from "../../components/layout/index.tsx";
+import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import SelectChart from "../../components/SelectChart.tsx";
 import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
@@ -290,7 +291,8 @@ function EditChartPage() {
       </div>
 
       <div className="mx-auto px-4 lg:px-10 pb-10">
-        <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-6  gap-4">
+          <EditStepsSidebar>
           <div className="xl:col-span-2">
             <EditStepComponent
               title={t(`body.options.setup.title`)}
@@ -445,11 +447,12 @@ function EditChartPage() {
               </div>
             </EditStepComponent>
           </div>
+          </EditStepsSidebar>
 
           {/* Right column: Preview */}
           <section
             aria-labelledby="chart-preview-heading"
-            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg"
+            className="xl:col-span-4 flex flex-col h-full p-4 lg:p-10 bg-base-100  border border-base-300 rounded-lg"
           >
             <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>

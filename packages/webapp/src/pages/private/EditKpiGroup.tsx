@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import Layout from "../../components/layout";
+import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading";
 import EditStepComponent from "../../components/EditStepComponent";
 import GenericDialog from "../../components/layout/GenericDialog";
@@ -312,9 +313,10 @@ function EditKpiGroupPage() {
       )}
 
       <div className="mx-auto px-4 lg:px-10 pb-10">
-        <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-6 gap-4">
           {/* Left: Info + Config steps */}
-          <div className="space-y-1 xl:col-span-2">
+          <EditStepsSidebar>
+          <div className="space-y-1">
             <EditStepComponent
               title={t("body.options.setup.title")}
               Icon={FaInfo}
@@ -420,11 +422,12 @@ function EditKpiGroupPage() {
               )}
             </EditStepComponent>
           </div>
+          </EditStepsSidebar>
 
           {/* Right: Preview */}
           <section
             aria-labelledby="kpi-preview-heading"
-            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg ]"
+            className="xl:col-span-4 flex flex-col h-full p-4 lg:p-10 bg-base-100 border border-base-300 rounded-lg ]"
           >
 
             <div>

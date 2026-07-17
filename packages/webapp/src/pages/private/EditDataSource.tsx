@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { HOME_ROUTE, ROUTES } from "../../router.tsx";
 import Layout from "../../components/layout/index.tsx";
+import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
 import EditStepComponent from "../../components/EditStepComponent.tsx";
@@ -209,9 +210,10 @@ export default function EditDataSource() {
       </div>
 
       <div className="mx-auto px-4 lg:px-10 pb-10">
-        <div className="grid grid-cols-2 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-6 gap-4">
           {/* Left column — steps */}
-          <div className="space-y-1 xl:col-span-2">
+          <EditStepsSidebar>
+          <div className="space-y-1">
 
             {/* Step 0: Setup */}
             <EditStepComponent
@@ -352,11 +354,12 @@ export default function EditDataSource() {
               </div>
             </EditStepComponent>
           </div>
+          </EditStepsSidebar>
 
           {/* Right column — data preview */}
           <section
             aria-labelledby="ds-preview-heading"
-            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100 border border-base-300 rounded-lg"
+            className="xl:col-span-4 flex flex-col h-full p-4 lg:p-10 bg-base-100 border border-base-300 rounded-lg"
           >
             <div className="bg-base-100 flex flex-col gap-4 min-h-[500px]">
               <div>

@@ -17,6 +17,7 @@ import { HOME_ROUTE } from "../../router.tsx";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 
 import Layout from "../../components/layout/index.tsx";
+import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import EditStepComponent from "../../components/EditStepComponent.tsx";
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges.tsx";
@@ -220,8 +221,9 @@ export default function EditMapPage() {
       </div>
 
       <div className="mx-auto px-4 lg:px-10 pb-10">
-        <div className="grid grid-cols-2 xl:grid-cols-6  gap-4">
-          <div className="space-y-1 xl:col-span-2">
+        <div className="grid grid-cols-1 xl:grid-cols-6  gap-4">
+          <EditStepsSidebar>
+          <div className="space-y-1">
             <EditStepComponent
               title={t(`body.options.setup.title`)}
               description={t(`body.options.setup.description`)}
@@ -356,11 +358,12 @@ export default function EditMapPage() {
               </div>
             </EditStepComponent>
           </div>
+          </EditStepsSidebar>
 
           {/* Right column: Preview */}
           <section
             aria-labelledby="map-preview-heading"
-            className="xl:col-span-4 flex flex-col h-full p-10 bg-base-100  border border-base-300 rounded-lg"
+            className="xl:col-span-4 flex flex-col h-full p-4 lg:p-10 bg-base-100  border border-base-300 rounded-lg"
           >
             <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>
