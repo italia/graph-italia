@@ -263,6 +263,9 @@
                     "quickstart": {
                         "label": "Quick Start"
                     },
+                    "docs": {
+                        "label": "Documentation"
+                    },
                     "tos": {
                         "label": "Terms of service"
                     },

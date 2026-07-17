@@ -7,9 +7,6 @@
             "tools": {
                 "label": "Strumenti",
                 "subItems": {
-                    "quickStart": {
-                        "label": "Come Iniziare"
-                    },
                     "generateData": {
                         "label": "Genera dati di esempio"
                     },
@@ -23,6 +20,9 @@
                         "label": "Preview dei file GeoJson"
                     }
                 }
+            },
+            "docs": {
+                "label": "Documentazione"
             },
             "settings": {
                 "label": "Impostazioni",

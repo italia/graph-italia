@@ -13,6 +13,7 @@ import DashboardEditPage from "./pages/private/EditDashboard";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
 import PolicyPage from "./pages/gdpr";
+import DocsPage from "./pages/DocsPage";
 import PrivateAreaPage from "./pages/private";
 import EditApiKeysPage from "./pages/private/EditApiKeys";
 import EditOrgsPage from "./pages/private/EditOrgs";
@@ -43,6 +44,7 @@ export const ROUTES = {
   root: "/",
   about: "/about",
   quickStart: "/quickstart",
+  docs: (section?: string) => `/docs${section ? `/${section}` : ""}`,
   gdpr: "/gdpr",
   terms: "/terms-of-service",
   // Auth
@@ -107,11 +109,6 @@ export const MENU: readonly MenuItem[] = [
     link: "",
     subMenu: [
       {
-        name: "Quick Start",
-        translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.quickStart.label`,
-        link: ROUTES.quickStart,
-      },
-      {
         name: "Generate Data",
         translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.tools.subItems.generateData.label`,
         link: ROUTES.generateData,
@@ -122,6 +119,12 @@ export const MENU: readonly MenuItem[] = [
         link: ROUTES.generatePoi,
       },
     ],
+  },
+  {
+    name: "Documentation",
+    requireAuth: false,
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.docs.label`,
+    link: ROUTES.docs(),
   },
   {
     name: "Settings",
@@ -174,6 +177,11 @@ const routes = [
   {
     path: "/quickstart",
     element: <QuickStartPage />,
+  },
+  // Documentazione
+  {
+    path: "/docs/:section?",
+    element: <DocsPage />,
   },
   //PRIVATE PART
   {

@@ -263,6 +263,9 @@
                     "quickstart": {
                         "label": "Come iniziare"
                     },
+                    "docs": {
+                        "label": "Documentazione"
+                    },
                     "tos": {
                         "label": "Termini del servizio"
                     },

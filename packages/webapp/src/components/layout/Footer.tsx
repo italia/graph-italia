@@ -29,6 +29,9 @@ export default function Footer() {
         <a href="/quickstart" className="underline">
           {t(`links.quickstart.label`)}
         </a>
+        <a href="/docs" className="underline">
+          {t(`links.docs.label`, { defaultValue: "Documentazione" })}
+        </a>
         <a href="/terms-of-service" className="underline">
           {t(`links.tos.label`)}
         </a>

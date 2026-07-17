@@ -7,9 +7,6 @@
             "tools": {
                 "label": "Tools",
                 "subItems": {
-                    "quickStart": {
-                        "label": "Quick Start"
-                    },
                     "generateData": {
                         "label": "Generate Data"
                     },
@@ -23,6 +20,9 @@
                         "label": "Check GeoJSon File"
                     }
                 }
+            },
+            "docs": {
+                "label": "Documentation"
             },
             "settings": {
                 "label": "Settings",
