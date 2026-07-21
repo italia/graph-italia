@@ -207,6 +207,34 @@
   outline-offset: -2px;
 }
 
+/* Dark theme foreground contrast (WCAG 1.4.3 / 1.4.11).
+   The brand blues were carried over from the light theme unchanged, where they
+   sit on white and pass comfortably. On the dark surfaces they do not:
+
+     --color-primary   #0066cc  on base-200 #2c3035  ->  2.39:1
+     --color-secondary #023466  on base-100 #1f2126  ->  1.68:1
+
+   Both are below the 4.5:1 needed for text and even the 3:1 needed for icons
+   and focus rings. Lighten them for FOREGROUND use only: the theme tokens stay
+   untouched, so bg-primary / btn-primary keep their fill and their white label
+   (white on #66b3ff would be only 2.22:1, so promoting this colour to a token
+   would break every primary button instead).
+
+   #66b3ff is the lighter step of the same Bootstrap Italia blue: 7.25:1 on
+   base-100 and 5.98:1 on base-200, and still 4.27:1 through the opacity-70
+   the project switcher applies to its trigger. The theme is set as
+   data-theme on a wrapper div, not on <html>, hence the descendant selector. */
+[data-theme="scuro"] .text-primary,
+[data-theme="scuro"] .text-secondary,
+[data-theme="scuro"] .link-primary {
+  color: #66b3ff;
+}
+
+[data-theme="scuro"] .rdt_Pagination select:focus-visible,
+[data-theme="scuro"] .rdt_TableCol_Sortable:focus-visible {
+  outline-color: #66b3ff;
+}
+
 /* https://github.com/react-grid-layout/react-grid-layout/issues/1329#issuecomment-1518921042 */
 .react-resizable-hide .react-resizable-handle {
   display: none !important;
