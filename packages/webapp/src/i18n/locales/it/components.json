@@ -1,5 +1,34 @@
 {
     "components": {
+        "geoPresets": {
+            "label": "Tipo di territorio",
+            "options": {
+                "regions": "Regioni",
+                "provinces": "Province",
+                "custom": "Personalizzato (URL)"
+            },
+            "hints": {
+                "regions": "Le 20 regioni italiane. Attenzione: il Trentino-Alto Adige è presente come area singola \"P.A. Bolzano/Trento\", quindi i dati che usano \"Trentino-Alto Adige\" non verranno abbinati.",
+                "provinces": "Le 107 province italiane. Il file pesa circa 5 MB, il caricamento della mappa può richiedere qualche secondo.",
+                "custom": "Indica l'URL di un file GeoJson e la proprietà che contiene il nome del territorio. Puoi verificarli con lo strumento"
+            },
+            "checkGeoLink": "Controlla GeoJson",
+            "match": {
+                "howItWorks": "Come funziona l'abbinamento: la prima colonna dei tuoi dati deve contenere il nome del territorio scritto esattamente come nel file dei confini, la seconda il valore numerico da rappresentare. La prima riga è considerata intestazione. I territori senza una riga corrispondente restano grigi e nel tooltip mostrano NaN.",
+                "summary": "{{matched}} righe su {{total}} abbinate, su {{territories}} territori disponibili.",
+                "nearMisses": "Differiscono solo per maiuscole o spazi, quindi non vengono abbinate:",
+                "unmatched": "Nomi non riconosciuti:",
+                "andMore": " e altri {{count}}",
+                "expectedExample": "Nella prima colonna sono attesi nomi come:",
+                "loadError": "Impossibile leggere il file dei confini: non posso verificare l'abbinamento."
+            },
+            "dialog": {
+                "title": "Scegli il territorio",
+                "description": "Seleziona i confini geografici da mostrare sulla mappa. Potrai cambiarli in seguito dalle opzioni.",
+                "confirm": "Conferma",
+                "cancel": "Annulla"
+            }
+        },
         "auth": {
             "changePasswordForm": {
                 "header": {

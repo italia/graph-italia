@@ -572,15 +572,15 @@
                 "items": {
                     "chart": {
                         "label": "Grafico",
-                        "description": "Un singolo grafico (barre, linee, torta…) creato a partire dai tuoi dati."
+                        "description": "Un singolo grafico creato dai tuoi dati: barre, linee, torta o mappa geografica colorata per regione o provincia."
                     },
                     "kpi": {
                         "label": "Gruppo KPI",
                         "description": "Un gruppo di indicatori numerici di sintesi (KPI), mostrati come riquadri affiancati."
                     },
                     "map": {
-                        "label": "Mappa",
-                        "description": "Una mappa geografica dell'Italia con dati per regione, provincia o punti sul territorio."
+                        "label": "Mappa a punti",
+                        "description": "Indirizzi o coordinate segnati su una mappa stradale, raggruppati automaticamente quando sono vicini."
                     },
                     "dash": {
                         "label": "Dashboard",

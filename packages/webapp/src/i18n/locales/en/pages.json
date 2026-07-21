@@ -572,15 +572,15 @@
                 "items": {
                     "chart": {
                         "label": "Chart",
-                        "description": "A single chart (bars, lines, pie…) built from your data."
+                        "description": "A single chart built from your data: bars, lines, pie or a geographic map shaded by region or province."
                     },
                     "kpi": {
                         "label": "KPI Group",
                         "description": "A group of summary numeric indicators (KPIs), shown as side-by-side tiles."
                     },
                     "map": {
-                        "label": "Map",
-                        "description": "A geographic map of Italy with data by region, province or points."
+                        "label": "Point map",
+                        "description": "Addresses or coordinates plotted on a street map, clustered automatically when close together."
                     },
                     "dash": {
                         "label": "Dashboard",

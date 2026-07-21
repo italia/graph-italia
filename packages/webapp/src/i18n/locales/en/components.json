@@ -1,5 +1,34 @@
 {
     "components": {
+        "geoPresets": {
+            "label": "Territory type",
+            "options": {
+                "regions": "Regions",
+                "provinces": "Provinces",
+                "custom": "Custom (URL)"
+            },
+            "hints": {
+                "regions": "The 20 Italian regions. Note: Trentino-Alto Adige appears as a single area named \"P.A. Bolzano/Trento\", so data using \"Trentino-Alto Adige\" will not match.",
+                "provinces": "The 107 Italian provinces. The file is about 5 MB, so the map may take a few seconds to load.",
+                "custom": "Provide a GeoJson file URL and the property holding the territory name. You can check both with the tool"
+            },
+            "checkGeoLink": "Check GeoJson",
+            "match": {
+                "howItWorks": "How matching works: the first column of your data must hold the territory name spelled exactly as in the boundary file, the second one the numeric value to plot. The first row is treated as a header. Territories with no matching row stay grey and show NaN in the tooltip.",
+                "summary": "{{matched}} of {{total}} rows matched, out of {{territories}} available territories.",
+                "nearMisses": "These differ only by case or spacing, so they do not match:",
+                "unmatched": "Unrecognised names:",
+                "andMore": " and {{count}} more",
+                "expectedExample": "The first column is expected to hold names like:",
+                "loadError": "Could not read the boundary file, so matching cannot be checked."
+            },
+            "dialog": {
+                "title": "Choose the territory",
+                "description": "Select the geographic boundaries to show on the map. You can change them later from the options.",
+                "confirm": "Confirm",
+                "cancel": "Cancel"
+            }
+        },
         "auth": {
             "changePasswordForm": {
                 "header": {

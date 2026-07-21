@@ -1,9 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { defaultConfig, getFields, palettes } from "../lib/constants";
+import {
+  DEFAULT_GEO_PRESET_ID,
+  GEO_PRESET_CUSTOM,
+  findGeoPresetById,
+  resolveGeoPresetId,
+} from "../lib/geoPresets";
 import { getAvailablePalettes, getMapPalettes } from "../lib/utils";
+import GeoMatchStatus from "./GeoMatchStatus";
+import GeoPresetDialog from "./GeoPresetDialog";
+import GeoPresetSelect from "./GeoPresetSelect";
 import ShowPalette from "./ShowPalette";
+
+// Fields a territory preset fills in on the user's behalf.
+const GEO_PRESET_FIELDS = ["geoJsonUrl", "nameProperty"];
 
 function ChartOptions({
   config,
@@ -61,6 +73,7 @@ function ChartOptions({
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -78,6 +91,38 @@ function ChartOptions({
   const watchLegend = formValues.legend ?? true;
   const watchShowPieLabels = formValues.showPieLabels ?? true;
   const watchVisualMap = formValues.visualMap ?? true;
+
+  // The dropdown choice is derived from the saved URL rather than persisted as
+  // its own config key, so no change to the shared ChartConfigType is needed.
+  const [geoPresetId, setGeoPresetId] = useState(() =>
+    resolveGeoPresetId(config?.geoJsonUrl),
+  );
+  const [isGeoDialogOpen, setIsGeoDialogOpen] = useState(false);
+
+  function applyGeoPreset(presetId: string) {
+    setGeoPresetId(presetId);
+    const preset = findGeoPresetById(presetId);
+    setValue("geoJsonUrl", preset?.geoJsonUrl ?? "", { shouldValidate: true });
+    setValue("nameProperty", preset?.nameProperty ?? "", {
+      shouldValidate: true,
+    });
+  }
+
+  // A map with no territory yet (a brand new one, or a chart just switched to
+  // "map") gets the default preset applied straight away and the picker dialog
+  // opened on top. An already configured map is left alone: no dialog on every
+  // edit, the inline dropdown is enough to change it.
+  useEffect(() => {
+    if (chart !== "map") return;
+    const currentUrl = watch("geoJsonUrl");
+    if (!currentUrl) {
+      applyGeoPreset(DEFAULT_GEO_PRESET_ID);
+      setIsGeoDialogOpen(true);
+      return;
+    }
+    setGeoPresetId(resolveGeoPresetId(currentUrl));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chart]);
 
   useEffect(() => {
     const { h, w, palette, ...rest } = formValues;
@@ -163,6 +208,13 @@ function ChartOptions({
             ? label.replace("X", "Y")
             : label.replace("Y", "X");
       }
+      // Filled in by the territory preset: kept visible so the user can see
+      // what was picked, but not editable until they switch to "custom".
+      const isGeoPresetLocked =
+        chart === "map" &&
+        geoPresetId !== GEO_PRESET_CUSTOM &&
+        GEO_PRESET_FIELDS.includes(field.name);
+
       return (
         <div key={field.name} className={`form-control ${gridSpan}`}>
           <label htmlFor={`opt-${field.name}`} className="label">
@@ -173,10 +225,13 @@ function ChartOptions({
           </label>
           <input
             id={`opt-${field.name}`}
-            className="input input-bordered w-full text-base"
+            className={`input input-bordered w-full text-base ${
+              isGeoPresetLocked ? "bg-base-200 text-base-content/70" : ""
+            }`}
             type={field.type}
             {...field.otherProps}
             {...register(field.name, { required: field.required })}
+            readOnly={isGeoPresetLocked}
           />
           {errors[field.name] && (
             <label className="label">
@@ -281,6 +336,19 @@ function ChartOptions({
           </div>
         </legend>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {group.label === "Map Chart" && (
+            <>
+              <GeoPresetSelect
+                value={geoPresetId}
+                onChange={applyGeoPreset}
+                className="sm:col-span-2"
+              />
+              <GeoMatchStatus
+                geoJsonUrl={formValues.geoJsonUrl}
+                nameProperty={formValues.nameProperty}
+              />
+            </>
+          )}
           {group.fields.map(renderField)}
         </div>
       </fieldset>
@@ -306,6 +374,18 @@ function ChartOptions({
             {advancedGroups.map(renderGroup)}
           </div>
         </details>
+      )}
+
+      {chart === "map" && (
+        <GeoPresetDialog
+          open={isGeoDialogOpen}
+          presetId={geoPresetId}
+          onConfirm={(presetId) => {
+            applyGeoPreset(presetId);
+            setIsGeoDialogOpen(false);
+          }}
+          onCancel={() => setIsGeoDialogOpen(false)}
+        />
       )}
     </div>
   );
