@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import { FaPenToSquare, FaTrashCan } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import type { DatasourceItem } from "../lib/api";
@@ -11,7 +11,11 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import dataTableStyles, { TABLE_COL } from "./layout/dataTableStyles.ts";
+import dataTableStyles, {
+  TABLE_COL,
+  TABLE_HIDE,
+  TABLE_NAME_MIN_WIDTH,
+} from "./layout/dataTableStyles.ts";
 import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
@@ -56,13 +60,28 @@ export default function DataSourceTable({
   const columns: TableColumn<DatasourceItem>[] = [
     {
       name: t("columns.name.label", { defaultValue: "Name" }),
+      minWidth: TABLE_NAME_MIN_WIDTH,
+      grow: 1,
       selector: (row) => row.name ?? "",
       sortable: true,
-      cell: (row) => <div className="text-md font-medium">{row.name}</div>,
+      // The row is clickable but never focusable, so the name carries the
+      // keyboard route to the editor (WCAG 2.1.1).
+      cell: (row) => (
+        <div className="text-md font-medium py-1">
+          <Link
+            to={ROUTES.editDataSource(row.id)}
+            onClick={(event) => event.stopPropagation()}
+            className="link link-hover"
+          >
+            {row.name}
+          </Link>
+        </div>
+      ),
     },
     {
       name: t("columns.visibility.label", { defaultValue: "Visibility" }),
       width: TABLE_COL.visibility,
+      hide: TABLE_HIDE.onTablet,
       cell: (row) => (
         <span className="text-sm">
           {row.publish
@@ -74,6 +93,7 @@ export default function DataSourceTable({
     {
       name: t("columns.source.label", { defaultValue: "Source" }),
       width: TABLE_COL.source,
+      hide: TABLE_HIDE.onMobile,
       cell: (row) => (
         <span className="badge badge-outline badge-sm">
           {row.isRemote
@@ -85,6 +105,7 @@ export default function DataSourceTable({
     {
       name: t("columns.createdAt.label", { defaultValue: "Created" }),
       width: TABLE_COL.date,
+      hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -93,6 +114,7 @@ export default function DataSourceTable({
     {
       name: t("columns.updatedAt.label", { defaultValue: "Updated" }),
       width: TABLE_COL.date,
+      hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -129,6 +151,7 @@ export default function DataSourceTable({
   return (
     <div ref={tableRef}>
       <DataTable
+        ariaLabel={t("tableLabel", { defaultValue: "Sorgenti dati" })}
         columns={columns}
         data={list}
         theme={currentTheme}

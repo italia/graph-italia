@@ -24,11 +24,15 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { RenderChart } from "graph-italia-components";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import dataTableStyles, { TABLE_COL } from "./layout/dataTableStyles.ts";
+import dataTableStyles, {
+  TABLE_COL,
+  TABLE_HIDE,
+  TABLE_NAME_MIN_WIDTH,
+} from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
 import { paginationIcons } from "./layout/paginationIcons";
 
@@ -96,14 +100,15 @@ export default function ChartTable({
   };
 
   const navigate = useNavigate();
+  function rowPath(item: FieldDataType) {
+    return item.chart === "cmap"
+      ? ROUTES.editMap(item.id)
+      : item.chart === "kpiGroup"
+        ? ROUTES.editKpi(item.id)
+        : ROUTES.editChart(item.id);
+  }
   function handleRowClick(item: FieldDataType) {
-    const path =
-      item.chart === "cmap"
-        ? ROUTES.editMap(item.id)
-        : item.chart === "kpiGroup"
-          ? ROUTES.editKpi(item.id)
-          : ROUTES.editChart(item.id);
-    navigate(path);
+    navigate(rowPath(item));
   }
 
   const COLUMNS_TRANSLATION_KEY_PATH = `columns`;
@@ -111,6 +116,7 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`),
       width: TABLE_COL.type,
+      hide: TABLE_HIDE.onMobile,
       selector: (row: FieldDataType) => row.chart,
       sortable: true,
       cell: (row: FieldDataType) => {
@@ -158,11 +164,22 @@ export default function ChartTable({
     },
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`),
+      minWidth: TABLE_NAME_MIN_WIDTH,
+      grow: 1,
       selector: (row: FieldDataType) => row.name ?? "",
       sortable: true,
+      // The row itself is only clickable, never focusable, so the name doubles
+      // as the keyboard route to the editor (WCAG 2.1.1). stopPropagation keeps
+      // the row handler from navigating a second time.
       cell: (row: FieldDataType) => (
-        <div className="text-md font-medium">
-          <div>{row.name}</div>
+        <div className="text-md font-medium py-1">
+          <Link
+            to={rowPath(row)}
+            onClick={(event) => event.stopPropagation()}
+            className="link link-hover"
+          >
+            {row.name}
+          </Link>
         </div>
       ),
     },
@@ -170,6 +187,7 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`),
       width: TABLE_COL.remote,
+      hide: TABLE_HIDE.onTablet,
       selector: (row: FieldDataType) => row.isRemote ?? false,
       cell: (row: FieldDataType) =>
         row.remoteUrl ? (
@@ -203,6 +221,7 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.visibility.label`),
       width: TABLE_COL.visibility,
+      hide: TABLE_HIDE.onTablet,
       cell: (row: FieldDataType) => (
         <div>
           {row.publish ? (
@@ -226,6 +245,7 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
       width: TABLE_COL.share,
+      hide: TABLE_HIDE.onTablet,
       cell: (row: FieldDataType) =>
         !row.publish ? (
           // A private chart's public URL always answers 401: don't offer links
@@ -277,6 +297,7 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
       width: TABLE_COL.date,
+      hide: TABLE_HIDE.onTablet,
       selector: (row: FieldDataType) => row.createdAt ?? "",
       cell: (row: FieldDataType) =>
         dayjs(row.createdAt).format("YYYY-MM-DD HH:mm"),
@@ -286,6 +307,7 @@ export default function ChartTable({
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
       width: TABLE_COL.date,
+      hide: TABLE_HIDE.onMobile,
       selector: (row: FieldDataType) => row.updatedAt ?? "",
       cell: (row: FieldDataType) =>
         dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm"),
@@ -360,6 +382,7 @@ export default function ChartTable({
       {list && (
         <div ref={tableRef}>
           <DataTable
+            ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
             onRowClicked={(row) => handleRowClick(row)}
             onSort={handleSort}
             columns={columns}

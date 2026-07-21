@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useCallback, useRef } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import { FaLink, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,11 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import dataTableStyles, { TABLE_COL } from "./layout/dataTableStyles.ts";
+import dataTableStyles, {
+  TABLE_COL,
+  TABLE_HIDE,
+  TABLE_NAME_MIN_WIDTH,
+} from "./layout/dataTableStyles.ts";
 import { paginationIcons } from "./layout/paginationIcons";
 
 registerDarkTheme();
@@ -58,13 +62,28 @@ export default function DashboardTable({
   const columns: TableColumn<FieldDataType>[] = [
     {
       name: t(`columns.name.label`),
+      minWidth: TABLE_NAME_MIN_WIDTH,
+      grow: 1,
       selector: (row) => row.name ?? "",
       sortable: true,
-      cell: (row) => <div className="text-md font-medium">{row.name}</div>,
+      // The row is clickable but never focusable, so the name carries the
+      // keyboard route to the editor (WCAG 2.1.1).
+      cell: (row) => (
+        <div className="text-md font-medium py-1">
+          <Link
+            to={ROUTES.editDashboard(row.id ?? "")}
+            onClick={(event) => event.stopPropagation()}
+            className="link link-hover"
+          >
+            {row.name}
+          </Link>
+        </div>
+      ),
     },
     {
       name: t(`columns.visibility.label`),
       width: TABLE_COL.visibility,
+      hide: TABLE_HIDE.onTablet,
       cell: (row) => (
         <span className="text-sm">
           {row.publish
@@ -76,6 +95,7 @@ export default function DashboardTable({
     {
       name: t(`columns.createdAt.label`),
       width: TABLE_COL.date,
+      hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -84,6 +104,7 @@ export default function DashboardTable({
     {
       name: t(`columns.updatedAt.label`),
       width: TABLE_COL.date,
+      hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
       sortable: true,
       cell: (row) =>
@@ -149,6 +170,7 @@ export default function DashboardTable({
   return (
     <div ref={tableRef}>
       <DataTable
+        ariaLabel={t("tableLabel", { defaultValue: "Le mie dashboard" })}
         columns={columns}
         data={list}
         theme={currentTheme}
