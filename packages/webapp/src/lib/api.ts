@@ -1,7 +1,37 @@
-import axios from "axios";
+import axios, { type AxiosError } from "axios";
 import { broadcastAuth } from "./authChannel";
 import { useUserStore } from "./store/user_store";
 axios.defaults.withCredentials = true;
+
+/**
+ * Server error bodies aren't consistent in shape: some routes return
+ * `{ error: "a plain string" }` (most of auth.ts's hand-written checks —
+ * invalid/expired code, rate limits, "user not found", etc.), some return
+ * `{ error: { message: "..." } }` (login/register), and Zod validation
+ * failures from `zValidator`/`sValidator` return `{ error: [{ message, path }, ...] }`
+ * — an array of issues, one per failed rule (e.g. a non-compliant password can
+ * fail several checks — missing uppercase, missing special char — at once).
+ * Reading only `.error?.message` (as most auth forms used to) silently misses
+ * the first and third shapes, surfacing a generic axios message instead of the
+ * real reason. This normalizes all three into one string.
+ */
+export function getErrorMessage(error: unknown, fallback = "An error occurred."): string {
+  const data = (error as AxiosError)?.response?.data as
+    | { error?: string | { message?: string } | { message?: string }[] }
+    | undefined;
+  const err = data?.error;
+
+  if (typeof err === "string" && err) return err;
+
+  if (Array.isArray(err)) {
+    const messages = err.map((issue) => issue?.message).filter((m): m is string => Boolean(m));
+    if (messages.length) return messages.join(" ");
+  } else if (err && typeof err === "object" && typeof err.message === "string" && err.message) {
+    return err.message;
+  }
+
+  return (error as Error)?.message || fallback;
+}
 
 // Prevents duplicate in-flight mutation requests for the same resource.
 // Key format: "<verb>:<resource>:<id>" e.g. "upsert:chart:abc" or "upsert:chart:new"

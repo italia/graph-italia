@@ -61,7 +61,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
       }
     } catch (error) {
       console.log("error", error);
-      setMessage((error as any).message ?? error);
+      setMessage(api.getErrorMessage(error));
     }
   };
 

@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
 import type { TFunction } from "i18next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -67,11 +66,7 @@ function ResetPasswordForm({
         setMessage("Password reset failed. Try requesting a new code.");
       }
     } catch (error) {
-      const errorMessage =
-        ((error as AxiosError).response?.data as any)?.error?.message ||
-        (error as any).message ||
-        "An error occurred.";
-      setMessage(errorMessage);
+      setMessage(api.getErrorMessage(error));
     } finally {
       setLoading(false);
     }

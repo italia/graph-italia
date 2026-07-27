@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -30,11 +29,7 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
         onDone();
       }, 1000);
     } catch (error) {
-      const msg =
-        ((error as AxiosError).response?.data as any)?.error?.message ||
-        (error as any).message ||
-        t(`form.actions.submit.messages.error`);
-      setErrorMessage(msg);
+      setErrorMessage(api.getErrorMessage(error, t(`form.actions.submit.messages.error`)));
     }
   };
 

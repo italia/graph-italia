@@ -44,10 +44,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
       }
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage =
-        ((error as AxiosError).response?.data as any).error?.message ||
-        (error as any).message ||
-        error;
+      const errorMessage = api.getErrorMessage(error);
       setMessage(errorMessage);
       // The server message for an unverified account is stable enough to key on.
       // When matched, surface the "resend activation email" affordance.

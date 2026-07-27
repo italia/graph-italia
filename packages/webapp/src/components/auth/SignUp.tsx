@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
 import type { TFunction } from "i18next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -93,11 +92,7 @@ function SignUp({
       }
     } catch (error) {
       console.log("error", error);
-      const errorMessage =
-        ((error as AxiosError).response?.data as any).error?.message ||
-        (error as any).message ||
-        error;
-      setMessage(errorMessage);
+      setMessage(api.getErrorMessage(error));
     }
   };
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { PinInput } from "react-input-pin-code";
 
-import { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import * as api from "../../lib/api";
 import { useUserStore } from "../../lib/store/user_store";
@@ -56,12 +55,7 @@ export default function VerifyCodeComponent({
       return onCheckDone(result);
     } catch (error) {
       console.log("error", error);
-      // setMessage('Error code invalid or expired');
-      const errorMessage =
-        ((error as AxiosError).response?.data as any).error?.message ||
-        (error as any).message ||
-        error;
-      setMessage(errorMessage);
+      setMessage(api.getErrorMessage(error));
     }
   }
 
