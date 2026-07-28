@@ -302,6 +302,30 @@ export default function EditMapPage() {
             </EditStepComponent>
 
             <EditStepComponent
+              title={t(`body.options.data.title`)}
+              description={t(`body.options.data.description`)}
+              Icon={FaDatabase}
+              isOpen={currentStepIndex === 0 ? true : false}
+              isDisabled={false}
+              index={1}
+            >
+              {/* Step 1: Data loading */}
+              <div className="card bg-base-100 shadow-sm border border-base-300">
+                <div className="card-body">
+                  <GeoMapUpload
+                    setData={(d, meta) => {
+                      setDataSource(d);
+                      setLatField(meta.latField);
+                      setLngField(meta.lngField);
+                      setHasUnsavedChanges(true);
+                      send({ type: "CONFIG" });
+                    }}
+                  />
+                </div>
+              </div>
+            </EditStepComponent>
+
+            <EditStepComponent
               title={t(`body.options.configuration.title`)}
               description={t(`body.options.configuration.description`)}
               Icon={FaCog}
@@ -331,30 +355,6 @@ export default function EditMapPage() {
                     {t(`body.options.configuration.status`)}{" "}
                   </div>
                 )}
-              </div>
-            </EditStepComponent>
-
-            <EditStepComponent
-              title={t(`body.options.data.title`)}
-              description={t(`body.options.data.description`)}
-              Icon={FaDatabase}
-              isOpen={currentStepIndex === 0 ? true : false}
-              isDisabled={false}
-              index={1}
-            >
-              {/* Step 1: Data loading */}
-              <div className="card bg-base-100 shadow-sm border border-base-300">
-                <div className="card-body">
-                  <GeoMapUpload
-                    setData={(d, meta) => {
-                      setDataSource(d);
-                      setLatField(meta.latField);
-                      setLngField(meta.lngField);
-                      setHasUnsavedChanges(true);
-                      send({ type: "CONFIG" });
-                    }}
-                  />
-                </div>
               </div>
             </EditStepComponent>
           </div>

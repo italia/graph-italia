@@ -13,6 +13,17 @@ registerDarkTheme();
 
 type RowRecord = Record<string, string | number>;
 
+type SortState = {
+  columnKey: string;
+  direction: "asc" | "desc";
+} | null;
+
+// Order-independent signature of a visibility set, used to compare states
+const visibleKeysOf = (cols: Set<string>) => [...cols].sort().join(",");
+
+const headersOf = (matrix: MatrixType | null | undefined) =>
+  new Set((matrix?.[0] ?? []).map(String));
+
 type DataTableProps = {
   data: MatrixType;
   onApplyData?: (transformedData: MatrixType) => void;
@@ -33,24 +44,42 @@ export default function DataTable({
   const { settings } = useSettingsStore();
   const currentTheme = settings?.preferredTheme === "dark" ? "dark" : "default";
   const [workingData, setWorkingData] = useState<MatrixType>(data);
+  // Last dataset received from the parent: what "Reimposta" goes back to
+  const [sourceData, setSourceData] = useState<MatrixType>(data);
   const [showRenameForm, setShowRenameForm] = useState(false);
   const [renameValues, setRenameValues] = useState<string[]>([]);
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set());
-  const [sortState, setSortState] = useState<{
-    columnKey: string;
-    direction: "asc" | "desc";
-  } | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(() =>
+    headersOf(data),
+  );
+  const [sortState, setSortState] = useState<SortState>(null);
+  // The matrix we last handed to the parent comes back through the `data` prop:
+  // it carries only the visible columns, so treating it as a new dataset would
+  // reset the selection and drop the hidden columns for good.
+  const emittedData = useRef<MatrixType | null>(null);
+  // Snapshot of the last applied state, used to compute hasChanges
+  const [appliedSnapshot, setAppliedSnapshot] = useState(() => ({
+    workingData: data,
+    visibleKeys: visibleKeysOf(headersOf(data)),
+    sortState: null as SortState,
+  }));
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
   usePaginationSelectKeyboard(tableRef);
 
-  // Sync workingData and visibleColumns when data prop changes
+  // Sync working state only when the parent hands over a genuinely new dataset
   useEffect(() => {
+    if (emittedData.current === data) return;
+    emittedData.current = null;
+    const cols = headersOf(data);
+    setSourceData(data);
     setWorkingData(data);
     setSortState(null);
-    if (data?.[0]) {
-      setVisibleColumns(new Set(data[0].map(String)));
-    }
+    setVisibleColumns(cols);
+    setAppliedSnapshot({
+      workingData: data,
+      visibleKeys: visibleKeysOf(cols),
+      sortState: null,
+    });
   }, [data]);
 
   // Reset rename form when workingData changes
@@ -88,34 +117,61 @@ export default function DataTable({
     });
   }, [workingData, headers]);
 
+  // Current state differs from what was last applied
   const hasChanges = useMemo(() => {
-    const originalHeaders = (data[0] ?? []).map(String);
-    const dataChanged = JSON.stringify(data) !== JSON.stringify(workingData);
-    const visibilityChanged = visibleColumns.size !== originalHeaders.length;
-    return dataChanged || visibilityChanged || sortState !== null;
-  }, [data, workingData, visibleColumns, sortState]);
+    if (workingData !== appliedSnapshot.workingData) return true;
+    if (visibleKeysOf(visibleColumns) !== appliedSnapshot.visibleKeys)
+      return true;
+    if (sortState?.columnKey !== appliedSnapshot.sortState?.columnKey)
+      return true;
+    if (sortState?.direction !== appliedSnapshot.sortState?.direction)
+      return true;
+    return false;
+  }, [workingData, visibleColumns, sortState, appliedSnapshot]);
+
+  // Current state differs from the dataset the parent handed over
+  const canReset = useMemo(() => {
+    if (workingData !== sourceData) return true;
+    if (visibleKeysOf(visibleColumns) !== visibleKeysOf(headersOf(sourceData)))
+      return true;
+    return sortState !== null;
+  }, [workingData, sourceData, visibleColumns, sortState]);
 
   function internalTranspose() {
     const transposed = transposeData(workingData);
+    const cols = headersOf(transposed);
     setWorkingData(transposed);
-    if (transposed?.[0]) {
-      setVisibleColumns(new Set(transposed[0].map(String)));
-    }
+    setVisibleColumns(cols);
+    setSortState(null);
+    setAppliedSnapshot({
+      workingData: transposed,
+      visibleKeys: visibleKeysOf(cols),
+      sortState: null,
+    });
+    emittedData.current = transposed;
     onApplyData?.(transposed);
   }
 
   function internalReset() {
-    setWorkingData(data);
+    const cols = headersOf(sourceData);
+    setWorkingData(sourceData);
     setSortState(null);
-    if (data?.[0]) {
-      setVisibleColumns(new Set(data[0].map(String)));
-    }
+    setVisibleColumns(cols);
+    setAppliedSnapshot({
+      workingData: sourceData,
+      visibleKeys: visibleKeysOf(cols),
+      sortState: null,
+    });
+    emittedData.current = sourceData;
+    onApplyData?.(sourceData);
   }
 
   function toggleColumn(colName: string) {
     setVisibleColumns((prev) => {
       const next = new Set(prev);
       if (next.has(colName)) {
+        // Keep at least one column visible
+        if (next.size <= 1) return prev;
         next.delete(colName);
       } else {
         next.add(colName);
@@ -127,7 +183,6 @@ export default function DataTable({
   function internalApply() {
     // Reconstruct matrix with only visible columns
     const finalHeaders = headers.filter((h) => visibleColumns.has(h));
-    const headerRow = workingData[0];
     const indexMap = finalHeaders.map((h) => headers.indexOf(h));
 
     let finalRows = workingData
@@ -149,8 +204,17 @@ export default function DataTable({
         });
       }
     }
+    // Keep the full matrix in workingData: the hidden columns stay listed in
+    // the filter and can be brought back by re-selecting them.
+    const applied: MatrixType = [finalHeaders, ...finalRows];
+    setAppliedSnapshot({
+      workingData,
+      visibleKeys: visibleKeysOf(visibleColumns),
+      sortState,
+    });
+    emittedData.current = applied;
     if (onApplyData) {
-      onApplyData([finalHeaders, ...finalRows]);
+      onApplyData(applied);
     }
   }
 
@@ -217,7 +281,7 @@ export default function DataTable({
       {data && data[0] && (
         <div>
           <p className="text-sm text-content/60">
-            {workingData.length} {t("header.rows")}, {workingData[0].length}{" "}
+            {workingData.length} {t("header.rows")}, {columns.length}{" "}
             {t("header.columns")}
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
@@ -239,9 +303,9 @@ export default function DataTable({
             </button>
             <button
               type="button"
-              className={`btn btn-outline ${!hasChanges ? "btn-disabled" : ""}`}
+              className={`btn btn-outline ${!canReset ? "btn-disabled" : ""}`}
               onClick={internalReset}
-              disabled={!hasChanges}
+              disabled={!canReset}
             >
               {t("actions.reset.label")}
             </button>

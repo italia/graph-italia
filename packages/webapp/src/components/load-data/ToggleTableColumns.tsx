@@ -11,12 +11,16 @@ export default function ToggleTableColumns({
   visibleColumns,
   onToggle,
 }: ToggleTableColumnsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.loadData.transformData",
+  });
 
   return (
     <div className="my-4">
       <h4 className="text-base mb-2 text-base-content/70">
-        {t(`table.actions.toggleColumns.label`) || "Toggle Columns"}
+        {t(`table.actions.toggleColumns.label`, {
+          defaultValue: "Mostra/nascondi colonne",
+        })}
       </h4>
       <div className="flex flex-wrap gap-2">
         {columnOrder.map((colName) => (
