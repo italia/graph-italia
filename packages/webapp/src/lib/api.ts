@@ -99,7 +99,7 @@ const getServerUrl = (): string => {
   } else {
     // Priority 2: Build-time env from .env file (for local development)
     // Priority 3: Default fallback
-    baseServerUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3003';
+    baseServerUrl = import.meta.env.VITE_SERVER_URL || '';
   }
   console.log("Using server URL:", baseServerUrl);
   return baseServerUrl;
