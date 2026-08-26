@@ -849,6 +849,9 @@
                 }
             }
         },
+        "loading": {
+            "label": "Caricamento in corso"
+        },
         "themeSwitcher": {
             "label": "Tema",
             "values": {
