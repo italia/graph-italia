@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface GenericDialogProps {
   title: string;
@@ -39,6 +40,9 @@ export default function GenericDialog({
   confirmDisabled = false,
 }: GenericDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.dialog",
+  });
 
   // Handle closing with ESC and click outside
   const handleBackdropClick = useCallback(
@@ -106,26 +110,31 @@ export default function GenericDialog({
             but placed after the title in the DOM. */}
         <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
           onClick={() => cancelCb()}
-          aria-label="Close modal">
+          aria-label={t("close", "Chiudi")}>
           <span aria-hidden="true">✕</span>
         </button>
 
         {/* Modal content */}
         <div className="py-4">{children}</div>
 
-        {/* Action buttons - Positioned at bottom right as per Italian Design guidelines */}
-        <div className="modal-action">
-          {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
-            {labels.cancel}
-          </button>}
-          {confirmCb && <button type="button"
-            className="btn btn-primary"
-            onClick={() => confirmCb()}
-            disabled={confirmDisabled}
-          >
-            {labels.confirm}
-          </button>}
-        </div>
+        {/* Action buttons - Positioned at bottom right as per Italian Design
+            guidelines. A close-only dialog keeps a single close control (the X
+            at the top right, WCAG 3.2.4): the bottom cancel button is rendered
+            only next to a confirm action, where it plays a distinct role. */}
+        {confirmCb && (
+          <div className="modal-action">
+            {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
+              {labels.cancel}
+            </button>}
+            <button type="button"
+              className="btn btn-primary"
+              onClick={() => confirmCb()}
+              disabled={confirmDisabled}
+            >
+              {labels.confirm}
+            </button>
+          </div>
+        )}
       </div>
     </dialog>
   );

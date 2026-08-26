@@ -27,7 +27,7 @@ describe("GenericDialog DOM order (1.3.2)", () => {
       level: 2,
       name: /conferma eliminazione/i,
     });
-    const closeBtn = screen.getByRole("button", { name: /close modal/i });
+    const closeBtn = screen.getByRole("button", { name: /chiudi|close/i });
 
     // DOCUMENT_POSITION_FOLLOWING (4) means `closeBtn` comes AFTER `title`.
     const relation = title.compareDocumentPosition(closeBtn);

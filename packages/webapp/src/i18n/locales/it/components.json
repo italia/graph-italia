@@ -851,6 +851,9 @@
                 }
             }
         },
+        "dialog": {
+            "close": "Chiudi"
+        },
         "languageSwitcher": {
             "label": "Lingua"
         },
