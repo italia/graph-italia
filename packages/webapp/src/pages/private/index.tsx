@@ -1,6 +1,6 @@
 import { useMachine } from "@xstate/react";
 import { type FieldDataType } from "graph-italia-components";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   FaChevronDown,
   FaChartBar,
@@ -69,6 +69,7 @@ function Home() {
   const [isRenamingProject, setIsRenamingProject] = useState(false);
   const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
   const projectDropdownRef = useRef<HTMLDivElement>(null);
+  const projectTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -375,15 +376,28 @@ function Home() {
             className="hidden sm:block w-px h-6 bg-base-300 shrink-0"
             aria-hidden="true"
           ></span>
-          {/* Project Switcher */}
+          {/* Project Switcher: a plain disclosure with a list of buttons.
+              No role="menu" — the items are composite (select + rename), which
+              doesn't fit the menu pattern's required children and keyboard
+              contract (WCAG 4.1.2). Escape closes and restores focus. */}
           <div className="flex items-center gap-2 min-w-0">
-            <div className="relative" ref={projectDropdownRef}>
+            <div
+              className="relative"
+              ref={projectDropdownRef}
+              onKeyDown={(e) => {
+                if (e.key === "Escape" && projectDropdownOpen) {
+                  e.stopPropagation();
+                  setProjectDropdownOpen(false);
+                  projectTriggerRef.current?.focus();
+                }
+              }}
+            >
               <button
                 type="button"
+                ref={projectTriggerRef}
                 className="btn btn-ghost btn-lg normal-case gap-2 px-1 opacity-70 hover:opacity-100"
-                aria-haspopup="menu"
                 aria-expanded={projectDropdownOpen}
-                aria-label={t("projectSwitcher.ariaLabel", { defaultValue: "Cambia progetto" })}
+                aria-label={`${t("projectSwitcher.ariaLabel", { defaultValue: "Cambia progetto" })}: ${projects.find(p => p.id === currentProjectId)?.name || t("projectSwitcher.selectPrompt", "Select Project")}`}
                 onClick={() => setProjectDropdownOpen((v) => !v)}
               >
                 <FaFolderOpen className="text-secondary" aria-hidden="true" />
@@ -393,7 +407,6 @@ function Home() {
                 <FaChevronDown className="w-3 h-3" aria-hidden="true" />
               </button>
               <ul
-                role="menu"
                 className={`${projectDropdownOpen ? "block" : "hidden"} absolute left-0 top-full z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto`}
               >
                 <li className="px-2 py-1 text-xs text-base-content/60 pointer-events-none">
@@ -411,6 +424,7 @@ function Home() {
                           <button
                             type="button"
                             className={`flex-grow text-left ${currentProjectId === project.id ? "active" : ""}`}
+                            aria-current={currentProjectId === project.id ? "true" : undefined}
                             onClick={() => handleSelectProject(project.id)}
                           >
                             {project.name}
@@ -436,8 +450,8 @@ function Home() {
                 )}
 
                 {Object.entries(orgsWithProjects).map(([orgId, orgData]) => (
-                  <div key={orgId}>
-                    <div className="divider my-0 opacity-20"></div>
+                  <Fragment key={orgId}>
+                    <li className="divider my-0 opacity-20" aria-hidden="true"></li>
                     <li className="menu-title text-base uppercase opacity-60">{orgData.name}</li>
                     {orgData.projects.map(project => (
                       <li key={project.id}>
@@ -445,6 +459,7 @@ function Home() {
                           <button
                             type="button"
                             className={`flex-grow text-left ${currentProjectId === project.id ? "active" : ""}`}
+                            aria-current={currentProjectId === project.id ? "true" : undefined}
                             onClick={() => handleSelectProject(project.id)}
                           >
                             {project.name}
@@ -467,10 +482,10 @@ function Home() {
                         </div>
                       </li>
                     ))}
-                  </div>
+                  </Fragment>
                 ))}
 
-                <div className="divider my-1"></div>
+                <li className="divider my-1" aria-hidden="true"></li>
                 <li>
                   <button
                     type="button"
