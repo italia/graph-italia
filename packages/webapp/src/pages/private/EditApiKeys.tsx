@@ -378,11 +378,15 @@ export default function EditApiKeysPage() {
             <button
               type="button"
               className={`btn btn-circle btn-sm shrink-0 ${copied ? "btn-success" : "btn-ghost"}`}
-              title={copied ? "Copied!" : "Copy to clipboard"}
+              title={t("modal.copy", "Copia negli appunti")}
+              aria-label={t("modal.copy", "Copia negli appunti")}
               onClick={() => copyToClipboard(revealedKey ?? "")}
             >
-              {copied ? <FaCheck /> : <FaCopy />}
+              {copied ? <FaCheck aria-hidden="true" /> : <FaCopy aria-hidden="true" />}
             </button>
+          </div>
+          <div role="status" className="sr-only">
+            {copied ? t("modal.copied", "Copiato negli appunti") : ""}
           </div>
           <div className="alert alert-warning text-xs">
             <span>{t("modal.warning", "Once you close this window, the key will never be visible again.")}</span>

@@ -190,6 +190,9 @@ function CodeBlock({
             </>
           )}
         </button>
+        <div role="status" className="sr-only">
+          {copied ? copiedLabel : ""}
+        </div>
       </div>
       <pre className="p-5 text-xs leading-relaxed text-neutral-content/80 overflow-x-auto font-mono whitespace-pre">
         {code}

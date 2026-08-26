@@ -732,7 +732,9 @@
             "create": "Create Key",
             "deleteTitle": "Delete API Key",
             "deleteDesc": "Are you sure you want to delete this API key? This action cannot be undone.",
-            "delete": "Delete"
+            "delete": "Delete",
+            "copy": "Copy to clipboard",
+            "copied": "Copied to clipboard"
         },
         "form": {
             "role": "Role",
