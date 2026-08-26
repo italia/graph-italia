@@ -105,7 +105,7 @@ export default function DocsPage() {
           aria-label={docsLabel}
           className="w-full lg:w-64 shrink-0 lg:sticky lg:top-6"
         >
-          <h1 className="text-xl font-bold mb-4">{docsLabel}</h1>
+          <h2 className="text-xl font-bold mb-4">{docsLabel}</h2>
           <ul className="menu w-full p-0 gap-1">
             <li>
               <Link to={ROUTES.quickStart} className="font-normal">
