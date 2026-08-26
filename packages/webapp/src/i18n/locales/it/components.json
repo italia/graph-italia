@@ -857,6 +857,10 @@
                 }
             }
         },
+        "chartA11y": {
+            "keyboardHint": "Usa le frecce per esplorare i dati, Esc per uscire.",
+            "dataTableCaption": "Dati del grafico"
+        },
         "dialog": {
             "close": "Chiudi"
         },

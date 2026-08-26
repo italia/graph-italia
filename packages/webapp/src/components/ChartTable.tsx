@@ -36,6 +36,7 @@ import dataTableStyles, {
 } from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
 import { paginationIcons } from "./layout/paginationIcons";
+import { useChartA11yProps } from "../hooks/useChartA11yProps";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -70,6 +71,7 @@ export default function ChartTable({
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
   usePaginationSelectKeyboard(tableRef);
+  const chartA11y = useChartA11yProps();
 
   const handleSort = useCallback(
     (
@@ -412,7 +414,7 @@ export default function ChartTable({
         callback={() => setData(null)}
       >
         <div className="w-full h-full p-4" style={{ minHeight: "400px" }}>
-          {data && <RenderChart {...data} />}
+          {data && <RenderChart {...data} {...chartA11y} />}
         </div>
       </Dialog>
       <Dialog

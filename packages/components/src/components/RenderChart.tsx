@@ -16,6 +16,9 @@ type RenderProps = FieldDataType & {
   getInstance?: (instance: EChartsType) => void;
   /** Caption of the screen-reader-only data table. Defaults to Italian. */
   dataTableCaption?: string;
+  /** Keyboard instructions appended to the chart's accessible name.
+      Overridable so consumers can localize them. Defaults to Italian. */
+  keyboardHint?: string;
 };
 
 const visuallyHidden: React.CSSProperties = {
@@ -142,6 +145,7 @@ function RenderChart(props: RenderProps) {
                 setEchartInstance={setEchartInstance}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
+                keyboardHint={props.keyboardHint}
               />
             )}
             {props.chart === "pie" && (
@@ -152,6 +156,7 @@ function RenderChart(props: RenderProps) {
                 setEchartInstance={setEchartInstance}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
+                keyboardHint={props.keyboardHint}
               />
             )}
             {props.chart === "map" && (
@@ -162,6 +167,7 @@ function RenderChart(props: RenderProps) {
                 setEchartInstance={setEchartInstance}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
+                keyboardHint={props.keyboardHint}
               />
             )}
             {props.chart === "cmap" && (

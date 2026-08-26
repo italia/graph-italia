@@ -13,6 +13,7 @@ function PieChart({
   isMobile = false,
   rowHeight,
   hFactor = 1,
+  keyboardHint,
 }: ChartPropsType) {
   const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
@@ -119,7 +120,7 @@ function PieChart({
     return options;
   }
 
-  const ariaLabel = `${data?.config?.title || "Grafico a torta"}. Usa le frecce per esplorare i settori, Esc per uscire.`;
+  const ariaLabel = `${data?.config?.title || "Grafico a torta"}. ${keyboardHint || "Usa le frecce per esplorare i settori, Esc per uscire."}`;
   const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
   if (!data) return <div>...</div>;
   let h = (data.config?.h || 350) * hFactor;

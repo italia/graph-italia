@@ -36,6 +36,7 @@ import {
   type KpiFormValues,
 } from "./kpi-form";
 import ThemeSwitcherComponent from "../../components/layout/ThemeSwitcher";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 // ────────────────────────────────────────────────────────────────────────────
 // KPI Group Config Form
@@ -192,6 +193,7 @@ function KpiTable({ data, onEdit, onDelete }: KpiTableProps) {
 // Page
 // ────────────────────────────────────────────────────────────────────────────
 function EditKpiGroupPage() {
+  const chartA11y = useChartA11yProps();
   const { t } = useTranslation("pages", { keyPrefix: "charts.editKpiGroup" });
   const { id } = useParams();
   const navigate = useNavigate();
@@ -470,7 +472,7 @@ function EditKpiGroupPage() {
                   }}
                 >
                   <ColorSchemeProvider scheme={previewScheme}>
-                    <RenderChart {...kpiGroup} />
+                    <RenderChart {...kpiGroup} {...chartA11y} />
                   </ColorSchemeProvider>
                 </div>
               </>

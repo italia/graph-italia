@@ -8,11 +8,13 @@ import Loading from "../../components/layout/Loading";
 import * as api from "../../lib/api";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { publicChartErrorMessage } from "../embed/EmbedChartPage";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 function ShowChartPage() {
   const { id } = useParams();
   const previewMode = !api.isPublishingEnabled();
   const { t } = useTranslation("pages");
+  const chartA11y = useChartA11yProps();
   const { data, error, isLoading } = useSWR(
     `${id}`,
     previewMode ? api.getChart : api.showChart,
@@ -71,7 +73,7 @@ function ShowChartPage() {
               <p className="text-base-content/70 mb-4">{chart.description}</p>
             )}
             <ColorSchemeProvider scheme={scheme}>
-              <RenderChart {...chart} />
+              <RenderChart {...chart} {...chartA11y} />
             </ColorSchemeProvider>
           </>
         )}

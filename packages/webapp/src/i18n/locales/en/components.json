@@ -857,6 +857,10 @@
                 }
             }
         },
+        "chartA11y": {
+            "keyboardHint": "Use the arrow keys to explore the data, Esc to exit.",
+            "dataTableCaption": "Chart data"
+        },
         "dialog": {
             "close": "Close"
         },
