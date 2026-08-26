@@ -242,7 +242,8 @@
                 "center": {
                     "brand": {
                         "title": "Graph Italia",
-                        "tagline": "Shape your data"
+                        "tagline": "Shape your data",
+                        "homeLinkLabel": "Go to the Graph Italia homepage"
                     },
                     "social": {
                         "label": "Sources on",
@@ -263,7 +264,8 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Graph Italia"
+                    "title": "Graph Italia",
+                    "homeLinkLabel": "Go to the Graph Italia homepage"
                 },
                 "user": {
                     "loggedAs": "Logged in as"

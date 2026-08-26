@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className="footer bg-accent text-accent-content p-4 lg:px-10 py-6">
       <div>
         <div className="flex items-center">
-          <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`brand.title`)} />
+          <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
           <div>
             <span className="block font-semibold text-2xl leading-tight">{t(`brand.title`)}</span>
             {tagline && (

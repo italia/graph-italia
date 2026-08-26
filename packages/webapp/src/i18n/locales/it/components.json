@@ -242,7 +242,8 @@
                 "center": {
                     "brand": {
                         "title": "Graph Italia",
-                        "tagline": "Dai forma ai tuoi dati"
+                        "tagline": "Dai forma ai tuoi dati",
+                        "homeLinkLabel": "Vai alla homepage di Graph Italia"
                     },
                     "social": {
                         "label": "Sorgenti su",
@@ -263,7 +264,8 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Graph Italia"
+                    "title": "Graph Italia",
+                    "homeLinkLabel": "Vai alla homepage di Graph Italia"
                 },
                 "user": {
                     "loggedAs": "Connesso come"

@@ -88,10 +88,11 @@ export default function Header() {
           {/* Brand */}
           <a
             href={ROUTES.root}
+            aria-label={t(`brand.homeLinkLabel`)}
             className="text-primary-content text-base font-normal no-underline  cursor leading-snug"
           >
             <div className="flex items-center justify-center">
-              <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`brand.title`)} />
+              <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
               <span className="font-semibold text-2xl">{t(`brand.title`)}</span>
             </div>
           </a>

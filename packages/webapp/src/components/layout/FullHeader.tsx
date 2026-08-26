@@ -78,10 +78,10 @@ export default function HeaderCompleta() {
         <div className="mx-auto px-[18px] flex items-center justify-between py-6">
           <a
             href={ROUTES.root}
-            aria-label={t(`center.brand.title`)}
+            aria-label={t(`center.brand.homeLinkLabel`)}
             className="flex items-center no-underline group"
           >
-            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`center.brand.title`)} />
+            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
 
             <div className="ml-[-8px]">
               <span className="block text-[2rem] font-semibold leading-tight text-primary-content ">
