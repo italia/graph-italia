@@ -172,6 +172,7 @@ export default function DataTable(props: DataTableProps) {
           responsive
           onSort={handleSort}
           sortServer={false}
+          sortIcon={<span aria-hidden="true">▾</span>}
           onColumnOrderChange={enableColumnReorder ? handleColumnOrderChange : undefined}
         />
       </div>

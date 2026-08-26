@@ -156,6 +156,7 @@ export default function DataSourceTable({
         data={list}
         theme={currentTheme}
         onSort={handleSort}
+        sortIcon={<span aria-hidden="true">▾</span>}
         onRowClicked={(row) => navigate(ROUTES.editDataSource(row.id))}
         pagination
         paginationComponentOptions={{

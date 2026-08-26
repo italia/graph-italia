@@ -385,6 +385,7 @@ export default function ChartTable({
             ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
             onRowClicked={(row) => handleRowClick(row)}
             onSort={handleSort}
+            sortIcon={<span aria-hidden="true">▾</span>}
             columns={columns}
             data={list as FieldDataTypeWithPreview[]}
             theme={currentTheme}
