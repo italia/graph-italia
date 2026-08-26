@@ -7,7 +7,7 @@ import { useUserStore } from "../../lib/store/user_store.ts";
 import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
-import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket } from "react-icons/fa6";
+import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket, FaUserGear } from "react-icons/fa6";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 
 
@@ -230,7 +230,13 @@ export default function Header() {
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-base-content no-underline  hover:bg-base-200 hover: text-base-content transition-colors duration-150"
                             onClick={() => setDropdownUserOpen(false)}
                           >
-                            {sub.name === "API Keys" ? <FaKey className="w-4 h-4 opacity-70" /> : <FaUsers className="w-4 h-4 opacity-70" />}
+                            {sub.name === "API Keys" ? (
+                              <FaKey className="w-4 h-4 opacity-70" aria-hidden="true" />
+                            ) : sub.name === "Organizations" ? (
+                              <FaUsers className="w-4 h-4 opacity-70" aria-hidden="true" />
+                            ) : (
+                              <FaUserGear className="w-4 h-4 opacity-70" aria-hidden="true" />
+                            )}
                             <span>
                               {sub.translationKey ? translateMenu(sub.translationKey) : sub.name}
                             </span>
