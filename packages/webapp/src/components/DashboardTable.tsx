@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useCallback, useRef } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
-import { FaLink, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
+import { FaArrowUpRightFromSquare, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from "react";
@@ -146,7 +146,7 @@ export default function DashboardTable({
               title={t("actions.view", { defaultValue: "Apri dashboard pubblicata" })}
               className="btn btn-ghost btn-xs btn-square"
             >
-              <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
+              <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
             </a>
           )}
           <button

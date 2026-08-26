@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import {
+  FaArrowUpRightFromSquare,
   FaChartBar,
   FaChartLine,
   FaChartPie,
@@ -354,7 +355,7 @@ export default function ChartTable({
             title={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
             className="btn btn-ghost btn-xs btn-square"
           >
-            <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
+            <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
           <button
             type="button"
