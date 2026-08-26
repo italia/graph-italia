@@ -851,6 +851,9 @@
                 }
             }
         },
+        "languageSwitcher": {
+            "label": "Lingua"
+        },
         "loading": {
             "label": "Caricamento in corso"
         },
