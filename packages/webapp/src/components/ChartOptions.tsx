@@ -98,6 +98,7 @@ function ChartOptions({
     resolveGeoPresetId(config?.geoJsonUrl),
   );
   const [isGeoDialogOpen, setIsGeoDialogOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   function applyGeoPreset(presetId: string) {
     setGeoPresetId(presetId);
@@ -366,14 +367,33 @@ function ChartOptions({
       {basicGroups.map(renderGroup)}
 
       {advancedGroups.length > 0 && (
-        <details className="collapse collapse-arrow border border-base-300 bg-base-100">
-          <summary className="collapse-title min-h-0 py-3 text-base font-medium cursor-pointer focus-visible:outline-2 focus-visible:outline-primary">
+        <div className="rounded-box border border-base-300 bg-base-100">
+          {/* Disclosure button instead of <details>: the native summary marker
+              is announced by screen readers as a triangle, while the state
+              belongs in aria-expanded (WCAG 1.1.1). */}
+          <button
+            type="button"
+            aria-expanded={advancedOpen}
+            aria-controls="chart-advanced-options"
+            className="w-full flex items-center justify-between gap-2 px-4 py-3 text-base font-medium text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-primary"
+            onClick={() => setAdvancedOpen((v) => !v)}
+          >
             {t("advanced.title", "Configurazioni avanzate")}
-          </summary>
-          <div className="collapse-content space-y-4">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className={`w-4 h-4 fill-current shrink-0 transition-transform duration-200 ${advancedOpen ? "rotate-180" : ""}`}
+            >
+              <path d="M11.6 15.4 6 9.8l.7-.8 4.9 4.9L16.5 9l.7.8z" />
+            </svg>
+          </button>
+          <div
+            id="chart-advanced-options"
+            className={`${advancedOpen ? "block" : "hidden"} px-4 pb-4 space-y-4`}
+          >
             {advancedGroups.map(renderGroup)}
           </div>
-        </details>
+        </div>
       )}
 
       {chart === "map" && (
