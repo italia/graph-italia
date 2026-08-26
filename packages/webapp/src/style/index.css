@@ -235,6 +235,37 @@
   outline-color: #66b3ff;
 }
 
+/* Outline buttons in dark (WCAG 1.4.11 / 1.4.3): the resting border and label
+   of the primary outline variants use the same #0066cc as light, which lands
+   at 2.89:1 on base-100 — below the 3:1 required for UI borders, let alone the
+   4.5:1 for the label. Same lighter Bootstrap Italia blue as above, applied to
+   the resting state only: --btn-color stays untouched so the hover fill keeps
+   its darker blue with a white label. The secondary outline (#17324d on dark)
+   is close to invisible, so it moves to the light grey-blue of the palette. */
+[data-theme="scuro"] .btn-outline.btn-primary {
+  --btn-rest-fg: #66b3ff;
+  --btn-border: #66b3ff;
+}
+
+[data-theme="scuro"] .btn-italia-primary-outline {
+  color: #66b3ff;
+  border-color: #66b3ff;
+}
+[data-theme="scuro"] .btn-italia-primary-outline:hover {
+  background-color: rgba(102, 179, 255, 0.12);
+  color: #66b3ff;
+  border-color: #66b3ff;
+}
+[data-theme="scuro"] .btn-italia-secondary-outline {
+  color: #d9e2ec;
+  border-color: #8fa3b3;
+}
+[data-theme="scuro"] .btn-italia-secondary-outline:hover {
+  background-color: rgba(143, 163, 179, 0.12);
+  color: #d9e2ec;
+  border-color: #8fa3b3;
+}
+
 /* https://github.com/react-grid-layout/react-grid-layout/issues/1329#issuecomment-1518921042 */
 .react-resizable-hide .react-resizable-handle {
   display: none !important;
