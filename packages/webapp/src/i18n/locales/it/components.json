@@ -797,6 +797,9 @@
                 "generate": {
                     "label": "Genera dati"
                 }
+            },
+            "status": {
+                "generated": "Dati generati: tabella con {{rows}} righe e {{cols}} colonne disponibile sotto il modulo"
             }
         },
         "generateRandomPoi": {
@@ -824,6 +827,9 @@
                         "label": "Genera POI"
                     }
                 }
+            },
+            "status": {
+                "generated": "POI generati: {{count}} punti disponibili sotto il modulo"
             }
         },
         "selectChart": {

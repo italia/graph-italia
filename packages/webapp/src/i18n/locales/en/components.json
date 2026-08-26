@@ -797,6 +797,9 @@
                 "generate": {
                     "label": "Generate data"
                 }
+            },
+            "status": {
+                "generated": "Data generated: a table with {{rows}} rows and {{cols}} columns is available below the form"
             }
         },
         "generateRandomPoi": {
@@ -824,6 +827,9 @@
                         "label": "Generate Pois"
                     }
                 }
+            },
+            "status": {
+                "generated": "POI generated: {{count}} points are available below the form"
             }
         },
         "selectChart": {
