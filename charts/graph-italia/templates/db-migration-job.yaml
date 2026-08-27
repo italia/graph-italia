@@ -81,13 +81,15 @@ spec:
               fi
 
               run_migrate_deploy() {
-                echo "🔎 Running prisma migrate status..."
-                if ! npx prisma migrate status --config="$PRISMA_CONFIG_PATH" --schema=prisma/schema.prisma; then
-                  echo "❌ prisma migrate status failed."
-                  echo "💡 Database may be out of sync due to manual changes."
-                  echo "💡 Verify baseline/state before retrying deploy (for example with prisma migrate resolve)."
-                  exit 1
-                fi
+                # NOTE: `prisma migrate status` exits non-zero whenever there are
+                # PENDING migrations, not only on drift/failed state. Gating the
+                # deploy on it made this hook abort exactly when there was
+                # something to apply, so a new migration could never be deployed.
+                # Keep it informational only; `prisma migrate deploy` is
+                # idempotent and refuses on its own to run over a genuinely
+                # failed migration state, so it is the correct source of truth.
+                echo "🔎 Running prisma migrate status (informational)..."
+                npx prisma migrate status --config="$PRISMA_CONFIG_PATH" --schema=prisma/schema.prisma || true
 
                 echo "🚀 Running prisma migrate deploy..."
                 npx prisma migrate deploy --config="$PRISMA_CONFIG_PATH" --schema=prisma/schema.prisma
