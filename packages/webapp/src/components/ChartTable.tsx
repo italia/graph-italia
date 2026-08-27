@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import {
+  FaArrowUpRightFromSquare,
   FaChartBar,
   FaChartLine,
   FaChartPie,
@@ -35,6 +36,7 @@ import dataTableStyles, {
 } from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
 import { paginationIcons } from "./layout/paginationIcons";
+import { useChartA11yProps } from "../hooks/useChartA11yProps";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -69,6 +71,7 @@ export default function ChartTable({
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
   usePaginationSelectKeyboard(tableRef);
+  const chartA11y = useChartA11yProps();
 
   const handleSort = useCallback(
     (
@@ -354,7 +357,7 @@ export default function ChartTable({
             title={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
             className="btn btn-ghost btn-xs btn-square"
           >
-            <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
+            <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
           <button
             type="button"
@@ -385,6 +388,7 @@ export default function ChartTable({
             ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
             onRowClicked={(row) => handleRowClick(row)}
             onSort={handleSort}
+            sortIcon={<span aria-hidden="true">▾</span>}
             columns={columns}
             data={list as FieldDataTypeWithPreview[]}
             theme={currentTheme}
@@ -410,7 +414,7 @@ export default function ChartTable({
         callback={() => setData(null)}
       >
         <div className="w-full h-full p-4" style={{ minHeight: "400px" }}>
-          {data && <RenderChart {...data} />}
+          {data && <RenderChart {...data} {...chartA11y} />}
         </div>
       </Dialog>
       <Dialog

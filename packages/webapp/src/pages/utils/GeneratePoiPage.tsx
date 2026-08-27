@@ -8,11 +8,13 @@ import useStoreState from "../../lib/store/storeState";
 import type { FieldDataType } from "graph-italia-components";
 import { RenderChart } from "graph-italia-components";
 import { useTranslation } from "react-i18next";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 export default function GeneratePoiPage() {
   const { t } = useTranslation("pages", {
     keyPrefix: "utility.generatePoiPage",
   });
+  const chartA11y = useChartA11yProps();
   const {
     config,
     setConfig,
@@ -97,7 +99,7 @@ export default function GeneratePoiPage() {
         )}
         {dataSource && dataSource.length > 0 && (
           <section className="rounded-2xl border border-base-200 bg-base-300 p-6 shadow-sm mb-8">
-            <RenderChart {...{ ...samplData, dataSource }} />
+            <RenderChart {...{ ...samplData, dataSource }} {...chartA11y} />
           </section>
         )}
       </div>

@@ -2,7 +2,7 @@ import type { EChartsType } from "echarts";
 import React, { useEffect, useRef, useState } from "react";
 import { getBasicValues, getMapValues, getPieValues } from "../lib/utils";
 import "../themes";
-import type { FieldDataType } from "../types";
+import type { FieldDataType, MatrixType } from "../types";
 import BasicChart from "./charts/BasicChart";
 import GeoMapChart from "./charts/GeoMapChart";
 import PieChart from "./charts/PieChart";
@@ -14,7 +14,28 @@ type RenderProps = FieldDataType & {
   hFactor?: number;
   getPicture?: (dataUrl: string) => void;
   getInstance?: (instance: EChartsType) => void;
+  /** Caption of the screen-reader-only data table. Defaults to Italian. */
+  dataTableCaption?: string;
+  /** Keyboard instructions appended to the chart's accessible name.
+      Overridable so consumers can localize them. Defaults to Italian. */
+  keyboardHint?: string;
 };
+
+const visuallyHidden: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
+function isMatrix(d: unknown): d is MatrixType {
+  return Array.isArray(d) && d.length > 1 && Array.isArray(d[0]);
+}
 function RenderChart(props: RenderProps) {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -88,10 +109,32 @@ function RenderChart(props: RenderProps) {
 
   const altText = [props.name, props.description].filter(Boolean).join(". ");
 
+  // A wrapper with role="img" would hide the whole subtree from assistive
+  // tech, including the focusable chart (which exposes its own accessible
+  // name and keyboard hints) and the data table below (WCAG 1.1.1). It stays
+  // only for the cluster map, which has no accessible alternative of its own.
+  const wrapA11yProps =
+    props.chart === "cmap"
+      ? { role: "img" as const, "aria-label": altText || undefined }
+      : {};
+
+  // Underlying data, exposed to screen readers as a real table: the canvas
+  // chart is otherwise an empty image for them.
+  const showDataTable =
+    isMatrix(props.data) &&
+    props.chart !== "kpi" &&
+    props.chart !== "kpiGroup" &&
+    props.chart !== "cmap";
+  const [headerRow, ...bodyRows] = showDataTable
+    ? (props.data as MatrixType)
+    : [[]];
+  const captionLabel = props.dataTableCaption || "Dati del grafico";
+  const caption = props.name ? `${captionLabel}: ${props.name}` : captionLabel;
+
   /** Render  */
   return (
     <div style={chartWrapStyle}>
-      <div ref={wrapRef} role="img" aria-label={altText || undefined}>
+      <div ref={wrapRef} {...wrapA11yProps}>
         {props && (
           <>
             {(props.chart === "bar" || props.chart === "line") && (
@@ -102,6 +145,7 @@ function RenderChart(props: RenderProps) {
                 setEchartInstance={setEchartInstance}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
+                keyboardHint={props.keyboardHint}
               />
             )}
             {props.chart === "pie" && (
@@ -112,6 +156,7 @@ function RenderChart(props: RenderProps) {
                 setEchartInstance={setEchartInstance}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
+                keyboardHint={props.keyboardHint}
               />
             )}
             {props.chart === "map" && (
@@ -122,6 +167,7 @@ function RenderChart(props: RenderProps) {
                 setEchartInstance={setEchartInstance}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
+                keyboardHint={props.keyboardHint}
               />
             )}
             {props.chart === "cmap" && (
@@ -141,6 +187,37 @@ function RenderChart(props: RenderProps) {
           </>
         )}
       </div>
+      {showDataTable && (
+        <div style={visuallyHidden}>
+          <table>
+            <caption>{caption}</caption>
+            <thead>
+              <tr>
+                {headerRow.map((cell, i) => (
+                  <th key={i} scope="col">
+                    {cell === "_" ? "" : cell}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {bodyRows.map((row, i) => (
+                <tr key={i}>
+                  {row.map((cell, j) =>
+                    j === 0 ? (
+                      <th key={j} scope="row">
+                        {cell}
+                      </th>
+                    ) : (
+                      <td key={j}>{cell}</td>
+                    ),
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

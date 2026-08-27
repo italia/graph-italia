@@ -24,6 +24,7 @@ import useDashboardEditStore, {
 } from "../../lib/store/dashboard-edit.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { HOME_ROUTE, ROUTES } from "../../router";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 // ─── Grid constants ───────────────────────────────────────────────────────────
 // 12 cols everywhere (bootstrap-style). User picks conceptual spans 1–3.
@@ -417,6 +418,7 @@ function DashboardEditPage() {
 
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
+  const chartA11y = useChartA11yProps();
 
   // Memoize layouts to avoid rebuilding on every render
   const layouts = useMemo(() => buildLayouts(layout), [layout]);
@@ -672,6 +674,7 @@ function DashboardEditPage() {
                               {...currentChart}
                               rowHeight={chartHeight}
                               hFactor={1}
+                              {...chartA11y}
                             />
                           </ColorSchemeProvider>
                         ) : (

@@ -442,6 +442,7 @@ export default function DataTable({
               onColumnOrderChange={handleColumnOrderChange}
               onSort={handleSort}
               sortServer={false}
+              sortIcon={<span aria-hidden="true">▾</span>}
             />
           </div>
         </div>

@@ -74,30 +74,36 @@ export default function QuickStartPage() {
             </h1>
             <p className="lead">{t("description")}</p>
 
-            {steps.map((key, index) => {
-              const items = t(`guide.${key}.items`, {
-                returnObjects: true,
-                defaultValue: [],
-              }) as string[];
-              return (
-                <section key={key}>
-                  <h2 className="text-xl font-normal text-base-content mt-10">
-                    {index + 1} · {t(`guide.${key}.title`)}
-                  </h2>
-                  <ul>
-                    {items.map((_, i) => (
-                      <li key={i}>
-                        <Trans
-                          t={t}
-                          i18nKey={`guide.${key}.items.${i}`}
-                          components={{ strong: <strong /> }}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              );
-            })}
+            {/* Ordered list so assistive tech can report the sequence and the
+                position of each step ("item 1 of 7"). role="list" restores the
+                list semantics that Safari drops with list-style: none; the
+                visible numbering stays in the heading text. */}
+            <ol role="list" className="list-none p-0 m-0">
+              {steps.map((key, index) => {
+                const items = t(`guide.${key}.items`, {
+                  returnObjects: true,
+                  defaultValue: [],
+                }) as string[];
+                return (
+                  <li key={key} className="p-0 m-0">
+                    <h2 className="text-xl font-normal text-base-content mt-10">
+                      {index + 1} · {t(`guide.${key}.title`)}
+                    </h2>
+                    <ul>
+                      {items.map((_, i) => (
+                        <li key={i}>
+                          <Trans
+                            t={t}
+                            i18nKey={`guide.${key}.items.${i}`}
+                            components={{ strong: <strong /> }}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              })}
+            </ol>
 
             <hr className="my-8" />
             <p>{t("footer.text")}</p>

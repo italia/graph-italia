@@ -14,6 +14,7 @@ function GeoMapChart({
   setEchartInstance,
   hFactor = 1,
   rowHeight,
+  keyboardHint,
 }: ChartPropsType) {
   const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
@@ -180,7 +181,7 @@ function GeoMapChart({
 
   const chartHeight = (data.config?.h || 500) * hFactor;
   const effectiveHeight = rowHeight || chartHeight;
-  const ariaLabel = `${data?.config?.title || "Mappa geografica"}. Usa le frecce per esplorare le regioni, Esc per uscire.`;
+  const ariaLabel = `${data?.config?.title || "Mappa geografica"}. ${keyboardHint || "Usa le frecce per esplorare le regioni, Esc per uscire."}`;
   const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
   return (
     <ErrorBoundary fallback={<div>Errore nel rendering della mappa</div>}>

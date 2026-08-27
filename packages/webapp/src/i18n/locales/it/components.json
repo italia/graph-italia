@@ -242,7 +242,8 @@
                 "center": {
                     "brand": {
                         "title": "Graph Italia",
-                        "tagline": "Dai forma ai tuoi dati"
+                        "tagline": "Dai forma ai tuoi dati",
+                        "homeLinkLabel": "Vai alla homepage di Graph Italia"
                     },
                     "social": {
                         "label": "Sorgenti su",
@@ -263,7 +264,8 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Graph Italia"
+                    "title": "Graph Italia",
+                    "homeLinkLabel": "Vai alla homepage di Graph Italia"
                 },
                 "user": {
                     "loggedAs": "Connesso come"
@@ -795,6 +797,9 @@
                 "generate": {
                     "label": "Genera dati"
                 }
+            },
+            "status": {
+                "generated": "Dati generati: tabella con {{rows}} righe e {{cols}} colonne disponibile sotto il modulo"
             }
         },
         "generateRandomPoi": {
@@ -822,6 +827,9 @@
                         "label": "Genera POI"
                     }
                 }
+            },
+            "status": {
+                "generated": "POI generati: {{count}} punti disponibili sotto il modulo"
             }
         },
         "selectChart": {
@@ -848,6 +856,19 @@
                     "label": "Tipo di grafico"
                 }
             }
+        },
+        "chartA11y": {
+            "keyboardHint": "Usa le frecce per esplorare i dati, Esc per uscire.",
+            "dataTableCaption": "Dati del grafico"
+        },
+        "dialog": {
+            "close": "Chiudi"
+        },
+        "languageSwitcher": {
+            "label": "Lingua"
+        },
+        "loading": {
+            "label": "Caricamento in corso"
         },
         "themeSwitcher": {
             "label": "Tema",

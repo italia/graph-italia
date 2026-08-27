@@ -242,7 +242,8 @@
                 "center": {
                     "brand": {
                         "title": "Graph Italia",
-                        "tagline": "Shape your data"
+                        "tagline": "Shape your data",
+                        "homeLinkLabel": "Go to the Graph Italia homepage"
                     },
                     "social": {
                         "label": "Sources on",
@@ -263,7 +264,8 @@
             },
             "slimHeader": {
                 "brand": {
-                    "title": "Graph Italia"
+                    "title": "Graph Italia",
+                    "homeLinkLabel": "Go to the Graph Italia homepage"
                 },
                 "user": {
                     "loggedAs": "Logged in as"
@@ -795,6 +797,9 @@
                 "generate": {
                     "label": "Generate data"
                 }
+            },
+            "status": {
+                "generated": "Data generated: a table with {{rows}} rows and {{cols}} columns is available below the form"
             }
         },
         "generateRandomPoi": {
@@ -822,6 +827,9 @@
                         "label": "Generate Pois"
                     }
                 }
+            },
+            "status": {
+                "generated": "POI generated: {{count}} points are available below the form"
             }
         },
         "selectChart": {
@@ -848,6 +856,19 @@
                     "label": "Chart type"
                 }
             }
+        },
+        "chartA11y": {
+            "keyboardHint": "Use the arrow keys to explore the data, Esc to exit.",
+            "dataTableCaption": "Chart data"
+        },
+        "dialog": {
+            "close": "Close"
+        },
+        "languageSwitcher": {
+            "label": "Language"
+        },
+        "loading": {
+            "label": "Loading"
         },
         "themeSwitcher": {
             "label": "Theme",

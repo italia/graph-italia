@@ -33,3 +33,9 @@ i18next
             escapeValue: false, // React already escapes
         },
     });
+
+/** Keep the document language in sync so screen readers pick the right voice. */
+i18next.on('languageChanged', (lng) => {
+    document.documentElement.lang = lng;
+});
+document.documentElement.lang = i18next.language;

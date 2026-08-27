@@ -28,9 +28,11 @@ import { defaultConfig } from "../../lib/constants.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
 import useStoreState from "../../lib/store/storeState.ts";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 
 export default function EditMapPage() {
+  const chartA11y = useChartA11yProps();
   const { t } = useTranslation("pages", {
     keyPrefix: `charts.editChart`,
   });
@@ -411,6 +413,7 @@ export default function EditMapPage() {
                           data={data}
                           config={config}
                           dataSource={dataSource ?? null}
+                          {...chartA11y}
                         />
                       </ColorSchemeProvider>
                     </div>

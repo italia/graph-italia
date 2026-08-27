@@ -6,6 +6,7 @@ import Loading from "../../components/layout/Loading";
 import TextSlot from "../../components/TextSlot";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 const TOTAL_COLS = 12;
 const ALL_COLS = { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 };
@@ -66,6 +67,7 @@ function buildLayouts(items: TLayoutItem[]) {
 const ResponsiveGrid = WidthProvider(Responsive);
 
 function EmbedDashboardPage() {
+  const chartA11y = useChartA11yProps();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const { load, layout, charts, name, description, isLoading, loaded, error } =
@@ -127,6 +129,7 @@ function EmbedDashboardPage() {
                             {...currentChart}
                             rowHeight={chartHeight}
                             hFactor={1}
+                            {...chartA11y}
                           />
                         )
                       )}

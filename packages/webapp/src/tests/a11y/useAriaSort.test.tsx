@@ -14,21 +14,33 @@ import { useAriaSort } from "../../hooks/useAriaSort";
 function AriaSortHarness({
   sortState,
   columns,
+  unsortableColumns = [],
 }: {
   sortState: { columnKey: string; direction: "asc" | "desc" } | null;
   columns: string[];
+  unsortableColumns?: string[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useAriaSort(ref, sortState);
   return (
     <div ref={ref}>
-      {columns.map((c) => (
+      {columns.map((c, i) => {
         // Simulate the columnheader structure produced by
-        // react-data-table-component.
-        <div key={c} role="columnheader">
-          {c}
-        </div>
-      ))}
+        // react-data-table-component: the name lives in an inner
+        // div[data-column-id], a custom sort icon may sit next to it, and
+        // non-sortable columns get tabIndex -1.
+        const sortable = !unsortableColumns.includes(c);
+        return (
+          <div key={c} role="columnheader" tabIndex={sortable ? 0 : -1}>
+            <div data-column-id={i + 1}>{c}</div>
+            {sortable && (
+              <span className="__rdt_custom_sort_icon__">
+                <span aria-hidden="true">▾</span>
+              </span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -68,6 +80,23 @@ describe("useAriaSort (4.1.2 column sort state)", () => {
       "aria-sort",
       "descending",
     );
+  });
+
+  it("leaves non-sortable columns without aria-sort", () => {
+    const { getByText } = render(
+      <AriaSortHarness
+        sortState={{ columnKey: "Name", direction: "asc" }}
+        columns={["Name", "Actions"]}
+        unsortableColumns={["Actions"]}
+      />,
+    );
+    expect(getByText("Name").closest("[role=columnheader]")).toHaveAttribute(
+      "aria-sort",
+      "ascending",
+    );
+    expect(
+      getByText("Actions").closest("[role=columnheader]"),
+    ).not.toHaveAttribute("aria-sort");
   });
 
   it("rerender updates aria-sort when sortState changes", () => {

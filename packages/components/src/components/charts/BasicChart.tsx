@@ -13,6 +13,7 @@ function BasicChart({
   rowHeight,
   isMobile = false,
   hFactor = 1,
+  keyboardHint,
 }: ChartPropsType) {
   const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
@@ -245,7 +246,7 @@ function BasicChart({
   const config: any = data.config || null;
   const height = (config?.h || 500) * hFactor;
   const seriesCount = data.dataSource?.series?.length ?? 0;
-  const ariaLabel = `${config?.title || "Grafico"}. ${seriesCount > 0 ? `${seriesCount} serie. ` : ""}Usa le frecce per esplorare i dati, Esc per uscire.`;
+  const ariaLabel = `${config?.title || "Grafico"}. ${seriesCount > 0 ? `${seriesCount} serie. ` : ""}${keyboardHint || "Usa le frecce per esplorare i dati, Esc per uscire."}`;
   const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
   return (
     <div style={{ textAlign: "left" }} {...keyboardProps}>

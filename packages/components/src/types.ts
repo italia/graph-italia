@@ -35,6 +35,9 @@ export type ChartPropsType = {
   setEchartInstance: (i: any) => void;
   rowHeight?: number;
   hFactor?: number;
+  /** Keyboard instructions appended to the chart's accessible name.
+      Overridable so consumers can localize them. Defaults to Italian. */
+  keyboardHint?: string;
 };
 
 export type ChartConfigType = {

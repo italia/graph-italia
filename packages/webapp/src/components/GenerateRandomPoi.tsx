@@ -27,6 +27,7 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
   const [maxLat, setMaxLat] = useState(ITALY_BOUNDS.maxLat);
   const [minLon, setMinLon] = useState(ITALY_BOUNDS.minLon);
   const [maxLon, setMaxLon] = useState(ITALY_BOUNDS.maxLon);
+  const [announcement, setAnnouncement] = useState("");
 
   function generate() {
     const poiData: PointData[] = [];
@@ -39,6 +40,10 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
       });
     }
     setData(poiData);
+    // Announce the new content to assistive tech (WCAG 4.1.3): the generated
+    // table appears further down the page and would otherwise go unnoticed.
+    setAnnouncement("");
+    setTimeout(() => setAnnouncement(t("status.generated", { count: items })), 100);
   }
 
   const inputClass = "input input-bordered w-full rounded-md";
@@ -114,6 +119,9 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
         <button type="button" className="btn btn-primary" onClick={generate}>
           {t("form.actions.generate.label")}
         </button>
+      </div>
+      <div role="status" className="sr-only">
+        {announcement}
       </div>
     </div>
   );

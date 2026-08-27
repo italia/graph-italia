@@ -149,14 +149,9 @@
     "secondaryGuest": "Log in"
   },
   "aboutFooter": {
-    "title": "Graph Italia",
+    "title": "About the project",
     "copyright": "Copyright © 2023–present · Presidenza del Consiglio dei Ministri",
     "license": "Released under the",
-    "licenseName": "GNU General Public License v3",
-    "links": {
-      "github": "GitHub",
-      "docs": "Documentation",
-      "issues": "Report an Issue"
-    }
+    "licenseName": "GNU General Public License v3"
   }
 }

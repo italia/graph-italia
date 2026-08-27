@@ -190,6 +190,9 @@ function CodeBlock({
             </>
           )}
         </button>
+        <div role="status" className="sr-only">
+          {copied ? copiedLabel : ""}
+        </div>
       </div>
       <pre className="p-5 text-xs leading-relaxed text-neutral-content/80 overflow-x-auto font-mono whitespace-pre">
         {code}
@@ -544,12 +547,15 @@ export default function AboutPage() {
            ══════════════════════════════════════════════════════════════════ */}
         <section
           className="py-10 bg-base-300/30"
-          aria-label="About this project"
+          aria-labelledby="about-project-heading"
         >
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-3">
-            <p className="text-xl font-bold text-base-content">
+            <h2
+              id="about-project-heading"
+              className="text-xl font-bold text-base-content"
+            >
               {t("aboutFooter.title")}
-            </p>
+            </h2>
             <p className="text-sm text-base-content/50">
               {t("aboutFooter.copyright")}
             </p>
@@ -565,31 +571,6 @@ export default function AboutPage() {
               </a>
               .
             </p>
-            <nav
-              className="flex flex-wrap items-center justify-center gap-2 pt-2"
-              aria-label="Project links"
-            >
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ghost btn-sm gap-1.5"
-              >
-                <GitHubIcon className="w-4 h-4" />
-                {t("aboutFooter.links.github")}
-              </a>
-              <a href="/quickstart" className="btn btn-ghost btn-sm">
-                {t("aboutFooter.links.docs")}
-              </a>
-              <a
-                href="https://github.com/issues"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ghost btn-sm"
-              >
-                {t("aboutFooter.links.issues")}
-              </a>
-            </nav>
           </div>
         </section>
       </div>

@@ -722,7 +722,9 @@
             "create": "Crea Key",
             "deleteTitle": "Elimina API Key",
             "deleteDesc": "Sei sicuro di voler eliminare questa API key? L'azione non può essere annullata.",
-            "delete": "Elimina"
+            "delete": "Elimina",
+            "copy": "Copia negli appunti",
+            "copied": "Copiato negli appunti"
         },
         "form": {
             "role": "Ruolo",

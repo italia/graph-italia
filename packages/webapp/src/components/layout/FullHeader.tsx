@@ -6,7 +6,7 @@ import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import { useUserStore } from "../../lib/store/user_store";
 import { useSettingsStore } from "../../lib/store/settings_store";
-// import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
+import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
 
 export default function HeaderCompleta() {
@@ -15,8 +15,8 @@ export default function HeaderCompleta() {
   });
   const { t: translateMenu } = useTranslation("menu");
   const { user, clearUser } = useUserStore();
-  const { settings, setLanguage, /*setTheme*/ } = useSettingsStore();
-  // const theme = settings?.preferredTheme;
+  const { settings, setLanguage, setTheme } = useSettingsStore();
+  const theme = settings?.preferredTheme;
   const language = settings?.preferredLanguage ?? "it";
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
@@ -65,6 +65,10 @@ export default function HeaderCompleta() {
 
 
           <div className="flex items-center gap-6 text-accent-content">
+            <ThemeSwitcherComponent
+              currentTheme={theme as "light" | "dark"}
+              handleChange={setTheme}
+            />
             <LanguageSwitcher
               currentLanguage={language}
               handleChange={setLanguage}
@@ -78,10 +82,10 @@ export default function HeaderCompleta() {
         <div className="mx-auto px-[18px] flex items-center justify-between py-6">
           <a
             href={ROUTES.root}
-            aria-label={t(`center.brand.title`)}
+            aria-label={t(`center.brand.homeLinkLabel`)}
             className="flex items-center no-underline group"
           >
-            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt={t(`center.brand.title`)} />
+            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
 
             <div className="ml-[-8px]">
               <span className="block text-[2rem] font-semibold leading-tight text-primary-content ">
