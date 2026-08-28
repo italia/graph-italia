@@ -30,7 +30,7 @@ permissions:
 jobs:
   prepare:
     name: 📋 Prepare
-    runs-on: arc-runner-italia
+    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-latest' || 'arc-runner-italia' }}
     outputs:
       version: ${{ steps.version.outputs.version }}
       is_production: ${{ steps.version.outputs.is_production }}
@@ -57,7 +57,7 @@ jobs:
 
   build-images:
     name: 🏗️ Build Docker Images
-    runs-on: arc-runner-italia
+    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-latest' || 'arc-runner-italia' }}
     needs: prepare
     strategy:
       matrix:
