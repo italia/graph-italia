@@ -235,35 +235,56 @@
   outline-color: #66b3ff;
 }
 
-/* Outline buttons in dark (WCAG 1.4.11 / 1.4.3): the resting border and label
-   of the primary outline variants use the same #0066cc as light, which lands
-   at 2.89:1 on base-100 — below the 3:1 required for UI borders, let alone the
-   4.5:1 for the label. Same lighter Bootstrap Italia blue as above, applied to
-   the resting state only: --btn-color stays untouched so the hover fill keeps
-   its darker blue with a white label. The secondary outline (#17324d on dark)
-   is close to invisible, so it moves to the light grey-blue of the palette. */
+/* Primary/secondary buttons in dark (WCAG 1.4.11 / 1.4.3): Bootstrap Italia's
+   "varianti di colore su sfondo scuro" invert the primary button to white
+   (white fill with primary label, white border/label for the outlines), which
+   both passes contrast and keeps the active state clearly distinct from the
+   dimmed disabled one.
+   @see https://italia.github.io/bootstrap-italia/docs/componenti/buttons/#varianti-di-colore
+   DaisyUI mechanics: --btn-color drives fill/border, --btn-fg the label,
+   --btn-rest-fg the resting label of outline variants. */
+[data-theme="scuro"] .btn-primary:not(.btn-outline):not(.btn-ghost) {
+  --btn-color: #ffffff;
+  --btn-fg: #0066cc;
+}
 [data-theme="scuro"] .btn-outline.btn-primary {
-  --btn-rest-fg: #66b3ff;
-  --btn-border: #66b3ff;
+  --btn-color: #ffffff;
+  --btn-fg: #0066cc;
+  --btn-rest-fg: #ffffff;
+  --btn-border: #ffffff;
+}
+[data-theme="scuro"] .btn-outline.btn-secondary {
+  --btn-rest-fg: #ffffff;
+  --btn-border: #ffffff;
 }
 
+[data-theme="scuro"] .btn-italia-primary {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #0066cc;
+}
+[data-theme="scuro"] .btn-italia-primary:hover {
+  background-color: #d9d9d9;
+  border-color: #d9d9d9;
+  color: #0066cc;
+}
 [data-theme="scuro"] .btn-italia-primary-outline {
-  color: #66b3ff;
-  border-color: #66b3ff;
+  color: #ffffff;
+  border-color: #ffffff;
 }
 [data-theme="scuro"] .btn-italia-primary-outline:hover {
-  background-color: rgba(102, 179, 255, 0.12);
-  color: #66b3ff;
-  border-color: #66b3ff;
+  background-color: #ffffff;
+  color: #0066cc;
+  border-color: #ffffff;
 }
 [data-theme="scuro"] .btn-italia-secondary-outline {
-  color: #d9e2ec;
-  border-color: #8fa3b3;
+  color: #ffffff;
+  border-color: #ffffff;
 }
 [data-theme="scuro"] .btn-italia-secondary-outline:hover {
-  background-color: rgba(143, 163, 179, 0.12);
-  color: #d9e2ec;
-  border-color: #8fa3b3;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: #ffffff;
 }
 
 /* https://github.com/react-grid-layout/react-grid-layout/issues/1329#issuecomment-1518921042 */
