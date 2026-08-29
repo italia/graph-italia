@@ -235,6 +235,14 @@
   outline-color: #66b3ff;
 }
 
+/* Outline badges ("Livello 1/2/3" on the homepage) reuse the primary blue for
+   text and border: 2.89:1 on the dark cards, below the 4.5:1 required for
+   text. Same readable blue as the foreground overrides above (7.25:1). */
+[data-theme="scuro"] .badge-primary.badge-outline {
+  color: #66b3ff;
+  border-color: #66b3ff;
+}
+
 /* Primary/secondary buttons in dark (WCAG 1.4.11 / 1.4.3): Bootstrap Italia's
    "varianti di colore su sfondo scuro" invert the primary button to white
    (white fill with primary label, white border/label for the outlines), which
