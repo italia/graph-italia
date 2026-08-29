@@ -1,11 +1,15 @@
 import { useEffect, useRef } from "react";
 export default function Dialog({ title, children, toggle, callback }: any) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (ref.current) {
       if (toggle) {
         ref.current.showModal();
+        // Land the initial focus on the title, not on the first button, so the
+        // screen reader announces the modal context first (WCAG 2.4.3).
+        requestAnimationFrame(() => titleRef.current?.focus());
       } else {
         ref.current.close();
       }
@@ -15,7 +19,7 @@ export default function Dialog({ title, children, toggle, callback }: any) {
   return (
     <dialog ref={ref} className="modal">
       <div className="modal-box max-w-6xl max-h-full">
-        <h2 className="font-bold text-lg ">{title}</h2>
+        <h2 ref={titleRef} tabIndex={-1} className="font-bold text-lg outline-none">{title}</h2>
         <div className="mx-auto">
           {children}
         </div>
