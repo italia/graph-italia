@@ -6,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
-import { useChartKeyboard } from "../../lib/useChartKeyboard";
+import { chartLiveRegionStyle, useChartKeyboard } from "../../lib/useChartKeyboard";
 
 function GeoMapChart({
   data,
@@ -182,10 +182,11 @@ function GeoMapChart({
   const chartHeight = (data.config?.h || 500) * hFactor;
   const effectiveHeight = rowHeight || chartHeight;
   const ariaLabel = `${data?.config?.title || "Mappa geografica"}. ${keyboardHint || "Usa le frecce per esplorare le regioni, Esc per uscire."}`;
-  const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
+  const { containerProps, announcement } = useChartKeyboard(localInstance, ariaLabel);
   return (
     <ErrorBoundary fallback={<div>Errore nel rendering della mappa</div>}>
-      <div key={mapId} id={"chart_" + mapId} {...keyboardProps}>
+      <>
+      <div key={mapId} id={"chart_" + mapId} {...containerProps}>
         {error && <div className="alert error">{error}</div>}
         {!geoData && <div>In attesa dei dati geo...</div>}
         {!options ? (
@@ -205,6 +206,10 @@ function GeoMapChart({
           />
         )}
       </div>
+      <div role="status" style={chartLiveRegionStyle}>
+        {announcement}
+      </div>
+      </>
     </ErrorBoundary>
   );
 }
