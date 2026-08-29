@@ -366,6 +366,7 @@
                     "transpose": {
                         "label": "Trasponi"
                     },
+                    "transposedStatus": "Tabella trasposta: ora {{rows}} righe e {{cols}} colonne",
                     "reset": {
                         "label": "Reimposta"
                     },
@@ -735,6 +736,7 @@
                 "transpose": {
                     "label": "Trasponi"
                 },
+                "transposedStatus": "Tabella trasposta: ora {{rows}} righe e {{cols}} colonne",
                 "applyChanges": {
                     "label": "Applica modifiche"
                 },

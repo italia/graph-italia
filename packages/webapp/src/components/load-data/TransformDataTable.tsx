@@ -46,6 +46,7 @@ export default function TransformData({
 
   // State: working copy of the data matrix (supports transpose)
   const [workingData, setWorkingData] = useState<MatrixType>(() => currentData);
+  const [transposeAnnouncement, setTransposeAnnouncement] = useState("");
 
   // Derive headers and row data from the working matrix
   const allHeaders = useMemo(
@@ -123,7 +124,18 @@ export default function TransformData({
     setVisibleColumns(new Set(newHeaders));
     setColumnOrder([...newHeaders]);
     setSortState(null);
-  }, [workingData]);
+    // Announce the outcome to assistive tech (WCAG 4.1.3): the table changes
+    // visually but a screen reader user gets no other confirmation.
+    setTransposeAnnouncement("");
+    setTimeout(() => {
+      setTransposeAnnouncement(
+        t("actions.transposedStatus", {
+          rows: Math.max(0, transposed.length - 1),
+          cols: Math.max(0, (transposed[0]?.length ?? 1) - 1),
+        }),
+      );
+    }, 100);
+  }, [workingData, t]);
 
   // Reset to the original data
   const resetData = useCallback(() => {
@@ -321,6 +333,9 @@ export default function TransformData({
           >
             {t(`actions.transpose.label`)}
           </button>
+          <div role="status" className="sr-only">
+            {transposeAnnouncement}
+          </div>
           <button
             type="button" className="btn btn-outline"
             onClick={() => setShowResetDialog(true)}

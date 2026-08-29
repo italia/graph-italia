@@ -52,6 +52,7 @@ export default function DataTable({
     headersOf(data),
   );
   const [sortState, setSortState] = useState<SortState>(null);
+  const [transposeAnnouncement, setTransposeAnnouncement] = useState("");
   // The matrix we last handed to the parent comes back through the `data` prop:
   // it carries only the visible columns, so treating it as a new dataset would
   // reset the selection and drop the hidden columns for good.
@@ -150,6 +151,17 @@ export default function DataTable({
     });
     emittedData.current = transposed;
     onApplyData?.(transposed);
+    // Announce the outcome to assistive tech (WCAG 4.1.3): the table changes
+    // visually but a screen reader user gets no other confirmation.
+    setTransposeAnnouncement("");
+    setTimeout(() => {
+      setTransposeAnnouncement(
+        t("actions.transposedStatus", {
+          rows: Math.max(0, transposed.length - 1),
+          cols: Math.max(0, (transposed[0]?.length ?? 1) - 1),
+        }),
+      );
+    }, 100);
   }
 
   function internalReset() {
@@ -292,6 +304,9 @@ export default function DataTable({
             >
               {t("actions.transpose.label")}
             </button>
+            <div role="status" className="sr-only">
+              {transposeAnnouncement}
+            </div>
 
             <button
               type="button"

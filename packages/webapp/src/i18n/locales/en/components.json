@@ -366,6 +366,7 @@
                     "transpose": {
                         "label": "Transpose"
                     },
+                    "transposedStatus": "Table transposed: now {{rows}} rows and {{cols}} columns",
                     "reset": {
                         "label": "Reset"
                     },
@@ -735,6 +736,7 @@
                 "transpose": {
                     "label": "Transpose"
                 },
+                "transposedStatus": "Table transposed: now {{rows}} rows and {{cols}} columns",
                 "applyChanges": {
                     "label": "Apply Changes"
                 },
