@@ -39,6 +39,18 @@ const sortHeaderButtonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
+const srOnlyStyle: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
 export default function DataTable(props: DataTableProps) {
   const {
     data,
@@ -61,6 +73,9 @@ export default function DataTable(props: DataTableProps) {
     columnVisibilityCloseAriaLabel:
       labels?.columnVisibilityCloseAriaLabel ?? "Chiudi filtri colonne",
     exportCsvButton: labels?.exportCsvButton ?? "Esporta CSV",
+    sortable: labels?.sortable ?? "ordinabile",
+    sortedAscending: labels?.sortedAscending ?? "ordinato in modo crescente",
+    sortedDescending: labels?.sortedDescending ?? "ordinato in modo decrescente",
   };
 
   const scheme = useColorScheme();
@@ -112,6 +127,14 @@ export default function DataTable(props: DataTableProps) {
             onKeyPress={(event) => event.stopPropagation()}
           >
             {key}
+            <span style={srOnlyStyle}>
+              {", "}
+              {sortState?.columnKey === key
+                ? sortState.direction === "asc"
+                  ? resolvedLabels.sortedAscending
+                  : resolvedLabels.sortedDescending
+                : resolvedLabels.sortable}
+            </span>
           </button>
         ),
         selector: (row) => row[key] as string | number,
@@ -133,7 +156,17 @@ export default function DataTable(props: DataTableProps) {
         style: displayIndex === 0 ? { fontWeight: "bold" } : undefined,
       };
     });
-  }, [orderedVisibleHeaders, headers, enableColumnReorder, format, formatValue]);
+  }, [
+    orderedVisibleHeaders,
+    headers,
+    enableColumnReorder,
+    format,
+    formatValue,
+    sortState,
+    resolvedLabels.sortable,
+    resolvedLabels.sortedAscending,
+    resolvedLabels.sortedDescending,
+  ]);
 
   const handleSort = useCallback(
     (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
@@ -195,6 +228,15 @@ export default function DataTable(props: DataTableProps) {
         onToggleColumn={toggleColumn}
       />
       <div ref={tableRef} className="mid-table-wrapper">
+        <div role="status" style={srOnlyStyle}>
+          {sortState
+            ? `${sortState.columnKey}: ${
+                sortState.direction === "asc"
+                  ? resolvedLabels.sortedAscending
+                  : resolvedLabels.sortedDescending
+              }`
+            : ""}
+        </div>
         <DataTableComponent
           columns={columns}
           data={rows}

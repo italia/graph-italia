@@ -872,6 +872,11 @@
         "loading": {
             "label": "Caricamento in corso"
         },
+        "sortHeader": {
+            "sortable": "ordinabile",
+            "sortedAsc": "ordinato in modo crescente",
+            "sortedDesc": "ordinato in modo decrescente"
+        },
         "themeSwitcher": {
             "label": "Tema",
             "values": {

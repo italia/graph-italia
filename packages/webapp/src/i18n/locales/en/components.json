@@ -872,6 +872,11 @@
         "loading": {
             "label": "Loading"
         },
+        "sortHeader": {
+            "sortable": "sortable",
+            "sortedAsc": "sorted ascending",
+            "sortedDesc": "sorted descending"
+        },
         "themeSwitcher": {
             "label": "Theme",
             "values": {

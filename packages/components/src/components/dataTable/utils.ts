@@ -17,6 +17,12 @@ export type DataTableLabels = {
   exportCsvButton?: string;
   scrollLeftAriaLabel?: string;
   scrollRightAriaLabel?: string;
+  /** Announced inside sortable header buttons when the column is not sorted */
+  sortable?: string;
+  /** Announced for the actively sorted column, ascending */
+  sortedAscending?: string;
+  /** Announced for the actively sorted column, descending */
+  sortedDescending?: string;
   reorderColumnAriaLabel?: string;
 };
 

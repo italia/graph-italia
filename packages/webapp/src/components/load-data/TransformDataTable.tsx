@@ -9,7 +9,7 @@ import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
 import dataTableStyles from "../layout/dataTableStyles.ts";
 import { paginationIcons } from "../layout/paginationIcons";
 import GenericDialog from "../layout/GenericDialog.tsx";
-import SortHeaderButton from "../layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus } from "../layout/SortHeaderButton";
 import { useAriaSort } from "../../hooks/useAriaSort";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
 import ToggleTableColumns from "./ToggleTableColumns.tsx";
@@ -166,12 +166,17 @@ export default function TransformData({
       .filter((key) => visibleColumns.has(key))
       .map((key) => ({
         id: key,
-        name: <SortHeaderButton label={key} />,
+        name: (
+          <SortHeaderButton
+            label={key}
+            direction={sortState?.columnKey === key ? sortState.direction : undefined}
+          />
+        ),
         selector: (row: RowRecord) => row[key] as string,
         sortable: true,
         reorder: true,
       }));
-  }, [columnOrder, visibleColumns]);
+  }, [columnOrder, visibleColumns, sortState]);
 
   // a11y: aria-sort + APG header buttons via the shared hook (the library
   // does not expose sort state on its column headers).
@@ -378,6 +383,7 @@ export default function TransformData({
       )}
 
       <div ref={tableRef}>
+        <SortStatus sortState={sortState} />
         <DataTable
           title={t(`table.title`)}
           columns={columns}

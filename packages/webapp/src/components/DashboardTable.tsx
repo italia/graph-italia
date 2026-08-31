@@ -12,7 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import SortHeaderButton from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -63,12 +63,22 @@ export default function DashboardTable({
     [],
   );
 
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
+
   const navigate = useNavigate();
 
   const columns: TableColumn<FieldDataType>[] = [
     {
-      id: t(`columns.name.label`),
-      name: <SortHeaderButton label={t(`columns.name.label`)} />,
+      ...sortHeader(t(`columns.name.label`)),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -100,8 +110,7 @@ export default function DashboardTable({
       ),
     },
     {
-      id: t(`columns.createdAt.label`),
-      name: <SortHeaderButton label={t(`columns.createdAt.label`)} />,
+      ...sortHeader(t(`columns.createdAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -110,8 +119,7 @@ export default function DashboardTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      id: t(`columns.updatedAt.label`),
-      name: <SortHeaderButton label={t(`columns.updatedAt.label`)} />,
+      ...sortHeader(t(`columns.updatedAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
@@ -178,6 +186,7 @@ export default function DashboardTable({
 
   return (
     <div ref={tableRef}>
+      <SortStatus sortState={sortState} />
       <DataTable
         ariaLabel={t("tableLabel", { defaultValue: "Le mie dashboard" })}
         columns={columns}

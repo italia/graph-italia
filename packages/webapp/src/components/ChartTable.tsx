@@ -29,7 +29,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import SortHeaderButton from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -92,6 +92,17 @@ export default function ChartTable({
     [],
   );
 
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
+
   const [copiedText, copy] = useCopyToClipboard();
   const [copyStatus, setCopyStatus] = useState<string>("");
 
@@ -123,8 +134,7 @@ export default function ChartTable({
   const COLUMNS_TRANSLATION_KEY_PATH = `columns`;
   const columns: TableColumn<FieldDataType>[] = [
     {
-      id: t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`),
-      name: <SortHeaderButton label={t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`)} />,
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`)),
       width: TABLE_COL.type,
       hide: TABLE_HIDE.onMobile,
       selector: (row: FieldDataType) => row.chart,
@@ -173,8 +183,7 @@ export default function ChartTable({
       },
     },
     {
-      id: t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`),
-      name: <SortHeaderButton label={t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`)} />,
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`)),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row: FieldDataType) => row.name ?? "",
@@ -196,8 +205,7 @@ export default function ChartTable({
     },
 
     {
-      id: t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`),
-      name: <SortHeaderButton label={t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`)} />,
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`)),
       width: TABLE_COL.remote,
       hide: TABLE_HIDE.onTablet,
       selector: (row: FieldDataType) => row.isRemote ?? false,
@@ -307,8 +315,7 @@ export default function ChartTable({
     },
 
     {
-      id: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
-      name: <SortHeaderButton label={t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`)} />,
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row: FieldDataType) => row.createdAt ?? "",
@@ -318,8 +325,7 @@ export default function ChartTable({
     },
 
     {
-      id: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
-      name: <SortHeaderButton label={t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`)} />,
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row: FieldDataType) => row.updatedAt ?? "",
@@ -392,6 +398,7 @@ export default function ChartTable({
       <div role="status" aria-live="polite" className="sr-only">
         {copyStatus}
       </div>
+      <SortStatus sortState={sortState} />
 
       {list && (
         <div ref={tableRef}>

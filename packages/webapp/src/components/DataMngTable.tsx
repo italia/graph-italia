@@ -6,7 +6,7 @@ import type { MatrixType } from "graph-italia-components";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import { useAriaSort } from "../hooks/useAriaSort";
-import SortHeaderButton from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import registerDarkTheme from "./layout/DataTableDarkTheme";
 
@@ -100,14 +100,19 @@ export default function DataTable({
       .filter((key) => visibleColumns.has(key))
       .map((key, i) => ({
         id: key,
-        name: <SortHeaderButton label={key} />,
+        name: (
+          <SortHeaderButton
+            label={key}
+            direction={sortState?.columnKey === key ? sortState.direction : undefined}
+          />
+        ),
         selector: (row: RowRecord) => row[key],
         sortable: true,
         reorder: true,
         wrap: true,
         style: i === 0 ? { fontWeight: "bold" } : undefined,
       }));
-  }, [headers, visibleColumns]);
+  }, [headers, visibleColumns, sortState]);
 
   const rows: RowRecord[] = useMemo(() => {
     if (!workingData || workingData.length < 2) return [];
@@ -451,6 +456,7 @@ export default function DataTable({
           )}
 
           <div className="mt-4" ref={tableRef}>
+            <SortStatus sortState={sortState} />
             <DataTableComponent
               columns={columns}
               data={rows}

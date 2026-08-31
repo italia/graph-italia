@@ -11,7 +11,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import SortHeaderButton from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -61,12 +61,22 @@ export default function DataSourceTable({
     [],
   );
 
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
+
   const navigate = useNavigate();
 
   const columns: TableColumn<DatasourceItem>[] = [
     {
-      id: t("columns.name.label", { defaultValue: "Name" }),
-      name: <SortHeaderButton label={t("columns.name.label", { defaultValue: "Name" })} />,
+      ...sortHeader(t("columns.name.label", { defaultValue: "Name" })),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -110,8 +120,7 @@ export default function DataSourceTable({
       ),
     },
     {
-      id: t("columns.createdAt.label", { defaultValue: "Created" }),
-      name: <SortHeaderButton label={t("columns.createdAt.label", { defaultValue: "Created" })} />,
+      ...sortHeader(t("columns.createdAt.label", { defaultValue: "Created" })),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -120,8 +129,7 @@ export default function DataSourceTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      id: t("columns.updatedAt.label", { defaultValue: "Updated" }),
-      name: <SortHeaderButton label={t("columns.updatedAt.label", { defaultValue: "Updated" })} />,
+      ...sortHeader(t("columns.updatedAt.label", { defaultValue: "Updated" })),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
@@ -159,6 +167,7 @@ export default function DataSourceTable({
 
   return (
     <div ref={tableRef}>
+      <SortStatus sortState={sortState} />
       <DataTable
         ariaLabel={t("tableLabel", { defaultValue: "Sorgenti dati" })}
         columns={columns}
