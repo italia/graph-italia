@@ -152,6 +152,7 @@
     "title": "About the project",
     "copyright": "Copyright © 2023–present · Presidenza del Consiglio dei Ministri",
     "license": "Released under the",
-    "licenseName": "GNU General Public License v3"
+    "licenseName": "GNU General Public License v3",
+    "opensInNewWindow": "(opens in a new window)"
   }
 }
