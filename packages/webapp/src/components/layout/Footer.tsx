@@ -4,25 +4,13 @@ export default function Footer() {
   const { t } = useTranslation("components", {
     keyPrefix: "components.layout.footer",
   });
-  const tagline = t(`brand.tagline`);
 
   return (
     <footer className="footer bg-accent text-accent-content p-4 lg:px-10 py-6">
       <div>
-        <div className="flex items-center">
-          <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
-          <div>
-            <span className="block font-semibold text-2xl leading-tight">{t(`brand.title`)}</span>
-            {tagline && (
-              <p className="text-sm font-normal m-0 mt-0.5 ml-0.5">
-                {tagline}
-              </p>
-            )}
-          </div>
-        </div>
         {/* Ente di appartenenza nel footer, come da UI Kit: "è un progetto di"
             + logo dell'ente (stesso modello di Designers Italia). */}
-        <p className="m-0 mt-3 text-sm">
+        <p className="m-0 text-sm">
           <span className="font-semibold">{t(`brand.title`)}</span>{" "}
           {t(`brand.projectOf`)}
         </p>
