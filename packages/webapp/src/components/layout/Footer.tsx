@@ -21,13 +21,24 @@ export default function Footer() {
           </div>
         </div>
         {/* Ente di appartenenza nel footer, come da UI Kit: "è un progetto di"
-            + ente. Il logo PCM potrà affiancare il nome quando disponibile. */}
+            + logo dell'ente (stesso modello di Designers Italia). */}
         <p className="m-0 mt-3 text-sm">
-          {t(`brand.title`)} {t(`brand.projectOf`)}{" "}
-          <span className="block font-semibold text-base">
-            {t(`brand.projectOwner`)}
-          </span>
+          <span className="font-semibold">{t(`brand.title`)}</span>{" "}
+          {t(`brand.projectOf`)}
         </p>
+        <a
+          href="https://innovazione.gov.it/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block mt-2"
+        >
+          <img
+            src="/footer-logo-dipartimento.png"
+            alt={t(`brand.projectOwner`)}
+            className="h-10 w-auto"
+          />
+          <span className="sr-only">{t(`license.newWindow`)}</span>
+        </a>
       </div>
       <nav
         aria-label={t(`navLabel`, { defaultValue: "Link del footer" })}
