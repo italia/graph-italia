@@ -147,11 +147,5 @@
     "primary": "Vai alla guida Quick Start",
     "secondaryUser": "Vai ai miei grafici",
     "secondaryGuest": "Accedi"
-  },
-  "aboutFooter": {
-    "title": "Informazioni sul progetto",
-    "copyright": "Copyright © 2023–presente · Presidenza del Consiglio dei Ministri",
-    "license": "Rilasciato sotto",
-    "licenseName": "GNU General Public License v3"
   }
 }

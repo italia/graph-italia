@@ -147,11 +147,5 @@
     "primary": "Go to Quick Start Guide",
     "secondaryUser": "Go to my charts",
     "secondaryGuest": "Log in"
-  },
-  "aboutFooter": {
-    "title": "About the project",
-    "copyright": "Copyright © 2023–present · Presidenza del Consiglio dei Ministri",
-    "license": "Released under the",
-    "licenseName": "GNU General Public License v3"
   }
 }

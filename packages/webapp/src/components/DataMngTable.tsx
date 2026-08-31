@@ -6,6 +6,7 @@ import type { MatrixType } from "graph-italia-components";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import { useAriaSort } from "../hooks/useAriaSort";
+import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import registerDarkTheme from "./layout/DataTableDarkTheme";
 
@@ -52,6 +53,7 @@ export default function DataTable({
     headersOf(data),
   );
   const [sortState, setSortState] = useState<SortState>(null);
+  const [transposeAnnouncement, setTransposeAnnouncement] = useState("");
   // The matrix we last handed to the parent comes back through the `data` prop:
   // it carries only the visible columns, so treating it as a new dataset would
   // reset the selection and drop the hidden columns for good.
@@ -97,14 +99,20 @@ export default function DataTable({
     return headers
       .filter((key) => visibleColumns.has(key))
       .map((key, i) => ({
-        name: key,
+        id: key,
+        name: (
+          <SortHeaderButton
+            label={key}
+            direction={sortState?.columnKey === key ? sortState.direction : undefined}
+          />
+        ),
         selector: (row: RowRecord) => row[key],
         sortable: true,
         reorder: true,
         wrap: true,
         style: i === 0 ? { fontWeight: "bold" } : undefined,
       }));
-  }, [headers, visibleColumns]);
+  }, [headers, visibleColumns, sortState]);
 
   const rows: RowRecord[] = useMemo(() => {
     if (!workingData || workingData.length < 2) return [];
@@ -150,6 +158,17 @@ export default function DataTable({
     });
     emittedData.current = transposed;
     onApplyData?.(transposed);
+    // Announce the outcome to assistive tech (WCAG 4.1.3): the table changes
+    // visually but a screen reader user gets no other confirmation.
+    setTransposeAnnouncement("");
+    setTimeout(() => {
+      setTransposeAnnouncement(
+        t("actions.transposedStatus", {
+          rows: Math.max(0, transposed.length - 1),
+          cols: Math.max(0, (transposed[0]?.length ?? 1) - 1),
+        }),
+      );
+    }, 100);
   }
 
   function internalReset() {
@@ -250,7 +269,12 @@ export default function DataTable({
 
   const handleSort = useCallback(
     (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) {
         setSortState({ columnKey: key, direction });
       }
@@ -262,7 +286,7 @@ export default function DataTable({
     (newCols: TableColumn<RowRecord>[]) => {
       if (!workingData?.[0]) return;
       const newOrder = newCols
-        .map((c) => (typeof c.name === "string" ? c.name : ""))
+        .map((c) => (c.id != null ? String(c.id) : typeof c.name === "string" ? c.name : ""))
         .filter(Boolean);
 
       // Map new column order to indices in current workingData
@@ -292,6 +316,9 @@ export default function DataTable({
             >
               {t("actions.transpose.label")}
             </button>
+            <div role="status" className="sr-only">
+              {transposeAnnouncement}
+            </div>
 
             <button
               type="button"
@@ -429,6 +456,7 @@ export default function DataTable({
           )}
 
           <div className="mt-4" ref={tableRef}>
+            <SortStatus sortState={sortState} />
             <DataTableComponent
               columns={columns}
               data={rows}

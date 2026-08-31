@@ -288,15 +288,16 @@
             "footer": {
                 "brand": {
                     "title": "Graph Italia",
-                    "tagline": "Shape your data"
+                    "projectOf": "is a project of",
+                    "projectOwner": "Dipartimento per la trasformazione digitale"
+                },
+                "navLabel": "Footer links",
+                "license": {
+                    "prefix": "Released under the",
+                    "name": "GNU General Public License v3",
+                    "newWindow": "(opens in a new window)"
                 },
                 "links": {
-                    "quickstart": {
-                        "label": "Quick Start"
-                    },
-                    "docs": {
-                        "label": "Documentation"
-                    },
                     "tos": {
                         "label": "Terms of service"
                     },
@@ -366,6 +367,7 @@
                     "transpose": {
                         "label": "Transpose"
                     },
+                    "transposedStatus": "Table transposed: now {{rows}} rows and {{cols}} columns",
                     "reset": {
                         "label": "Reset"
                     },
@@ -735,6 +737,7 @@
                 "transpose": {
                     "label": "Transpose"
                 },
+                "transposedStatus": "Table transposed: now {{rows}} rows and {{cols}} columns",
                 "applyChanges": {
                     "label": "Apply Changes"
                 },
@@ -869,6 +872,11 @@
         },
         "loading": {
             "label": "Loading"
+        },
+        "sortHeader": {
+            "sortable": "sortable",
+            "sortedAsc": "sorted ascending",
+            "sortedDesc": "sorted descending"
         },
         "themeSwitcher": {
             "label": "Theme",

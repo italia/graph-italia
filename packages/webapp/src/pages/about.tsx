@@ -540,39 +540,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <Divider />
-
-        {/* ══════════════════════════════════════════════════════════════════
-            FOOTER BAND
-           ══════════════════════════════════════════════════════════════════ */}
-        <section
-          className="py-10 bg-base-300/30"
-          aria-labelledby="about-project-heading"
-        >
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-3">
-            <h2
-              id="about-project-heading"
-              className="text-xl font-bold text-base-content"
-            >
-              {t("aboutFooter.title")}
-            </h2>
-            <p className="text-sm text-base-content/50">
-              {t("aboutFooter.copyright")}
-            </p>
-            <p className="text-sm text-base-content/50">
-              {t("aboutFooter.license")}{" "}
-              <a
-                href="https://www.gnu.org/licenses/gpl-3.0.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link link-primary"
-              >
-                {t("aboutFooter.licenseName")}
-              </a>
-              .
-            </p>
-          </div>
-        </section>
       </div>
     </Layout>
   );

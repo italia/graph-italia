@@ -40,6 +40,7 @@ export default function GenericDialog({
   confirmDisabled = false,
 }: GenericDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const { t } = useTranslation("components", {
     keyPrefix: "components.dialog",
   });
@@ -66,6 +67,10 @@ export default function GenericDialog({
     if (ref.current) {
       if (toggle) {
         ref.current.showModal();
+        // showModal() would land the focus on the first focusable element
+        // (the X button): move it to the title so the screen reader announces
+        // the modal context first (WCAG 2.4.3).
+        requestAnimationFrame(() => titleRef.current?.focus());
       } else {
         ref.current.close();
       }
@@ -92,7 +97,7 @@ export default function GenericDialog({
         {/* Title with h2 for accessibility - Italian Design guideline.
             DOM order: title first so screen readers announce the modal
             purpose before the close affordance (WCAG 1.3.2). */}
-        <h2 id="modal-title" className="font-bold text-xl pr-8">
+        <h2 id="modal-title" ref={titleRef} tabIndex={-1} className="font-bold text-xl pr-8 outline-none">
           {title}
         </h2>
 

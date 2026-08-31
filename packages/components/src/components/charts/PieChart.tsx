@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
-import { useChartKeyboard } from "../../lib/useChartKeyboard";
+import { chartLiveRegionStyle, useChartKeyboard } from "../../lib/useChartKeyboard";
 
 function PieChart({
   id,
@@ -121,7 +121,7 @@ function PieChart({
   }
 
   const ariaLabel = `${data?.config?.title || "Grafico a torta"}. ${keyboardHint || "Usa le frecce per esplorare i settori, Esc per uscire."}`;
-  const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
+  const { containerProps, announcement } = useChartKeyboard(localInstance, ariaLabel);
   if (!data) return <div>...</div>;
   let h = (data.config?.h || 350) * hFactor;
   const responsive =
@@ -132,7 +132,8 @@ function PieChart({
   const height = rowHeight ? "100%" : `${chartHeight}px`;
   const minHeight = rowHeight ? rowHeight : "auto";
   return (
-    <div key={id} id={"chart_" + id} {...keyboardProps}>
+    <>
+    <div key={id} id={"chart_" + id} {...containerProps}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
         theme={resolvedTheme}
@@ -146,6 +147,10 @@ function PieChart({
         }}
       />
     </div>
+    <div role="status" style={chartLiveRegionStyle}>
+      {announcement}
+    </div>
+    </>
   );
 }
 

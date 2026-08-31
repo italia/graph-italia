@@ -4,7 +4,7 @@ import type { EChartsType } from "echarts";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { formatTooltip } from "../../lib/utils";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
-import { useChartKeyboard } from "../../lib/useChartKeyboard";
+import { chartLiveRegionStyle, useChartKeyboard } from "../../lib/useChartKeyboard";
 import React from "react";
 
 function BasicChart({
@@ -247,9 +247,10 @@ function BasicChart({
   const height = (config?.h || 500) * hFactor;
   const seriesCount = data.dataSource?.series?.length ?? 0;
   const ariaLabel = `${config?.title || "Grafico"}. ${seriesCount > 0 ? `${seriesCount} serie. ` : ""}${keyboardHint || "Usa le frecce per esplorare i dati, Esc per uscire."}`;
-  const keyboardProps = useChartKeyboard(localInstance, ariaLabel);
+  const { containerProps, announcement } = useChartKeyboard(localInstance, ariaLabel);
   return (
-    <div style={{ textAlign: "left" }} {...keyboardProps}>
+    <>
+    <div style={{ textAlign: "left" }} {...containerProps}>
       <ReactEcharts
         option={getOptions(data) as EChartsOption}
         theme={resolvedTheme}
@@ -263,6 +264,10 @@ function BasicChart({
         }}
       />
     </div>
+    <div role="status" style={chartLiveRegionStyle}>
+      {announcement}
+    </div>
+    </>
   );
 }
 

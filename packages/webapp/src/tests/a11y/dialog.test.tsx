@@ -34,6 +34,28 @@ describe("GenericDialog DOM order (1.3.2)", () => {
     expect(relation & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it("initial focus lands on the title, not on the close button (2.4.3)", async () => {
+    render(
+      <GenericDialog
+        toggle={true}
+        title="Conferma eliminazione"
+        labels={{ cancel: "Annulla" }}
+        cancelCb={() => {}}
+      >
+        <div>body</div>
+      </GenericDialog>,
+    );
+
+    // The focus is moved on the next animation frame after showModal()
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    const title = screen.getByRole("heading", {
+      level: 2,
+      name: /conferma eliminazione/i,
+    });
+    expect(document.activeElement).toBe(title);
+  });
+
   it("the dialog is labelled by the modal title", () => {
     render(
       <GenericDialog

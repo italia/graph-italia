@@ -99,6 +99,40 @@ describe("useAriaSort (4.1.2 column sort state)", () => {
     ).not.toHaveAttribute("aria-sort");
   });
 
+  it("headers with an APG sort button leave the tab order and match by column id", () => {
+    function ButtonHarness({
+      sortState,
+    }: {
+      sortState: { columnKey: string; direction: "asc" | "desc" } | null;
+    }) {
+      const ref = useRef<HTMLDivElement>(null);
+      useAriaSort(ref, sortState);
+      return (
+        <div ref={ref}>
+          {["Nome", "Creato il"].map((c) => (
+            // Header with the label as data-column-id and a real button as
+            // column name, as rendered by our tables.
+            <div key={c} role="columnheader" tabIndex={0} data-column-id={c}>
+              <button type="button" data-sort-header>
+                {c}
+              </button>
+              <span aria-hidden="true">▾</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    const { getAllByRole } = render(
+      <ButtonHarness sortState={{ columnKey: "Nome", direction: "desc" }} />,
+    );
+    const [nome, creato] = getAllByRole("columnheader");
+    expect(nome).toHaveAttribute("aria-sort", "descending");
+    expect(nome).toHaveAttribute("tabindex", "-1");
+    expect(creato).toHaveAttribute("aria-sort", "none");
+    expect(creato).toHaveAttribute("tabindex", "-1");
+  });
+
   it("rerender updates aria-sort when sortState changes", () => {
     const { rerender, getByText } = render(
       <AriaSortHarness

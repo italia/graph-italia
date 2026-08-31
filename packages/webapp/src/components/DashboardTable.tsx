@@ -12,6 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -51,17 +52,33 @@ export default function DashboardTable({
 
   const handleSort = useCallback(
     (column: TableColumn<FieldDataType>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     [],
   );
 
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
+
   const navigate = useNavigate();
 
   const columns: TableColumn<FieldDataType>[] = [
     {
-      name: t(`columns.name.label`),
+      ...sortHeader(t(`columns.name.label`)),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -93,7 +110,7 @@ export default function DashboardTable({
       ),
     },
     {
-      name: t(`columns.createdAt.label`),
+      ...sortHeader(t(`columns.createdAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -102,7 +119,7 @@ export default function DashboardTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: t(`columns.updatedAt.label`),
+      ...sortHeader(t(`columns.updatedAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
@@ -169,6 +186,7 @@ export default function DashboardTable({
 
   return (
     <div ref={tableRef}>
+      <SortStatus sortState={sortState} />
       <DataTable
         ariaLabel={t("tableLabel", { defaultValue: "Le mie dashboard" })}
         columns={columns}

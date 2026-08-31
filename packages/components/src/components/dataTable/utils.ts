@@ -17,6 +17,12 @@ export type DataTableLabels = {
   exportCsvButton?: string;
   scrollLeftAriaLabel?: string;
   scrollRightAriaLabel?: string;
+  /** Announced inside sortable header buttons when the column is not sorted */
+  sortable?: string;
+  /** Announced for the actively sorted column, ascending */
+  sortedAscending?: string;
+  /** Announced for the actively sorted column, descending */
+  sortedDescending?: string;
   reorderColumnAriaLabel?: string;
 };
 
@@ -202,17 +208,34 @@ export function useAriaSort(
       '[role="columnheader"]'
     );
     headers.forEach((header) => {
-      // Sortable headers get tabIndex 0 from the library; aria-sort on a
-      // non-sortable column would wrongly advertise it as sortable.
-      if (header.getAttribute("tabindex") !== "0") {
+      const sortButton = header.querySelector<HTMLElement>(
+        "button[data-sort-header]"
+      );
+      // The library makes the whole header focusable (tabIndex 0): with a
+      // real button inside (APG sortable-table pattern), the header must
+      // leave the tab order or every column becomes a double tab stop.
+      if (sortButton) header.setAttribute("tabindex", "-1");
+
+      // Sortable headers: ours carry the button, the library's get tabIndex
+      // 0. aria-sort on a non-sortable column would wrongly advertise it.
+      const sortable =
+        !!sortButton || header.getAttribute("tabindex") === "0";
+      if (!sortable) {
         header.removeAttribute("aria-sort");
         return;
       }
-      // Read the name from the inner title element so a custom sort icon
-      // rendered next to it never pollutes the comparison.
-      const nameEl = header.querySelector<HTMLElement>("div[data-column-id]");
+      // Match by the explicit column id when the table sets it to the label,
+      // otherwise by the name element text, so a custom sort icon rendered
+      // next to it never pollutes the comparison.
+      const columnId = header.getAttribute("data-column-id") ?? "";
+      const nameEl = header.querySelector<HTMLElement>(
+        "div[data-column-id], button[data-sort-header]"
+      );
       const colName = (nameEl ?? header).textContent?.trim() ?? "";
-      if (sortState && colName === sortState.columnKey) {
+      const isActive =
+        sortState != null &&
+        (columnId === sortState.columnKey || colName === sortState.columnKey);
+      if (isActive) {
         header.setAttribute(
           "aria-sort",
           sortState.direction === "asc" ? "ascending" : "descending"

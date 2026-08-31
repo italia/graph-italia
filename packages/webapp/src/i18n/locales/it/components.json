@@ -288,15 +288,16 @@
             "footer": {
                 "brand": {
                     "title": "Graph Italia",
-                    "tagline": "Dai forma ai tuoi dati"
+                    "projectOf": "è un progetto di",
+                    "projectOwner": "Dipartimento per la trasformazione digitale"
+                },
+                "navLabel": "Link del footer",
+                "license": {
+                    "prefix": "Rilasciato sotto",
+                    "name": "GNU General Public License v3",
+                    "newWindow": "(si apre in una nuova finestra)"
                 },
                 "links": {
-                    "quickstart": {
-                        "label": "Come iniziare"
-                    },
-                    "docs": {
-                        "label": "Documentazione"
-                    },
                     "tos": {
                         "label": "Termini del servizio"
                     },
@@ -366,6 +367,7 @@
                     "transpose": {
                         "label": "Trasponi"
                     },
+                    "transposedStatus": "Tabella trasposta: ora {{rows}} righe e {{cols}} colonne",
                     "reset": {
                         "label": "Reimposta"
                     },
@@ -735,6 +737,7 @@
                 "transpose": {
                     "label": "Trasponi"
                 },
+                "transposedStatus": "Tabella trasposta: ora {{rows}} righe e {{cols}} colonne",
                 "applyChanges": {
                     "label": "Applica modifiche"
                 },
@@ -869,6 +872,11 @@
         },
         "loading": {
             "label": "Caricamento in corso"
+        },
+        "sortHeader": {
+            "sortable": "ordinabile",
+            "sortedAsc": "ordinato in modo crescente",
+            "sortedDesc": "ordinato in modo decrescente"
         },
         "themeSwitcher": {
             "label": "Tema",

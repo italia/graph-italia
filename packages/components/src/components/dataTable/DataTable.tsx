@@ -21,6 +21,36 @@ import {
 
 registerDataTableDarkTheme();
 
+/**
+ * Real <button> as the sortable column name (APG sortable-table pattern):
+ * screen readers announce it as a button, Space/Enter activate it natively,
+ * and the click bubbles to the library's header sort handler. The keypress
+ * is stopped so the library's legacy Enter handler doesn't double-fire.
+ * @see https://www.w3.org/WAI/ARIA/apg/patterns/table/examples/sortable-table/
+ */
+const sortHeaderButtonStyle: React.CSSProperties = {
+  background: "none",
+  border: 0,
+  padding: 0,
+  margin: 0,
+  font: "inherit",
+  color: "inherit",
+  textAlign: "inherit",
+  cursor: "pointer",
+};
+
+const srOnlyStyle: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
 export default function DataTable(props: DataTableProps) {
   const {
     data,
@@ -43,6 +73,9 @@ export default function DataTable(props: DataTableProps) {
     columnVisibilityCloseAriaLabel:
       labels?.columnVisibilityCloseAriaLabel ?? "Chiudi filtri colonne",
     exportCsvButton: labels?.exportCsvButton ?? "Esporta CSV",
+    sortable: labels?.sortable ?? "ordinabile",
+    sortedAscending: labels?.sortedAscending ?? "ordinato in modo crescente",
+    sortedDescending: labels?.sortedDescending ?? "ordinato in modo decrescente",
   };
 
   const scheme = useColorScheme();
@@ -86,7 +119,24 @@ export default function DataTable(props: DataTableProps) {
       const originalIndex = headers.indexOf(key);
       return {
         id: key,
-        name: key,
+        name: (
+          <button
+            type="button"
+            data-sort-header
+            style={sortHeaderButtonStyle}
+            onKeyPress={(event) => event.stopPropagation()}
+          >
+            {key}
+            <span style={srOnlyStyle}>
+              {", "}
+              {sortState?.columnKey === key
+                ? sortState.direction === "asc"
+                  ? resolvedLabels.sortedAscending
+                  : resolvedLabels.sortedDescending
+                : resolvedLabels.sortable}
+            </span>
+          </button>
+        ),
         selector: (row) => row[key] as string | number,
         sortable: true,
         reorder: enableColumnReorder,
@@ -106,11 +156,26 @@ export default function DataTable(props: DataTableProps) {
         style: displayIndex === 0 ? { fontWeight: "bold" } : undefined,
       };
     });
-  }, [orderedVisibleHeaders, headers, enableColumnReorder, format, formatValue]);
+  }, [
+    orderedVisibleHeaders,
+    headers,
+    enableColumnReorder,
+    format,
+    formatValue,
+    sortState,
+    resolvedLabels.sortable,
+    resolvedLabels.sortedAscending,
+    resolvedLabels.sortedDescending,
+  ]);
 
   const handleSort = useCallback(
     (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     []
@@ -119,7 +184,7 @@ export default function DataTable(props: DataTableProps) {
   const handleColumnOrderChange = useCallback(
     (newCols: TableColumn<RowRecord>[]) => {
       const newOrder = newCols
-        .map((c) => (typeof c.name === "string" ? c.name : ""))
+        .map((c) => (c.id != null ? String(c.id) : typeof c.name === "string" ? c.name : ""))
         .filter(Boolean);
       // Merge into the full column order, preserving the positions of any
       // currently hidden columns.
@@ -163,6 +228,15 @@ export default function DataTable(props: DataTableProps) {
         onToggleColumn={toggleColumn}
       />
       <div ref={tableRef} className="mid-table-wrapper">
+        <div role="status" style={srOnlyStyle}>
+          {sortState
+            ? `${sortState.columnKey}: ${
+                sortState.direction === "asc"
+                  ? resolvedLabels.sortedAscending
+                  : resolvedLabels.sortedDescending
+              }`
+            : ""}
+        </div>
         <DataTableComponent
           columns={columns}
           data={rows}
