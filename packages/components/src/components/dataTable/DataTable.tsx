@@ -21,6 +21,24 @@ import {
 
 registerDataTableDarkTheme();
 
+/**
+ * Real <button> as the sortable column name (APG sortable-table pattern):
+ * screen readers announce it as a button, Space/Enter activate it natively,
+ * and the click bubbles to the library's header sort handler. The keypress
+ * is stopped so the library's legacy Enter handler doesn't double-fire.
+ * @see https://www.w3.org/WAI/ARIA/apg/patterns/table/examples/sortable-table/
+ */
+const sortHeaderButtonStyle: React.CSSProperties = {
+  background: "none",
+  border: 0,
+  padding: 0,
+  margin: 0,
+  font: "inherit",
+  color: "inherit",
+  textAlign: "inherit",
+  cursor: "pointer",
+};
+
 export default function DataTable(props: DataTableProps) {
   const {
     data,
@@ -86,7 +104,16 @@ export default function DataTable(props: DataTableProps) {
       const originalIndex = headers.indexOf(key);
       return {
         id: key,
-        name: key,
+        name: (
+          <button
+            type="button"
+            data-sort-header
+            style={sortHeaderButtonStyle}
+            onKeyPress={(event) => event.stopPropagation()}
+          >
+            {key}
+          </button>
+        ),
         selector: (row) => row[key] as string | number,
         sortable: true,
         reorder: enableColumnReorder,
@@ -110,7 +137,12 @@ export default function DataTable(props: DataTableProps) {
 
   const handleSort = useCallback(
     (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     []
@@ -119,7 +151,7 @@ export default function DataTable(props: DataTableProps) {
   const handleColumnOrderChange = useCallback(
     (newCols: TableColumn<RowRecord>[]) => {
       const newOrder = newCols
-        .map((c) => (typeof c.name === "string" ? c.name : ""))
+        .map((c) => (c.id != null ? String(c.id) : typeof c.name === "string" ? c.name : ""))
         .filter(Boolean);
       // Merge into the full column order, preserving the positions of any
       // currently hidden columns.

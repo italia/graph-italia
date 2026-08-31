@@ -6,6 +6,7 @@ import type { MatrixType } from "graph-italia-components";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import { useAriaSort } from "../hooks/useAriaSort";
+import SortHeaderButton from "./layout/SortHeaderButton";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import registerDarkTheme from "./layout/DataTableDarkTheme";
 
@@ -98,7 +99,8 @@ export default function DataTable({
     return headers
       .filter((key) => visibleColumns.has(key))
       .map((key, i) => ({
-        name: key,
+        id: key,
+        name: <SortHeaderButton label={key} />,
         selector: (row: RowRecord) => row[key],
         sortable: true,
         reorder: true,
@@ -262,7 +264,12 @@ export default function DataTable({
 
   const handleSort = useCallback(
     (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) {
         setSortState({ columnKey: key, direction });
       }
@@ -274,7 +281,7 @@ export default function DataTable({
     (newCols: TableColumn<RowRecord>[]) => {
       if (!workingData?.[0]) return;
       const newOrder = newCols
-        .map((c) => (typeof c.name === "string" ? c.name : ""))
+        .map((c) => (c.id != null ? String(c.id) : typeof c.name === "string" ? c.name : ""))
         .filter(Boolean);
 
       // Map new column order to indices in current workingData

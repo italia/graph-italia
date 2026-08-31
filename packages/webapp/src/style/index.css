@@ -235,6 +235,27 @@
   outline-color: #66b3ff;
 }
 
+/* Sortable-header buttons (APG pattern): visually identical to the previous
+   plain-text header, with their own visible keyboard focus now that the
+   columnheader div has left the tab order. */
+.rdt-sort-header-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.rdt-sort-header-btn:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+[data-theme="scuro"] .rdt-sort-header-btn:focus-visible {
+  outline-color: #66b3ff;
+}
+
 /* Outline badges ("Livello 1/2/3" on the homepage) reuse the primary blue for
    text and border: 2.89:1 on the dark cards, below the 4.5:1 required for
    text. Same readable blue as the foreground overrides above (7.25:1). */

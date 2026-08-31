@@ -11,6 +11,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import SortHeaderButton from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -49,7 +50,12 @@ export default function DataSourceTable({
 
   const handleSort = useCallback(
     (column: TableColumn<DatasourceItem>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     [],
@@ -59,7 +65,8 @@ export default function DataSourceTable({
 
   const columns: TableColumn<DatasourceItem>[] = [
     {
-      name: t("columns.name.label", { defaultValue: "Name" }),
+      id: t("columns.name.label", { defaultValue: "Name" }),
+      name: <SortHeaderButton label={t("columns.name.label", { defaultValue: "Name" })} />,
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -103,7 +110,8 @@ export default function DataSourceTable({
       ),
     },
     {
-      name: t("columns.createdAt.label", { defaultValue: "Created" }),
+      id: t("columns.createdAt.label", { defaultValue: "Created" }),
+      name: <SortHeaderButton label={t("columns.createdAt.label", { defaultValue: "Created" })} />,
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -112,7 +120,8 @@ export default function DataSourceTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: t("columns.updatedAt.label", { defaultValue: "Updated" }),
+      id: t("columns.updatedAt.label", { defaultValue: "Updated" }),
+      name: <SortHeaderButton label={t("columns.updatedAt.label", { defaultValue: "Updated" })} />,
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",

@@ -12,6 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import SortHeaderButton from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -51,7 +52,12 @@ export default function DashboardTable({
 
   const handleSort = useCallback(
     (column: TableColumn<FieldDataType>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     [],
@@ -61,7 +67,8 @@ export default function DashboardTable({
 
   const columns: TableColumn<FieldDataType>[] = [
     {
-      name: t(`columns.name.label`),
+      id: t(`columns.name.label`),
+      name: <SortHeaderButton label={t(`columns.name.label`)} />,
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -93,7 +100,8 @@ export default function DashboardTable({
       ),
     },
     {
-      name: t(`columns.createdAt.label`),
+      id: t(`columns.createdAt.label`),
+      name: <SortHeaderButton label={t(`columns.createdAt.label`)} />,
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -102,7 +110,8 @@ export default function DashboardTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: t(`columns.updatedAt.label`),
+      id: t(`columns.updatedAt.label`),
+      name: <SortHeaderButton label={t(`columns.updatedAt.label`)} />,
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",

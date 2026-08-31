@@ -9,6 +9,8 @@ import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
 import dataTableStyles from "../layout/dataTableStyles.ts";
 import { paginationIcons } from "../layout/paginationIcons";
 import GenericDialog from "../layout/GenericDialog.tsx";
+import SortHeaderButton from "../layout/SortHeaderButton";
+import { useAriaSort } from "../../hooks/useAriaSort";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
 import ToggleTableColumns from "./ToggleTableColumns.tsx";
 import SortTableColumns from "./SortTableColumns.tsx";
@@ -164,40 +166,23 @@ export default function TransformData({
       .filter((key) => visibleColumns.has(key))
       .map((key) => ({
         id: key,
-        name: key,
+        name: <SortHeaderButton label={key} />,
         selector: (row: RowRecord) => row[key] as string,
         sortable: true,
         reorder: true,
       }));
   }, [columnOrder, visibleColumns]);
 
-  // a11y: react-data-table-component does not expose aria-sort on column
-  // headers, so we sync it manually after each render. Sort icons rendered by
-  // the library are also aria-hidden to avoid duplicate announcements.
+  // a11y: aria-sort + APG header buttons via the shared hook (the library
+  // does not expose sort state on its column headers).
   const tableRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const root = tableRef.current;
-    if (!root) return;
-    const headers = root.querySelectorAll<HTMLElement>(
-      '[role="columnheader"][data-column-id]',
-    );
-    headers.forEach((el) => {
-      const id = el.getAttribute("data-column-id");
-      const value =
-        sortState && sortState.columnKey === id
-          ? sortState.direction === "asc"
-            ? "ascending"
-            : "descending"
-          : "none";
-      el.setAttribute("aria-sort", value);
-    });
-  }, [sortState, columns]);
+  useAriaSort(tableRef, sortState);
 
   // Handle column reorder from DataTable drag-and-drop
   const handleColumnOrderChange = useCallback(
     (newCols: TableColumn<RowRecord>[]) => {
       const newOrder = newCols
-        .map((c) => (typeof c.name === "string" ? c.name : ""))
+        .map((c) => (c.id != null ? String(c.id) : typeof c.name === "string" ? c.name : ""))
         .filter(Boolean);
       // Merge: keep hidden columns in their relative position, update visible order
       setColumnOrder((prev) => {
@@ -212,7 +197,12 @@ export default function TransformData({
   // Handle sort change from DataTable
   const handleSort = useCallback(
     (column: TableColumn<RowRecord>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) {
         setSortState({ columnKey: key, direction });
       }
