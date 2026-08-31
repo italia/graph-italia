@@ -4,7 +4,6 @@ export default function Footer() {
   const { t } = useTranslation("components", {
     keyPrefix: "components.layout.footer",
   });
-  const brand = t(`brand.title`);
   const tagline = t(`brand.tagline`);
 
   return (
@@ -21,17 +20,40 @@ export default function Footer() {
             )}
           </div>
         </div>
+        {/* Ente di appartenenza nel footer, come da UI Kit: "è un progetto di"
+            + ente. Il logo PCM potrà affiancare il nome quando disponibile. */}
+        <p className="m-0 mt-3 text-sm">
+          {t(`brand.title`)} {t(`brand.projectOf`)}{" "}
+          <span className="block font-semibold text-base">
+            {t(`brand.projectOwner`)}
+          </span>
+        </p>
       </div>
       <nav
         aria-label={t(`navLabel`, { defaultValue: "Link del footer" })}
         className="grid-flow-col gap-4 md:place-self-center md:justify-self-end"
       >
-        <a href="/quickstart" className="underline">
-          {t(`links.quickstart.label`)}
-        </a>
-        <a href="/docs" className="underline">
-          {t(`links.docs.label`, { defaultValue: "Documentazione" })}
-        </a>
+        <span>
+          {t(`license.prefix`)}{" "}
+          <a
+            href="https://www.gnu.org/licenses/gpl-3.0.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline inline-flex items-center gap-1"
+          >
+            {t(`license.name`)}
+            <svg
+              className="w-4 h-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M14 3v2h3.59l-9.3 9.29 1.42 1.42L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z" />
+            </svg>
+            <span className="sr-only">{t(`license.newWindow`)}</span>
+          </a>
+        </span>
         <a href="/terms-of-service" className="underline">
           {t(`links.tos.label`)}
         </a>
@@ -54,7 +76,7 @@ export default function Footer() {
           >
             <path d="M14 3v2h3.59l-9.3 9.29 1.42 1.42L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z" />
           </svg>
-          <span className="sr-only">(si apre in una nuova finestra)</span>
+          <span className="sr-only">{t(`license.newWindow`)}</span>
         </a>
       </nav>
     </footer>

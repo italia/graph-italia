@@ -288,15 +288,17 @@
             "footer": {
                 "brand": {
                     "title": "Graph Italia",
-                    "tagline": "Dai forma ai tuoi dati"
+                    "tagline": "Dai forma ai tuoi dati",
+                    "projectOf": "è un progetto di",
+                    "projectOwner": "Presidenza del Consiglio dei Ministri"
+                },
+                "navLabel": "Link del footer",
+                "license": {
+                    "prefix": "Rilasciato sotto",
+                    "name": "GNU General Public License v3",
+                    "newWindow": "(si apre in una nuova finestra)"
                 },
                 "links": {
-                    "quickstart": {
-                        "label": "Come iniziare"
-                    },
-                    "docs": {
-                        "label": "Documentazione"
-                    },
                     "tos": {
                         "label": "Termini del servizio"
                     },

@@ -540,51 +540,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <Divider />
-
-        {/* ══════════════════════════════════════════════════════════════════
-            FOOTER BAND
-           ══════════════════════════════════════════════════════════════════ */}
-        <section
-          className="py-10 bg-base-300/30"
-          aria-labelledby="about-project-heading"
-        >
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-3">
-            <h2
-              id="about-project-heading"
-              className="text-xl font-bold text-base-content"
-            >
-              {t("aboutFooter.title")}
-            </h2>
-            <p className="text-sm text-base-content/50">
-              {t("aboutFooter.copyright")}
-            </p>
-            <p className="text-sm text-base-content/50">
-              {t("aboutFooter.license")}{" "}
-              <a
-                href="https://www.gnu.org/licenses/gpl-3.0.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link link-primary inline-flex items-center gap-1"
-              >
-                {t("aboutFooter.licenseName")}
-                <svg
-                  className="w-4 h-4 shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M14 3v2h3.59l-9.3 9.29 1.42 1.42L19 6.41V10h2V3h-7zM19 19H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z" />
-                </svg>
-                <span className="sr-only">
-                  {t("aboutFooter.opensInNewWindow")}
-                </span>
-              </a>
-              .
-            </p>
-          </div>
-        </section>
       </div>
     </Layout>
   );

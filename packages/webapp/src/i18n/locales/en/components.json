@@ -288,15 +288,17 @@
             "footer": {
                 "brand": {
                     "title": "Graph Italia",
-                    "tagline": "Shape your data"
+                    "tagline": "Shape your data",
+                    "projectOf": "is a project of",
+                    "projectOwner": "Presidenza del Consiglio dei Ministri"
+                },
+                "navLabel": "Footer links",
+                "license": {
+                    "prefix": "Released under the",
+                    "name": "GNU General Public License v3",
+                    "newWindow": "(opens in a new window)"
                 },
                 "links": {
-                    "quickstart": {
-                        "label": "Quick Start"
-                    },
-                    "docs": {
-                        "label": "Documentation"
-                    },
                     "tos": {
                         "label": "Terms of service"
                     },
