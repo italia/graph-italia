@@ -8,6 +8,7 @@ import { useUserStore } from "../../lib/store/user_store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
+import { handleDropdownKeyDown } from "../../lib/dropdownKeyboard";
 
 export default function HeaderCompleta() {
   const { t } = useTranslation("components", {
@@ -162,7 +163,16 @@ export default function HeaderCompleta() {
               {MENU.filter(i => !i.requireAuth).map((item) => {
                 if ("subMenu" in item) {
                   return (
-                    <li key={item.name} className="relative" ref={(el) => { dropdownRefs.current[item.name] = el; }}>
+                    <li
+                      key={item.name}
+                      className="relative"
+                      ref={(el) => { dropdownRefs.current[item.name] = el; }}
+                      onKeyDown={(e) =>
+                        handleDropdownKeyDown(e, openDropdown === item.name, (o) =>
+                          setOpenDropdown(o ? item.name : null),
+                        )
+                      }
+                    >
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 px-4 py-2 text-sm text-primary-content/90 hover:text-primary-content hover:bg-primary-content/10 transition-colors duration-150 bg-transparent border-none cursor-pointer"

@@ -7,6 +7,7 @@ import { useUserStore } from "../../lib/store/user_store.ts";
 import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
+import { handleDropdownKeyDown } from "../../lib/dropdownKeyboard";
 import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket, FaUserGear } from "react-icons/fa6";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 
@@ -114,6 +115,11 @@ export default function Header() {
                     <li
                       key={item.name}
                       className="relative"
+                      onKeyDown={(e) =>
+                        handleDropdownKeyDown(e, isOpen, (o) =>
+                          setOpenDropdown(o ? item.name : null),
+                        )
+                      }
                     >
                       <button
                         type="button"
@@ -185,7 +191,13 @@ export default function Header() {
           />
 
           {user ? (
-            <div className="relative" ref={dropdownUserRef}>
+            <div
+              className="relative"
+              ref={dropdownUserRef}
+              onKeyDown={(e) =>
+                handleDropdownKeyDown(e, dropdownUserOpen, setDropdownUserOpen)
+              }
+            >
               <button
                 type="button"
                 className="flex items-center justify-center w-8 h-8 rounded-full text-primary-content hover:bg-primary-content/15 bg-transparent border-none cursor-pointer transition-colors duration-150"

@@ -11,6 +11,7 @@ import {
   FaPencil,
 } from "react-icons/fa6";
 import Layout from "../../components/layout/index.tsx";
+import { handleDropdownKeyDown } from "../../lib/dropdownKeyboard";
 import Loading from "../../components/layout/Loading.tsx";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
@@ -384,13 +385,9 @@ function Home() {
             <div
               className="relative"
               ref={projectDropdownRef}
-              onKeyDown={(e) => {
-                if (e.key === "Escape" && projectDropdownOpen) {
-                  e.stopPropagation();
-                  setProjectDropdownOpen(false);
-                  projectTriggerRef.current?.focus();
-                }
-              }}
+              onKeyDown={(e) =>
+                handleDropdownKeyDown(e, projectDropdownOpen, setProjectDropdownOpen)
+              }
             >
               <button
                 type="button"
