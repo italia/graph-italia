@@ -517,13 +517,17 @@
             "dashboards": "Le mie dashboard",
             "noDashboards": "Le mie dashboard",
             "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare.",
-            "datasources": "Sorgenti dati"
+            "datasources": "File sorgente dati",
+            "chartsDescription": "Qui trovi l'elenco dei tuoi progetti per tipologia. Puoi modificare la visibilità, copiare il link o il codice embed per la pubblicazione e modificarlo.",
+            "dashboardsDescription": "Le dashboard sono un raccoglitore di più grafici e blocchi di testo in un'unica pagina.",
+            "datasourcesDescription": "Elenco dei file CSV o URL utilizzati come sorgente dati, possono essere aggiornati anche tramite API REST."
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
             "selectPrompt": "Seleziona Progetto",
             "newBtn": "Nuovo Progetto",
-            "help": "I progetti raggruppano grafici, dashboard e sorgenti dati. Il progetto attivo determina cosa vedi e dove viene salvato ciò che crei."
+            "help": "Qui trovi l'elenco dei tuoi grafici, dashboard e file sorgenti dati.",
+            "personal": "Progetti personali"
         },
         "body": {
             "actions": {
