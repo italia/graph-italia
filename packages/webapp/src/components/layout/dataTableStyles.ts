@@ -39,8 +39,6 @@ const dataTableStyles = {
     style: {
       fontSize: "1rem",
       fontWeight: 700,
-      textTransform: "uppercase" as const,
-      letterSpacing: "0.02em",
     },
   },
   cells: {

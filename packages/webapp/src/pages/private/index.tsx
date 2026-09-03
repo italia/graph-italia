@@ -409,12 +409,12 @@ function Home() {
                 <li className="px-2 py-1 text-xs text-base-content/60 pointer-events-none">
                   {t(
                     "projectSwitcher.help",
-                    "I progetti raggruppano grafici, dashboard e sorgenti dati. Il progetto attivo determina cosa vedi e dove viene salvato ciò che crei.",
+                    "Qui trovi l'elenco dei tuoi grafici, dashboard e file sorgenti dati.",
                   )}
                 </li>
                 {personalProjects.length > 0 && (
                   <>
-                    <li className="menu-title text-base uppercase opacity-60">{t("projectSwitcher.personal", "Personal Projects")}</li>
+                    <li className="menu-title text-base opacity-60">{t("projectSwitcher.personal", "Progetti personali")}</li>
                     {personalProjects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -449,7 +449,7 @@ function Home() {
                 {Object.entries(orgsWithProjects).map(([orgId, orgData]) => (
                   <Fragment key={orgId}>
                     <li className="divider my-0 opacity-20" aria-hidden="true"></li>
-                    <li className="menu-title text-base uppercase opacity-60">{orgData.name}</li>
+                    <li className="menu-title text-base opacity-60">{orgData.name}</li>
                     {orgData.projects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -532,7 +532,7 @@ function Home() {
               <p className="text-base-content/70 -mt-3 mb-4">
                 {t(
                   "header.chartsDescription",
-                  "Le visualizzazioni del progetto: grafici, mappe e indicatori numerici (KPI), pubblicabili e incorporabili in altri siti.",
+                  "Qui trovi l'elenco dei tuoi progetti per tipologia. Puoi modificare la visibilità, copiare il link o il codice embed per la pubblicazione e modificarlo.",
                 )}
               </p>
 
@@ -558,7 +558,7 @@ function Home() {
                 <p className="text-base-content/70 -mt-3 mb-4">
                   {t(
                     "header.dashboardsDescription",
-                    "Pagine componibili che raccolgono più grafici e blocchi di testo, da condividere con un unico link.",
+                    "Le dashboard sono un raccoglitore di più grafici e blocchi di testo in un'unica pagina.",
                   )}
                 </p>
                 {dashboardLoading ? (
@@ -589,12 +589,12 @@ function Home() {
                   id="datasources-section-heading"
                   className="text-lg mb-4 font-normal"
                 >
-                  {t("header.datasources", "Sorgenti dati")}
+                  {t("header.datasources", "File sorgente dati")}
                 </h2>
                 <p className="text-base-content/70 -mt-3 mb-4">
                   {t(
                     "header.datasourcesDescription",
-                    "I dataset riutilizzabili del progetto: file CSV caricati o collegamenti a URL remoti, consultabili e aggiornabili anche via API REST.",
+                    "Elenco dei file CSV o URL utilizzati come sorgente dati, possono essere aggiornati anche tramite API REST.",
                   )}
                 </p>
                 {datasourceLoading ? (

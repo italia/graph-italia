@@ -52,7 +52,8 @@ function PasswordRequirements({
   }
 
   return (
-    <ul className="mt-2 space-y-1 text-sm" aria-live="polite" role="status">
+    <div role="status" aria-live="polite">
+      <ul className="mt-2 space-y-1 text-sm">
       {PASSWORD_RULES.map((rule) => {
         const met = rule.test(password);
         return (
@@ -70,7 +71,8 @@ function PasswordRequirements({
           </li>
         );
       })}
-    </ul>
+      </ul>
+    </div>
   );
 }
 

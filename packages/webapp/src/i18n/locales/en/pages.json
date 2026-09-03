@@ -517,14 +517,17 @@
             "dashboards": "My dashboards",
             "noDashboards": "My dashboards",
             "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start.",
-            "datasources": "Data sources"
+            "datasources": "Data source files",
+            "chartsDescription": "Here you find the list of your items by type. You can change their visibility, copy the link or the embed code for publishing, and edit them.",
+            "dashboardsDescription": "Dashboards collect several charts and text blocks in a single page.",
+            "datasourcesDescription": "List of the CSV files or URLs used as data sources; they can also be updated through the REST API."
         },
         "projectSwitcher": {
             "title": "Your Projects",
-            "personal": "Personal Projects",
+            "personal": "Personal projects",
             "selectPrompt": "Select Project",
             "newBtn": "New Project",
-            "help": "Projects group charts, dashboards and data sources. The active project determines what you see and where new items are saved."
+            "help": "Here you find the list of your charts, dashboards and data source files."
         },
         "body": {
             "actions": {

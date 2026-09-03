@@ -1,66 +1,68 @@
 {
     "back": "Back to home",
     "title": "Getting started",
-    "description": "From signing up to your first published chart: the essential steps to use Graph Italia. This is not the full documentation, just what you need to find your bearings: for everything else the interface guides you along the way.",
+    "description": "From signing up to publishing your first chart: follow this guide to find out how to use Graph Italia.",
     "guide": {
         "account": {
             "title": "Sign up and log in",
             "items": [
-                "Press <strong>Log in</strong> in the top right corner and create an account with your email: you will receive a verification code to activate it.",
-                "Every account starts with a personal project; you can create more and share them with other people through <strong>organizations</strong>."
+                "In the top right corner, click <strong>Log in</strong> and create your account with your email address: you will receive a verification code to activate it.",
+                "Every account already has a personal project; you can create more and share them with other people through the <strong>Organizations</strong> feature."
             ]
         },
         "create": {
             "title": "Create a new item",
             "items": [
-                "From your <strong>private area</strong> press <strong>Create new</strong> and choose what to create: a chart, a KPI group, a map, a dashboard or a data source.",
-                "Give it a title and, optionally, a description right away (you can always change them later): the editor will open."
+                "In your <strong>private area</strong> click <strong>Create new</strong> and choose the kind of item you want to create: a chart, a KPI group, a map, a dashboard or a data source.",
+                "Give your item a title and, if needed, add a description to make it easier to identify. Both can be changed from the editor."
             ]
         },
         "data": {
-            "title": "Load your data",
+            "title": "Import your data",
             "items": [
-                "In the <strong>Load your data</strong> step you can import a <strong>CSV</strong> or <strong>JSON</strong> file from your computer, or connect a <strong>remote URL</strong>.",
-                "With a remote URL the chart stays linked to its source: when public, the server re-downloads the data if the saved copy is older than 24 hours.",
-                "After loading you can clean the table up: filter and reorder columns, rename headers, transpose rows and columns. If the data has repeated rows, the editor suggests an <strong>aggregation</strong> (count, sum or mean)."
+                "In <strong>Load your data</strong> you can import your data from a CSV or JSON file, or link the information from an external URL.",
+                "After loading, review the table structure and adjust it if needed. You can filter and reorder columns, rename headers, transpose rows and columns. Please note: if the data has repeated rows, the editor suggests an <strong>aggregation</strong> of the data (count, sum or mean)."
             ]
         },
         "configure": {
             "title": "Configure the chart",
             "items": [
-                "Choose the visualization type (<strong>bars, lines, pie or geographic map</strong>) and watch the preview update in real time.",
-                "The options let you set direction, color palette, legend, height and an optional logarithmic scale; <strong>Advanced settings</strong> group tooltip, grid and axes."
+                "Choose the kind of chart you want to create among <strong>bars, lines, pie or map</strong>, and watch the preview build up as you go.",
+                "You can configure and customize your chart with the available settings. In <strong>Advanced settings</strong> you can create and set up tooltip, grid and axes.",
+                "In the <strong>Info</strong> section you define the chart visibility: if <strong>public</strong> it can be seen by anyone with the direct link and embedded in other websites, if <strong>private</strong> it stays visible to you only."
             ]
         },
         "publish": {
             "title": "Save, publish and share",
             "items": [
-                "Press <strong>Save</strong>: the item appears in the lists of your private area.",
-                "In the <strong>Info</strong> section you decide its visibility: a <strong>public</strong> item is visible to anyone with the link and can be embedded in other websites; a <strong>private</strong> item stays visible to you only.",
-                "The <strong>Share</strong> column of the list has buttons to copy the public link and the embed code (iframe)."
+                "Once your changes are done click <strong>Save</strong>: your chart will appear in the list of your personal projects in the <strong>private area</strong>.",
+                "If you created a chart with public visibility, in the <strong>Share</strong> column you can copy the public link and the embed code (iframe) to integrate in your website."
             ]
         },
         "dashboard": {
             "title": "Compose a dashboard",
             "items": [
-                "A dashboard gathers several charts and text blocks in a single page: drag the slots on the grid, adjust their width and height, write texts in markdown.",
-                "A dashboard is also shared with a single public link."
+                "A dashboard collects several charts and text blocks in a single page: you can drag the items into the grid slots, adjust heights and widths and write the texts.",
+                "A dashboard can be shared with a public link."
             ]
         },
         "api": {
-            "title": "For developers",
+            "title": "Information for developers",
             "items": [
-                "From the user menu you can generate an <strong>API key</strong> (read-only or read/write) to use the project's REST APIs.",
-                "<strong>Data sources</strong> are reusable datasets that can also be updated via API: useful to feed data from a script or an external system."
+                "From the menu you can generate an <strong>API key</strong> (read-only or read/write) to use the project's REST APIs.",
+                "<strong>Data sources</strong> are datasets that can be reused and updated via API too: they are useful to feed data from a script or an external system."
             ]
         }
     },
     "footer": {
-        "text": "That is all you need to get started: for everything else, each section of the application has contextual help texts."
+        "text": "That is all you need to get started: for everything else, each section has contextual help texts."
     },
     "actions": {
         "getStarted": {
             "label": "Log in"
+        },
+        "register": {
+            "label": "Sign up"
         },
         "goToPrivateArea": {
             "label": "Go to your private area"
