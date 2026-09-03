@@ -3,6 +3,7 @@ import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CSVUpload from "../../components/load-data/CSVUpload";
 import JsonUpload from "../../components/load-data/JsonUpload";
+import "../../i18n/config";
 
 /**
  * Guards issue 4.1.3 (Messaggi di stato): after data is loaded from CSV/JSON,
@@ -30,7 +31,7 @@ describe("CSVUpload status messages (4.1.3)", () => {
     const onData = vi.fn();
     render(<CSVUpload setData={onData} />);
 
-    const input = screen.getByLabelText(/upload csv file/i) as HTMLInputElement;
+    const input = screen.getByLabelText(/carica file csv/i) as HTMLInputElement;
     const file = makeFile("a,b\n1,2\n3,4\n", "sample.csv", "text/csv");
 
     await act(async () => {
