@@ -115,9 +115,17 @@ export default function QuickStartPage() {
                   })}
                 </a>
               ) : (
-                <a href="/login" className="btn-italia btn-italia-primary">
-                  {t("actions.getStarted.label")}
-                </a>
+                <span className="inline-flex flex-wrap gap-3">
+                  <a href="/login" className="btn-italia btn-italia-primary">
+                    {t("actions.getStarted.label")}
+                  </a>
+                  <a
+                    href="/login?mode=register"
+                    className="btn-italia btn-italia-primary-outline"
+                  >
+                    {t("actions.register.label", { defaultValue: "Registrati" })}
+                  </a>
+                </span>
               )}
             </p>
           </article>

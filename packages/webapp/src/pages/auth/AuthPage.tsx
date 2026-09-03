@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import SignIn from "../../components/auth/SignIn";
 import SignUp from "../../components/auth/SignUp";
 import Layout from "../../components/layout";
 
 function AuthPage() {
-  const [login, setLogin] = useState(true);
+  const [searchParams] = useSearchParams();
+  const [login, setLogin] = useState(searchParams.get("mode") !== "register");
   const [welcome, showWelcome] = useState(false);
   const { t } = useTranslation("pages", { keyPrefix: "auth" });
 
