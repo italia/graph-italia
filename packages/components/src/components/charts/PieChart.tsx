@@ -5,6 +5,16 @@ import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import { chartLiveRegionStyle, useChartKeyboard } from "../../lib/useChartKeyboard";
+import { useColorScheme } from "../../context/ColorSchemeContext";
+import "./charts.css";
+
+/** Emphasis (hover and keyboard highlight) drawn with a strong border so
+ *  the active element is visible whatever the series colour (WCAG 2.4.7). */
+const focusEmphasis = (dark: boolean) => ({
+  focus: "none" as const,
+  itemStyle: { borderColor: dark ? "#ffffff" : "#000000", borderWidth: 3 },
+});
+
 
 function PieChart({
   id,
@@ -14,8 +24,10 @@ function PieChart({
   rowHeight,
   hFactor = 1,
   keyboardHint,
+  altText,
 }: ChartPropsType) {
   const resolvedTheme = useResolvedTheme();
+  const isDark = useColorScheme() === "dark";
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
   const [localInstance, setLocalInstance] = useState<EChartsType | null>(null);
@@ -97,6 +109,7 @@ function PieChart({
       },
       series: {
         ...dataSource.series,
+        emphasis: { ...focusEmphasis(isDark), scale: true, scaleSize: 8 },
         labelLine: {
           show: showLabels && config.labeLine,
         },
@@ -120,8 +133,11 @@ function PieChart({
     return options;
   }
 
-  const ariaLabel = `${data?.config?.title || "Grafico a torta"}. ${keyboardHint || "Usa le frecce per esplorare i settori, Esc per uscire."}`;
-  const { containerProps, announcement } = useChartKeyboard(localInstance, ariaLabel);
+  const ariaLabel = `${altText || data?.config?.title || "Grafico a torta"}. ${keyboardHint || "Usa le frecce per esplorare i settori, Esc per uscire."}`;
+  const { containerProps, announcement } = useChartKeyboard(
+    () => refCanvas.current?.getEchartsInstance() ?? localInstance,
+    ariaLabel,
+  );
   if (!data) return <div>...</div>;
   let h = (data.config?.h || 350) * hFactor;
   const responsive =

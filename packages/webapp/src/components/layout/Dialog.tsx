@@ -19,7 +19,13 @@ export default function Dialog({ title, children, toggle, callback }: any) {
   }, [toggle, ref, children]);
 
   return (
-    <dialog ref={ref} className="modal">
+    <dialog
+      ref={ref}
+      className="modal"
+      // Escape closes a native <dialog> on its own: without this the parent
+      // still believes it is open and re-opens it on the next render
+      onClose={() => callback()}
+    >
       <div className="modal-box max-w-6xl max-h-full">
         <h2 ref={titleRef} tabIndex={-1} className="font-bold text-lg outline-none">{title}</h2>
         <div className="mx-auto">

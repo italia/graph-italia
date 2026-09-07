@@ -71,7 +71,7 @@ function ShowChartPage() {
             {chart.name && (
               <h1 className="text-2xl font-bold mb-1">{chart.name}</h1>
             )}
-            {chart.description && (
+            {chart.description && (chart.config as { showDescription?: boolean } | undefined)?.showDescription !== false && (
               <p className="text-base-content/70 mb-4">{chart.description}</p>
             )}
             <ColorSchemeProvider scheme={scheme}>
