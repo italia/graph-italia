@@ -6,7 +6,7 @@ import type { MatrixType } from "graph-italia-components";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { transposeData } from "../lib/utils";
 import { useAriaSort } from "../hooks/useAriaSort";
-import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import registerDarkTheme from "./layout/DataTableDarkTheme";
 
@@ -470,7 +470,7 @@ export default function DataTable({
               onColumnOrderChange={handleColumnOrderChange}
               onSort={handleSort}
               sortServer={false}
-              sortIcon={<span aria-hidden="true">▾</span>}
+              sortIcon={sortIcon}
             />
           </div>
         </div>

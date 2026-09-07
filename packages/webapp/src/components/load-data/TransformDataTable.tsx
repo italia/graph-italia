@@ -9,7 +9,7 @@ import registerDarkTheme from "../layout/DataTableDarkTheme.ts";
 import dataTableStyles from "../layout/dataTableStyles.ts";
 import { paginationIcons } from "../layout/paginationIcons";
 import GenericDialog from "../layout/GenericDialog.tsx";
-import SortHeaderButton, { SortStatus } from "../layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus, sortIcon } from "../layout/SortHeaderButton";
 import { useAriaSort } from "../../hooks/useAriaSort";
 import RenameTableHeadersForm from "./RenameTableHeadersForm.tsx";
 import ToggleTableColumns from "./ToggleTableColumns.tsx";
@@ -412,7 +412,7 @@ export default function TransformData({
           onColumnOrderChange={handleColumnOrderChange}
           onSort={handleSort}
           sortServer={false}
-          sortIcon={<span aria-hidden="true">▾</span>}
+          sortIcon={sortIcon}
         />
       </div>
 

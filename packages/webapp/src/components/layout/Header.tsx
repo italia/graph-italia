@@ -160,7 +160,7 @@ export default function Header() {
           >
             <div className="flex items-center justify-center">
               <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
-              <span className="font-semibold text-2xl hidden sm:inline">{t(`brand.title`)}</span>
+              <span className="font-semibold text-2xl hidden sm:inline whitespace-nowrap">{t(`brand.title`)}</span>
             </div>
           </a>
 
@@ -189,7 +189,7 @@ export default function Header() {
                     >
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-primary-content text-sm rounded bg-transparent border-none cursor-pointer hover:bg-primary-content/15"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-primary-content text-sm rounded bg-transparent border-none cursor-pointer hover:bg-primary-content/15 whitespace-nowrap"
                         aria-expanded={isOpen}
                         aria-haspopup="true"
                         onClick={() => setOpenDropdown(isOpen ? null : item.name)}
@@ -230,7 +230,7 @@ export default function Header() {
                   <li key={item.name}>
                     <a
                       href={item.link}
-                      className="inline-flex items-center px-3 py-1.5 text-primary-content text-sm rounded no-underline hover:bg-primary-content/15"
+                      className="inline-flex items-center px-3 py-1.5 text-primary-content text-sm rounded no-underline hover:bg-primary-content/15 whitespace-nowrap"
                     >
                       {item.translationKey
                         ? translateMenu(item.translationKey)
