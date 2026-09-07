@@ -1,6 +1,9 @@
 {
     "menu": {
         "items": {
+            "privateArea": {
+                "label": "Area privata"
+            },
             "quickStart": {
                 "label": "Come iniziare"
             },

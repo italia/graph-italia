@@ -11,6 +11,11 @@
         "oidc": {
             "loading": "Verifica del tuo account in corso…",
             "alreadyRegistered": "Hai già completato la registrazione. Accesso in corso…"
+        },
+        "registered": {
+            "title": "Registrazione completata",
+            "body": "Ti abbiamo inviato un'email con il link per attivare il tuo account. Dopo l'attivazione potrai accedere con la tua email e la password scelta.",
+            "cta": "Vai all'accesso"
         }
     },
     "charts": {
@@ -822,6 +827,13 @@
             "intro": "Le organizzazioni servono a far collaborare un gruppo di persone sugli stessi progetti: tutti i membri vedono e possono modificare grafici, dashboard e sorgenti dati dei progetti associati all'organizzazione. Chi crea l'organizzazione ne è amministratore e può invitare membri via email, cambiarne il ruolo e associare o revocare progetti.",
             "members": "I membri con ruolo ADMIN possono invitare o rimuovere membri e gestire l'organizzazione; i membri USER accedono ai progetti associati senza poteri di amministrazione.",
             "projects": "“Trasferisci Progetto” associa un tuo progetto personale a questa organizzazione: tutti i membri potranno vederlo e modificarlo. Non è una cessione di proprietà — resti proprietario e puoi revocare l'associazione in qualsiasi momento (icona ⇄ accanto al progetto); con la revoca il progetto torna personale."
+        }
+    },
+    "settings": {
+        "title": "Modifica password",
+        "description": "Scegli una nuova password per il tuo account.",
+        "changePassword": {
+            "success": "Password aggiornata con successo."
         }
     }
 }

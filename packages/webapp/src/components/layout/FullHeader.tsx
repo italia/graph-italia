@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import { broadcastAuth } from "../../lib/authChannel";
@@ -9,6 +9,7 @@ import { useSettingsStore } from "../../lib/store/settings_store";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
 import { handleDropdownKeyDown } from "../../lib/dropdownKeyboard";
+import { useMobileMenuFocus } from "../../lib/useMobileMenuFocus";
 
 export default function HeaderCompleta() {
   const { t } = useTranslation("components", {
@@ -22,6 +23,10 @@ export default function HeaderCompleta() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
   const dropdownRefs = useRef<Record<string, HTMLLIElement | null>>({});
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLElement>(null);
+  const closeMobileMenu = useCallback(() => setMenuMobileOpen(false), []);
+  useMobileMenuFocus(menuMobileOpen, mobileMenuRef, hamburgerRef, closeMobileMenu);
 
   const handleLogout = async () => {
     try {
@@ -54,7 +59,7 @@ export default function HeaderCompleta() {
 
       {/* ── 1. SLIM BAR — accent (#0059b3), h-12, text-sm ── */}
       <div className="bg-accent">
-        <div className="mx-auto px-[18px] flex items-center justify-between h-12">
+        <div className="mx-auto px-[18px] flex items-center justify-between h-12 gap-2">
           <a
             href="https://innovazione.gov.it/"
             target="_blank"
@@ -65,7 +70,7 @@ export default function HeaderCompleta() {
           </a>
 
 
-          <div className="flex items-center gap-6 text-accent-content">
+          <div className="flex items-center gap-2 sm:gap-6 text-accent-content">
             <ThemeSwitcherComponent
               currentTheme={theme as "light" | "dark"}
               handleChange={setTheme}
@@ -86,10 +91,10 @@ export default function HeaderCompleta() {
             aria-label={t(`center.brand.homeLinkLabel`)}
             className="flex items-center no-underline group"
           >
-            <img className="w-20 h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
+            <img className="w-14 h-14 sm:w-20 sm:h-20 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
 
             <div className="ml-[-8px]">
-              <span className="block text-[2rem] font-semibold leading-tight text-primary-content ">
+              <span className="block text-2xl sm:text-[2rem] font-semibold leading-tight text-primary-content ">
                 {t(`center.brand.title`)}
               </span>
               <p className="text-sm font-medium text-primary-content m-0 mt-0.5 ml-0.5 opacity-100">
@@ -136,8 +141,9 @@ export default function HeaderCompleta() {
           <button
             type="button"
             className="flex items-center gap-2 text-primary-content hover:text-primary-content lg:hidden cursor-pointer bg-transparent border-none transition-colors duration-150"
-            aria-label="Menu"
+            ref={hamburgerRef}
             aria-expanded={menuMobileOpen}
+            aria-controls="mobile-nav"
             onClick={() => setMenuMobileOpen((v) => !v)}
           >
             <svg
@@ -158,7 +164,7 @@ export default function HeaderCompleta() {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex w-full items-center justify-between" aria-label="Navigazione principale">
+          <nav className="hidden lg:flex w-full items-center justify-between" aria-label={t("nav.label", "Navigazione principale")}>
             <ul className="flex items-center list-none m-0 p-0">
               {MENU.filter(i => !i.requireAuth).map((item) => {
                 if ("subMenu" in item) {
@@ -245,10 +251,15 @@ export default function HeaderCompleta() {
           </nav>
         </div>
 
-        {/* Mobile slide-down */}
-        <div
+        {/* Mobile slide-down: a landmark of its own, inert while closed so
+            its links are not tabbable (#120) */}
+        <nav
+          id="mobile-nav"
+          ref={mobileMenuRef}
+          aria-label={t("nav.label", "Navigazione principale")}
           className={`lg:hidden absolute top-full left-0 right-0 bg-primary shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] overflow-hidden z-[999] transition-all duration-200 ease-in-out ${menuMobileOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}
           aria-hidden={!menuMobileOpen}
+          inert={!menuMobileOpen}
         >
           <ul className="list-none m-0 px-[18px] py-2">
             {MENU.filter(i => !i.requireAuth).map((item) => {
@@ -308,7 +319,7 @@ export default function HeaderCompleta() {
               )}
             </li>
           </ul>
-        </div>
+        </nav>
       </div>
 
     </header>

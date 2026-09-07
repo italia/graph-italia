@@ -91,11 +91,15 @@ export type MenuItem =
   | (TMenuItem & { subMenu: readonly MenuSubItem[] });
 
 export const MENU: readonly MenuItem[] = [
-  // {
-  //   name: "Charts",
-  //   translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.charts.label`,
-  //   link: ROUTES.home,
-  // },
+  // The private area is the working space: it is listed first in the
+  // logged-in navigation, while the brand link keeps pointing to the public
+  // landing page (#65).
+  {
+    name: "Private area",
+    requireAuth: true,
+    translationKey: `${MENU_ITEMS_TRANSLATION_KEYS}.privateArea.label`,
+    link: ROUTES.home,
+  },
   {
     name: "Quick Start",
     requireAuth: false,

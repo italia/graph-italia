@@ -56,7 +56,8 @@
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Le password non corrispondono"
+                        "passwordDontMatch": "Le password non corrispondono",
+                        "generic": "Errore durante il cambio della password. Riprova."
                     },
                     "actions": {
                         "submit": {
@@ -189,7 +190,8 @@
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Le password non corrispondono"
+                        "passwordDontMatch": "Le password non corrispondono",
+                        "generic": "Errore durante la registrazione. Riprova."
                     },
                     "actions": {
                         "submit": {
@@ -219,6 +221,10 @@
                         }
                     }
                 }
+            },
+            "passwordToggle": {
+                "show": "Mostra password",
+                "hide": "Nascondi password"
             }
         },
         "layout": {
@@ -259,7 +265,8 @@
                         "hamburger": {
                             "label": "Menu"
                         }
-                    }
+                    },
+                    "label": "Navigazione principale"
                 }
             },
             "slimHeader": {
@@ -283,6 +290,11 @@
                     "requestAccountDeletion": {
                         "label": "Richiedi cancellazione account"
                     }
+                },
+                "nav": {
+                    "label": "Principale",
+                    "hamburger": "Menu",
+                    "close": "Chiudi menu"
                 }
             },
             "footer": {
@@ -500,41 +512,111 @@
                 "Axes": "Assi"
             },
             "fields": {
-                "zoom": { "label": "Mostra zoom" },
-                "smooth": { "label": "Curvatura linee" },
-                "showArea": { "label": "Mostra area" },
-                "showAllSymbol": { "label": "Mostra tutti i punti" },
-                "direction": { "label": "Direzione" },
-                "stack": { "label": "Valori impilati" },
-                "totalLabel": { "label": "Etichetta del totale" },
-                "showPieLabels": { "label": "Mostra etichette" },
-                "labeLine": { "label": "Mostra linee delle etichette" },
-                "geoJsonUrl": { "label": "URL GeoJson" },
-                "nameProperty": { "label": "Proprietà di corrispondenza" },
-                "showMapLabels": { "label": "Mostra etichette" },
-                "serieName": { "label": "Nome della serie" },
-                "areaColor": { "label": "Colore di sfondo delle aree" },
-                "visualMap": { "label": "Mostra scala colori" },
-                "visualMapLeft": { "label": "Posizione scala colori" },
-                "visualMapOrient": { "label": "Orientamento scala colori" },
-                "palette": { "label": "Palette" },
-                "h": { "label": "Altezza grafico (px)" },
-                "responsive": { "label": "Adattivo (responsive)" },
-                "legend": { "label": "Mostra legenda" },
-                "legendPosition": { "label": "Posizione legenda" },
-                "tooltip": { "label": "Mostra tooltip" },
-                "valueFormatter": { "label": "Suffisso dei valori" },
-                "tooltipFormatter": { "label": "Formato dei valori" },
-                "tooltipTrigger": { "label": "Attivazione tooltip" },
-                "gridHeight": { "label": "Altezza" },
-                "gridWidth": { "label": "Larghezza" },
-                "gridLeft": { "label": "Margine sinistro (%/px)" },
-                "gridRight": { "label": "Margine destro (%/px)" },
-                "gridTop": { "label": "Margine superiore (%/px)" },
-                "gridBottom": { "label": "Margine inferiore (%/px)" },
-                "xLabel": { "label": "Etichetta asse X" },
-                "yLabel": { "label": "Etichetta asse Y" },
-                "nameGap": { "label": "Distanza etichette assi" },
+                "zoom": {
+                    "label": "Mostra zoom"
+                },
+                "smooth": {
+                    "label": "Curvatura linee"
+                },
+                "showArea": {
+                    "label": "Mostra area"
+                },
+                "showAllSymbol": {
+                    "label": "Mostra tutti i punti"
+                },
+                "direction": {
+                    "label": "Direzione"
+                },
+                "stack": {
+                    "label": "Valori impilati"
+                },
+                "totalLabel": {
+                    "label": "Etichetta del totale"
+                },
+                "showPieLabels": {
+                    "label": "Mostra etichette"
+                },
+                "labeLine": {
+                    "label": "Mostra linee delle etichette"
+                },
+                "geoJsonUrl": {
+                    "label": "URL GeoJson"
+                },
+                "nameProperty": {
+                    "label": "Proprietà di corrispondenza"
+                },
+                "showMapLabels": {
+                    "label": "Mostra etichette"
+                },
+                "serieName": {
+                    "label": "Nome della serie"
+                },
+                "areaColor": {
+                    "label": "Colore di sfondo delle aree"
+                },
+                "visualMap": {
+                    "label": "Mostra scala colori"
+                },
+                "visualMapLeft": {
+                    "label": "Posizione scala colori"
+                },
+                "visualMapOrient": {
+                    "label": "Orientamento scala colori"
+                },
+                "palette": {
+                    "label": "Palette"
+                },
+                "h": {
+                    "label": "Altezza grafico (px)"
+                },
+                "responsive": {
+                    "label": "Adattivo (responsive)"
+                },
+                "legend": {
+                    "label": "Mostra legenda"
+                },
+                "legendPosition": {
+                    "label": "Posizione legenda"
+                },
+                "tooltip": {
+                    "label": "Mostra tooltip"
+                },
+                "valueFormatter": {
+                    "label": "Suffisso dei valori"
+                },
+                "tooltipFormatter": {
+                    "label": "Formato dei valori"
+                },
+                "tooltipTrigger": {
+                    "label": "Attivazione tooltip"
+                },
+                "gridHeight": {
+                    "label": "Altezza"
+                },
+                "gridWidth": {
+                    "label": "Larghezza"
+                },
+                "gridLeft": {
+                    "label": "Margine sinistro (%/px)"
+                },
+                "gridRight": {
+                    "label": "Margine destro (%/px)"
+                },
+                "gridTop": {
+                    "label": "Margine superiore (%/px)"
+                },
+                "gridBottom": {
+                    "label": "Margine inferiore (%/px)"
+                },
+                "xLabel": {
+                    "label": "Etichetta asse X"
+                },
+                "yLabel": {
+                    "label": "Etichetta asse Y"
+                },
+                "nameGap": {
+                    "label": "Distanza etichette assi"
+                },
                 "logScale": {
                     "label": "Scala logaritmica",
                     "hint": "Comprime i valori grandi e dilata i piccoli: utile quando le serie hanno ordini di grandezza molto diversi. I valori pari a zero o negativi non sono rappresentabili su questa scala."
@@ -676,7 +758,9 @@
         "datasourceTable": {
             "noDataComponent": "Nessuna sorgente dati creata",
             "columns": {
-                "name": { "label": "Nome" },
+                "name": {
+                    "label": "Nome"
+                },
                 "visibility": {
                     "label": "Visibilità",
                     "values": {
@@ -691,9 +775,15 @@
                         "local": "Locale"
                     }
                 },
-                "createdAt": { "label": "Creata il" },
-                "updatedAt": { "label": "Aggiornata il" },
-                "actions": { "label": "Azioni" }
+                "createdAt": {
+                    "label": "Creata il"
+                },
+                "updatedAt": {
+                    "label": "Aggiornata il"
+                },
+                "actions": {
+                    "label": "Azioni"
+                }
             },
             "actions": {
                 "edit": "Modifica",
@@ -883,7 +973,8 @@
             "values": {
                 "light": "Chiaro",
                 "dark": "Scuro"
-            }
+            },
+            "switchLabel": "Tema scuro"
         }
     }
 }

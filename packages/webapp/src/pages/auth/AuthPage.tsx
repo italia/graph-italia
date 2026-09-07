@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import SignIn from "../../components/auth/SignIn";
@@ -8,79 +8,59 @@ import Layout from "../../components/layout";
 function AuthPage() {
   const [searchParams] = useSearchParams();
   const [login, setLogin] = useState(searchParams.get("mode") !== "register");
-  const [welcome, showWelcome] = useState(false);
+  const [registered, setRegistered] = useState(false);
   const { t } = useTranslation("pages", { keyPrefix: "auth" });
+  const registeredHeading = useRef<HTMLHeadingElement>(null);
+
+  // After a successful sign-up the form is replaced by a confirmation panel
+  // (#70): the message sits at the top of the page, the heading receives
+  // focus so it is announced, and the next step is a single clear CTA.
+  useEffect(() => {
+    if (registered) {
+      window.scrollTo({ top: 0 });
+      registeredHeading.current?.focus();
+    }
+  }, [registered]);
 
   return (
     <Layout>
       <div className="flex flex-col  min-h-full justify-center items-center  px-4 sm:px-6 lg:px-8">
-        {welcome && (
-          <>
-            <div role="alert" className="alert alert-success mt-6 mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
+        {registered ? (
+          <section
+            aria-labelledby="registered-heading"
+            className="my-12 mx-auto w-full max-w-lg card bg-base-100 shadow-sm border border-base-200"
+          >
+            <div className="card-body p-8">
+              <h1
+                id="registered-heading"
+                ref={registeredHeading}
+                tabIndex={-1}
+                className="text-2xl font-bold leading-9 tracking-tight text-content outline-none"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-lg">{t("header.accountCreated.label")} </p>
+                {t("registered.title")}
+              </h1>
+              <p role="status" className="mt-4">
+                {t("registered.body")}
+              </p>
+              <p className="mt-6">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setRegistered(false);
+                    setLogin(true);
+                  }}
+                >
+                  {t("registered.cta")}
+                </button>
+              </p>
             </div>
-            <div role="alert" className="alert alert-info mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-lg">{t("header.checkEmail.label")}</p>
-            </div>
-          </>
+          </section>
+        ) : login ? (
+          <SignIn setLogin={setLogin} />
+        ) : (
+          <SignUp setLogin={setLogin} handleRegistered={() => setRegistered(true)} />
         )}
-        <>
-          {login ? (
-            <SignIn setLogin={setLogin} />
-          ) : (
-            <SignUp
-              setLogin={setLogin}
-              handleRegistered={() => showWelcome(true)}
-            />
-          )}
-        </>
-        {/* <div
-          className={`relative hidden w-0 flex-1 lg:block bg-cover  bg-center bg-no-repeat ${
-            login
-              ? "bg-[url('/images/undraw_Charts_re_5qe9.png')]"
-              : "bg-[url('/images/undraw_Data_re_80ws.png')]"
-          } `}
-        >
-          <div className='py-20 w-full h-full bg-primary opacity-90 text-primary-content flex flex-col items-center  justify-center '>
-            {login ? (
-              <>
-                <h1 className='text-6xl'>Welcome Back.</h1>
-                <p className='py-10 text-3xl'>we missed you!</p>
-              </>
-            ) : (
-              <>
-                <h1 className='text-6xl'>Create an account.</h1>
-                <p className='py-10 text-3xl'>Join the community.</p>
-              </>
-            )}
-          </div>
-        </div> */}
       </div>
     </Layout>
   );

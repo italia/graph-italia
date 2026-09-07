@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logout } from "../../lib/api";
 import { broadcastAuth } from "../../lib/authChannel.ts";
@@ -8,7 +8,8 @@ import type { MenuSubItem } from "../../router";
 import { MENU, ROUTES } from "../../router";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
 import { handleDropdownKeyDown } from "../../lib/dropdownKeyboard";
-import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket, FaUserGear } from "react-icons/fa6";
+import { useMobileMenuFocus } from "../../lib/useMobileMenuFocus";
+import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket, FaUserGear, FaChartBar } from "react-icons/fa6";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 
 
@@ -23,6 +24,10 @@ export default function Header() {
   const [menuMobileOpen, setMenuMobileOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const dropdownUserRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLElement>(null);
+  const closeMobileMenu = useCallback(() => setMenuMobileOpen(false), []);
+  useMobileMenuFocus(menuMobileOpen, mobileMenuRef, hamburgerRef, closeMobileMenu);
 
   const { settings, setTheme, setLanguage } = useSettingsStore();
   const theme = settings?.preferredTheme;
@@ -66,13 +71,15 @@ export default function Header() {
       {/* ── Main bar ── */}
       <div className="navbar bg-primary text-primary-content border-b border-primary-content/20 p-4 lg:px-10 min-h-12 shadow-md z-20">
         {/* Left: hamburger + brand + separator + desktop nav */}
-        <div className="navbar-start flex items-center gap-4 ">
+        <div className="navbar-start flex items-center gap-2 sm:gap-4 min-w-0">
           {/* Hamburger – mobile only */}
           <button
             type="button"
             className="btn btn-ghost btn-square text-primary-content lg:hidden flex flex-col justify-center gap-[5px]"
-            aria-label="Menu"
+            ref={hamburgerRef}
+            aria-label={menuMobileOpen ? t("nav.close", "Chiudi menu") : t("nav.hamburger", "Menu")}
             aria-expanded={menuMobileOpen}
+            aria-controls="mobile-nav"
             onClick={() => setMenuMobileOpen((v) => !v)}
           >
             <span
@@ -85,16 +92,75 @@ export default function Header() {
               className={`block w-full h-0.5 bg-current rounded transition-transform duration-200 ${menuMobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`}
             />
           </button>
+          {/* Mobile slide-down menu: placed right after its button so the
+              navigation follows the control in reading order (#120). */}
+          <nav
+            id="mobile-nav"
+            ref={mobileMenuRef}
+            aria-label={t("nav.label", "Principale")}
+            className={`lg:hidden absolute top-full left-0 right-0 bg-primary border-b border-primary-content/20 shadow-md overflow-hidden z-[999] transition-all duration-200 ease-in-out ${menuMobileOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}
+            aria-hidden={!menuMobileOpen}
+            inert={!menuMobileOpen}
+          >
+        <ul className="list-none m-0 p-4">
+          {navigationMenu.map((item) => {
+            if ("subMenu" in item) {
+
+              return (
+                <li
+                  key={item.name}
+                  className="border-b border-primary-content/20"
+                >
+                  <span className="block py-3 text-[0.9375rem] text-primary-content">
+                    {item.translationKey
+                      ? translateMenu(item.translationKey)
+                      : item.name}
+                  </span>
+                  <ul className="list-none m-0 ml-4 pb-2 p-0">
+                    {item.subMenu.map((sub: MenuSubItem) => (
+                      <li key={sub.name}>
+                        <a
+                          href={sub.link}
+                          className="block py-2 text-sm text-primary-content no-underline hover:text-primary-content/80"
+                          onClick={() => setMenuMobileOpen(false)}
+                        >
+                          {sub.translationKey
+                            ? translateMenu(sub.translationKey)
+                            : sub.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            }
+            return (
+              <li
+                key={item.name}
+                className="border-b border-primary-content/20 last:border-b-0"
+              >
+                <a
+                  href={item.link}
+                  className="block py-3 text-[0.9375rem] text-primary-content no-underline hover:text-primary-content/80"
+                  onClick={() => setMenuMobileOpen(false)}
+                >
+                  {item.translationKey ? translateMenu(item.translationKey) : item.name}
+                </a>
+              </li>
+            );
+          })}
+            </ul>
+          </nav>
 
           {/* Brand */}
           <a
-            href={ROUTES.root}
+            href={ROUTES.about}
             aria-label={t(`brand.homeLinkLabel`)}
             className="text-primary-content text-base font-normal no-underline  cursor leading-snug"
           >
             <div className="flex items-center justify-center">
               <img className="w-12 h-12 shrink-0 text-primary-content" aria-hidden="true" src="/logo_header.svg" alt="" />
-              <span className="font-semibold text-2xl">{t(`brand.title`)}</span>
+              <span className="font-semibold text-2xl hidden sm:inline">{t(`brand.title`)}</span>
             </div>
           </a>
 
@@ -178,8 +244,8 @@ export default function Header() {
         </div>
 
         {/* Right: language + theme + user/login */}
-        <div className="navbar-end flex items-center gap-4">
-          <div className="rounded px-2">
+        <div className="navbar-end flex items-center gap-1 sm:gap-4 shrink-0">
+          <div className="rounded sm:px-2">
             <ThemeSwitcherComponent
               currentTheme={theme as "light" | "dark"}
               handleChange={setTheme}
@@ -231,6 +297,18 @@ export default function Header() {
 
                     </div>
                   </li>
+
+                  <li>
+                    <a
+                      href={ROUTES.home}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-base-content no-underline hover:bg-base-200 hover: text-base-content transition-colors duration-150"
+                      onClick={() => setDropdownUserOpen(false)}
+                    >
+                      <FaChartBar className="w-4 h-4 opacity-70" aria-hidden="true" />
+                      <span>{translateMenu("menu.items.privateArea.label")}</span>
+                    </a>
+                  </li>
+                  <div className="divider my-0 opacity-20"></div>
 
                   {/* Settings Items from MENU */}
                   {settingsMenuItem && "subMenu" in settingsMenuItem && (
@@ -299,67 +377,11 @@ export default function Header() {
             <a
               href={ROUTES.login}
               className="btn btn-sm btn-ghost border border-primary-content/40 text-primary-content hover:bg-primary-content/20"
-              aria-label="Accedi"
             >
               {t(`actions.login.label`)}
             </a>
           )}
         </div>
-      </div>
-
-      {/* ── Mobile slide-down menu ── */}
-      <div
-        className={`lg:hidden absolute top-full left-0 right-0 bg-primary border-b border-primary-content/20 shadow-md overflow-hidden z-[999] transition-all duration-200 ease-in-out ${menuMobileOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}
-        aria-hidden={!menuMobileOpen}
-      >
-        <ul className="list-none m-0 p-4">
-          {navigationMenu.map((item) => {
-            if ("subMenu" in item) {
-
-              return (
-                <li
-                  key={item.name}
-                  className="border-b border-primary-content/20"
-                >
-                  <span className="block py-3 text-[0.9375rem] text-primary-content">
-                    {item.translationKey
-                      ? translateMenu(item.translationKey)
-                      : item.name}
-                  </span>
-                  <ul className="list-none m-0 ml-4 pb-2 p-0">
-                    {item.subMenu.map((sub: MenuSubItem) => (
-                      <li key={sub.name}>
-                        <a
-                          href={sub.link}
-                          className="block py-2 text-sm text-primary-content no-underline hover:text-primary-content/80"
-                          onClick={() => setMenuMobileOpen(false)}
-                        >
-                          {sub.translationKey
-                            ? translateMenu(sub.translationKey)
-                            : sub.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              );
-            }
-            return (
-              <li
-                key={item.name}
-                className="border-b border-primary-content/20 last:border-b-0"
-              >
-                <a
-                  href={item.link}
-                  className="block py-3 text-[0.9375rem] text-primary-content no-underline hover:text-primary-content/80"
-                  onClick={() => setMenuMobileOpen(false)}
-                >
-                  {item.translationKey ? translateMenu(item.translationKey) : item.name}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
       </div>
     </header>
   );

@@ -11,6 +11,11 @@
         "oidc": {
             "loading": "Checking your account…",
             "alreadyRegistered": "You have already completed registration. Signing you in…"
+        },
+        "registered": {
+            "title": "Registration complete",
+            "body": "We sent you an email with the link to activate your account. Once activated you can log in with your email and the password you chose.",
+            "cta": "Go to login"
         }
     },
     "charts": {
@@ -835,6 +840,13 @@
             "intro": "Organizations let a group of people collaborate on the same projects: every member can view and edit the charts, dashboards and data sources of the projects associated with the organization. Whoever creates the organization is its admin and can invite members by email, change their role and associate or revoke projects.",
             "members": "Members with the ADMIN role can invite or remove members and manage the organization; USER members access the associated projects without admin powers.",
             "projects": "“Transfer Project” associates one of your personal projects with this organization: every member will be able to view and edit it. It is not an ownership transfer — you remain the owner and can revoke the association at any time (⇄ icon next to the project); on revoke the project becomes personal again."
+        }
+    },
+    "settings": {
+        "title": "Change password",
+        "description": "Choose a new password for your account.",
+        "changePassword": {
+            "success": "Password updated successfully."
         }
     }
 }

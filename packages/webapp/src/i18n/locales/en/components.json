@@ -56,7 +56,8 @@
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Passwords do not match"
+                        "passwordDontMatch": "Passwords do not match",
+                        "generic": "Error while changing the password. Please try again."
                     },
                     "actions": {
                         "submit": {
@@ -189,7 +190,8 @@
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Passwords do not match"
+                        "passwordDontMatch": "Passwords do not match",
+                        "generic": "Error while registering. Please try again."
                     },
                     "actions": {
                         "submit": {
@@ -219,6 +221,10 @@
                         }
                     }
                 }
+            },
+            "passwordToggle": {
+                "show": "Show password",
+                "hide": "Hide password"
             }
         },
         "layout": {
@@ -232,10 +238,10 @@
                     },
                     "actions": {
                         "login": {
-                            "label": "Login"
+                            "label": "Log in"
                         },
                         "logout": {
-                            "label": "Logout"
+                            "label": "Log out"
                         }
                     }
                 },
@@ -259,7 +265,8 @@
                         "hamburger": {
                             "label": "Menu"
                         }
-                    }
+                    },
+                    "label": "Main navigation"
                 }
             },
             "slimHeader": {
@@ -272,10 +279,10 @@
                 },
                 "actions": {
                     "login": {
-                        "label": "Login"
+                        "label": "Log in"
                     },
                     "logout": {
-                        "label": "Logout"
+                        "label": "Log out"
                     },
                     "askMyData": {
                         "label": "Ask my data"
@@ -283,6 +290,11 @@
                     "requestAccountDeletion": {
                         "label": "Request account deletion"
                     }
+                },
+                "nav": {
+                    "label": "Main",
+                    "hamburger": "Menu",
+                    "close": "Close menu"
                 }
             },
             "footer": {
@@ -500,41 +512,111 @@
                 "Axes": "Axes"
             },
             "fields": {
-                "zoom": { "label": "Show zoom" },
-                "smooth": { "label": "Line smoothing" },
-                "showArea": { "label": "Show area" },
-                "showAllSymbol": { "label": "Show all symbols" },
-                "direction": { "label": "Direction" },
-                "stack": { "label": "Stack values" },
-                "totalLabel": { "label": "Total label" },
-                "showPieLabels": { "label": "Show labels" },
-                "labeLine": { "label": "Show label lines" },
-                "geoJsonUrl": { "label": "GeoJson URL" },
-                "nameProperty": { "label": "Matching property name" },
-                "showMapLabels": { "label": "Show labels" },
-                "serieName": { "label": "Series name" },
-                "areaColor": { "label": "Area overlay color" },
-                "visualMap": { "label": "Show color scale" },
-                "visualMapLeft": { "label": "Color scale position" },
-                "visualMapOrient": { "label": "Color scale orientation" },
-                "palette": { "label": "Palette" },
-                "h": { "label": "Chart height (px)" },
-                "responsive": { "label": "Responsive" },
-                "legend": { "label": "Show legend" },
-                "legendPosition": { "label": "Legend position" },
-                "tooltip": { "label": "Show tooltip" },
-                "valueFormatter": { "label": "Value suffix" },
-                "tooltipFormatter": { "label": "Value format" },
-                "tooltipTrigger": { "label": "Tooltip trigger" },
-                "gridHeight": { "label": "Height" },
-                "gridWidth": { "label": "Width" },
-                "gridLeft": { "label": "Left margin (%/px)" },
-                "gridRight": { "label": "Right margin (%/px)" },
-                "gridTop": { "label": "Top margin (%/px)" },
-                "gridBottom": { "label": "Bottom margin (%/px)" },
-                "xLabel": { "label": "X axis label" },
-                "yLabel": { "label": "Y axis label" },
-                "nameGap": { "label": "Axis label gap" },
+                "zoom": {
+                    "label": "Show zoom"
+                },
+                "smooth": {
+                    "label": "Line smoothing"
+                },
+                "showArea": {
+                    "label": "Show area"
+                },
+                "showAllSymbol": {
+                    "label": "Show all symbols"
+                },
+                "direction": {
+                    "label": "Direction"
+                },
+                "stack": {
+                    "label": "Stack values"
+                },
+                "totalLabel": {
+                    "label": "Total label"
+                },
+                "showPieLabels": {
+                    "label": "Show labels"
+                },
+                "labeLine": {
+                    "label": "Show label lines"
+                },
+                "geoJsonUrl": {
+                    "label": "GeoJson URL"
+                },
+                "nameProperty": {
+                    "label": "Matching property name"
+                },
+                "showMapLabels": {
+                    "label": "Show labels"
+                },
+                "serieName": {
+                    "label": "Series name"
+                },
+                "areaColor": {
+                    "label": "Area overlay color"
+                },
+                "visualMap": {
+                    "label": "Show color scale"
+                },
+                "visualMapLeft": {
+                    "label": "Color scale position"
+                },
+                "visualMapOrient": {
+                    "label": "Color scale orientation"
+                },
+                "palette": {
+                    "label": "Palette"
+                },
+                "h": {
+                    "label": "Chart height (px)"
+                },
+                "responsive": {
+                    "label": "Responsive"
+                },
+                "legend": {
+                    "label": "Show legend"
+                },
+                "legendPosition": {
+                    "label": "Legend position"
+                },
+                "tooltip": {
+                    "label": "Show tooltip"
+                },
+                "valueFormatter": {
+                    "label": "Value suffix"
+                },
+                "tooltipFormatter": {
+                    "label": "Value format"
+                },
+                "tooltipTrigger": {
+                    "label": "Tooltip trigger"
+                },
+                "gridHeight": {
+                    "label": "Height"
+                },
+                "gridWidth": {
+                    "label": "Width"
+                },
+                "gridLeft": {
+                    "label": "Left margin (%/px)"
+                },
+                "gridRight": {
+                    "label": "Right margin (%/px)"
+                },
+                "gridTop": {
+                    "label": "Top margin (%/px)"
+                },
+                "gridBottom": {
+                    "label": "Bottom margin (%/px)"
+                },
+                "xLabel": {
+                    "label": "X axis label"
+                },
+                "yLabel": {
+                    "label": "Y axis label"
+                },
+                "nameGap": {
+                    "label": "Axis label gap"
+                },
                 "logScale": {
                     "label": "Logarithmic scale",
                     "hint": "Compresses large values and expands small ones: useful when series span very different orders of magnitude. Zero or negative values cannot be plotted on this scale."
@@ -676,7 +758,9 @@
         "datasourceTable": {
             "noDataComponent": "No data sources created",
             "columns": {
-                "name": { "label": "Name" },
+                "name": {
+                    "label": "Name"
+                },
                 "visibility": {
                     "label": "Visibility",
                     "values": {
@@ -691,9 +775,15 @@
                         "local": "Local"
                     }
                 },
-                "createdAt": { "label": "Created" },
-                "updatedAt": { "label": "Updated" },
-                "actions": { "label": "Actions" }
+                "createdAt": {
+                    "label": "Created"
+                },
+                "updatedAt": {
+                    "label": "Updated"
+                },
+                "actions": {
+                    "label": "Actions"
+                }
             },
             "actions": {
                 "edit": "Edit",
@@ -883,7 +973,8 @@
             "values": {
                 "light": "Light",
                 "dark": "Dark"
-            }
+            },
+            "switchLabel": "Dark theme"
         }
     }
 }

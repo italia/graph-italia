@@ -35,6 +35,9 @@ function ResetPasswordForm({
   const { t } = useTranslation("components", {
     keyPrefix: "components.auth.changePasswordForm",
   });
+  const { t: tToggle } = useTranslation("components", {
+    keyPrefix: "components.auth.passwordToggle",
+  });
   const [pinValues, setPinValues] = useState(
     initialCode.length === 6 ? initialCode.split("") : ["", "", "", "", "", ""],
   );
@@ -112,8 +115,11 @@ function ResetPasswordForm({
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-content rounded-e-md focus:text-primary"
+                    aria-label={showPassword ? tToggle("hide") : tToggle("show")}
+                    aria-pressed={showPassword}
                   >
                     <svg
+                      aria-hidden="true"
                       className="shrink-0 size-3.5"
                       width="24"
                       height="24"
@@ -123,8 +129,7 @@ function ResetPasswordForm({
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
+                      >
                       <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
                       <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
                       <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
