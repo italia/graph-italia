@@ -90,6 +90,11 @@ function EditChartPage() {
   // Below xl the step column is a modal drawer: the rest of the page is
   // inert while it is open (#122)
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // ChartOptions re-emits a normalised config from its form on mount and
+  // again after its reset (numbers, palette colours), so those emissions
+  // cannot be told apart from an edit by comparing values. They count as
+  // unsaved changes only once the user has interacted with the page.
+  const userInteracted = useRef(false);
   // Inline title editing next to the preview heading (#59)
   const [editingTitle, setEditingTitle] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -270,7 +275,7 @@ function EditChartPage() {
     <Layout>
       <Helmet>
         <title>
-          {t(`head.title.label`)}: {`${chartName ? ": " + chartName : ""}`}
+          {t(`head.title.label`)}{chartName ? `: ${chartName}` : ""}
         </title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
@@ -327,7 +332,15 @@ function EditChartPage() {
         </div>
       </div>
 
-      <div className="mx-auto px-4 lg:px-10 pb-10">
+      <div
+        className="mx-auto px-4 lg:px-10 pb-10"
+        onPointerDownCapture={() => {
+          userInteracted.current = true;
+        }}
+        onKeyDownCapture={() => {
+          userInteracted.current = true;
+        }}
+      >
         <div className="grid grid-cols-1 xl:grid-cols-6  gap-4">
           <EditStepsSidebar onOpenChange={setSidebarOpen}>
           <div className="xl:col-span-2">
@@ -490,7 +503,7 @@ function EditChartPage() {
                   <div className="pt-1">
                     <SelectChart
                       setChart={(value: string) => {
-                        setHasUnsavedChanges(true);
+                        if (value !== chart) setHasUnsavedChanges(true);
                         setChart(value);
                       }}
                       chart={chart}
@@ -499,7 +512,7 @@ function EditChartPage() {
                     <ChartOptions
                       config={config}
                       setConfig={(value) => {
-                        setHasUnsavedChanges(true);
+                        if (userInteracted.current) setHasUnsavedChanges(true);
                         setConfig(value);
                       }}
                       chart={chart}
