@@ -11,7 +11,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -180,7 +180,7 @@ export default function DataSourceTable({
           data={list}
           theme={currentTheme}
           onSort={handleSort}
-          sortIcon={<span aria-hidden="true">▾</span>}
+          sortIcon={sortIcon}
           onRowClicked={(row) => navigate(ROUTES.editDataSource(row.id))}
           pagination
           paginationComponentOptions={{

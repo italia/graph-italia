@@ -29,7 +29,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
-import SortHeaderButton, { SortStatus } from "./layout/SortHeaderButton";
+import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -211,7 +211,7 @@ export default function ChartTable({
       selector: (row: FieldDataType) => row.isRemote ?? false,
       cell: (row: FieldDataType) =>
         row.remoteUrl ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 whitespace-nowrap">
             <span>{t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.values.remote`)}</span>
             <a
               href={row.remoteUrl}
@@ -413,7 +413,7 @@ export default function ChartTable({
               ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
               onRowClicked={(row) => handleRowClick(row)}
               onSort={handleSort}
-              sortIcon={<span aria-hidden="true">▾</span>}
+              sortIcon={sortIcon}
               columns={columns}
               data={list as FieldDataTypeWithPreview[]}
               theme={currentTheme}

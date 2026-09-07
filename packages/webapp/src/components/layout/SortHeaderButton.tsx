@@ -57,6 +57,19 @@ export default function SortHeaderButton({
 }
 
 /**
+ * Sort indicator for react-data-table-component's `sortIcon` prop. The
+ * library rotates and fades the custom icon through CSS that targets only an
+ * <i> or <svg> inside its wrapper: a <span> (used since #97) never turned and
+ * showed on every sortable column. The svg is decorative, the sort state is
+ * in the header button's name.
+ */
+export const sortIcon = (
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+    <path d="M7 10l5 5 5-5z" />
+  </svg>
+);
+
+/**
  * Screen-reader-only live region announcing sort changes (WCAG 4.1.3):
  * activating a sort button re-renders the header, so relying on the focused
  * element's name change alone is not reliable across screen readers.
