@@ -183,6 +183,13 @@
   background-image: none !important;
   padding-right: 24px;
 }
+/* The library pins its arrow to the top of the select wrapper (top: 0); with
+   the 1rem font size above the select is taller than the 24px the library
+   assumes, so the arrow sat above the centre line. Centre it vertically. */
+.rdt_Pagination select + svg {
+  top: 50% !important;
+  transform: translateY(-50%);
+}
 .rdt_Pagination select:focus-visible {
   outline: 2px solid var(--color-primary, #0066cc);
   outline-offset: 2px;
