@@ -231,7 +231,7 @@ export default function AboutPage() {
            ══════════════════════════════════════════════════════════════════ */}
         <section
           className="relative flex flex-col justify-center pt-20 pb-28 lg:pt-32 lg:pb-40"
-          aria-label="Hero"
+          aria-label={t("sections.hero")}
         >
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8">
@@ -383,7 +383,7 @@ export default function AboutPage() {
         {/* ══════════════════════════════════════════════════════════════════
             CTA BAND
            ══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 lg:py-20" aria-label="Call to action">
+        <section className="py-16 lg:py-20" aria-label={t("sections.cta")}>
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl font-extrabold tracking-tight text-base-content sm:text-3xl">
               {t("cta.title")}
