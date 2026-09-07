@@ -146,6 +146,7 @@ function RenderChart(props: RenderProps) {
                 rowHeight={rowHeight}
                 hFactor={hFactor}
                 keyboardHint={props.keyboardHint}
+                altText={altText}
               />
             )}
             {props.chart === "pie" && (
@@ -157,6 +158,7 @@ function RenderChart(props: RenderProps) {
                 rowHeight={rowHeight}
                 hFactor={hFactor}
                 keyboardHint={props.keyboardHint}
+                altText={altText}
               />
             )}
             {props.chart === "map" && (
@@ -168,6 +170,7 @@ function RenderChart(props: RenderProps) {
                 rowHeight={rowHeight}
                 hFactor={hFactor}
                 keyboardHint={props.keyboardHint}
+                altText={altText}
               />
             )}
             {props.chart === "cmap" && (

@@ -98,7 +98,13 @@
                                 },
                                 "description": {
                                     "label": "Descrizione grafico",
-                                    "placeholder": "Aggiungi una descrizione"
+                                    "placeholder": "Descrivi cosa mostra il grafico",
+                                    "hint": "Obbligatoria: è il testo alternativo del grafico per chi usa uno screen reader. Racconta cosa mostra e il dato principale.",
+                                    "error": "Inserisci una descrizione del grafico: serve come testo alternativo."
+                                },
+                                "showDescription": {
+                                    "label": "Mostra la descrizione nella pagina del grafico",
+                                    "hint": "Se disattivata, la descrizione resta disponibile alle tecnologie assistive ma non viene mostrata sotto il titolo."
                                 }
                             }
                         }
@@ -461,7 +467,9 @@
                                 },
                                 "description": {
                                     "label": "Descrizione",
-                                    "placeholder": "Inserisci una descrizione..."
+                                    "placeholder": "Descrivi cosa mostra il grafico",
+                                    "hint": "Obbligatoria: è il testo alternativo del grafico per chi usa uno screen reader. Racconta cosa mostra e il dato principale.",
+                                    "error": "Inserisci una descrizione del grafico: serve come testo alternativo."
                                 }
                             }
                         }
@@ -621,8 +629,10 @@
                             "label": "Titolo"
                         },
                         "description": {
-                            "label": "Descrizione (facoltativa)",
-                            "placeholder": "Aggiungi una descrizione"
+                            "label": "Descrizione",
+                            "placeholder": "Descrivi cosa mostra",
+                            "optionalLabel": "Descrizione (facoltativa)",
+                            "hint": "Obbligatoria per grafici, mappe e KPI: è il testo alternativo per chi usa uno screen reader."
                         }
                     }
                 },

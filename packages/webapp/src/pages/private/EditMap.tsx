@@ -58,6 +58,8 @@ export default function EditMapPage() {
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(api.isPublishingEnabled());
+  const [showDescription, setShowDescription] = useState(true);
+  const descriptionMissing = chartDescription.trim().length === 0;
   const [isSaving, setIsSaving] = useState(false);
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
@@ -92,6 +94,7 @@ export default function EditMapPage() {
             setChart("cmap");
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
+            setShowDescription(chartData.config?.showDescription !== false);
             setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
 
             // Go to config step only if chart already has data loaded
@@ -139,7 +142,7 @@ export default function EditMapPage() {
       description: chartDescription,
       publish: api.isPublishingEnabled() ? chartPublish : false,
       chart: chart || "cmap",
-      config,
+      config: { ...config, showDescription },
       data,
       dataSource,
       isRemote,
@@ -169,7 +172,7 @@ export default function EditMapPage() {
   };
 
   // Check if Save button should be enabled
-  const canSave = !!chart;
+  const canSave = !!chart && !descriptionMissing;
 
   const currentStepIndex = getCurrentStepIndex();
 
@@ -284,12 +287,19 @@ export default function EditMapPage() {
                       htmlFor="chart_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t(`body.options.setup.form.fields.description.label`)}
+                      {t(`body.options.setup.form.fields.description.label`)} *
                     </label>
+                    <p id="chart_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.description.hint`)}
+                    </p>
                     <textarea
                       id="chart_description"
                       value={chartDescription}
                       rows={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={descriptionMissing}
+                      aria-describedby={descriptionMissing ? "chart_description_hint chart_description_error" : "chart_description_hint"}
                       onChange={(e) => {
                         setHasUnsavedChanges(true);
                         setChartDescription(e.target.value);
@@ -297,8 +307,33 @@ export default function EditMapPage() {
                       placeholder={t(
                         `body.options.setup.form.fields.description.placeholder`,
                       )}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65"
+                      className={`input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65 ${descriptionMissing ? "textarea-error" : ""}`}
                     />
+                    {descriptionMissing && (
+                      <p id="chart_description_error" role="alert" className="text-sm text-error">
+                        {t(`body.options.setup.form.fields.description.error`)}
+                      </p>
+                    )}
+                    <div className="mt-4 flex items-center gap-4">
+                      <input
+                        id="chart_show_description"
+                        type="checkbox"
+                        role="switch"
+                        checked={showDescription}
+                        aria-describedby="chart_show_description_hint"
+                        onChange={() => {
+                          setHasUnsavedChanges(true);
+                          setShowDescription((v) => !v);
+                        }}
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <label htmlFor="chart_show_description" className="text-base text-base-content/70 cursor-pointer">
+                        {t(`body.options.setup.form.fields.showDescription.label`)}
+                      </label>
+                    </div>
+                    <p id="chart_show_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.showDescription.hint`)}
+                    </p>
                   </div>
                 </div>
               </div>

@@ -302,7 +302,7 @@ function EditKpiGroupPage() {
         <button
           type="button"
           onClick={saveHandler}
-          disabled={!pendingChanges}
+          disabled={!pendingChanges || !description?.trim()}
           className="btn btn-primary"
         >
           {t("header.actions.save.default")}
@@ -375,18 +375,30 @@ function EditKpiGroupPage() {
                       htmlFor="kpigroup_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t("body.options.setup.form.fields.description.label")}
+                      {t("body.options.setup.form.fields.description.label")} *
                     </label>
+                    <p id="kpigroup_description_hint" className="text-sm text-base-content/70">
+                      {t("body.options.setup.form.fields.description.hint")}
+                    </p>
                     <textarea
                       id="kpigroup_description"
                       value={description ?? ""}
                       rows={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={!description?.trim()}
+                      aria-describedby={!description?.trim() ? "kpigroup_description_hint kpigroup_description_error" : "kpigroup_description_hint"}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder={t(
                         "body.options.setup.form.fields.description.placeholder",
                       )}
                       className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65"
                     />
+                    {!description?.trim() && (
+                      <p id="kpigroup_description_error" role="alert" className="text-sm text-error">
+                        {t("body.options.setup.form.fields.description.error")}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,0 +1,15 @@
+/* Keyboard focus on the chart container (WCAG 2.4.7). The active data point
+   is highlighted on the canvas through the ECharts emphasis state, see
+   useChartKeyboard. */
+.gi-chart-focusable {
+  outline: none;
+  border-radius: 4px;
+}
+.gi-chart-focusable:focus-visible {
+  outline: 3px solid #0066cc;
+  outline-offset: 3px;
+}
+.graph-italia-dark .gi-chart-focusable:focus-visible,
+.gi-chart-focusable.graph-italia-dark:focus-visible {
+  outline-color: #ffffff;
+}

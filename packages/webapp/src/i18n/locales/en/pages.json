@@ -97,8 +97,14 @@
                                     "label": "Chart Title"
                                 },
                                 "description": {
-                                    "label": "Chart Description",
-                                    "placeholder": "Add a description"
+                                    "label": "Chart description",
+                                    "placeholder": "Describe what the chart shows",
+                                    "hint": "Required: it is the chart's text alternative for screen reader users. Say what it shows and the main figure.",
+                                    "error": "Enter a chart description: it is used as its text alternative."
+                                },
+                                "showDescription": {
+                                    "label": "Show the description on the chart page",
+                                    "hint": "When off, the description stays available to assistive technology but is not shown under the title."
                                 }
                             }
                         }
@@ -461,7 +467,9 @@
                                 },
                                 "description": {
                                     "label": "Description",
-                                    "placeholder": "Enter a description..."
+                                    "placeholder": "Describe what the chart shows",
+                                    "hint": "Required: it is the chart's text alternative for screen reader users. Say what it shows and the main figure.",
+                                    "error": "Enter a chart description: it is used as its text alternative."
                                 }
                             }
                         }
@@ -620,8 +628,10 @@
                             "label": "Title"
                         },
                         "description": {
-                            "label": "Description (optional)",
-                            "placeholder": "Add a description"
+                            "label": "Description",
+                            "placeholder": "Describe what it shows",
+                            "optionalLabel": "Description (optional)",
+                            "hint": "Required for charts, maps and KPIs: it is the text alternative for screen reader users."
                         }
                     }
                 },

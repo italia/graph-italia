@@ -70,6 +70,11 @@ function EditChartPage() {
   // Recipe from SeriesSelector (column selection + aggregation): persisted in
   // config so the server can replay it when refreshing remote-linked data
   const [dataTransform, setDataTransform] = useState<DataTransformRecipe | null>(null);
+  // Whether the description is rendered under the title; it is always the
+  // chart's text alternative. Kept apart from `config` because ChartOptions
+  // rebuilds config from its own form.
+  const [showDescription, setShowDescription] = useState(true);
+  const descriptionMissing = chartDescription.trim().length === 0;
   const [isSaving, setIsSaving] = useState(false);
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
@@ -120,6 +125,7 @@ function EditChartPage() {
             setChartDescription(chartData.description || "");
             setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
             setDataTransform(chartData.config?.dataTransform ?? null);
+            setShowDescription(chartData.config?.showDescription !== false);
 
             // Go to config step only if chart already has data loaded
             const hasExistingData =
@@ -191,7 +197,7 @@ function EditChartPage() {
       chart: chart || "bar",
       // ChartOptions rebuilds config from its form: merge the recipe at save
       // time so it can't be dropped along the way
-      config: dataTransform ? { ...config, dataTransform } : config,
+      config: { ...config, ...(dataTransform ? { dataTransform } : {}), showDescription },
       data,
       isRemote,
       remoteUrl,
@@ -232,7 +238,7 @@ function EditChartPage() {
   };
 
   // Check if Save button should be enabled
-  const canSave = !!chart;
+  const canSave = !!chart && !descriptionMissing;
 
   const currentStepIndex = getCurrentStepIndex();
 
@@ -390,12 +396,19 @@ function EditChartPage() {
                       htmlFor="chart_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t(`body.options.setup.form.fields.description.label`)}
+                      {t(`body.options.setup.form.fields.description.label`)} *
                     </label>
+                    <p id="chart_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.description.hint`)}
+                    </p>
                     <textarea
                       id="chart_description"
                       value={chartDescription}
                       rows={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={descriptionMissing}
+                      aria-describedby={descriptionMissing ? "chart_description_hint chart_description_error" : "chart_description_hint"}
                       onChange={(e) => {
                         setHasUnsavedChanges(true);
                         setChartDescription(e.target.value);
@@ -403,8 +416,33 @@ function EditChartPage() {
                       placeholder={t(
                         `body.options.setup.form.fields.description.placeholder`,
                       )}
-                      className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/65"
+                      className={`input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/65 ${descriptionMissing ? "textarea-error" : ""}`}
                     />
+                    {descriptionMissing && (
+                      <p id="chart_description_error" role="alert" className="text-sm text-error">
+                        {t(`body.options.setup.form.fields.description.error`)}
+                      </p>
+                    )}
+                    <div className="mt-4 flex items-center gap-4">
+                      <input
+                        id="chart_show_description"
+                        type="checkbox"
+                        role="switch"
+                        checked={showDescription}
+                        aria-describedby="chart_show_description_hint"
+                        onChange={() => {
+                          setHasUnsavedChanges(true);
+                          setShowDescription((v) => !v);
+                        }}
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <label htmlFor="chart_show_description" className="text-base text-base-content/70 cursor-pointer">
+                        {t(`body.options.setup.form.fields.showDescription.label`)}
+                      </label>
+                    </div>
+                    <p id="chart_show_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.showDescription.hint`)}
+                    </p>
                   </div>
                 </div>
               </div>
