@@ -498,6 +498,47 @@
                         "label": "Use this data for the chart"
                     }
                 }
+            },
+            "geoMapUpload": {
+                "fileLabel": "Upload a JSON or GeoJSON file",
+                "detected": {
+                    "geo": "GeoJSON detected",
+                    "json": "JSON array detected"
+                },
+                "summary": "{{rows}} rows, {{cols}} columns",
+                "latField": "Latitude field",
+                "lngField": "Longitude field",
+                "selectOption": "Select",
+                "apply": "Use this data",
+                "selectFieldsHint": "Select the latitude and longitude fields to continue"
+            },
+            "geoSearch": {
+                "title": "Add points by location search",
+                "apiKeyButton": "API key",
+                "apiKeyTitle": "Configure the HERE API key"
+            },
+            "dataHelper": {
+                "quickTransforms": "Quick transforms",
+                "transpose": "Transpose",
+                "reset": "Reset",
+                "inspect": "Inspect data with AI",
+                "analyzing": "Analyzing…",
+                "noSuggestions": "No suggestions for this data.",
+                "suggestions": "AI suggestions",
+                "xAxis": "X axis:",
+                "yAxes": "Y axes:",
+                "transformations": "Transformations",
+                "useData": "Use this data",
+                "errors": {
+                    "none": "No suggestions returned.",
+                    "failed": "Failed to get suggestions."
+                }
+            },
+            "dataSource": {
+                "transposed": {
+                    "label": "Transposed",
+                    "hint": "Swap rows and columns when this data source is consumed"
+                }
             }
         },
         "chartOptions": {
@@ -710,7 +751,11 @@
                     "label": "Name"
                 },
                 "isRemote": {
-                    "label": "Is Remote"
+                    "label": "Data origin",
+                    "values": {
+                        "remote": "Remote URL",
+                        "file": "Uploaded file"
+                    }
                 },
                 "createdAt": {
                     "label": "Created At"
@@ -961,7 +1006,9 @@
             "dataTableCaption": "Chart data"
         },
         "dialog": {
-            "close": "Close"
+            "close": "Close",
+            "confirm": "Confirm",
+            "cancel": "Cancel"
         },
         "languageSwitcher": {
             "label": "Language"

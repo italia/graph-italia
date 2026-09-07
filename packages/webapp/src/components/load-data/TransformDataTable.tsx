@@ -417,7 +417,7 @@ export default function TransformData({
       </div>
 
       {sortState && (
-        <div className="mt-2 text-sm text-base-content/60">
+        <div className="mt-2 text-sm text-base-content/70">
           {t(`table.sorting.label`)} <strong>{sortState.columnKey}</strong> (
           {t(`table.sorting.direction.${sortState.direction}`, {
             defaultValue: sortState.direction,
@@ -465,9 +465,9 @@ export default function TransformData({
         }}
         cancelCb={() => setShowResetDialog(false)}
       >
-        <p className="text-sm text-warning font-medium">
-          {t(`resetDialog.warning`)}
-        </p>
+        <div role="note" className="alert alert-warning text-sm">
+          <span>{t(`resetDialog.warning`)}</span>
+        </div>
       </GenericDialog>
     </div >
   );

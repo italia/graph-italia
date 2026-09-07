@@ -131,7 +131,7 @@ function ChartSave({ item, handleSave }: any) {
         <div className="form-control">
           <label className="label" htmlFor="chart-description">
             <span className="label-text font-medium">Description</span>
-            <span className="label-text-alt text-base-content/50">
+            <span className="label-text-alt text-base-content/70">
               Optional
             </span>
           </label>
@@ -160,7 +160,7 @@ function ChartSave({ item, handleSave }: any) {
               <span className="label-text font-medium block">
                 Publish chart
               </span>
-              <span className="label-text-alt text-base-content/60">
+              <span className="label-text-alt text-base-content/70">
                 Make the chart publicly visible
               </span>
             </div>

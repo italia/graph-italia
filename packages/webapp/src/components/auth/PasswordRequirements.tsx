@@ -60,7 +60,7 @@ function PasswordRequirements({
           <li
             key={rule.key}
             className={`flex items-center gap-2 ${
-              met ? "text-success" : "text-base-content/60"
+              met ? "text-success" : "text-base-content/70"
             }`}
           >
             <RuleIcon met={met} />

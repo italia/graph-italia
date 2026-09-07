@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 export default function Dialog({ title, children, toggle, callback }: any) {
+  const { t } = useTranslation("components", { keyPrefix: "components.dialog" });
   const ref = useRef<HTMLDialogElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -24,8 +26,8 @@ export default function Dialog({ title, children, toggle, callback }: any) {
           {children}
         </div>
         <div className="modal-action">
-          <button className="btn btn-primary" onClick={() => callback()}>
-            Close
+          <button type="button" className="btn btn-primary" onClick={() => callback()}>
+            {t("close", "Chiudi")}
           </button>
         </div>
       </div>

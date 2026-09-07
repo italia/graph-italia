@@ -498,6 +498,47 @@
                         "label": "Usa questi dati per il grafico"
                     }
                 }
+            },
+            "geoMapUpload": {
+                "fileLabel": "Carica un file JSON o GeoJSON",
+                "detected": {
+                    "geo": "GeoJSON rilevato",
+                    "json": "Array JSON rilevato"
+                },
+                "summary": "{{rows}} righe, {{cols}} colonne",
+                "latField": "Campo latitudine",
+                "lngField": "Campo longitudine",
+                "selectOption": "Seleziona",
+                "apply": "Usa questi dati",
+                "selectFieldsHint": "Seleziona i campi latitudine e longitudine per continuare"
+            },
+            "geoSearch": {
+                "title": "Aggiungi punti cercando una località",
+                "apiKeyButton": "API key",
+                "apiKeyTitle": "Configura la API key di HERE"
+            },
+            "dataHelper": {
+                "quickTransforms": "Trasformazioni rapide",
+                "transpose": "Trasponi",
+                "reset": "Reimposta",
+                "inspect": "Analizza i dati con l'AI",
+                "analyzing": "Analisi in corso…",
+                "noSuggestions": "Nessun suggerimento per questi dati.",
+                "suggestions": "Suggerimenti AI",
+                "xAxis": "Asse X:",
+                "yAxes": "Assi Y:",
+                "transformations": "Trasformazioni",
+                "useData": "Usa questi dati",
+                "errors": {
+                    "none": "Nessun suggerimento ricevuto.",
+                    "failed": "Impossibile ottenere i suggerimenti."
+                }
+            },
+            "dataSource": {
+                "transposed": {
+                    "label": "Trasposta",
+                    "hint": "Scambia righe e colonne quando questa sorgente dati viene utilizzata"
+                }
             }
         },
         "chartOptions": {
@@ -710,7 +751,11 @@
                     "label": "Nome"
                 },
                 "isRemote": {
-                    "label": "Remoto"
+                    "label": "Origine dati",
+                    "values": {
+                        "remote": "URL remoto",
+                        "file": "File caricato"
+                    }
                 },
                 "createdAt": {
                     "label": "Creato il"
@@ -961,7 +1006,9 @@
             "dataTableCaption": "Dati del grafico"
         },
         "dialog": {
-            "close": "Chiudi"
+            "close": "Chiudi",
+            "confirm": "Conferma",
+            "cancel": "Annulla"
         },
         "languageSwitcher": {
             "label": "Lingua"

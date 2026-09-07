@@ -406,7 +406,7 @@ function Home() {
               <ul
                 className={`${projectDropdownOpen ? "block" : "hidden"} absolute left-0 top-full z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto`}
               >
-                <li className="px-2 py-1 text-xs text-base-content/60 pointer-events-none">
+                <li className="px-2 py-1 text-xs text-base-content/70 pointer-events-none">
                   {t(
                     "projectSwitcher.help",
                     "Qui trovi l'elenco dei tuoi grafici, dashboard e file sorgenti dati.",
@@ -414,7 +414,7 @@ function Home() {
                 </li>
                 {personalProjects.length > 0 && (
                   <>
-                    <li className="menu-title text-base opacity-60">{t("projectSwitcher.personal", "Progetti personali")}</li>
+                    <li className="menu-title text-base opacity-70">{t("projectSwitcher.personal", "Progetti personali")}</li>
                     {personalProjects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -449,7 +449,7 @@ function Home() {
                 {Object.entries(orgsWithProjects).map(([orgId, orgData]) => (
                   <Fragment key={orgId}>
                     <li className="divider my-0 opacity-20" aria-hidden="true"></li>
-                    <li className="menu-title text-base opacity-60">{orgData.name}</li>
+                    <li className="menu-title text-base opacity-70">{orgData.name}</li>
                     {orgData.projects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -707,7 +707,7 @@ function Home() {
                 <span className="font-semibold">
                   {t(`modals.createNew.items.${key}.label`, label)}
                 </span>
-                <span className="text-xs text-base-content/60 text-center leading-snug">
+                <span className="text-xs text-base-content/70 text-center leading-snug">
                   {t(`modals.createNew.items.${key}.description`)}
                 </span>
               </button>

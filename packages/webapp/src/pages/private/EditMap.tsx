@@ -278,7 +278,7 @@ export default function EditMapPage() {
                         setChartName(e.target.value);
                       }}
                       placeholder={getDefaultName()}
-                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/65"
                     />
                     <label
                       htmlFor="chart_description"
@@ -297,7 +297,7 @@ export default function EditMapPage() {
                       placeholder={t(
                         `body.options.setup.form.fields.description.placeholder`,
                       )}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65"
                     />
                   </div>
                 </div>
@@ -425,7 +425,7 @@ export default function EditMapPage() {
               </div>
               <div className="space-y-4">
                 {haveData && (
-                  <div className="flex items-center gap-3 text-sm text-base-content/60">
+                  <div className="flex items-center gap-3 text-sm text-base-content/70">
                     <span>{(dataSource ?? []).length} points loaded</span>
                     <button
                       type="button"

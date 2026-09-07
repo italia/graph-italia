@@ -168,29 +168,31 @@ export default function DataSourceTable({
   return (
     <div ref={tableRef}>
       <SortStatus sortState={sortState} />
-      <DataTable
-        ariaLabel={t("tableLabel", { defaultValue: "Sorgenti dati" })}
-        columns={columns}
-        data={list}
-        theme={currentTheme}
-        onSort={handleSort}
-        sortIcon={<span aria-hidden="true">▾</span>}
-        onRowClicked={(row) => navigate(ROUTES.editDataSource(row.id))}
-        pagination
-        paginationComponentOptions={{
-          rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Rows per page:" }),
-          rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "of" }),
-          selectAllRowsItem: false,
-        }}
-        {...paginationIcons}
-        customStyles={dataTableStyles}
-        highlightOnHover
-        noDataComponent={
-          <div className="py-10 text-base-content/70">
-            {t("noDataComponent", { defaultValue: "No data sources found" })}
-          </div>
-        }
-      />
+      {list.length === 0 ? (
+        /* An empty list is a status message, not a table with free text inside (#119) */
+        <p role="status" className="py-6 text-base-content/70">
+          {t("noDataComponent", { defaultValue: "Nessuna sorgente dati creata" })}
+        </p>
+      ) : (
+        <DataTable
+          ariaLabel={t("tableLabel", { defaultValue: "Sorgenti dati" })}
+          columns={columns}
+          data={list}
+          theme={currentTheme}
+          onSort={handleSort}
+          sortIcon={<span aria-hidden="true">▾</span>}
+          onRowClicked={(row) => navigate(ROUTES.editDataSource(row.id))}
+          pagination
+          paginationComponentOptions={{
+            rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+            rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+            selectAllRowsItem: false,
+          }}
+          {...paginationIcons}
+          customStyles={dataTableStyles}
+          highlightOnHover
+        />
+      )}
     </div>
   );
 }

@@ -386,7 +386,7 @@ export default function EditOrgsPage() {
                                   <td>
                                     <div className="flex flex-col">
                                       <span>{member.user?.email || member.userId}</span>
-                                      {member.user?.email && <span className="text-xs opacity-60 font-mono">{member.userId}</span>}
+                                      {member.user?.email && <span className="text-xs opacity-70 font-mono">{member.userId}</span>}
                                     </div>
                                   </td>
                                   <td>

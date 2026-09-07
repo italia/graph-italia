@@ -176,7 +176,7 @@ export default function GodModeOnPage() {
       sortable: true,
       maxWidth: "180px",
       cell: (row) => (
-        <span className="text-xs opacity-60">{new Date(row.createdAt).toLocaleString()}</span>
+        <span className="text-xs opacity-70">{new Date(row.createdAt).toLocaleString()}</span>
       ),
     },
     {

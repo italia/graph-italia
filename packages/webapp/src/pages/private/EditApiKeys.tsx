@@ -222,7 +222,7 @@ export default function EditApiKeysPage() {
                         const orgsList = key.project?.orgs?.map((o) => o.org.name).join(", ") || t("form.personal", "Personal");
                         const status = getKeyStatus(key);
                         return (
-                          <tr key={key.id} className={`hover ${key.revokedAt ? "opacity-60" : ""}`}>
+                          <tr key={key.id} className={`hover ${key.revokedAt ? "opacity-70" : ""}`}>
                             <td>
                               <code className="font-mono text-xs bg-base-200 px-2 py-1 rounded">
                                 dv_{key.prefix}…
@@ -351,7 +351,7 @@ export default function EditApiKeysPage() {
               onChange={(e) => setExpire(Math.max(1, parseInt(e.target.value, 10) || 1))}
               min={1}
             />
-            <p className="text-xs opacity-60 mt-1 px-1">
+            <p className="text-xs opacity-70 mt-1 px-1">
               {expire >= 1440 ? `${Math.round(expire / 1440)} day(s)` : expire >= 60 ? `${Math.round(expire / 60)} hour(s)` : `${expire} minute(s)`}
             </p>
           </div>

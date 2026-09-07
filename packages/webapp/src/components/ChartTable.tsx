@@ -211,7 +211,8 @@ export default function ChartTable({
       selector: (row: FieldDataType) => row.isRemote ?? false,
       cell: (row: FieldDataType) =>
         row.remoteUrl ? (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <span>{t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.values.remote`)}</span>
             <a
               href={row.remoteUrl}
               target="_blank"
@@ -233,7 +234,7 @@ export default function ChartTable({
             </button>
           </div>
         ) : (
-          "No"
+          t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.values.file`)
         ),
       sortable: true,
     },
@@ -402,27 +403,31 @@ export default function ChartTable({
 
       {list && (
         <div ref={tableRef}>
-          <DataTable
-            ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
-            onRowClicked={(row) => handleRowClick(row)}
-            onSort={handleSort}
-            sortIcon={<span aria-hidden="true">▾</span>}
-            columns={columns}
-            data={list as FieldDataTypeWithPreview[]}
-            theme={currentTheme}
-            pagination
-            paginationComponentOptions={{
-              rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
-              rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
-              selectAllRowsItem: false,
-            }}
-            {...paginationIcons}
-            customStyles={dataTableStyles}
-            highlightOnHover
-            noDataComponent={
-              <div className="py-10 text-base-content/70">{t(`noDataComponent`)}</div>
-            }
-          />
+          {list.length === 0 ? (
+            /* An empty list is a status message, not a table with free text inside (#119) */
+            <p role="status" className="py-6 text-base-content/70">
+              {t(`noDataComponent`)}
+            </p>
+          ) : (
+            <DataTable
+              ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
+              onRowClicked={(row) => handleRowClick(row)}
+              onSort={handleSort}
+              sortIcon={<span aria-hidden="true">▾</span>}
+              columns={columns}
+              data={list as FieldDataTypeWithPreview[]}
+              theme={currentTheme}
+              pagination
+              paginationComponentOptions={{
+                rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+                rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+                selectAllRowsItem: false,
+              }}
+              {...paginationIcons}
+              customStyles={dataTableStyles}
+              highlightOnHover
+            />
+          )}
         </div>
       )}
 

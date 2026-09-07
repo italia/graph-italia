@@ -369,7 +369,7 @@ function EditKpiGroupPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/65"
                     />
                     <label
                       htmlFor="kpigroup_description"
@@ -385,7 +385,7 @@ function EditKpiGroupPage() {
                       placeholder={t(
                         "body.options.setup.form.fields.description.placeholder",
                       )}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65"
                     />
                   </div>
                 </div>
@@ -480,7 +480,7 @@ function EditKpiGroupPage() {
 
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="italic text-base-content/60">
+                <p className="italic text-base-content/70">
                   {t("body.messages.noKpi")}
                 </p>
               </div>
