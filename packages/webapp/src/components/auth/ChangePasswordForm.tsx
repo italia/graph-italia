@@ -179,14 +179,14 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                       {...register("confirmPassword")}
                     />
                     {errors["confirmPassword"] && (
-                      <p className="text-error">
+                      <p className="text-error" role="alert">
                         {errors["confirmPassword"].message}
                       </p>
                     )}
                   </div>
                 </div>
 
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-error" role="alert">{message}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}

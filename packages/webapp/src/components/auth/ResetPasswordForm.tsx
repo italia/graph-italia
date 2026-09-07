@@ -161,12 +161,12 @@ function ResetPasswordForm({
                   {...register("confirmPassword")}
                 />
                 {errors["confirmPassword"] && (
-                  <p className="text-error">{errors["confirmPassword"].message}</p>
+                  <p className="text-error" role="alert">{errors["confirmPassword"].message}</p>
                 )}
               </div>
             </div>
 
-            {message && <p className="text-error">{message}</p>}
+            {message && <p className="text-error" role="alert">{message}</p>}
 
             <button
               type="submit"

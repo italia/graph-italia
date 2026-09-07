@@ -120,7 +120,7 @@ function ChartSave({ item, handleSave }: any) {
           />
           {errors["name"] && (
             <label className="label">
-              <span className="label-text-alt text-error">
+              <span className="label-text-alt text-error" role="alert">
                 Name is required
               </span>
             </label>

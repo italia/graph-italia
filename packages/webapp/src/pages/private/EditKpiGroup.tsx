@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import Layout from "../../components/layout";
+import NewTabLink from "../../components/layout/NewTabLink.tsx";
 import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading";
 import EditStepComponent from "../../components/EditStepComponent";
@@ -285,7 +286,7 @@ function EditKpiGroupPage() {
       </Helmet>
 
       {/* Top bar */}
-      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
+      <div className="sticky top-0 z-30 bg-base-200/95 backdrop-blur border-b border-base-300 w-full flex justify-between items-center gap-2 mb-2 py-4 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -457,7 +458,7 @@ function EditKpiGroupPage() {
             {kpiGroup.dataSource.length > 0 ? (
 
               <>
-                {isPublishingEnabled() && publish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
+                {isPublishingEnabled() && publish && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t("header.preview.actions.viewChart.label", { defaultValue: "Apri il gruppo KPI" })}</NewTabLink></div>}
                 <ThemeSwitcherComponent
                   currentTheme={previewScheme}
                   handleChange={(value: ChartColorScheme) =>

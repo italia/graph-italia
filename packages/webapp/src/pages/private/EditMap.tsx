@@ -13,10 +13,11 @@ import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { HOME_ROUTE } from "../../router.tsx";
+import { HOME_ROUTE, ROUTES } from "../../router.tsx";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 
 import Layout from "../../components/layout/index.tsx";
+import NewTabLink from "../../components/layout/NewTabLink.tsx";
 import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import EditStepComponent from "../../components/EditStepComponent.tsx";
@@ -186,11 +187,11 @@ export default function EditMapPage() {
     <Layout>
       <Helmet>
         <title>
-          {t(`Edit Map`)}: {`${chartName ? ": " + chartName : ""}`}
+          {t(`head.mapTitle`)}{chartName ? `: ${chartName}` : ""}
         </title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
+      <div className="sticky top-0 z-30 bg-base-200/95 backdrop-blur border-b border-base-300 w-full flex justify-between items-center gap-2 mb-2 py-4 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -392,7 +393,7 @@ export default function EditMapPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/charts/${id}/view`} target="_blank" className="btn btn-outline">view published chart</a></div>}
+                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t(`header.preview.actions.viewChart.label`)}</NewTabLink></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>

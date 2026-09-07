@@ -37,7 +37,8 @@
                     "description": {
                         "content": "Creating chart"
                     }
-                }
+                },
+                "mapTitle": "Edit map"
             },
             "header": {
                 "pageTitle": {
@@ -49,7 +50,12 @@
                     "untitled": "Untitled chart",
                     "actions": {
                         "viewChart": {
-                            "label": "View chart"
+                            "label": "View chart",
+                            "unsaved": "Save your changes to open the published chart"
+                        },
+                        "editTitle": {
+                            "label": "Edit title",
+                            "done": "Done"
                         }
                     }
                 },
@@ -60,6 +66,9 @@
                     "save": {
                         "default": "Save",
                         "isSaving": "Saving"
+                    },
+                    "saveAndExit": {
+                        "default": "Save and close"
                     }
                 }
             },
@@ -417,6 +426,13 @@
                     "reset": {
                         "default": "Reset",
                         "isSaving": "Saving"
+                    }
+                },
+                "preview": {
+                    "actions": {
+                        "viewChart": {
+                            "label": "Open the KPI group"
+                        }
                     }
                 }
             },

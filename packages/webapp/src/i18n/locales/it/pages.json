@@ -37,7 +37,8 @@
                     "description": {
                         "content": "Creazione grafico"
                     }
-                }
+                },
+                "mapTitle": "Modifica mappa"
             },
             "header": {
                 "pageTitle": {
@@ -49,7 +50,12 @@
                     "untitled": "Grafico senza titolo",
                     "actions": {
                         "viewChart": {
-                            "label": "Apri il grafico"
+                            "label": "Apri il grafico",
+                            "unsaved": "Salva le modifiche per aprire il grafico pubblicato"
+                        },
+                        "editTitle": {
+                            "label": "Modifica titolo",
+                            "done": "Fine"
                         }
                     }
                 },
@@ -60,6 +66,9 @@
                     "save": {
                         "default": "Salva",
                         "isSaving": "Salvataggio..."
+                    },
+                    "saveAndExit": {
+                        "default": "Salva e chiudi"
                     }
                 }
             },
@@ -417,6 +426,13 @@
                     "reset": {
                         "default": "Reimposta",
                         "isSaving": "Salvataggio..."
+                    }
+                },
+                "preview": {
+                    "actions": {
+                        "viewChart": {
+                            "label": "Apri il gruppo KPI"
+                        }
                     }
                 }
             },

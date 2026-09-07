@@ -129,7 +129,7 @@ function SignUp({
                       className="input input-bordered w-full"
                     />
                     {errors["email"] && (
-                      <p className="text-error">
+                      <p className="text-error" role="alert">
                         {t(`form.fields.email.errors.required`)}
                       </p>
                     )}
@@ -234,7 +234,7 @@ function SignUp({
                       {...register("confirmPassword")}
                     />
                     {errors["confirmPassword"] && (
-                      <p className="text-error">
+                      <p className="text-error" role="alert">
                         {errors["confirmPassword"].message}
                       </p>
                     )}
@@ -273,13 +273,13 @@ function SignUp({
                     </label>
                   </div>
                   {errors["policyAcknologment"] && (
-                    <p className="pl-4 text-error">
+                    <p className="pl-4 text-error" role="alert">
                       {errors["policyAcknologment"].message}
                     </p>
                   )}
                 </div>
 
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-error" role="alert">{message}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}
