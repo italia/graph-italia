@@ -6,7 +6,7 @@ export type EditStepStatus = "completed" | "active" | "locked";
 const CIRCLE_CLASSES: Record<EditStepStatus | "default", string> = {
   completed: "bg-success text-success-content",
   active: "bg-primary text-primary-content",
-  locked: "bg-base-200 text-base-content/60",
+  locked: "bg-base-200 text-base-content/70",
   default: "bg-primary/10 text-primary",
 };
 
@@ -42,7 +42,7 @@ export default function EditStepComponent(props: {
   const panelId = `edit-step-panel-${index}`;
 
   return (
-    <section className={`rounded-box bg-base-100 border border-base-300 transition-opacity ${activeBorder} ${isDisabled ? "opacity-60" : ""}`}>
+    <section className={`rounded-box bg-base-100 border border-base-300 transition-opacity ${activeBorder} ${isDisabled ? "opacity-70" : ""}`}>
       <h2 ref={headingRef} tabIndex={-1} className="m-0">
         <button
           type="button"
@@ -77,7 +77,7 @@ export default function EditStepComponent(props: {
                   <span className="sr-only"> ({srStatusLabel})</span>
                 )}
               </span>
-              <span className="block text-base font-normal text-base-content/60">
+              <span className="block text-base font-normal text-base-content/70">
                 {description || ""}
               </span>
             </span>

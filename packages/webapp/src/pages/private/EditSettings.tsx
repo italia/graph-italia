@@ -12,15 +12,15 @@ export default function EditSettingsPage() {
   return (
     <Layout>
       <Helmet>
-        <title>{t("title", "Account Settings")}</title>
+        <title>{t("title", "Modifica password")}</title>
       </Helmet>
 
       <div className="w-full flex items-center gap-2 py-6 px-4 lg:px-10 mb-2">
-        <FaLock className="text-primary" />
+        <FaLock className="text-primary" aria-hidden="true" />
         <div>
-          <h1 className="text-2xl font-bold">{t("title", "Account Settings")}</h1>
+          <h1 className="text-2xl font-bold">{t("title", "Modifica password")}</h1>
           <p className="text-sm opacity-70">
-            {t("description", "Manage your account preferences and security.")}
+            {t("description", "Scegli una nuova password per il tuo account.")}
           </p>
         </div>
       </div>
@@ -28,8 +28,8 @@ export default function EditSettingsPage() {
       {done ? (
         <div className="px-8 max-w-2xl">
           <div className="alert alert-success flex items-center gap-2">
-            <FaCheck />
-            <span>{t("changePassword.success", "Password updated successfully.")}</span>
+            <FaCheck aria-hidden="true" />
+            <span>{t("changePassword.success", "Password aggiornata con successo.")}</span>
           </div>
         </div>
       ) : (

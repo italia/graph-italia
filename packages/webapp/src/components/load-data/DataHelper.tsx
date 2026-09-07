@@ -3,6 +3,7 @@ import DataMngTable from "../DataMngTable";
 import { transposeData } from "../../lib/utils";
 import type { MatrixType, AISuggestion } from "../../types";
 import * as api from "../../lib/api";
+import { useTranslation } from "react-i18next";
 
 type DataHelperProps = {
   rawData: MatrixType;
@@ -10,6 +11,7 @@ type DataHelperProps = {
 };
 
 export default function DataHelper({ rawData, setData }: DataHelperProps) {
+  const { t } = useTranslation("components", { keyPrefix: "components.loadData.dataHelper" });
   const [currentData, setCurrentData] = useState<MatrixType>(rawData);
   const [isLoadingHints, setIsLoadingHints] = useState(false);
   const [hints, setHints] = useState<AISuggestion[] | null>(null);
@@ -45,11 +47,11 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
       if (Array.isArray(result)) {
         setHints(result as AISuggestion[]);
       } else {
-        setHintsError("No suggestions returned.");
+        setHintsError(t("errors.none"));
       }
     } catch (err: unknown) {
       setHintsError(
-        err instanceof Error ? err.message : "Failed to get suggestions.",
+        err instanceof Error ? err.message : t("errors.failed"),
       );
     } finally {
       setIsLoadingHints(false);
@@ -72,21 +74,21 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
       {/* Transpose / Reset */}
       <div className="p-4 bg-base-200 rounded-lg">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium text-sm">Quick transforms</h4>
+          <h4 className="font-medium text-sm">{t("quickTransforms")}</h4>
           <div className="flex gap-2">
             <button
               type="button"
               className="btn btn-outline btn-sm"
               onClick={transpose}
             >
-              Transpose
+              {t("transpose")}
             </button>
             <button
               type="button"
               className="btn btn-outline btn-sm"
               onClick={reset}
             >
-              Reset
+              {t("reset")}
             </button>
           </div>
         </div>
@@ -103,10 +105,10 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
           {isLoadingHints ? (
             <>
               <span className="loading loading-spinner loading-sm" aria-hidden="true" />
-              Analyzing…
+              {t("analyzing")}
             </>
           ) : (
-            "Inspect Data with AI"
+            t("inspect")
           )}
         </button>
 
@@ -117,12 +119,12 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
         )}
 
         {hints && hints.length === 0 && (
-          <p className="text-sm text-base-content/60">No suggestions for this data.</p>
+          <p className="text-sm text-base-content/70">{t("noSuggestions")}</p>
         )}
 
         {hints && hints.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">AI Suggestions</h4>
+            <h4 className="font-medium text-sm">{t("suggestions")}</h4>
             {hints.map((hint, i) => (
               <div
                 key={hint.id ?? i}
@@ -137,23 +139,23 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
                   </div>
 
                   {hint.xAxis && (
-                    <p className="text-xs text-base-content/60">
-                      <span className="font-medium">X axis:</span>{" "}
+                    <p className="text-xs text-base-content/70">
+                      <span className="font-medium">{t("xAxis")}</span>{" "}
                       {hint.xAxis.displayName ?? hint.xAxis.sourceColumn}
                     </p>
                   )}
 
                   {hint.yAxes?.length > 0 && (
-                    <p className="text-xs text-base-content/60">
-                      <span className="font-medium">Y axes:</span>{" "}
+                    <p className="text-xs text-base-content/70">
+                      <span className="font-medium">{t("yAxes")}</span>{" "}
                       {hint.yAxes.map((y) => y.displayName).join(", ")}
                     </p>
                   )}
 
                   {hint.transformations?.length > 0 && (
                     <div>
-                      <p className="text-xs font-medium text-base-content/60 mb-1">
-                        Transformations
+                      <p className="text-xs font-medium text-base-content/70 mb-1">
+                        {t("transformations")}
                       </p>
                       <ul className="space-y-0.5">
                         {hint.transformations.map((tr, j) => (
@@ -166,7 +168,7 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
                               <span>{tr.inputColumns.join(", ")}</span>
                             )}
                             {tr.outputColumnName && (
-                              <span className="opacity-60">→ {tr.outputColumnName}</span>
+                              <span className="opacity-70">→ {tr.outputColumnName}</span>
                             )}
                             {tr.aggregationFunction && (
                               <span className="badge badge-outline badge-xs">
@@ -191,7 +193,7 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
         className="btn btn-primary btn-sm"
         onClick={() => setData(currentData)}
       >
-        Use this Data
+        {t("useData")}
       </button>
     </div>
   );

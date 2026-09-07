@@ -130,7 +130,7 @@ function SelectChart({
               className={`shrink-0 ${
                 chart === type.value
                   ? "text-primary-content"
-                  : "text-base-content/60"
+                  : "text-base-content/70"
               }`}
             >
               {type.icon}
@@ -151,7 +151,7 @@ function SelectChart({
       </div>
 
       {chart && (
-        <p className="text-base text-base-content/60 px-1">
+        <p className="text-base text-base-content/70 px-1">
           {t(CHART_TYPES.find((t) => t.value === chart)?.description)}
         </p>
       )}

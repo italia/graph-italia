@@ -236,7 +236,7 @@ function ChartOptions({
           />
           {errors[field.name] && (
             <label className="label">
-              <span className="label-text-alt text-error">
+              <span className="label-text-alt text-error" role="alert">
                 {t(`form.error.required`)}
               </span>
             </label>
@@ -268,7 +268,7 @@ function ChartOptions({
           </div>
           {errors[field.name] && (
             <label className="label">
-              <span className="label-text-alt text-error">
+              <span className="label-text-alt text-error" role="alert">
                 {t(`form.error.required`)}
               </span>
             </label>
@@ -303,7 +303,7 @@ function ChartOptions({
           </select>
           {errors[field.name] && (
             <label className="label">
-              <span className="label-text-alt text-error">
+              <span className="label-text-alt text-error" role="alert">
                 {t(`form.error.required`)}
               </span>
             </label>

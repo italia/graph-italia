@@ -32,6 +32,12 @@ const detailSchema = z.object({
 	id: z.string({ error: "Id is required" }),
 });
 
+// The description is the chart's text alternative for assistive technology,
+// so it is required. Dashboard text blocks are stored as charts of type "text"
+// and carry no visual to describe: they are exempt.
+const DESCRIPTION_REQUIRED = "Description is required: it is used as the chart's text alternative";
+const requiresDescription = (chart: string | undefined) => chart !== "text";
+
 const createChartSchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
@@ -44,6 +50,10 @@ const createChartSchema = z.object({
 	publish: z.boolean().optional(),
 	preview: z.string().nullable().optional(),
 	projectId: z.string().optional(),
+}).superRefine((value, ctx) => {
+	if (requiresDescription(value.chart) && !value.description?.trim()) {
+		ctx.addIssue({ code: "custom", path: ["description"], message: DESCRIPTION_REQUIRED });
+	}
 });
 
 const updateChartSchema = z.object({
@@ -59,6 +69,11 @@ const updateChartSchema = z.object({
 	id: z.string().optional(),
 	preview: z.string().nullable().optional(),
 	slots: z.array(z.string()).nullable().optional(),
+}).superRefine((value, ctx) => {
+	// Partial update: only an explicit empty description is rejected
+	if (value.description !== undefined && requiresDescription(value.chart) && !value.description.trim()) {
+		ctx.addIssue({ code: "custom", path: ["description"], message: DESCRIPTION_REQUIRED });
+	}
 });
 
 const chartSchema = z.object({

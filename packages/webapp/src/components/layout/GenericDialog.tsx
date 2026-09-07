@@ -33,10 +33,7 @@ export default function GenericDialog({
   toggle,
   confirmCb,
   cancelCb,
-  labels = {
-    confirm: "Confirm",
-    cancel: "Cancel",
-  },
+  labels,
   confirmDisabled = false,
 }: GenericDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -44,6 +41,8 @@ export default function GenericDialog({
   const { t } = useTranslation("components", {
     keyPrefix: "components.dialog",
   });
+  const confirmLabel = labels?.confirm ?? t("confirm", "Conferma");
+  const cancelLabel = labels?.cancel ?? t("cancel", "Annulla");
 
   // Handle closing with ESC and click outside
   const handleBackdropClick = useCallback(
@@ -111,13 +110,16 @@ export default function GenericDialog({
           </p>
         )}
 
-        {/* Close button (X) — visually top-right via absolute positioning,
-            but placed after the title in the DOM. */}
-        <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
-          onClick={() => cancelCb()}
-          aria-label={t("close", "Chiudi")}>
-          <span aria-hidden="true">✕</span>
-        </button>
+        {/* Close button (X): only for close-only dialogs. A confirm dialog
+            already has "Annulla" among its actions, and two controls with the
+            same purpose are ambiguous (#133, WCAG 3.2.4). */}
+        {!confirmCb && (
+          <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
+            onClick={() => cancelCb()}
+            aria-label={t("close", "Chiudi")}>
+            <span aria-hidden="true">✕</span>
+          </button>
+        )}
 
         {/* Modal content */}
         <div className="py-4">{children}</div>
@@ -129,14 +131,14 @@ export default function GenericDialog({
         {confirmCb && (
           <div className="modal-action">
             {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
-              {labels.cancel}
+              {cancelLabel}
             </button>}
             <button type="button"
               className="btn btn-primary"
               onClick={() => confirmCb()}
               disabled={confirmDisabled}
             >
-              {labels.confirm}
+              {confirmLabel}
             </button>
           </div>
         )}

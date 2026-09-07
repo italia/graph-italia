@@ -81,5 +81,9 @@
     "primary": "Vai alla Guida",
     "secondaryUser": "Vai ai miei grafici",
     "secondaryGuest": "Accedi"
+  },
+  "sections": {
+    "hero": "Presentazione",
+    "cta": "Invito all'azione"
   }
 }

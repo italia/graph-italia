@@ -5,6 +5,16 @@ import type { ChartPropsType, FieldDataType } from "../../types";
 import { formatTooltip } from "../../lib/utils";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import { chartLiveRegionStyle, useChartKeyboard } from "../../lib/useChartKeyboard";
+import { useColorScheme } from "../../context/ColorSchemeContext";
+import "./charts.css";
+
+/** Emphasis (hover and keyboard highlight) drawn with a strong border so
+ *  the active element is visible whatever the series colour (WCAG 2.4.7). */
+const focusEmphasis = (dark: boolean) => ({
+  focus: "none" as const,
+  itemStyle: { borderColor: dark ? "#ffffff" : "#000000", borderWidth: 3 },
+});
+
 import React from "react";
 
 function BasicChart({
@@ -14,8 +24,10 @@ function BasicChart({
   isMobile = false,
   hFactor = 1,
   keyboardHint,
+  altText,
 }: ChartPropsType) {
   const resolvedTheme = useResolvedTheme();
+  const isDark = useColorScheme() === "dark";
   const refCanvas = useRef<ReactEcharts>(null);
   const [loaded, setLoaded] = useState(false);
   const [localInstance, setLocalInstance] = useState<EChartsType | null>(null);
@@ -224,6 +236,7 @@ function BasicChart({
         }
         return {
           ...serie,
+          emphasis: { ...focusEmphasis(isDark), scale: 1.6 },
           ...rest,
         };
       }),
@@ -246,8 +259,11 @@ function BasicChart({
   const config: any = data.config || null;
   const height = (config?.h || 500) * hFactor;
   const seriesCount = data.dataSource?.series?.length ?? 0;
-  const ariaLabel = `${config?.title || "Grafico"}. ${seriesCount > 0 ? `${seriesCount} serie. ` : ""}${keyboardHint || "Usa le frecce per esplorare i dati, Esc per uscire."}`;
-  const { containerProps, announcement } = useChartKeyboard(localInstance, ariaLabel);
+  const ariaLabel = `${altText || config?.title || "Grafico"}. ${seriesCount > 0 ? `${seriesCount} serie. ` : ""}${keyboardHint || "Usa le frecce per esplorare i dati, Esc per uscire."}`;
+  const { containerProps, announcement } = useChartKeyboard(
+    () => refCanvas.current?.getEchartsInstance() ?? localInstance,
+    ariaLabel,
+  );
   return (
     <>
     <div style={{ textAlign: "left" }} {...containerProps}>

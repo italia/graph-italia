@@ -117,7 +117,7 @@ beforeAll(async () => { app = await buildApp(); });
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-const payload = { chart: "bar", name: "Rate-limit test" };
+const payload = { chart: "bar", name: "Rate-limit test", description: "Grafico di prova per il rate limit" };
 
 describe("POST /charts — chartCreateLimiter", () => {
 	test("JWT user: first 20 requests succeed (201), 21st is blocked (429)", async () => {

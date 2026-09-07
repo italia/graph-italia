@@ -379,7 +379,7 @@ export default function DataTable({
                   key={colName}
                   className={`flex items-center gap-1.5 px-2 py-1 rounded-md cursor-pointer text-xs border transition-colors ${visibleColumns.has(colName)
                     ? "bg-primary/10 border-primary/30 text-primary"
-                    : "bg-base-200 border-base-300 text-base-content/40 line-through"
+                    : "bg-base-200 border-base-300 text-base-content/70 line-through"
                     }`}
                 >
                   <input
@@ -395,7 +395,7 @@ export default function DataTable({
           </div>
 
           {sortState && (
-            <div className="mt-2 text-xs text-base-content/50 italic">
+            <div className="mt-2 text-xs text-base-content/70 italic">
               {t("sorting.sortedBy")} <strong>{sortState.columnKey}</strong> (
               {sortState.direction})
             </div>
@@ -418,7 +418,7 @@ export default function DataTable({
                 {renameValues.map((val, i) => (
                   <div key={i} className="form-control">
                     <label htmlFor={`col-rename-${i}`} className="label py-0.5">
-                      <span className="label-text text-xs text-base-content/50">
+                      <span className="label-text text-xs text-base-content/70">
                         {t("renameForm.column")} {i + 1}
                       </span>
                     </label>

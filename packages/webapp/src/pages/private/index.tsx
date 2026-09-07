@@ -61,6 +61,9 @@ function Home() {
   const [pendingCreate, setPendingCreate] = useState<{ id: number; key: ItemTypeNames } | null>(null);
   const [newItemName, setNewItemName] = useState("");
   const [newItemDescription, setNewItemDescription] = useState("");
+  // Charts, maps and KPI groups use the description as their text
+  // alternative: it is required for them, optional for the rest
+  const needsDescription = (key: string) => key === "chart" || key === "map" || key === "kpi";
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isCreatingProject, setIsCreatingProject] = useState(false);
@@ -323,6 +326,7 @@ function Home() {
   async function handleCreateFromDialog(id: number, key: ItemTypeNames) {
     const name = newItemName.trim() || generateName(key);
     const description = newItemDescription.trim() || undefined;
+    if (needsDescription(key) && !description) return;
     setIsCreatingNewChart(id);
     let response = undefined;
     try {
@@ -406,7 +410,7 @@ function Home() {
               <ul
                 className={`${projectDropdownOpen ? "block" : "hidden"} absolute left-0 top-full z-[20] menu p-2 shadow bg-base-200 rounded-box w-64 border border-base-300 mt-1 max-h-[400px] overflow-y-auto`}
               >
-                <li className="px-2 py-1 text-xs text-base-content/60 pointer-events-none">
+                <li className="px-2 py-1 text-xs text-base-content/70 pointer-events-none">
                   {t(
                     "projectSwitcher.help",
                     "Qui trovi l'elenco dei tuoi grafici, dashboard e file sorgenti dati.",
@@ -414,7 +418,7 @@ function Home() {
                 </li>
                 {personalProjects.length > 0 && (
                   <>
-                    <li className="menu-title text-base opacity-60">{t("projectSwitcher.personal", "Progetti personali")}</li>
+                    <li className="menu-title text-base opacity-70">{t("projectSwitcher.personal", "Progetti personali")}</li>
                     {personalProjects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -449,7 +453,7 @@ function Home() {
                 {Object.entries(orgsWithProjects).map(([orgId, orgData]) => (
                   <Fragment key={orgId}>
                     <li className="divider my-0 opacity-20" aria-hidden="true"></li>
-                    <li className="menu-title text-base opacity-60">{orgData.name}</li>
+                    <li className="menu-title text-base opacity-70">{orgData.name}</li>
                     {orgData.projects.map(project => (
                       <li key={project.id}>
                         <div className="flex items-center justify-between gap-1 group">
@@ -637,7 +641,10 @@ function Home() {
             ? () => handleCreateFromDialog(pendingCreate.id, pendingCreate.key)
             : undefined
         }
-        confirmDisabled={isCreatingNewChart > 0}
+        confirmDisabled={
+          isCreatingNewChart > 0 ||
+          (pendingCreate ? needsDescription(pendingCreate.key) && !newItemDescription.trim() : false)
+        }
         cancelCb={() => {
           if (pendingCreate && isCreatingNewChart === 0) {
             setPendingCreate(null);
@@ -667,15 +674,22 @@ function Home() {
             />
             <label htmlFor="create-item-description" className="label pb-0">
               <span className="label-text font-semibold">
-                {t(
-                  "modals.createNew.details.form.description.label",
-                  "Descrizione (facoltativa)",
-                )}
+                {needsDescription(pendingCreate.key)
+                  ? `${t("modals.createNew.details.form.description.label", "Descrizione")} *`
+                  : t("modals.createNew.details.form.description.optionalLabel", "Descrizione (facoltativa)")}
               </span>
             </label>
+            {needsDescription(pendingCreate.key) && (
+              <p id="create-item-description-hint" className="text-sm text-base-content/70">
+                {t("modals.createNew.details.form.description.hint")}
+              </p>
+            )}
             <textarea
               id="create-item-description"
               rows={3}
+              required={needsDescription(pendingCreate.key)}
+              aria-required={needsDescription(pendingCreate.key)}
+              aria-describedby={needsDescription(pendingCreate.key) ? "create-item-description-hint" : undefined}
               className="textarea textarea-bordered w-full"
               placeholder={t(
                 "modals.createNew.details.form.description.placeholder",
@@ -707,7 +721,7 @@ function Home() {
                 <span className="font-semibold">
                   {t(`modals.createNew.items.${key}.label`, label)}
                 </span>
-                <span className="text-xs text-base-content/60 text-center leading-snug">
+                <span className="text-xs text-base-content/70 text-center leading-snug">
                   {t(`modals.createNew.items.${key}.description`)}
                 </span>
               </button>

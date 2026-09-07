@@ -7,6 +7,9 @@ import { formatTooltip } from "../../lib/utils";
 import type { ChartPropsType, FieldDataType } from "../../types";
 import { useResolvedTheme } from "../../context/ColorSchemeContext";
 import { chartLiveRegionStyle, useChartKeyboard } from "../../lib/useChartKeyboard";
+import { useColorScheme } from "../../context/ColorSchemeContext";
+import "./charts.css";
+
 
 function GeoMapChart({
   data,
@@ -15,7 +18,9 @@ function GeoMapChart({
   hFactor = 1,
   rowHeight,
   keyboardHint,
+  altText,
 }: ChartPropsType) {
+  const isDark = useColorScheme() === "dark";
   const resolvedTheme = useResolvedTheme();
   const refCanvas = useRef<ReactEcharts>(null);
   const [error, setError] = useState("");
@@ -121,6 +126,8 @@ function GeoMapChart({
             },
             itemStyle: {
               areaColor: config.areaColor || "#F2F7FC",
+              borderColor: isDark ? "#ffffff" : "#000000",
+              borderWidth: 3,
             },
           },
           map: mapId,
@@ -181,8 +188,11 @@ function GeoMapChart({
 
   const chartHeight = (data.config?.h || 500) * hFactor;
   const effectiveHeight = rowHeight || chartHeight;
-  const ariaLabel = `${data?.config?.title || "Mappa geografica"}. ${keyboardHint || "Usa le frecce per esplorare le regioni, Esc per uscire."}`;
-  const { containerProps, announcement } = useChartKeyboard(localInstance, ariaLabel);
+  const ariaLabel = `${altText || data?.config?.title || "Mappa geografica"}. ${keyboardHint || "Usa le frecce per esplorare le regioni, Esc per uscire."}`;
+  const { containerProps, announcement } = useChartKeyboard(
+    () => refCanvas.current?.getEchartsInstance() ?? localInstance,
+    ariaLabel,
+  );
   return (
     <ErrorBoundary fallback={<div>Errore nel rendering della mappa</div>}>
       <>

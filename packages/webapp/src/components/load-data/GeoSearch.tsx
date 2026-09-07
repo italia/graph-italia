@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FaSearch, FaPlus, FaTimes } from "react-icons/fa";
 
 const LS_KEY = "here_api_key";
@@ -86,6 +87,7 @@ export default function GeoSearch({
   lngField,
   onAddPoints,
 }: GeoSearchProps) {
+  const { t: tGeo } = useTranslation("components", { keyPrefix: "components.loadData.geoSearch" });
   const [apiKey, setApiKey] = useState<string>(getStoredApiKey);
   const [showKeyInput, setShowKeyInput] = useState(!getStoredApiKey());
   const [query, setQuery] = useState("");
@@ -165,14 +167,15 @@ export default function GeoSearch({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">Add points by location search</p>
+        <p className="text-sm font-medium">{tGeo("title")}</p>
         <button
           type="button"
-          className="btn btn-xs btn-ghost opacity-50"
+          className="btn btn-xs btn-ghost"
           onClick={() => setShowKeyInput((v) => !v)}
-          title="Configure HERE API key"
+          title={tGeo("apiKeyTitle")}
+          aria-label={tGeo("apiKeyTitle")}
         >
-          API key
+          {tGeo("apiKeyButton")}
         </button>
       </div>
 
@@ -218,7 +221,7 @@ export default function GeoSearch({
       {/* Results */}
       {results.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs text-base-content/50">{results.length} results — select to add</p>
+          <p className="text-xs text-base-content/70">{results.length} results — select to add</p>
           <ul className="space-y-1">
             {results.map((r) => {
               const isSelected = selected.has(r.id);
@@ -239,10 +242,10 @@ export default function GeoSearch({
                     />
                     <div className="min-w-0">
                       <p className="text-sm font-medium leading-tight">{r.title}</p>
-                      <p className="text-xs text-base-content/50 truncate">
+                      <p className="text-xs text-base-content/70 truncate">
                         {r.address.label}
                       </p>
-                      <p className="text-xs text-base-content/40 font-mono">
+                      <p className="text-xs text-base-content/70 font-mono">
                         {r.position.lat.toFixed(5)}, {r.position.lng.toFixed(5)}
                       </p>
                     </div>

@@ -148,7 +148,7 @@ function CodeBlock({
         <button
           type="button"
           onClick={copy}
-          className="btn btn-ghost btn-xs gap-1.5 text-neutral-content/50 hover:text-neutral-content"
+          className="btn btn-ghost btn-xs gap-1.5 text-neutral-content/80 hover:text-neutral-content"
           aria-label={copyLabel}
         >
           {copied ? (
@@ -183,7 +183,7 @@ function CodeBlock({
       <pre className="p-5 text-xs leading-relaxed text-neutral-content/80 overflow-x-auto font-mono whitespace-pre">
         {code}
       </pre>
-      <p className="px-5 pb-4 text-xs text-neutral-content/40 italic">{note}</p>
+      <p className="px-5 pb-4 text-xs text-neutral-content/70 italic">{note}</p>
     </div>
   );
 }
@@ -231,7 +231,7 @@ export default function AboutPage() {
            ══════════════════════════════════════════════════════════════════ */}
         <section
           className="relative flex flex-col justify-center pt-20 pb-28 lg:pt-32 lg:pb-40"
-          aria-label="Hero"
+          aria-label={t("sections.hero")}
         >
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8">
@@ -272,7 +272,7 @@ export default function AboutPage() {
               </a>
             </div>
 
-            <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-base-content/55 list-none p-0">
+            <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-base-content/70 list-none p-0">
               {badges.map((label) => (
                 <li key={label} className="flex items-center gap-2">
                   <CheckIcon className="h-4 w-4 text-primary/70 shrink-0" />
@@ -304,7 +304,7 @@ export default function AboutPage() {
               {features.map((f) => (
                 <article
                   key={f.title}
-                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm"
+                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6"
                 >
                   <span className="text-3xl mb-4 select-none" aria-hidden="true">
                     {f.emoji}
@@ -383,7 +383,7 @@ export default function AboutPage() {
         {/* ══════════════════════════════════════════════════════════════════
             CTA BAND
            ══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 lg:py-20" aria-label="Call to action">
+        <section className="py-16 lg:py-20" aria-label={t("sections.cta")}>
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl font-extrabold tracking-tight text-base-content sm:text-3xl">
               {t("cta.title")}

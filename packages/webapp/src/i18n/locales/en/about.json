@@ -81,5 +81,9 @@
     "primary": "Go to the Guide",
     "secondaryUser": "Go to my charts",
     "secondaryGuest": "Log in"
+  },
+  "sections": {
+    "hero": "Introduction",
+    "cta": "Call to action"
   }
 }

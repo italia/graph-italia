@@ -121,7 +121,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     >
 
       {showHeading && title && <h3 className="cw-title">{title}</h3>}
-      {showHeading && subTitle && (
+      {showHeading && subTitle && data.config?.showDescription !== false && (
         <p
           className="cw-subtitle"
           dangerouslySetInnerHTML={{ __html: `${subTitle}` }}

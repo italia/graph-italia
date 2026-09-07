@@ -1,4 +1,8 @@
 import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
+import type { EChartsType } from "echarts";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { downloadChartPng, downloadChartSvg } from "../../lib/chartExport";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
@@ -21,6 +25,7 @@ function ShowChartPage() {
   );
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
+  const [instance, setInstance] = useState<EChartsType | null>(null);
   const chart = data as
     | (React.ComponentProps<typeof RenderChart> & {
         name?: string;
@@ -34,10 +39,7 @@ function ShowChartPage() {
       <div className="px-4 lg:px-10 py-10 min-h-[calc(100dvh-230px)] flex flex-col justify-center">
         {previewMode && (
           <div role="status" className="alert alert-info mb-4">
-            <span>
-              Public publishing is disabled on this instance — you're viewing an
-              authenticated preview, not a public page.
-            </span>
+            <span>{t("publicChart.previewNotice")}</span>
           </div>
         )}
         {isLoading && <Loading />}
@@ -69,12 +71,47 @@ function ShowChartPage() {
             {chart.name && (
               <h1 className="text-2xl font-bold mb-1">{chart.name}</h1>
             )}
-            {chart.description && (
+            {chart.description && (chart.config as { showDescription?: boolean } | undefined)?.showDescription !== false && (
               <p className="text-base-content/70 mb-4">{chart.description}</p>
             )}
             <ColorSchemeProvider scheme={scheme}>
-              <RenderChart {...chart} {...chartA11y} />
+              <RenderChart {...chart} {...chartA11y} getInstance={setInstance} />
             </ColorSchemeProvider>
+            {/* Export as image or vector, for documents and presentations (#79) */}
+            {instance && (
+              <div
+                role="group"
+                aria-label={t("publicChart.download.label")}
+                className="mt-4 flex flex-wrap gap-2"
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    try {
+                      downloadChartPng(instance, chart.name ?? "");
+                    } catch {
+                      toast.error(t("publicChart.download.error"));
+                    }
+                  }}
+                >
+                  {t("publicChart.download.png")}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => {
+                    try {
+                      downloadChartSvg(instance, chart.name ?? "");
+                    } catch {
+                      toast.error(t("publicChart.download.error"));
+                    }
+                  }}
+                >
+                  {t("publicChart.download.svg")}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -1,20 +1,24 @@
 import { useTranslation } from "react-i18next";
 
+/**
+ * Light/dark switch. The control is a single role="switch" whose accessible
+ * name is the option it turns on ("Tema scuro"): checked means dark is
+ * active, unchecked means light is active. Putting the current theme in the
+ * name ("Tema: Chiaro" + unchecked) made screen readers announce
+ * "Tema chiaro, non attivo" while light was the active theme (#129).
+ */
 export default function ThemeSwitcherComponent(props: {
   currentTheme: "light" | "dark";
   handleChange: (value: string) => void;
-  /** Optional contextual prefix for the accessible label (e.g. "Anteprima grafico"). */
+  /** Optional contextual prefix for the accessible name (e.g. "Anteprima grafico"). */
   contextLabel?: string;
 }) {
   const { currentTheme, handleChange, contextLabel } = props;
   const { t } = useTranslation("components", {
     keyPrefix: "components.themeSwitcher",
   });
-  const stateLabel = t(currentTheme === "dark" ? "values.dark" : "values.light");
-  const baseLabel = t("label");
-  const ariaLabel = contextLabel
-    ? `${contextLabel} — ${baseLabel}: ${stateLabel}`
-    : `${baseLabel}: ${stateLabel}`;
+  const switchLabel = t("switchLabel", "Tema scuro");
+  const ariaLabel = contextLabel ? `${contextLabel}: ${switchLabel}` : switchLabel;
   return (
     <div className="flex p-2 rounded-lg ">
       <label className="flex items-center gap-4 cursor-pointer">

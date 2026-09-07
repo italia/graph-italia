@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import Layout from "../../components/layout";
+import NewTabLink from "../../components/layout/NewTabLink.tsx";
 import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading";
 import EditStepComponent from "../../components/EditStepComponent";
@@ -285,7 +286,7 @@ function EditKpiGroupPage() {
       </Helmet>
 
       {/* Top bar */}
-      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
+      <div className="sticky top-0 z-30 bg-base-200/95 backdrop-blur border-b border-base-300 w-full flex justify-between items-center gap-2 mb-2 py-4 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -301,7 +302,7 @@ function EditKpiGroupPage() {
         <button
           type="button"
           onClick={saveHandler}
-          disabled={!pendingChanges}
+          disabled={!pendingChanges || !description?.trim()}
           className="btn btn-primary"
         >
           {t("header.actions.save.default")}
@@ -368,24 +369,36 @@ function EditKpiGroupPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/65"
                     />
                     <label
                       htmlFor="kpigroup_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t("body.options.setup.form.fields.description.label")}
+                      {t("body.options.setup.form.fields.description.label")} *
                     </label>
+                    <p id="kpigroup_description_hint" className="text-sm text-base-content/70">
+                      {t("body.options.setup.form.fields.description.hint")}
+                    </p>
                     <textarea
                       id="kpigroup_description"
                       value={description ?? ""}
                       rows={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={!description?.trim()}
+                      aria-describedby={!description?.trim() ? "kpigroup_description_hint kpigroup_description_error" : "kpigroup_description_hint"}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder={t(
                         "body.options.setup.form.fields.description.placeholder",
                       )}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65"
                     />
+                    {!description?.trim() && (
+                      <p id="kpigroup_description_error" role="alert" className="text-sm text-error">
+                        {t("body.options.setup.form.fields.description.error")}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -457,7 +470,7 @@ function EditKpiGroupPage() {
             {kpiGroup.dataSource.length > 0 ? (
 
               <>
-                {isPublishingEnabled() && publish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">View Chart</a></div>}
+                {isPublishingEnabled() && publish && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t("header.preview.actions.viewChart.label", { defaultValue: "Apri il gruppo KPI" })}</NewTabLink></div>}
                 <ThemeSwitcherComponent
                   currentTheme={previewScheme}
                   handleChange={(value: ChartColorScheme) =>
@@ -479,7 +492,7 @@ function EditKpiGroupPage() {
 
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="italic text-base-content/60">
+                <p className="italic text-base-content/70">
                   {t("body.messages.noKpi")}
                 </p>
               </div>

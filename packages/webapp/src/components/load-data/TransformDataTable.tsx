@@ -283,104 +283,111 @@ export default function TransformData({
 
   return (
     <div className="mt-10">
-      {/* Transpose & Reset controls */}
-      {/* The table below already carries the "Trasforma dati" title */}
-      <div className="mb-4 flex items-center justify-end">
-        <div className="flex gap-2">
+      {/* Toolbar. Each disclosure panel sits right after its button in the
+          DOM (reading and focus order, #132); flex order-last + basis-full
+          keeps the buttons on one visual row with the open panel below. */}
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          className="btn btn-outline"
+          aria-expanded={showFilterColumns}
+          aria-controls="data-table-filter-columns"
+          onClick={() => setShowFilterColumns((v) => !v)}
+        >
+          {showFilterColumns
+            ? t(`actions.filterColumns.hide`)
+            : t(`actions.filterColumns.show`)}
+        </button>
+        {showFilterColumns && (
+          <div id="data-table-filter-columns" role="region" aria-label={t(`actions.filterColumns.label`, { defaultValue: "Filtra colonne" })} className="order-last basis-full">
+            <ToggleTableColumns
+              columnOrder={columnOrder}
+              visibleColumns={visibleColumns}
+              onToggle={toggleColumn}
+            />
+          </div>
+        )}
+        <button
+          type="button"
+          className="btn btn-outline"
+          aria-expanded={showSortColumns}
+          aria-controls="data-table-sort-columns"
+          onClick={() => setShowSortColumns((v) => !v)}
+        >
+          {showSortColumns
+            ? t(`actions.reorderColumns.hide`)
+            : t(`actions.reorderColumns.show`)}
+        </button>
+        {showSortColumns && (
+          <div id="data-table-sort-columns" role="region" aria-label={t(`actions.reorderColumns.label`, { defaultValue: "Riordina colonne" })} className="order-last basis-full">
+            <SortTableColumns
+              columnOrder={columnOrder}
+              onReorder={setColumnOrder}
+            />
+          </div>
+        )}
+        <button
+          type="button"
+          className="btn btn-outline"
+          aria-expanded={showRenameForm}
+          aria-controls="data-table-rename-headers"
+          onClick={() =>
+            showRenameForm ? setShowRenameForm(false) : openRenameForm()
+          }
+        >
+          {showRenameForm
+            ? t(`actions.renameHeaders.hide`)
+            : t(`actions.renameHeaders.show`)}
+        </button>
+        {showRenameForm && (
+          <div id="data-table-rename-headers" role="region" aria-label={t(`actions.renameHeaders.label`, { defaultValue: "Rinomina intestazioni" })} className="order-last basis-full">
+            <RenameTableHeadersForm
+              initialValues={workingData[0].map(String)}
+              onApply={applyRenames}
+              onCancel={() => setShowRenameForm(false)}
+            />
+          </div>
+        )}
+        {/* "Trasponi" is opaque to most users: the tooltip and the
+            description say what it does (#57) */}
+        <span className="tooltip tooltip-bottom" data-tip={t(`actions.transpose.hint`)}>
           <button
             type="button"
             className="btn btn-outline"
-            aria-expanded={showFilterColumns}
-            aria-controls="data-table-filter-columns"
-            onClick={() => setShowFilterColumns((v) => !v)}
-          >
-            {showFilterColumns
-              ? t(`actions.filterColumns.hide`)
-              : t(`actions.filterColumns.show`)}
-          </button>
-          <button
-            type="button"
-            className="btn btn-outline"
-            aria-expanded={showSortColumns}
-            aria-controls="data-table-sort-columns"
-            onClick={() => setShowSortColumns((v) => !v)}
-          >
-            {showSortColumns
-              ? t(`actions.reorderColumns.hide`)
-              : t(`actions.reorderColumns.show`)}
-          </button>
-          <button
-            type="button"
-            className="btn btn-outline"
-            aria-expanded={showRenameForm}
-            aria-controls="data-table-rename-headers"
-            onClick={() =>
-              showRenameForm ? setShowRenameForm(false) : openRenameForm()
-            }
-          >
-            {showRenameForm
-              ? t(`actions.renameHeaders.hide`)
-              : t(`actions.renameHeaders.show`)}
-          </button>
-          <button
-            type="button" className="btn btn-outline"
+            aria-describedby="data-table-transpose-hint"
             onClick={transpose}
           >
             {t(`actions.transpose.label`)}
           </button>
-          <div role="status" className="sr-only">
-            {transposeAnnouncement}
-          </div>
-          <button
-            type="button" className="btn btn-outline"
-            onClick={() => setShowResetDialog(true)}
-          >
-            {t(`actions.reset.label`)}
+        </span>
+        <span id="data-table-transpose-hint" className="sr-only">
+          {t(`actions.transpose.hint`)}
+        </span>
+        <div role="status" className="sr-only">
+          {transposeAnnouncement}
+        </div>
+        <button
+          type="button" className="btn btn-outline"
+          onClick={() => setShowResetDialog(true)}
+        >
+          {t(`actions.reset.label`)}
+        </button>
+
+        {downloadCSV && (
+          <button type="button" className="btn btn-outline" onClick={() => downloadCSV()}>
+            {t(`actions.downloadCsv.label`)}
           </button>
-
-          {downloadCSV && (
-            <button type="button" className="btn btn-outline" onClick={() => downloadCSV()}>
-              {t(`actions.downloadCsv.label`)}
-            </button>
-          )}
-          {downloadJSON && (
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={() => downloadJSON()}
-            >
-              {t(`actions.downloadJson.label`)}
-            </button>
-          )}
-        </div>
+        )}
+        {downloadJSON && (
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => downloadJSON()}
+          >
+            {t(`actions.downloadJson.label`)}
+          </button>
+        )}
       </div>
-
-      {showRenameForm && (
-        <div id="data-table-rename-headers" role="region" aria-label={t(`actions.renameHeaders.label`, { defaultValue: "Rinomina intestazioni" })}>
-          <RenameTableHeadersForm
-            initialValues={workingData[0].map(String)}
-            onApply={applyRenames}
-            onCancel={() => setShowRenameForm(false)}
-          />
-        </div>
-      )}
-      {showFilterColumns && (
-        <div id="data-table-filter-columns" role="region" aria-label={t(`actions.filterColumns.label`, { defaultValue: "Filtra colonne" })}>
-          <ToggleTableColumns
-            columnOrder={columnOrder}
-            visibleColumns={visibleColumns}
-            onToggle={toggleColumn}
-          />
-        </div>
-      )}
-      {showSortColumns && (
-        <div id="data-table-sort-columns" role="region" aria-label={t(`actions.reorderColumns.label`, { defaultValue: "Riordina colonne" })}>
-          <SortTableColumns
-            columnOrder={columnOrder}
-            onReorder={setColumnOrder}
-          />
-        </div>
-      )}
 
       <div ref={tableRef}>
         <SortStatus sortState={sortState} />
@@ -410,7 +417,7 @@ export default function TransformData({
       </div>
 
       {sortState && (
-        <div className="mt-2 text-sm text-base-content/60">
+        <div className="mt-2 text-sm text-base-content/70">
           {t(`table.sorting.label`)} <strong>{sortState.columnKey}</strong> (
           {t(`table.sorting.direction.${sortState.direction}`, {
             defaultValue: sortState.direction,
@@ -434,7 +441,7 @@ export default function TransformData({
           </button>
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn btn-outline btn-primary"
             onClick={applyChanges}
             disabled={!hasChanges}
           >
@@ -458,9 +465,9 @@ export default function TransformData({
         }}
         cancelCb={() => setShowResetDialog(false)}
       >
-        <p className="text-sm text-warning font-medium">
-          {t(`resetDialog.warning`)}
-        </p>
+        <div role="note" className="alert alert-warning text-sm">
+          <span>{t(`resetDialog.warning`)}</span>
+        </div>
       </GenericDialog>
     </div >
   );

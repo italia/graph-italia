@@ -114,7 +114,7 @@ export default function DocsPage() {
             </li>
             {GROUPS.map((group) => (
               <li key={group.label}>
-                <span className="menu-title text-base uppercase opacity-60 px-3 pt-4">
+                <span className="menu-title text-base uppercase opacity-70 px-3 pt-4">
                   {group.label}
                 </span>
                 <ul className="p-0 gap-1">

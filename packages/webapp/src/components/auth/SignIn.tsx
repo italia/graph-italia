@@ -113,7 +113,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                       {...register("email", { required: true })}
                     />
                     {errors["email"] && (
-                      <span className="text-error">
+                      <span className="text-error" role="alert">
                         {t(`form.fields.email.errors.required`)}
                       </span>
                     )}
@@ -145,7 +145,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   </div>
                 </div>
 
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-error" role="alert">{message}</p>}
                 {unverifiedEmail && (
                   <div className="text-sm">
                     <button

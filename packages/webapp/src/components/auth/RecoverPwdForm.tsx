@@ -63,13 +63,13 @@ function RecoverPasswordForm({ onDone }: { onDone: () => void }) {
                       {...register("email", { required: true })}
                     />
                     {errors["email"] && (
-                      <span className="text-error">
+                      <span className="text-error" role="alert">
                         {t(`form.fields.email.errors.required`)}
                       </span>
                     )}
                   </div>
                 </div>
-                {errorMessage && <p className="text-error">{errorMessage}</p>}
+                {errorMessage && <p className="text-error" role="alert">{errorMessage}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}

@@ -24,7 +24,7 @@ export default function RenameTableHeadersForm({
         {values.map((val, i) => (
           <div key={i} className="form-control">
             <label htmlFor={`col-rename-${i}`} className="label py-0.5">
-              <span className="label-text text-xs text-base-content/50">
+              <span className="label-text text-xs text-base-content/70">
                 {t("column")} {i + 1}
               </span>
             </label>

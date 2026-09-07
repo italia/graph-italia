@@ -193,7 +193,7 @@ describe("GET /charts/:id — single", () => {
 // ── POST / ────────────────────────────────────────────────────────────────────
 
 describe("POST /charts — create", () => {
-	const payload = { chart: "bar", name: "New Chart" };
+	const payload = { chart: "bar", name: "New Chart", description: "Vendite mensili per regione" };
 
 	test("user JWT creates a chart (201)", async () => {
 		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), payload) });
@@ -222,6 +222,21 @@ describe("POST /charts — create", () => {
 		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { name: "No type" }) });
 		expect(res.status).toBe(400);
 	});
+
+	test("missing description returns 400: it is the chart's text alternative", async () => {
+		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { chart: "bar", name: "No description" }) });
+		expect(res.status).toBe(400);
+	});
+
+	test("blank description returns 400", async () => {
+		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { chart: "bar", name: "Blank", description: "   " }) });
+		expect(res.status).toBe(400);
+	});
+
+	test("dashboard text blocks (chart 'text') need no description", async () => {
+		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { chart: "text", name: "dashboard-text-1", config: { content: "# Titolo" } }) });
+		expect(res.status).toBe(201);
+	});
 });
 
 // ── PUT /:id ──────────────────────────────────────────────────────────────────
@@ -249,6 +264,11 @@ describe("PUT /charts/:id — update", () => {
 	test("no credentials returns 401", async () => {
 		const res = await app.request(`/charts/${CHART_ID}`, { method: "PUT", ...withJson({}, payload) });
 		expect(res.status).toBe(401);
+	});
+
+	test("explicit empty description returns 400", async () => {
+		const res = await app.request(`/charts/${CHART_ID}`, { method: "PUT", ...withJson(userHeaders(), { description: "" }) });
+		expect(res.status).toBe(400);
 	});
 
 	test("nonexistent chart returns 404", async () => {

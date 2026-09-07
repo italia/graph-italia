@@ -15,6 +15,7 @@ import EditStepComponent from "../../components/EditStepComponent";
 import TextSlot from "../../components/TextSlot";
 import AppLayout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
+import NewTabLink from "../../components/layout/NewTabLink";
 import Loading from "../../components/layout/Loading";
 import * as api from "../../lib/api";
 import useDashboardEditStore, {
@@ -133,6 +134,17 @@ function ChartSelection({
       .catch(console.error);
   }, [assignedCharts]);
 
+  if (available.length === 0) {
+    return (
+      <div className="flex flex-col gap-3 min-w-[260px]">
+        <p role="status">{t(`components.chartSelection.empty`)}</p>
+        <NewTabLink href={ROUTES.editChart()} className="btn btn-primary self-start">
+          {t(`components.chartSelection.createChart`)}
+        </NewTabLink>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2 min-w-[260px]">
       <label htmlFor="select-chart" className="label-text">
@@ -184,7 +196,7 @@ function TextSlotEditor({
         <button
           type="button"
           aria-pressed={!showPreview}
-          className={`tab ${!showPreview ? "tab-active" : ""}`}
+          className={`tab text-base-content opacity-100 ${!showPreview ? "tab-active bg-base-100 shadow-sm font-semibold underline" : "font-medium"}`}
           onClick={() => setShowPreview(false)}
         >
           {t(`components.textSlot.tabs.write`, "Scrivi")}
@@ -192,7 +204,7 @@ function TextSlotEditor({
         <button
           type="button"
           aria-pressed={showPreview}
-          className={`tab ${showPreview ? "tab-active" : ""}`}
+          className={`tab text-base-content opacity-100 ${showPreview ? "tab-active bg-base-100 shadow-sm font-semibold underline" : "font-medium"}`}
           onClick={() => setShowPreview(true)}
         >
           {t(`components.textSlot.tabs.preview`, "Anteprima")}
@@ -246,7 +258,7 @@ function SlotToolbar({
       title={t(`components.slotToolbar.dragHint`, "Trascina per spostare lo slot")}
     >
       <FaGripVertical
-        className="shrink-0 text-base-content/50"
+        className="shrink-0 text-base-content/70"
         aria-hidden="true"
       />
 
@@ -525,7 +537,7 @@ function DashboardEditPage() {
                             setName(e.target.value);
                           }}
                           placeholder={name}
-                          className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/40"
+                          className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/65"
                         />
                         <label
                           htmlFor="chart_description"
@@ -545,7 +557,7 @@ function DashboardEditPage() {
                           placeholder={t(
                             `body.options.setup.form.fields.description.placeholder`,
                           )}
-                          className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/40"
+                          className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/65"
                         />
                       </div>
                     </div>
@@ -562,7 +574,7 @@ function DashboardEditPage() {
                   </div>
                   <div>
                     <h2 className="card-title text-xl">{t(`slots.title`)}</h2>
-                    <p className="text-sm text-base-content/60">
+                    <p className="text-sm text-base-content/70">
                       {t(`slots.description`)}
                     </p>
                   </div>
@@ -594,13 +606,9 @@ function DashboardEditPage() {
                   </div>
 
                   {api.isPublishingEnabled() && publish && (
-                    <a
-                      href={`${ROUTES.viewDashboard(id)}`}
-                      target="_blank"
-                      className="btn btn-outline"
-                    >
+                    <NewTabLink href={ROUTES.viewDashboard(id)} className="btn btn-outline">
                       {t(`slots.actions.viewChart.label`)}
-                    </a>
+                    </NewTabLink>
                   )}
                 </div>
               </div>
@@ -608,7 +616,7 @@ function DashboardEditPage() {
             {/* Working area — ResponsiveGrid measures this element's width */}
             <div className="rounded-lg border border-dashed border-base-300 bg-base-200/60 p-2 min-h-[160px]">
               {layout.length === 0 && (
-                <div className="flex items-center justify-center h-36 text-base-content/60">
+                <div className="flex items-center justify-center h-36 text-base-content/70">
                   {t(
                     `slots.empty`,
                     "Nessuno slot: usa “Aggiungi slot” per un grafico o “Aggiungi testo” per un blocco di testo.",

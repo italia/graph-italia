@@ -78,7 +78,7 @@ export default function ChartsSuggestions({ data }: { data: any }) {
                 </div>
                 <div className='p-4'>
                   <div>{hint.description}</div>
-                  <div className='text-xs uppercase font-semibold opacity-60'>
+                  <div className='text-xs uppercase font-semibold opacity-70'>
                     {hint.chartType} chart
                   </div>
                   <ul>

@@ -34,6 +34,9 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
   const { t } = useTranslation("components", {
     keyPrefix: "components.auth.changePasswordForm",
   });
+  const { t: tToggle } = useTranslation("components", {
+    keyPrefix: "components.auth.passwordToggle",
+  });
   const updatePasswordSchema = getUpdatePasswordSchema(zod, t);
   const {
     register,
@@ -57,7 +60,7 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
       if (result) {
         onDone();
       } else {
-        setMessage("Error while changing password");
+        setMessage(t("form.errors.generic"));
       }
     } catch (error) {
       console.log("error", error);
@@ -99,8 +102,11 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-content rounded-e-md focus:text-primary"
+                        aria-label={showPassword ? tToggle("hide") : tToggle("show")}
+                        aria-pressed={showPassword}
                       >
                         <svg
+                          aria-hidden="true"
                           className="shrink-0 size-3.5"
                           width="24"
                           height="24"
@@ -173,14 +179,14 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
                       {...register("confirmPassword")}
                     />
                     {errors["confirmPassword"] && (
-                      <p className="text-error">
+                      <p className="text-error" role="alert">
                         {errors["confirmPassword"].message}
                       </p>
                     )}
                   </div>
                 </div>
 
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-error" role="alert">{message}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}

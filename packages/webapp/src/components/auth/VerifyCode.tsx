@@ -86,7 +86,7 @@ export default function VerifyCodeComponent({
                 showState={showState}
               />
               {message && (
-                <div className="text-error mt-2 text-md">{message}</div>
+                <div className="text-error mt-2 text-md" role="alert">{message}</div>
               )}
               <div className="text-sm leading-6 my-4">
                 {t(`bottom.label`)}

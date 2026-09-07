@@ -56,7 +56,8 @@
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Passwords do not match"
+                        "passwordDontMatch": "Passwords do not match",
+                        "generic": "Error while changing the password. Please try again."
                     },
                     "actions": {
                         "submit": {
@@ -189,7 +190,8 @@
                         }
                     },
                     "errors": {
-                        "passwordDontMatch": "Passwords do not match"
+                        "passwordDontMatch": "Passwords do not match",
+                        "generic": "Error while registering. Please try again."
                     },
                     "actions": {
                         "submit": {
@@ -219,6 +221,10 @@
                         }
                     }
                 }
+            },
+            "passwordToggle": {
+                "show": "Show password",
+                "hide": "Hide password"
             }
         },
         "layout": {
@@ -232,10 +238,10 @@
                     },
                     "actions": {
                         "login": {
-                            "label": "Login"
+                            "label": "Log in"
                         },
                         "logout": {
-                            "label": "Logout"
+                            "label": "Log out"
                         }
                     }
                 },
@@ -259,7 +265,8 @@
                         "hamburger": {
                             "label": "Menu"
                         }
-                    }
+                    },
+                    "label": "Main navigation"
                 }
             },
             "slimHeader": {
@@ -272,10 +279,10 @@
                 },
                 "actions": {
                     "login": {
-                        "label": "Login"
+                        "label": "Log in"
                     },
                     "logout": {
-                        "label": "Logout"
+                        "label": "Log out"
                     },
                     "askMyData": {
                         "label": "Ask my data"
@@ -283,6 +290,11 @@
                     "requestAccountDeletion": {
                         "label": "Request account deletion"
                     }
+                },
+                "nav": {
+                    "label": "Main",
+                    "hamburger": "Menu",
+                    "close": "Close menu"
                 }
             },
             "footer": {
@@ -308,6 +320,11 @@
                         "label": "Accessibility statement"
                     }
                 }
+            },
+            "editSidebar": {
+                "toggle": "Settings and data",
+                "close": "Close the panel",
+                "dialogLabel": "Settings and data"
             }
         },
         "loadData": {
@@ -365,7 +382,8 @@
                 },
                 "actions": {
                     "transpose": {
-                        "label": "Transpose"
+                        "label": "Transpose",
+                        "hint": "Swap the rows and columns of the table"
                     },
                     "transposedStatus": "Table transposed: now {{rows}} rows and {{cols}} columns",
                     "reset": {
@@ -409,7 +427,7 @@
                             "label": "Toggle columns"
                         },
                         "apply": {
-                            "label": "Apply Changes"
+                            "label": "Apply changes to the table"
                         },
                         "reset": {
                             "label": "Reset"
@@ -477,8 +495,49 @@
                         "label": "Reset"
                     },
                     "submit": {
-                        "label": "Load data"
+                        "label": "Use this data for the chart"
                     }
+                }
+            },
+            "geoMapUpload": {
+                "fileLabel": "Upload a JSON or GeoJSON file",
+                "detected": {
+                    "geo": "GeoJSON detected",
+                    "json": "JSON array detected"
+                },
+                "summary": "{{rows}} rows, {{cols}} columns",
+                "latField": "Latitude field",
+                "lngField": "Longitude field",
+                "selectOption": "Select",
+                "apply": "Use this data",
+                "selectFieldsHint": "Select the latitude and longitude fields to continue"
+            },
+            "geoSearch": {
+                "title": "Add points by location search",
+                "apiKeyButton": "API key",
+                "apiKeyTitle": "Configure the HERE API key"
+            },
+            "dataHelper": {
+                "quickTransforms": "Quick transforms",
+                "transpose": "Transpose",
+                "reset": "Reset",
+                "inspect": "Inspect data with AI",
+                "analyzing": "Analyzing…",
+                "noSuggestions": "No suggestions for this data.",
+                "suggestions": "AI suggestions",
+                "xAxis": "X axis:",
+                "yAxes": "Y axes:",
+                "transformations": "Transformations",
+                "useData": "Use this data",
+                "errors": {
+                    "none": "No suggestions returned.",
+                    "failed": "Failed to get suggestions."
+                }
+            },
+            "dataSource": {
+                "transposed": {
+                    "label": "Transposed",
+                    "hint": "Swap rows and columns when this data source is consumed"
                 }
             }
         },
@@ -500,41 +559,111 @@
                 "Axes": "Axes"
             },
             "fields": {
-                "zoom": { "label": "Show zoom" },
-                "smooth": { "label": "Line smoothing" },
-                "showArea": { "label": "Show area" },
-                "showAllSymbol": { "label": "Show all symbols" },
-                "direction": { "label": "Direction" },
-                "stack": { "label": "Stack values" },
-                "totalLabel": { "label": "Total label" },
-                "showPieLabels": { "label": "Show labels" },
-                "labeLine": { "label": "Show label lines" },
-                "geoJsonUrl": { "label": "GeoJson URL" },
-                "nameProperty": { "label": "Matching property name" },
-                "showMapLabels": { "label": "Show labels" },
-                "serieName": { "label": "Series name" },
-                "areaColor": { "label": "Area overlay color" },
-                "visualMap": { "label": "Show color scale" },
-                "visualMapLeft": { "label": "Color scale position" },
-                "visualMapOrient": { "label": "Color scale orientation" },
-                "palette": { "label": "Palette" },
-                "h": { "label": "Chart height (px)" },
-                "responsive": { "label": "Responsive" },
-                "legend": { "label": "Show legend" },
-                "legendPosition": { "label": "Legend position" },
-                "tooltip": { "label": "Show tooltip" },
-                "valueFormatter": { "label": "Value suffix" },
-                "tooltipFormatter": { "label": "Value format" },
-                "tooltipTrigger": { "label": "Tooltip trigger" },
-                "gridHeight": { "label": "Height" },
-                "gridWidth": { "label": "Width" },
-                "gridLeft": { "label": "Left margin (%/px)" },
-                "gridRight": { "label": "Right margin (%/px)" },
-                "gridTop": { "label": "Top margin (%/px)" },
-                "gridBottom": { "label": "Bottom margin (%/px)" },
-                "xLabel": { "label": "X axis label" },
-                "yLabel": { "label": "Y axis label" },
-                "nameGap": { "label": "Axis label gap" },
+                "zoom": {
+                    "label": "Show zoom"
+                },
+                "smooth": {
+                    "label": "Line smoothing"
+                },
+                "showArea": {
+                    "label": "Show area"
+                },
+                "showAllSymbol": {
+                    "label": "Show all symbols"
+                },
+                "direction": {
+                    "label": "Direction"
+                },
+                "stack": {
+                    "label": "Stack values"
+                },
+                "totalLabel": {
+                    "label": "Total label"
+                },
+                "showPieLabels": {
+                    "label": "Show labels"
+                },
+                "labeLine": {
+                    "label": "Show label lines"
+                },
+                "geoJsonUrl": {
+                    "label": "GeoJson URL"
+                },
+                "nameProperty": {
+                    "label": "Matching property name"
+                },
+                "showMapLabels": {
+                    "label": "Show labels"
+                },
+                "serieName": {
+                    "label": "Series name"
+                },
+                "areaColor": {
+                    "label": "Area overlay color"
+                },
+                "visualMap": {
+                    "label": "Show color scale"
+                },
+                "visualMapLeft": {
+                    "label": "Color scale position"
+                },
+                "visualMapOrient": {
+                    "label": "Color scale orientation"
+                },
+                "palette": {
+                    "label": "Palette"
+                },
+                "h": {
+                    "label": "Chart height (px)"
+                },
+                "responsive": {
+                    "label": "Responsive"
+                },
+                "legend": {
+                    "label": "Show legend"
+                },
+                "legendPosition": {
+                    "label": "Legend position"
+                },
+                "tooltip": {
+                    "label": "Show tooltip"
+                },
+                "valueFormatter": {
+                    "label": "Value suffix"
+                },
+                "tooltipFormatter": {
+                    "label": "Value format"
+                },
+                "tooltipTrigger": {
+                    "label": "Tooltip trigger"
+                },
+                "gridHeight": {
+                    "label": "Height"
+                },
+                "gridWidth": {
+                    "label": "Width"
+                },
+                "gridLeft": {
+                    "label": "Left margin (%/px)"
+                },
+                "gridRight": {
+                    "label": "Right margin (%/px)"
+                },
+                "gridTop": {
+                    "label": "Top margin (%/px)"
+                },
+                "gridBottom": {
+                    "label": "Bottom margin (%/px)"
+                },
+                "xLabel": {
+                    "label": "X axis label"
+                },
+                "yLabel": {
+                    "label": "Y axis label"
+                },
+                "nameGap": {
+                    "label": "Axis label gap"
+                },
                 "logScale": {
                     "label": "Logarithmic scale",
                     "hint": "Compresses large values and expands small ones: useful when series span very different orders of magnitude. Zero or negative values cannot be plotted on this scale."
@@ -575,28 +704,28 @@
                 "palette": {
                     "theme": "Theme colors",
                     "categorica": "Categorical (10 colors)",
-                    "divergente": "Diverging blue–red",
-                    "divergente_b": "Diverging blue–orange",
+                    "divergente": "Diverging blue-red",
+                    "divergente_b": "Diverging blue-orange",
                     "monocolore_a": "Monochrome blue",
                     "monocolore_b": "Monochrome dark blue",
                     "monocolore_c": "Monochrome gray-blue",
                     "monocolore_d": "Monochrome teal",
-                    "_1_a": "1 color — Blue",
-                    "_1_b": "1 color — Dark blue",
-                    "_1_c": "1 color — Gray-blue",
-                    "_2_a": "2 colors — Blue and orange",
-                    "_2_b": "2 colors — Blue and red",
-                    "_2_c": "2 colors — Green and orange",
-                    "_2_d": "2 colors — Green and red",
-                    "_2_e": "2 colors — Orange and teal",
-                    "_3_a": "3 colors — Blue, red, orange",
-                    "_3_b": "3 colors — Teal, light blue, orange",
-                    "_3_c": "3 colors — Navy, light blue, orange",
-                    "_4_a": "4 colors — Blue, light blue, orange, red",
-                    "_4_b": "4 colors — Navy, gray, red, orange",
-                    "_4_c": "4 colors — Navy, teal, light blue, red",
-                    "_5_a": "5 colors — Blue, light blue, orange, red, gray",
-                    "_5_b": "5 colors — Green, teal, light blue, orange, red"
+                    "_1_a": "1 color: Blue",
+                    "_1_b": "1 color: Dark blue",
+                    "_1_c": "1 color: Gray-blue",
+                    "_2_a": "2 colors: Blue and orange",
+                    "_2_b": "2 colors: Blue and red",
+                    "_2_c": "2 colors: Green and orange",
+                    "_2_d": "2 colors: Green and red",
+                    "_2_e": "2 colors: Orange and teal",
+                    "_3_a": "3 colors: Blue, red, orange",
+                    "_3_b": "3 colors: Teal, light blue, orange",
+                    "_3_c": "3 colors: Navy, light blue, orange",
+                    "_4_a": "4 colors: Blue, light blue, orange, red",
+                    "_4_b": "4 colors: Navy, gray, red, orange",
+                    "_4_c": "4 colors: Navy, teal, light blue, red",
+                    "_5_a": "5 colors: Blue, light blue, orange, red, gray",
+                    "_5_b": "5 colors: Green, teal, light blue, orange, red"
                 }
             },
             "form": {
@@ -622,7 +751,11 @@
                     "label": "Name"
                 },
                 "isRemote": {
-                    "label": "Is Remote"
+                    "label": "Data origin",
+                    "values": {
+                        "remote": "Remote URL",
+                        "file": "Uploaded file"
+                    }
                 },
                 "createdAt": {
                     "label": "Created At"
@@ -676,7 +809,9 @@
         "datasourceTable": {
             "noDataComponent": "No data sources created",
             "columns": {
-                "name": { "label": "Name" },
+                "name": {
+                    "label": "Name"
+                },
                 "visibility": {
                     "label": "Visibility",
                     "values": {
@@ -691,9 +826,15 @@
                         "local": "Local"
                     }
                 },
-                "createdAt": { "label": "Created" },
-                "updatedAt": { "label": "Updated" },
-                "actions": { "label": "Actions" }
+                "createdAt": {
+                    "label": "Created"
+                },
+                "updatedAt": {
+                    "label": "Updated"
+                },
+                "actions": {
+                    "label": "Actions"
+                }
             },
             "actions": {
                 "edit": "Edit",
@@ -865,7 +1006,9 @@
             "dataTableCaption": "Chart data"
         },
         "dialog": {
-            "close": "Close"
+            "close": "Close",
+            "confirm": "Confirm",
+            "cancel": "Cancel"
         },
         "languageSwitcher": {
             "label": "Language"
@@ -883,7 +1026,11 @@
             "values": {
                 "light": "Light",
                 "dark": "Dark"
-            }
+            },
+            "switchLabel": "Dark theme"
+        },
+        "common": {
+            "newTab": "(opens in a new tab)"
         }
     }
 }
