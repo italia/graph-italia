@@ -33,7 +33,7 @@ export default function EditSettingsPage() {
           </div>
         </div>
       ) : (
-        <ChangePasswordForm onDone={() => setDone(true)} />
+        <ChangePasswordForm headingLevel="h2" onDone={() => setDone(true)} />
       )}
     </Layout>
   );

@@ -27,7 +27,19 @@ const getUpdatePasswordSchema = (
   return updatePasswordSchema;
 };
 
-function ChangePassword({ onDone }: { onDone: () => void }) {
+/**
+ * `headingLevel`: the form is the whole page on the recover-password route
+ * (its title is the page's h1) but sits under the "Modifica password" h1 in
+ * the account settings, where a second h1 broke the heading outline (#126).
+ */
+function ChangePassword({
+  onDone,
+  headingLevel = "h1",
+}: {
+  onDone: () => void;
+  headingLevel?: "h1" | "h2";
+}) {
+  const Heading = headingLevel;
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
@@ -73,9 +85,9 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
       <div className="mx-auto w-full  min-w-sm max-w-lg card bg-base-100 shadow-sm border border-base-200">
         <div className="card-body p-8">
           <div>
-            <h1 className="text-2xl font-bold leading-9 tracking-tight text-content">
+            <Heading className="text-2xl font-bold leading-9 tracking-tight text-content">
               {t(`header.label`)}
-            </h1>
+            </Heading>
           </div>
 
           <div className="mt-10">
