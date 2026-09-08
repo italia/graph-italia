@@ -13,9 +13,28 @@ const FOCUSABLE =
  *
  * While the drawer is open it behaves as a modal dialog (#122): focus moves
  * into it, Tab cycles inside it, Escape closes it and focus returns to the
- * button. The parent is told through `onOpenChange` so it can mark the rest
- * of the page `inert`, keeping screen-reader navigation inside the panel.
+ * button. Everything outside the drawer (header, footer, toolbar, preview,
+ * toasts) is marked `inert` for as long as it is open, so screen-reader and
+ * keyboard navigation cannot reach the content hidden behind the overlay,
+ * whatever page hosts the sidebar. `onOpenChange` still reports the state.
  */
+const DRAWER_QUERY = "(max-width: 1279.98px)";
+
+/** Marks every sibling of the element's ancestors as inert; returns the undo. */
+function inertOutside(el: HTMLElement): () => void {
+  const touched: HTMLElement[] = [];
+  let node: HTMLElement | null = el;
+  while (node && node.parentElement && node !== document.body) {
+    for (const sibling of Array.from(node.parentElement.children)) {
+      if (sibling === node || !(sibling instanceof HTMLElement)) continue;
+      if (sibling.hasAttribute("inert")) continue;
+      sibling.setAttribute("inert", "");
+      touched.push(sibling);
+    }
+    node = node.parentElement;
+  }
+  return () => touched.forEach((s) => s.removeAttribute("inert"));
+}
 export default function EditStepsSidebar({
   children,
   onOpenChange,
@@ -30,18 +49,48 @@ export default function EditStepsSidebar({
   const toggleRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const asideRef = useRef<HTMLElement>(null);
+  // The toggle is inert while the drawer is open: focus can go back to it
+  // only after the page has been released, i.e. on the render that closes.
+  const refocusToggle = useRef(false);
+  const closeDrawer = () => {
+    refocusToggle.current = true;
+    setOpen(false);
+  };
 
   useEffect(() => {
     onOpenChange?.(open);
   }, [open, onOpenChange]);
+
+  // Drawer mode only (below xl): the rest of the page is inert while open.
+  // Leaving drawer mode (window resized to xl+) closes the drawer and
+  // releases the page, since the sidebar becomes a static column.
+  useEffect(() => {
+    if (!open || !asideRef.current) return;
+    const mq = window.matchMedia?.(DRAWER_QUERY);
+    if (mq && !mq.matches) return;
+    const release = inertOutside(asideRef.current);
+    const onChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) setOpen(false);
+    };
+    mq?.addEventListener("change", onChange);
+    return () => {
+      mq?.removeEventListener("change", onChange);
+      release();
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open || !refocusToggle.current) return;
+    refocusToggle.current = false;
+    toggleRef.current?.focus();
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
     closeRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus();
+        closeDrawer();
         return;
       }
       if (event.key !== "Tab" || !asideRef.current) return;
@@ -81,7 +130,7 @@ export default function EditStepsSidebar({
       {open && (
         <div
           className="fixed inset-0 z-40 bg-black/40 xl:hidden"
-          onClick={() => setOpen(false)}
+          onClick={closeDrawer}
           aria-hidden="true"
         />
       )}
@@ -102,10 +151,7 @@ export default function EditStepsSidebar({
             type="button"
             className="btn btn-ghost btn-sm btn-square"
             aria-label={t("close", { defaultValue: "Chiudi il pannello" })}
-            onClick={() => {
-              setOpen(false);
-              toggleRef.current?.focus();
-            }}
+            onClick={closeDrawer}
           >
             <FaXmark aria-hidden="true" />
           </button>
