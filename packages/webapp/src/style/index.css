@@ -263,6 +263,14 @@
   outline-color: #66b3ff;
 }
 
+/* DaisyUI 5 renders .label (form field labels) at 60% of the current colour:
+   #7a7c7f on white, 4.19:1, below WCAG 1.4.3 (#130). 75% gives about 7:1 on
+   white and keeps the label lighter than the field value; the dark theme
+   inherits the same ratio from its base-content. */
+.label {
+  color: color-mix(in oklab, currentColor 75%, transparent);
+}
+
 /* DaisyUI renders .menu-title at 40% of base-content (2.9:1 on white):
    raise it so the documentation sidebar labels pass WCAG 1.4.3 (#123). */
 .menu .menu-title {
