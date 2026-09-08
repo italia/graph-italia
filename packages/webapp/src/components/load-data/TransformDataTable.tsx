@@ -70,6 +70,15 @@ export default function TransformData({
   const [showFilterColumns, setShowFilterColumns] = useState(false);
   const [showSortColumns, setShowSortColumns] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  // The rename panel closes on apply, cancel or toggle: focus goes back to
+  // the button that opened it, so the user keeps their place (#132)
+  const renameButtonRef = useRef<HTMLButtonElement>(null);
+  function closeRenameForm() {
+    setShowRenameForm(false);
+    // setTimeout rather than requestAnimationFrame: rAF is paused in
+    // background tabs and the focus would move only when the tab is shown
+    setTimeout(() => renameButtonRef.current?.focus(), 0);
+  }
 
 
   // State: current sort
@@ -115,7 +124,7 @@ export default function TransformData({
     );
 
     setWorkingData(newData);
-    setShowRenameForm(false);
+    closeRenameForm();
   }
 
   // Transpose the data matrix
@@ -327,12 +336,13 @@ export default function TransformData({
           </div>
         )}
         <button
+          ref={renameButtonRef}
           type="button"
           className="btn btn-outline"
           aria-expanded={showRenameForm}
           aria-controls="data-table-rename-headers"
           onClick={() =>
-            showRenameForm ? setShowRenameForm(false) : openRenameForm()
+            showRenameForm ? closeRenameForm() : openRenameForm()
           }
         >
           {showRenameForm
@@ -344,7 +354,7 @@ export default function TransformData({
             <RenameTableHeadersForm
               initialValues={workingData[0].map(String)}
               onApply={applyRenames}
-              onCancel={() => setShowRenameForm(false)}
+              onCancel={closeRenameForm}
             />
           </div>
         )}

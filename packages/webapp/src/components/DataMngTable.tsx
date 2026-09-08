@@ -237,6 +237,15 @@ export default function DataTable({
     }
   }
 
+  // Focus goes back to the toggle button when the panel closes (#132)
+  const renameButtonRef = useRef<HTMLButtonElement>(null);
+  function closeRenameForm() {
+    setShowRenameForm(false);
+    // setTimeout rather than requestAnimationFrame: rAF is paused in
+    // background tabs and the focus would move only when the tab is shown
+    setTimeout(() => renameButtonRef.current?.focus(), 0);
+  }
+
   function openRenameForm() {
     if (!workingData?.[0]) return;
     setRenameValues(workingData[0].map(String));
@@ -264,7 +273,7 @@ export default function DataTable({
     });
 
     setWorkingData(newData);
-    setShowRenameForm(false);
+    closeRenameForm();
   }
 
   const handleSort = useCallback(
@@ -355,12 +364,13 @@ export default function DataTable({
               </button>
             )}
             <button
+              ref={renameButtonRef}
               type="button"
               className="btn btn-outline"
               aria-expanded={showRenameForm}
               aria-controls="rename-headers-panel"
               onClick={() =>
-                showRenameForm ? setShowRenameForm(false) : openRenameForm()
+                showRenameForm ? closeRenameForm() : openRenameForm()
               }
             >
               {showRenameForm
@@ -402,11 +412,15 @@ export default function DataTable({
           )}
 
           {showRenameForm && (
-            <div
+            <form
               id="rename-headers-panel"
               role="region"
               aria-labelledby="rename-headers-title"
               className="mt-4 p-4 rounded-lg border border-base-300 bg-base-200"
+              onSubmit={(event) => {
+                event.preventDefault();
+                applyRenames();
+              }}
             >
               <h4
                 id="rename-headers-title"
@@ -426,6 +440,7 @@ export default function DataTable({
                       id={`col-rename-${i}`}
                       type="text"
                       value={val}
+                      autoFocus={i === 0}
                       onChange={(e) => {
                         const updated = [...renameValues];
                         updated[i] = e.target.value;
@@ -437,22 +452,18 @@ export default function DataTable({
                 ))}
               </div>
               <div className="mt-3 flex gap-2">
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={applyRenames}
-                >
+                <button type="submit" className="btn btn-primary btn-sm">
                   {t("renameForm.actions.apply.label")}
                 </button>
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
-                  onClick={() => setShowRenameForm(false)}
+                  onClick={closeRenameForm}
                 >
                   {t("renameForm.actions.cancel.label")}
                 </button>
               </div>
-            </div>
+            </form>
           )}
 
           <div className="mt-4" ref={tableRef}>
