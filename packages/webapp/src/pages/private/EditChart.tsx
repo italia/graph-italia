@@ -87,9 +87,6 @@ function EditChartPage() {
   const [stepAnnouncement, setStepAnnouncement] = useState<string>("");
   const seriesSelectorRef = useRef<HTMLDivElement>(null);
   const configurationHeadingRef = useRef<HTMLHeadingElement>(null);
-  // Below xl the step column is a modal drawer: the rest of the page is
-  // inert while it is open (#122)
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   // ChartOptions re-emits a normalised config from its form on mount and
   // again after its reset (numbers, palette colours), so those emissions
   // cannot be told apart from an edit by comparing values. They count as
@@ -291,7 +288,6 @@ function EditChartPage() {
           "Salva" is always at hand (#76) */}
       <div
         className="sticky top-0 z-30 bg-base-200/95 backdrop-blur border-b border-base-300 w-full flex flex-wrap justify-between items-center gap-2 mb-2 py-4 px-4 lg:px-10"
-        inert={sidebarOpen}
       >
         <button
           type="button"
@@ -342,7 +338,7 @@ function EditChartPage() {
         }}
       >
         <div className="grid grid-cols-1 xl:grid-cols-6  gap-4">
-          <EditStepsSidebar onOpenChange={setSidebarOpen}>
+          <EditStepsSidebar>
           <div className="xl:col-span-2">
             <EditStepComponent
               title={t(`body.options.setup.title`)}
@@ -535,7 +531,6 @@ function EditChartPage() {
           <section
             aria-labelledby="chart-preview-heading"
             className="xl:col-span-4 flex flex-col p-4 lg:p-10 bg-base-100 border border-base-300 rounded-lg xl:sticky xl:top-24 xl:self-start xl:max-h-[calc(100vh-7rem)] xl:overflow-y-auto"
-            inert={sidebarOpen}
           >
             <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>
