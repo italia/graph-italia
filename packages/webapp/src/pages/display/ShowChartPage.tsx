@@ -1,7 +1,7 @@
 import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
 import type { EChartsType } from "echarts";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { downloadChartPng, downloadChartSvg } from "../../lib/chartExport";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import toast from "../lib/toast";
 import { useNavigate } from "react-router-dom";
 import * as api from "../lib/api";
 import { HOME_ROUTE } from "../router";

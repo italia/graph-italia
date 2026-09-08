@@ -8,7 +8,7 @@ import {
 import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { FaPen } from "react-icons/fa6";

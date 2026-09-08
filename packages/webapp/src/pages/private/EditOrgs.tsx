@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaTrash, FaPlus, FaUsers, FaUserPlus, FaShieldHalved, FaBuilding, FaChevronRight, FaChevronDown, FaFolderTree, FaRightLeft } from "react-icons/fa6";
 
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";

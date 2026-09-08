@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { startTransition, useEffect, useRef, useState } from "react";

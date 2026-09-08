@@ -7,7 +7,7 @@ import {
 import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -61,6 +61,7 @@ export default function EditMapPage() {
   const [showDescription, setShowDescription] = useState(true);
   const descriptionMissing = chartDescription.trim().length === 0;
   const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("");
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
     settings?.preferredTheme === "dark" ? "dark" : "light",
@@ -150,15 +151,18 @@ export default function EditMapPage() {
     };
 
     setIsSaving(true);
+    setSaveStatus("");
     try {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
         setHasUnsavedChanges(false);
         toast.success(t(`save.success.label`));
+        setSaveStatus(t(`save.success.label`));
       }
     } catch (error) {
       console.error("Error saving chart:", error);
       toast.error(t(`save.error.label`));
+      setSaveStatus(t(`save.error.label`));
     } finally {
       setIsSaving(false);
     }
@@ -188,6 +192,10 @@ export default function EditMapPage() {
 
   return (
     <Layout>
+      {/* Save outcome announced without moving the focus (WCAG 4.1.3, #135) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {saveStatus}
+      </div>
       <Helmet>
         <title>
           {t(`head.mapTitle`)}{chartName ? `: ${chartName}` : ""}

@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import DataMngTable from "../../components/DataMngTable";
 import Layout from "../../components/layout";
 import NewTabLink from "../../components/layout/NewTabLink";

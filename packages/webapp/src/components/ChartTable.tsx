@@ -23,7 +23,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 
 import { RenderChart } from "graph-italia-components";
-import toast from "react-hot-toast";
+import toast from "../lib/toast";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";

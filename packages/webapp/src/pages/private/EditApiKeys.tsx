@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaTrash, FaPlus, FaCopy, FaCheck, FaKey, FaBan, FaRotateLeft } from "react-icons/fa6";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";
