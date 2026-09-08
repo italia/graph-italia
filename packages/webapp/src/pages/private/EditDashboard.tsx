@@ -6,7 +6,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaInfo, FaThLarge } from "react-icons/fa";
 import { FaGripVertical, FaTrashCan } from "react-icons/fa6";
@@ -390,6 +390,7 @@ function DashboardEditPage() {
   } = useDashboardEditStore();
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveStatus, setSaveStatus] = useState("");
 
   async function saveHandler() {
     setIsSaving(true);
@@ -404,6 +405,7 @@ function DashboardEditPage() {
         // Reloading would drop unsaved empty slots from the editor
         if (emptySlots === 0) reload();
         toast.success(t("header.actions.save.success", "Dashboard salvata con successo"));
+        setSaveStatus(t("header.actions.save.success", "Dashboard salvata con successo"));
         if (emptySlots > 0) {
           toast(
             t(
@@ -415,10 +417,12 @@ function DashboardEditPage() {
         }
       } else {
         toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
+        setSaveStatus(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
       }
     } catch (error) {
       console.log(error);
       toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
+        setSaveStatus(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
     } finally {
       setIsSaving(false);
     }
@@ -441,6 +445,10 @@ function DashboardEditPage() {
 
   return (
     <AppLayout>
+      {/* Save outcome announced without moving the focus (WCAG 4.1.3, #135) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {saveStatus}
+      </div>
       <Helmet>
         <title>{`${t(`head.title.label`)}`}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />

@@ -15,7 +15,7 @@ import { FaCog, FaInfo } from "react-icons/fa";
 import { FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { Helmet } from "react-helmet";
 import { useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 
 import Layout from "../../components/layout";
 import NewTabLink from "../../components/layout/NewTabLink.tsx";
@@ -240,15 +240,19 @@ function EditKpiGroupPage() {
     if (id) load(id);
   }, [id, load]);
 
+  const [saveStatus, setSaveStatus] = useState("");
   async function saveHandler() {
+    setSaveStatus("");
     try {
       const ok = await save();
       if (ok) {
-        toast.success(t("header.actions.save.success") || "Saved!");
+        toast.success(t("header.actions.save.success"));
+        setSaveStatus(t("header.actions.save.success"));
         reload();
       }
     } catch {
-      toast.error(t("header.actions.save.error") || "Error saving");
+      toast.error(t("header.actions.save.error"));
+      setSaveStatus(t("header.actions.save.error"));
     }
   }
 
@@ -278,6 +282,10 @@ function EditKpiGroupPage() {
 
   return (
     <Layout>
+      {/* Save outcome announced without moving the focus (WCAG 4.1.3, #135) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {saveStatus}
+      </div>
       <Helmet>
         <title>
           {t("head.title.label")}
