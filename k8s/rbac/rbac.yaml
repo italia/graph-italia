@@ -44,10 +44,11 @@ rules:
     resources:
       - networkpolicies
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-  # Events (for debugging)
+  # Events and pod logs (for debugging failed deploys / migration jobs)
   - apiGroups: [""]
     resources:
       - events
+      - pods/log
     verbs: ["get", "list", "watch"]
   # Batch jobs (for migrations, seeds)
   - apiGroups: ["batch"]
