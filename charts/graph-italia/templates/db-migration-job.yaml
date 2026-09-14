@@ -93,6 +93,17 @@ spec:
 
                 echo "🚀 Running prisma migrate deploy..."
                 npx prisma migrate deploy --config="$PRISMA_CONFIG_PATH" --schema=prisma/schema.prisma
+
+                # Hard gate: after a successful deploy there must be nothing left
+                # pending and no failed migration. `migrate status` exits non-zero
+                # in both cases, so with `set -e` this fails the Job — which fails
+                # the Helm pre-upgrade hook and therefore the whole pipeline.
+                echo "🔎 Verifying final migration state..."
+                if ! npx prisma migrate status --config="$PRISMA_CONFIG_PATH" --schema=prisma/schema.prisma; then
+                  echo "❌ Database is not in sync with prisma/migrations after migrate deploy."
+                  echo "💡 Inspect the migration state and fix the baseline (for example with prisma migrate resolve)."
+                  exit 1
+                fi
               }
 
               run_db_push() {
