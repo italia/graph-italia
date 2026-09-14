@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import * as api from "../../lib/api";
 import useSWR from "swr";
 import Loading from "../../components/layout/Loading";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 /** Friendly message for a failed public chart load (401 private, 404 gone, rest generic). */
 export function publicChartErrorMessage(
@@ -32,6 +33,7 @@ function EmbedChartPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation("pages");
+  const chartA11y = useChartA11yProps();
   const { data, error, isLoading } = useSWR(`${id}`, api.showChart);
 
   const [browserScheme, setBrowserScheme] = useState<"light" | "dark">(
@@ -58,7 +60,7 @@ function EmbedChartPage() {
             {publicChartErrorMessage(error, t)}
           </div>
         )}
-        {data && <RenderChart {...(data as any)} />}
+        {data && <RenderChart {...(data as any)} {...chartA11y} />}
       </div>
     </ColorSchemeProvider>
   );

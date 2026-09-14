@@ -22,15 +22,21 @@ imagePullSecret:
 # - migrateDeploy: force prisma migrate deploy (fails if no migration files)
 # - dbPush: force legacy prisma db push
 dbMigration:
-  enabled: false
-  mode: auto
+  # Migrations must run on every deploy, in every environment: the hook is a
+  # Helm pre-upgrade hook, so a failing migration aborts the release (and with
+  # `--atomic` in CI, fails the pipeline) before the new pods are rolled out.
+  enabled: true
+  # migrateDeploy (not auto): versioned migrations exist, so never silently
+  # fall back to `db push`, which would drift the schema away from the
+  # migration history and leave `_prisma_migrations` inconsistent.
+  mode: migrateDeploy
   # In auto mode, allow fallback to db push when no migration files are found.
-  # Keep true for backward compatibility with legacy releases.
-  # Set false to fail fast and avoid accidental schema drift.
-  allowLegacyDbPushFallback: true
+  # Disabled: fail fast instead of drifting the schema.
+  allowLegacyDbPushFallback: false
   # Automatically migrates legacy schema (userId-based) to project-based schema
-  # before running Prisma migrations. Recommended for one-time transition.
-  legacySchemaAutoMigrate: true
+  # before running Prisma migrations. One-time transition, already done on both
+  # test and production — keep disabled so deploys don't run ad-hoc DDL.
+  legacySchemaAutoMigrate: false
   # Applies only to the legacy prisma db push fallback path.
   # Ignored when prisma migrate deploy is used.
   acceptDataLoss: false

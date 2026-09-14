@@ -52,14 +52,15 @@ function PasswordRequirements({
   }
 
   return (
-    <ul className="mt-2 space-y-1 text-sm" aria-live="polite" role="status">
+    <div role="status" aria-live="polite">
+      <ul className="mt-2 space-y-1 text-sm">
       {PASSWORD_RULES.map((rule) => {
         const met = rule.test(password);
         return (
           <li
             key={rule.key}
             className={`flex items-center gap-2 ${
-              met ? "text-success" : "text-base-content/60"
+              met ? "text-success" : "text-base-content/70"
             }`}
           >
             <RuleIcon met={met} />
@@ -70,7 +71,8 @@ function PasswordRequirements({
           </li>
         );
       })}
-    </ul>
+      </ul>
+    </div>
   );
 }
 

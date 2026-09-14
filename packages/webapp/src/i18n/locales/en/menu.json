@@ -1,11 +1,14 @@
 {
     "menu": {
         "items": {
+            "privateArea": {
+                "label": "Private area"
+            },
             "quickStart": {
                 "label": "Getting started"
             },
             "examples": {
-                "label": "Examples"
+                "label": "Sample datasets"
             },
             "tools": {
                 "label": "Tools",

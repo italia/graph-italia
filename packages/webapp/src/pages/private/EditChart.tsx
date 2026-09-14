@@ -8,9 +8,10 @@ import {
 import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
+import { FaPen } from "react-icons/fa6";
 import { startTransition, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -20,6 +21,7 @@ import ChartOptions from "../../components/ChartOptions.tsx";
 import Layout from "../../components/layout/index.tsx";
 import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading.tsx";
+import NewTabLink from "../../components/layout/NewTabLink.tsx";
 import SelectChart from "../../components/SelectChart.tsx";
 import ChooseLoader from "../../components/load-data/ChooseLoader.tsx";
 import SeriesSelector from "../../components/load-data/SeriesSelector.tsx";
@@ -32,9 +34,11 @@ import type { DataTransformRecipe } from "../../types.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
 import useStoreState from "../../lib/store/storeState.ts";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 
 function EditChartPage() {
+  const chartA11y = useChartA11yProps();
   const { t } = useTranslation("pages", {
     keyPrefix: `charts.editChart`,
   });
@@ -66,6 +70,11 @@ function EditChartPage() {
   // Recipe from SeriesSelector (column selection + aggregation): persisted in
   // config so the server can replay it when refreshing remote-linked data
   const [dataTransform, setDataTransform] = useState<DataTransformRecipe | null>(null);
+  // Whether the description is rendered under the title; it is always the
+  // chart's text alternative. Kept apart from `config` because ChartOptions
+  // rebuilds config from its own form.
+  const [showDescription, setShowDescription] = useState(true);
+  const descriptionMissing = chartDescription.trim().length === 0;
   const [isSaving, setIsSaving] = useState(false);
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
@@ -78,6 +87,18 @@ function EditChartPage() {
   const [stepAnnouncement, setStepAnnouncement] = useState<string>("");
   const seriesSelectorRef = useRef<HTMLDivElement>(null);
   const configurationHeadingRef = useRef<HTMLHeadingElement>(null);
+  // ChartOptions re-emits a normalised config from its form on mount and
+  // again after its reset (numbers, palette colours), so those emissions
+  // cannot be told apart from an edit by comparing values. They count as
+  // unsaved changes only once the user has interacted with the page.
+  const userInteracted = useRef(false);
+  // Inline title editing next to the preview heading (#59)
+  const [editingTitle, setEditingTitle] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const editTitleButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (editingTitle) titleInputRef.current?.focus();
+  }, [editingTitle]);
   useUnsavedChanges(hasUnsavedChanges, t(`unsavedChanges`));
 
   // After the initial load completes, reset any dirty flag that child components
@@ -106,6 +127,7 @@ function EditChartPage() {
             setChartDescription(chartData.description || "");
             setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
             setDataTransform(chartData.config?.dataTransform ?? null);
+            setShowDescription(chartData.config?.showDescription !== false);
 
             // Go to config step only if chart already has data loaded
             const hasExistingData =
@@ -167,8 +189,8 @@ function EditChartPage() {
     )}`;
   };
 
-  // Save chart function
-  async function saveChart() {
+  // Save chart function; `exit` closes the flow and returns to the list (#77)
+  async function saveChart(exit = false) {
     const finalName = chartName || getDefaultName();
     const payload = {
       name: finalName,
@@ -177,7 +199,7 @@ function EditChartPage() {
       chart: chart || "bar",
       // ChartOptions rebuilds config from its form: merge the recipe at save
       // time so it can't be dropped along the way
-      config: dataTransform ? { ...config, dataTransform } : config,
+      config: { ...config, ...(dataTransform ? { dataTransform } : {}), showDescription },
       data,
       isRemote,
       remoteUrl,
@@ -193,6 +215,10 @@ function EditChartPage() {
         setSaveStatus(t(`save.success.label`));
         // After creating a brand-new chart navigate to its permanent URL so that
         // every subsequent save issues PUT instead of POST.
+        if (exit) {
+          navigate(HOME_ROUTE);
+          return;
+        }
         if (!paramId && result.id) {
           navigate(ROUTES.editChart(result.id), { replace: true });
         }
@@ -214,7 +240,7 @@ function EditChartPage() {
   };
 
   // Check if Save button should be enabled
-  const canSave = !!chart;
+  const canSave = !!chart && !descriptionMissing;
 
   const currentStepIndex = getCurrentStepIndex();
 
@@ -246,7 +272,7 @@ function EditChartPage() {
     <Layout>
       <Helmet>
         <title>
-          {t(`head.title.label`)}: {`${chartName ? ": " + chartName : ""}`}
+          {t(`head.title.label`)}{chartName ? `: ${chartName}` : ""}
         </title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
@@ -258,7 +284,11 @@ function EditChartPage() {
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {stepAnnouncement}
       </div>
-      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
+      {/* Toolbar stays visible while the configuration column scrolls, so
+          "Salva" is always at hand (#76) */}
+      <div
+        className="sticky top-0 z-30 bg-base-200/95 backdrop-blur border-b border-base-300 w-full flex flex-wrap justify-between items-center gap-2 mb-2 py-4 px-4 lg:px-10"
+      >
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -271,10 +301,10 @@ function EditChartPage() {
             ? t(`header.pageTitle.edit`)
             : t(`header.pageTitle.new`)}
         </h1>
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 flex gap-2">
           <button
             type="button"
-            onClick={saveChart}
+            onClick={() => saveChart(false)}
             disabled={!hasUnsavedChanges || !canSave || isSaving}
             className="btn btn-primary gap-2"
           >
@@ -287,10 +317,26 @@ function EditChartPage() {
               <> {t(`header.actions.save.default`)}</>
             )}
           </button>
+          <button
+            type="button"
+            onClick={() => saveChart(true)}
+            disabled={!hasUnsavedChanges || !canSave || isSaving}
+            className="btn btn-outline btn-primary"
+          >
+            {t(`header.actions.saveAndExit.default`)}
+          </button>
         </div>
       </div>
 
-      <div className="mx-auto px-4 lg:px-10 pb-10">
+      <div
+        className="mx-auto px-4 lg:px-10 pb-10"
+        onPointerDownCapture={() => {
+          userInteracted.current = true;
+        }}
+        onKeyDownCapture={() => {
+          userInteracted.current = true;
+        }}
+      >
         <div className="grid grid-cols-1 xl:grid-cols-6  gap-4">
           <EditStepsSidebar>
           <div className="xl:col-span-2">
@@ -353,18 +399,25 @@ function EditChartPage() {
                         setChartName(e.target.value);
                       }}
                       placeholder={getDefaultName()}
-                      className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/40"
+                      className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/65"
                     />
                     <label
                       htmlFor="chart_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t(`body.options.setup.form.fields.description.label`)}
+                      {t(`body.options.setup.form.fields.description.label`)} *
                     </label>
+                    <p id="chart_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.description.hint`)}
+                    </p>
                     <textarea
                       id="chart_description"
                       value={chartDescription}
                       rows={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={descriptionMissing}
+                      aria-describedby={descriptionMissing ? "chart_description_hint chart_description_error" : "chart_description_hint"}
                       onChange={(e) => {
                         setHasUnsavedChanges(true);
                         setChartDescription(e.target.value);
@@ -372,8 +425,33 @@ function EditChartPage() {
                       placeholder={t(
                         `body.options.setup.form.fields.description.placeholder`,
                       )}
-                      className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/40"
+                      className={`input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/65 ${descriptionMissing ? "textarea-error" : ""}`}
                     />
+                    {descriptionMissing && (
+                      <p id="chart_description_error" role="alert" className="text-sm text-error">
+                        {t(`body.options.setup.form.fields.description.error`)}
+                      </p>
+                    )}
+                    <div className="mt-4 flex items-center gap-4">
+                      <input
+                        id="chart_show_description"
+                        type="checkbox"
+                        role="switch"
+                        checked={showDescription}
+                        aria-describedby="chart_show_description_hint"
+                        onChange={() => {
+                          setHasUnsavedChanges(true);
+                          setShowDescription((v) => !v);
+                        }}
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <label htmlFor="chart_show_description" className="text-base text-base-content/70 cursor-pointer">
+                        {t(`body.options.setup.form.fields.showDescription.label`)}
+                      </label>
+                    </div>
+                    <p id="chart_show_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.showDescription.hint`)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -421,7 +499,7 @@ function EditChartPage() {
                   <div className="pt-1">
                     <SelectChart
                       setChart={(value: string) => {
-                        setHasUnsavedChanges(true);
+                        if (value !== chart) setHasUnsavedChanges(true);
                         setChart(value);
                       }}
                       chart={chart}
@@ -430,7 +508,7 @@ function EditChartPage() {
                     <ChartOptions
                       config={config}
                       setConfig={(value) => {
-                        setHasUnsavedChanges(true);
+                        if (userInteracted.current) setHasUnsavedChanges(true);
                         setConfig(value);
                       }}
                       chart={chart}
@@ -452,17 +530,67 @@ function EditChartPage() {
           {/* Right column: Preview */}
           <section
             aria-labelledby="chart-preview-heading"
-            className="xl:col-span-4 flex flex-col h-full p-4 lg:p-10 bg-base-100  border border-base-300 rounded-lg"
+            className="xl:col-span-4 flex flex-col p-4 lg:p-10 bg-base-100 border border-base-300 rounded-lg xl:sticky xl:top-24 xl:self-start xl:max-h-[calc(100vh-7rem)] xl:overflow-y-auto"
           >
             <div className="bg-base-100 bl-2 flex flex-col gap-4 min-h-[500px]">
               <div>
-                <h2
-                  id="chart-preview-heading"
-                  className="text-2xl font-bold"
-                >
-                  {t(`header.preview.heading`)}
-                  {chartName ? `: ${chartName}` : ""}
-                </h2>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h2
+                    id="chart-preview-heading"
+                    className="text-2xl font-bold"
+                  >
+                    {t(`header.preview.heading`)}
+                    {chartName ? `: ${chartName}` : ""}
+                  </h2>
+                  {/* The title is edited where it is displayed (#59): the
+                      field is the same one as in "Informazioni" */}
+                  {editingTitle ? (
+                    <span className="flex items-center gap-2">
+                      <label htmlFor="chart_title_inline" className="sr-only">
+                        {t(`body.options.setup.form.fields.title.label`)}
+                      </label>
+                      <input
+                        id="chart_title_inline"
+                        ref={titleInputRef}
+                        type="text"
+                        value={chartName}
+                        placeholder={getDefaultName()}
+                        onChange={(e) => {
+                          setHasUnsavedChanges(true);
+                          setChartName(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === "Escape") {
+                            e.preventDefault();
+                            setEditingTitle(false);
+                            editTitleButtonRef.current?.focus();
+                          }
+                        }}
+                        className="input input-bordered input-sm w-64 max-w-full text-base bg-base-100"
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-primary"
+                        onClick={() => {
+                          setEditingTitle(false);
+                          editTitleButtonRef.current?.focus();
+                        }}
+                      >
+                        {t(`header.preview.actions.editTitle.done`)}
+                      </button>
+                    </span>
+                  ) : (
+                    <button
+                      ref={editTitleButtonRef}
+                      type="button"
+                      className="btn btn-sm btn-ghost gap-2"
+                      onClick={() => setEditingTitle(true)}
+                    >
+                      <FaPen aria-hidden="true" />
+                      {t(`header.preview.actions.editTitle.label`)}
+                    </button>
+                  )}
+                </div>
                 <div className="text-base-content/80">
                   {chartDescription ? (
                     <div
@@ -479,7 +607,29 @@ function EditChartPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><a href={`${ROUTES.viewChart(id)}`} target="_blank" className="btn btn-outline">{t(`header.preview.actions.viewChart.label`)}</a></div>}
+                    {api.isPublishingEnabled() && chartPublish && id && (
+                      <div className="w-full flex flex-wrap items-center justify-end gap-3">
+                        {hasUnsavedChanges ? (
+                          <>
+                            <span id="view-chart-hint" className="text-sm text-base-content/70">
+                              {t(`header.preview.actions.viewChart.unsaved`)}
+                            </span>
+                            <button
+                              type="button"
+                              className="btn btn-outline"
+                              disabled
+                              aria-describedby="view-chart-hint"
+                            >
+                              {t(`header.preview.actions.viewChart.label`)}
+                            </button>
+                          </>
+                        ) : (
+                          <NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">
+                            {t(`header.preview.actions.viewChart.label`)}
+                          </NewTabLink>
+                        )}
+                      </div>
+                    )}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>
@@ -504,6 +654,7 @@ function EditChartPage() {
                           data={data}
                           config={config}
                           dataSource={null}
+                          {...chartA11y}
                         />
                       </ColorSchemeProvider>
                       <figcaption

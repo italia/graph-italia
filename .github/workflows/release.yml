@@ -183,9 +183,28 @@ jobs:
             --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
+            --set dbMigration.enabled=true \
+            --set dbMigration.mode=migrateDeploy \
             --wait \
             --timeout=10m \
             --atomic
+
+      - name: 🧾 Migration job diagnostics (on failure)
+        if: failure()
+        run: |
+          set +e
+          NS=graph-italia
+          echo "::group::db-migration jobs"
+          kubectl get jobs -n "$NS" -l component=db-migration -o wide
+          echo "::endgroup::"
+          for job in $(kubectl get jobs -n "$NS" -l component=db-migration -o name); do
+            echo "::group::describe $job"
+            kubectl describe -n "$NS" "$job"
+            echo "::endgroup::"
+            echo "::group::logs $job"
+            kubectl logs -n "$NS" "$job" --all-containers --tail=300
+            echo "::endgroup::"
+          done
 
       - name: ✅ Verify deployment
         run: |
@@ -305,9 +324,28 @@ jobs:
             --reuse-values \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
+            --set dbMigration.enabled=true \
+            --set dbMigration.mode=migrateDeploy \
             --wait \
             --timeout=10m \
             --atomic
+
+      - name: 🧾 Migration job diagnostics (on failure)
+        if: failure()
+        run: |
+          set +e
+          NS=graph-italia-test
+          echo "::group::db-migration jobs"
+          kubectl get jobs -n "$NS" -l component=db-migration -o wide
+          echo "::endgroup::"
+          for job in $(kubectl get jobs -n "$NS" -l component=db-migration -o name); do
+            echo "::group::describe $job"
+            kubectl describe -n "$NS" "$job"
+            echo "::endgroup::"
+            echo "::group::logs $job"
+            kubectl logs -n "$NS" "$job" --all-containers --tail=300
+            echo "::endgroup::"
+          done
 
       - name: ✅ Verify deployment
         run: |

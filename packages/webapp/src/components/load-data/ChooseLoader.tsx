@@ -20,6 +20,7 @@ const TABS = [
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-4 w-4"
+        aria-hidden="true"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -41,6 +42,7 @@ const TABS = [
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-4 w-4"
+        aria-hidden="true"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -62,6 +64,7 @@ const TABS = [
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-4 w-4"
+        aria-hidden="true"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -106,7 +109,7 @@ export default function ChooseLoader({
             aria-selected={currentTab === tab.id}
           >
             {tab.icon}
-            <span className="hidden sm:inline">{t(tab.label)}</span>
+            <span className="sr-only sm:not-sr-only">{t(tab.label)}</span>
           </button>
         ))}
       </div>

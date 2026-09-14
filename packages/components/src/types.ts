@@ -35,9 +35,18 @@ export type ChartPropsType = {
   setEchartInstance: (i: any) => void;
   rowHeight?: number;
   hFactor?: number;
+  /** Keyboard instructions appended to the chart's accessible name.
+      Overridable so consumers can localize them. Defaults to Italian. */
+  keyboardHint?: string;
+  /** Text alternative of the chart (name and description): the base of its
+      accessible name, before series count and keyboard hint. */
+  altText?: string;
 };
 
 export type ChartConfigType = {
+  /** When false the description stays the text alternative of the chart but is
+      not rendered as visible subtitle. */
+  showDescription?: boolean;
   colors: [] | string[];
   direction: string;
   h: number;

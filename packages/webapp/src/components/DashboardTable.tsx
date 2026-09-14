@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useCallback, useRef } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
-import { FaLink, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
+import { FaArrowUpRightFromSquare, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from "react";
@@ -12,6 +12,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import type { FieldDataType } from "../types";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -51,17 +52,33 @@ export default function DashboardTable({
 
   const handleSort = useCallback(
     (column: TableColumn<FieldDataType>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     [],
   );
 
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
+
   const navigate = useNavigate();
 
   const columns: TableColumn<FieldDataType>[] = [
     {
-      name: t(`columns.name.label`),
+      ...sortHeader(t(`columns.name.label`)),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -93,7 +110,7 @@ export default function DashboardTable({
       ),
     },
     {
-      name: t(`columns.createdAt.label`),
+      ...sortHeader(t(`columns.createdAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -102,7 +119,7 @@ export default function DashboardTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: t(`columns.updatedAt.label`),
+      ...sortHeader(t(`columns.updatedAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
@@ -146,7 +163,7 @@ export default function DashboardTable({
               title={t("actions.view", { defaultValue: "Apri dashboard pubblicata" })}
               className="btn btn-ghost btn-xs btn-square"
             >
-              <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
+              <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
             </a>
           )}
           <button
@@ -169,26 +186,32 @@ export default function DashboardTable({
 
   return (
     <div ref={tableRef}>
-      <DataTable
-        ariaLabel={t("tableLabel", { defaultValue: "Le mie dashboard" })}
-        columns={columns}
-        data={list}
-        theme={currentTheme}
-        onSort={handleSort}
-        onRowClicked={(row) => navigate(ROUTES.editDashboard(row.id ?? ""))}
-        pagination
-        paginationComponentOptions={{
-          rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
-          rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
-          selectAllRowsItem: false,
-        }}
-        {...paginationIcons}
-        customStyles={dataTableStyles}
-        highlightOnHover
-        noDataComponent={
-          <div className="py-10 text-base-content/70">{t(`noDataComponent`)}</div>
-        }
-      />
+      <SortStatus sortState={sortState} />
+      {list.length === 0 ? (
+        /* An empty list is a status message, not a table with free text inside (#119) */
+        <p role="status" className="py-6 text-base-content/70">
+          {t(`noDataComponent`)}
+        </p>
+      ) : (
+        <DataTable
+          ariaLabel={t("tableLabel", { defaultValue: "Le mie dashboard" })}
+          columns={columns}
+          data={list}
+          theme={currentTheme}
+          onSort={handleSort}
+          sortIcon={sortIcon}
+          onRowClicked={(row) => navigate(ROUTES.editDashboard(row.id ?? ""))}
+          pagination
+          paginationComponentOptions={{
+            rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+            rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+            selectAllRowsItem: false,
+          }}
+          {...paginationIcons}
+          customStyles={dataTableStyles}
+          highlightOnHover
+        />
+      )}
     </div>
   );
 }

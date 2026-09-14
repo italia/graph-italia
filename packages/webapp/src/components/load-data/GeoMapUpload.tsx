@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type ParsedRow = Record<string, string | number | null>;
 
@@ -64,6 +65,7 @@ function rowsToObjects(rows: ParsedRow[], selectedCols: string[]): object[] {
 }
 
 export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
+  const { t: tGeo } = useTranslation("components", { keyPrefix: "components.loadData.geoMapUpload" });
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<ParsedRow[] | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
@@ -190,7 +192,7 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
     <div className="space-y-4">
       <div className="form-control">
         <label htmlFor="geoUploadFile" className="label">
-          <span className="label-text font-medium">Upload JSON or GeoJSON file</span>
+          <span className="label-text font-medium">{tGeo("fileLabel")}</span>
         </label>
         <input
           id="geoUploadFile"
@@ -209,22 +211,22 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
 
       {rows && (
         <div className="space-y-4">
-          <div className="text-sm text-base-content/60">
-            {isGeo ? "GeoJSON detected" : "JSON array detected"} — {rows.length} rows, {columns.length} columns
+          <div className="text-sm text-base-content/70">
+            {isGeo ? tGeo("detected.geo") : tGeo("detected.json")}: {tGeo("summary", { rows: rows.length, cols: columns.length })}
           </div>
 
           {/* Lat / Lng mapping */}
           <div className="grid grid-cols-2 gap-3">
             <div className="form-control">
               <label className="label py-1">
-                <span className="label-text text-xs font-medium">Latitude field</span>
+                <span className="label-text text-xs font-medium">{tGeo("latField")}</span>
               </label>
               <select
                 className="select select-bordered select-sm"
                 value={latField}
                 onChange={(e) => setLatField(e.target.value)}
               >
-                <option value="">— select —</option>
+                <option value="">{tGeo("selectOption")}</option>
                 {numericCols.map((col) => (
                   <option key={col} value={col}>{col}</option>
                 ))}
@@ -232,14 +234,14 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
             </div>
             <div className="form-control">
               <label className="label py-1">
-                <span className="label-text text-xs font-medium">Longitude field</span>
+                <span className="label-text text-xs font-medium">{tGeo("lngField")}</span>
               </label>
               <select
                 className="select select-bordered select-sm"
                 value={lngField}
                 onChange={(e) => setLngField(e.target.value)}
               >
-                <option value="">— select —</option>
+                <option value="">{tGeo("selectOption")}</option>
                 {numericCols.map((col) => (
                   <option key={col} value={col}>{col}</option>
                 ))}
@@ -249,7 +251,7 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
 
           {/* Property filter */}
           <div>
-            <p className="text-xs font-medium text-base-content/60 mb-2">
+            <p className="text-xs font-medium text-base-content/70 mb-2">
               Select properties to include
             </p>
             <div className="flex flex-wrap gap-2">
@@ -259,7 +261,7 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
                   <label
                     key={col}
                     className={`flex items-center gap-1 cursor-pointer badge badge-lg gap-2 ${selectedCols.has(col) ? "badge-primary" : "badge-ghost"
-                      } ${isLatLng ? "opacity-60" : ""}`}
+                      } ${isLatLng ? "opacity-70" : ""}`}
                   >
                     <input
                       type="checkbox"
@@ -312,7 +314,7 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
               </tbody>
             </table>
             {rows.length > 5 && (
-              <p className="text-xs text-base-content/40 px-2 py-1">
+              <p className="text-xs text-base-content/70 px-2 py-1">
                 …and {rows.length - 5} more rows
               </p>
             )}
@@ -324,10 +326,10 @@ export default function GeoMapUpload({ setData }: GeoMapUploadProps) {
             disabled={!latField || !lngField}
             onClick={handleApply}
           >
-            Use this data
+            {tGeo("apply")}
           </button>
           {(!latField || !lngField) && (
-            <p className="text-xs text-warning">Select latitude and longitude fields to continue</p>
+            <p className="text-xs" role="status">{tGeo("selectFieldsHint")}</p>
           )}
         </div>
       )}

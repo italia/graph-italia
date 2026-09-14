@@ -9,6 +9,7 @@ import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { isPublishingEnabled } from "../../lib/api";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 const TOTAL_COLS = 12;
 const ALL_COLS = { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 };
@@ -97,6 +98,7 @@ function segmentLayout(
 }
 
 function DashboardViewPage() {
+  const chartA11y = useChartA11yProps();
   const { id } = useParams();
   const { load, layout, charts, name, description, isLoading, loaded, error } =
     useDashboardViewStore();
@@ -140,6 +142,7 @@ function DashboardViewPage() {
                 {...currentChart}
                 rowHeight={chartHeight}
                 hFactor={1}
+                {...chartA11y}
               />
             </ColorSchemeProvider>
           )

@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { useCallback, useRef, useState } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import {
+  FaArrowUpRightFromSquare,
   FaChartBar,
   FaChartLine,
   FaChartPie,
@@ -22,12 +23,13 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 
 import { RenderChart } from "graph-italia-components";
-import toast from "react-hot-toast";
+import toast from "../lib/toast";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -35,6 +37,7 @@ import dataTableStyles, {
 } from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
 import { paginationIcons } from "./layout/paginationIcons";
+import { useChartA11yProps } from "../hooks/useChartA11yProps";
 
 type FieldDataTypeWithPreview = FieldDataType & { preview?: string };
 
@@ -69,19 +72,36 @@ export default function ChartTable({
   const tableRef = useRef<HTMLDivElement>(null);
   useAriaSort(tableRef, sortState);
   usePaginationSelectKeyboard(tableRef);
+  const chartA11y = useChartA11yProps();
 
   const handleSort = useCallback(
     (
       column: TableColumn<FieldDataTypeWithPreview>,
       direction: "asc" | "desc",
     ) => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) {
         setSortState({ columnKey: key, direction });
       }
     },
     [],
   );
+
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
 
   const [copiedText, copy] = useCopyToClipboard();
   const [copyStatus, setCopyStatus] = useState<string>("");
@@ -114,7 +134,7 @@ export default function ChartTable({
   const COLUMNS_TRANSLATION_KEY_PATH = `columns`;
   const columns: TableColumn<FieldDataType>[] = [
     {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`),
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.type.label`)),
       width: TABLE_COL.type,
       hide: TABLE_HIDE.onMobile,
       selector: (row: FieldDataType) => row.chart,
@@ -163,7 +183,7 @@ export default function ChartTable({
       },
     },
     {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`),
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.name.label`)),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row: FieldDataType) => row.name ?? "",
@@ -185,13 +205,14 @@ export default function ChartTable({
     },
 
     {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`),
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.label`)),
       width: TABLE_COL.remote,
       hide: TABLE_HIDE.onTablet,
       selector: (row: FieldDataType) => row.isRemote ?? false,
       cell: (row: FieldDataType) =>
         row.remoteUrl ? (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <span>{t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.values.remote`)}</span>
             <a
               href={row.remoteUrl}
               target="_blank"
@@ -213,7 +234,7 @@ export default function ChartTable({
             </button>
           </div>
         ) : (
-          "No"
+          t(`${COLUMNS_TRANSLATION_KEY_PATH}.isRemote.values.file`)
         ),
       sortable: true,
     },
@@ -295,7 +316,7 @@ export default function ChartTable({
     },
 
     {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`),
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.createdAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row: FieldDataType) => row.createdAt ?? "",
@@ -305,7 +326,7 @@ export default function ChartTable({
     },
 
     {
-      name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`),
+      ...sortHeader(t(`${COLUMNS_TRANSLATION_KEY_PATH}.updatedAt.label`)),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row: FieldDataType) => row.updatedAt ?? "",
@@ -354,7 +375,7 @@ export default function ChartTable({
             title={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
             className="btn btn-ghost btn-xs btn-square"
           >
-            <FaLink fill={actionColor} size={actionSize} aria-hidden="true" />
+            <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
           <button
             type="button"
@@ -378,29 +399,35 @@ export default function ChartTable({
       <div role="status" aria-live="polite" className="sr-only">
         {copyStatus}
       </div>
+      <SortStatus sortState={sortState} />
 
       {list && (
         <div ref={tableRef}>
-          <DataTable
-            ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
-            onRowClicked={(row) => handleRowClick(row)}
-            onSort={handleSort}
-            columns={columns}
-            data={list as FieldDataTypeWithPreview[]}
-            theme={currentTheme}
-            pagination
-            paginationComponentOptions={{
-              rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
-              rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
-              selectAllRowsItem: false,
-            }}
-            {...paginationIcons}
-            customStyles={dataTableStyles}
-            highlightOnHover
-            noDataComponent={
-              <div className="py-10 text-base-content/70">{t(`noDataComponent`)}</div>
-            }
-          />
+          {list.length === 0 ? (
+            /* An empty list is a status message, not a table with free text inside (#119) */
+            <p role="status" className="py-6 text-base-content/70">
+              {t(`noDataComponent`)}
+            </p>
+          ) : (
+            <DataTable
+              ariaLabel={t("tableLabel", { defaultValue: "Grafici, mappe e KPI" })}
+              onRowClicked={(row) => handleRowClick(row)}
+              onSort={handleSort}
+              sortIcon={sortIcon}
+              columns={columns}
+              data={list as FieldDataTypeWithPreview[]}
+              theme={currentTheme}
+              pagination
+              paginationComponentOptions={{
+                rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+                rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+                selectAllRowsItem: false,
+              }}
+              {...paginationIcons}
+              customStyles={dataTableStyles}
+              highlightOnHover
+            />
+          )}
         </div>
       )}
 
@@ -410,7 +437,7 @@ export default function ChartTable({
         callback={() => setData(null)}
       >
         <div className="w-full h-full p-4" style={{ minHeight: "400px" }}>
-          {data && <RenderChart {...data} />}
+          {data && <RenderChart {...data} {...chartA11y} />}
         </div>
       </Dialog>
       <Dialog

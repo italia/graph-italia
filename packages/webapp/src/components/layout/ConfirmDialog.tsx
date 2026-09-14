@@ -18,11 +18,15 @@ export default function ConfirmDialog({
   cancelCb,
 }: any) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (ref.current) {
       if (toggle) {
         ref.current.showModal();
+        // Land the initial focus on the title, not on the first button, so the
+        // screen reader announces the modal context first (WCAG 2.4.3).
+        requestAnimationFrame(() => titleRef.current?.focus());
       } else {
         ref.current.close();
       }
@@ -32,7 +36,7 @@ export default function ConfirmDialog({
   return (
     <dialog ref={ref} className='modal'>
       <div className='modal-box'>
-        <h3 className='font-bold text-lg'>{title}</h3>
+        <h3 ref={titleRef} tabIndex={-1} className='font-bold text-lg outline-none'>{title}</h3>
         <div>{message}</div>
         <div className='modal-action'>
           <button className='btn btn-outline' onClick={() => cancelCb()}>

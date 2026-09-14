@@ -12,6 +12,7 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
   const [max, setMax] = useState(100);
   const [offset, setOffset] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
+  const [announcement, setAnnouncement] = useState("");
 
   function generate() {
     const rowLabels = generateItems("SERIE", rows);
@@ -26,6 +27,10 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
       ];
     }
     setData(matrix);
+    // Announce the new content to assistive tech (WCAG 4.1.3): the generated
+    // table appears further down the page and would otherwise go unnoticed.
+    setAnnouncement("");
+    setTimeout(() => setAnnouncement(t("status.generated", { rows, cols })), 100);
   }
 
   const inputClass = "input input-bordered w-full rounded-md";
@@ -119,6 +124,9 @@ function GenerateRandomData({ setData }: { setData: (data: any) => void }) {
         <button type="button" className="btn btn-primary" onClick={generate}>
           {t("actions.generate.label")}
         </button>
+      </div>
+      <div role="status" className="sr-only">
+        {announcement}
       </div>
     </div>
   );

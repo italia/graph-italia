@@ -7,16 +7,17 @@ import {
 import "graph-italia-components/dist/style.css";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { HOME_ROUTE } from "../../router.tsx";
+import { HOME_ROUTE, ROUTES } from "../../router.tsx";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 
 import Layout from "../../components/layout/index.tsx";
+import NewTabLink from "../../components/layout/NewTabLink.tsx";
 import EditStepsSidebar from "../../components/layout/EditStepsSidebar.tsx";
 import Loading from "../../components/layout/Loading.tsx";
 import EditStepComponent from "../../components/EditStepComponent.tsx";
@@ -28,9 +29,11 @@ import { defaultConfig } from "../../lib/constants.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
 import useStoreState from "../../lib/store/storeState.ts";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 
 export default function EditMapPage() {
+  const chartA11y = useChartA11yProps();
   const { t } = useTranslation("pages", {
     keyPrefix: `charts.editChart`,
   });
@@ -55,7 +58,10 @@ export default function EditMapPage() {
   const [chartName, setChartName] = useState<string>("");
   const [chartDescription, setChartDescription] = useState<string>("");
   const [chartPublish, setChartPublish] = useState<boolean>(api.isPublishingEnabled());
+  const [showDescription, setShowDescription] = useState(true);
+  const descriptionMissing = chartDescription.trim().length === 0;
   const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("");
   const { settings } = useSettingsStore();
   const [previewScheme, setPreviewScheme] = useState<ChartColorScheme>(
     settings?.preferredTheme === "dark" ? "dark" : "light",
@@ -89,6 +95,7 @@ export default function EditMapPage() {
             setChart("cmap");
             setChartName(chartData.name || "");
             setChartDescription(chartData.description || "");
+            setShowDescription(chartData.config?.showDescription !== false);
             setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
 
             // Go to config step only if chart already has data loaded
@@ -136,7 +143,7 @@ export default function EditMapPage() {
       description: chartDescription,
       publish: api.isPublishingEnabled() ? chartPublish : false,
       chart: chart || "cmap",
-      config,
+      config: { ...config, showDescription },
       data,
       dataSource,
       isRemote,
@@ -144,15 +151,18 @@ export default function EditMapPage() {
     };
 
     setIsSaving(true);
+    setSaveStatus("");
     try {
       const result = await api.upsertChart(payload, paramId || id || "");
       if (result) {
         setHasUnsavedChanges(false);
         toast.success(t(`save.success.label`));
+        setSaveStatus(t(`save.success.label`));
       }
     } catch (error) {
       console.error("Error saving chart:", error);
       toast.error(t(`save.error.label`));
+      setSaveStatus(t(`save.error.label`));
     } finally {
       setIsSaving(false);
     }
@@ -166,7 +176,7 @@ export default function EditMapPage() {
   };
 
   // Check if Save button should be enabled
-  const canSave = !!chart;
+  const canSave = !!chart && !descriptionMissing;
 
   const currentStepIndex = getCurrentStepIndex();
 
@@ -182,13 +192,17 @@ export default function EditMapPage() {
 
   return (
     <Layout>
+      {/* Save outcome announced without moving the focus (WCAG 4.1.3, #135) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {saveStatus}
+      </div>
       <Helmet>
         <title>
-          {t(`Edit Map`)}: {`${chartName ? ": " + chartName : ""}`}
+          {t(`head.mapTitle`)}{chartName ? `: ${chartName}` : ""}
         </title>
         <meta name="description" content={t(`head.meta.description.content`)} />
       </Helmet>
-      <div className="w-full flex justify-between items-center gap-2 mb-2 py-6 px-4 lg:px-10">
+      <div className="sticky top-0 z-30 bg-base-200/95 backdrop-blur border-b border-base-300 w-full flex justify-between items-center gap-2 mb-2 py-4 px-4 lg:px-10">
         <button
           type="button"
           onClick={() => navigate(HOME_ROUTE)}
@@ -275,18 +289,25 @@ export default function EditMapPage() {
                         setChartName(e.target.value);
                       }}
                       placeholder={getDefaultName()}
-                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/65"
                     />
                     <label
                       htmlFor="chart_description"
                       className="mt-4 text-base-content/70"
                     >
-                      {t(`body.options.setup.form.fields.description.label`)}
+                      {t(`body.options.setup.form.fields.description.label`)} *
                     </label>
+                    <p id="chart_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.description.hint`)}
+                    </p>
                     <textarea
                       id="chart_description"
                       value={chartDescription}
                       rows={3}
+                      required
+                      aria-required="true"
+                      aria-invalid={descriptionMissing}
+                      aria-describedby={descriptionMissing ? "chart_description_hint chart_description_error" : "chart_description_hint"}
                       onChange={(e) => {
                         setHasUnsavedChanges(true);
                         setChartDescription(e.target.value);
@@ -294,8 +315,33 @@ export default function EditMapPage() {
                       placeholder={t(
                         `body.options.setup.form.fields.description.placeholder`,
                       )}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                      className={`input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65 ${descriptionMissing ? "textarea-error" : ""}`}
                     />
+                    {descriptionMissing && (
+                      <p id="chart_description_error" role="alert" className="text-sm text-error">
+                        {t(`body.options.setup.form.fields.description.error`)}
+                      </p>
+                    )}
+                    <div className="mt-4 flex items-center gap-4">
+                      <input
+                        id="chart_show_description"
+                        type="checkbox"
+                        role="switch"
+                        checked={showDescription}
+                        aria-describedby="chart_show_description_hint"
+                        onChange={() => {
+                          setHasUnsavedChanges(true);
+                          setShowDescription((v) => !v);
+                        }}
+                        className="toggle toggle-sm toggle-primary cursor-pointer"
+                      />
+                      <label htmlFor="chart_show_description" className="text-base text-base-content/70 cursor-pointer">
+                        {t(`body.options.setup.form.fields.showDescription.label`)}
+                      </label>
+                    </div>
+                    <p id="chart_show_description_hint" className="text-sm text-base-content/70">
+                      {t(`body.options.setup.form.fields.showDescription.hint`)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -390,7 +436,7 @@ export default function EditMapPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><a href={`${window.location.origin}/charts/${id}/view`} target="_blank" className="btn btn-outline">view published chart</a></div>}
+                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t(`header.preview.actions.viewChart.label`)}</NewTabLink></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>
@@ -411,6 +457,7 @@ export default function EditMapPage() {
                           data={data}
                           config={config}
                           dataSource={dataSource ?? null}
+                          {...chartA11y}
                         />
                       </ColorSchemeProvider>
                     </div>
@@ -421,7 +468,7 @@ export default function EditMapPage() {
               </div>
               <div className="space-y-4">
                 {haveData && (
-                  <div className="flex items-center gap-3 text-sm text-base-content/60">
+                  <div className="flex items-center gap-3 text-sm text-base-content/70">
                     <span>{(dataSource ?? []).length} points loaded</span>
                     <button
                       type="button"

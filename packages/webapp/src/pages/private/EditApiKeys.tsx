@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaTrash, FaPlus, FaCopy, FaCheck, FaKey, FaBan, FaRotateLeft } from "react-icons/fa6";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import Layout from "../../components/layout/index.tsx";
 import Loading from "../../components/layout/Loading.tsx";
@@ -222,7 +222,7 @@ export default function EditApiKeysPage() {
                         const orgsList = key.project?.orgs?.map((o) => o.org.name).join(", ") || t("form.personal", "Personal");
                         const status = getKeyStatus(key);
                         return (
-                          <tr key={key.id} className={`hover ${key.revokedAt ? "opacity-60" : ""}`}>
+                          <tr key={key.id} className={`hover ${key.revokedAt ? "opacity-70" : ""}`}>
                             <td>
                               <code className="font-mono text-xs bg-base-200 px-2 py-1 rounded">
                                 dv_{key.prefix}…
@@ -351,7 +351,7 @@ export default function EditApiKeysPage() {
               onChange={(e) => setExpire(Math.max(1, parseInt(e.target.value, 10) || 1))}
               min={1}
             />
-            <p className="text-xs opacity-60 mt-1 px-1">
+            <p className="text-xs opacity-70 mt-1 px-1">
               {expire >= 1440 ? `${Math.round(expire / 1440)} day(s)` : expire >= 60 ? `${Math.round(expire / 60)} hour(s)` : `${expire} minute(s)`}
             </p>
           </div>
@@ -378,11 +378,15 @@ export default function EditApiKeysPage() {
             <button
               type="button"
               className={`btn btn-circle btn-sm shrink-0 ${copied ? "btn-success" : "btn-ghost"}`}
-              title={copied ? "Copied!" : "Copy to clipboard"}
+              title={t("modal.copy", "Copia negli appunti")}
+              aria-label={t("modal.copy", "Copia negli appunti")}
               onClick={() => copyToClipboard(revealedKey ?? "")}
             >
-              {copied ? <FaCheck /> : <FaCopy />}
+              {copied ? <FaCheck aria-hidden="true" /> : <FaCopy aria-hidden="true" />}
             </button>
+          </div>
+          <div role="status" className="sr-only">
+            {copied ? t("modal.copied", "Copiato negli appunti") : ""}
           </div>
           <div className="alert alert-warning text-xs">
             <span>{t("modal.warning", "Once you close this window, the key will never be visible again.")}</span>

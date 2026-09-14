@@ -11,6 +11,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
+import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import dataTableStyles, {
   TABLE_COL,
   TABLE_HIDE,
@@ -49,17 +50,33 @@ export default function DataSourceTable({
 
   const handleSort = useCallback(
     (column: TableColumn<DatasourceItem>, direction: "asc" | "desc") => {
-      const key = typeof column.name === "string" ? column.name : "";
+      const key =
+        column.id != null
+          ? String(column.id)
+          : typeof column.name === "string"
+            ? column.name
+            : "";
       if (key) setSortState({ columnKey: key, direction });
     },
     [],
   );
 
+  // APG sortable header: button carrying the current state in its name
+  const sortHeader = (label: string) => ({
+    id: label,
+    name: (
+      <SortHeaderButton
+        label={label}
+        direction={sortState?.columnKey === label ? sortState.direction : undefined}
+      />
+    ),
+  });
+
   const navigate = useNavigate();
 
   const columns: TableColumn<DatasourceItem>[] = [
     {
-      name: t("columns.name.label", { defaultValue: "Name" }),
+      ...sortHeader(t("columns.name.label", { defaultValue: "Name" })),
       minWidth: TABLE_NAME_MIN_WIDTH,
       grow: 1,
       selector: (row) => row.name ?? "",
@@ -103,7 +120,7 @@ export default function DataSourceTable({
       ),
     },
     {
-      name: t("columns.createdAt.label", { defaultValue: "Created" }),
+      ...sortHeader(t("columns.createdAt.label", { defaultValue: "Created" })),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onTablet,
       selector: (row) => row.createdAt ?? "",
@@ -112,7 +129,7 @@ export default function DataSourceTable({
         row.createdAt ? dayjs(row.createdAt).format("YYYY-MM-DD HH:mm") : "—",
     },
     {
-      name: t("columns.updatedAt.label", { defaultValue: "Updated" }),
+      ...sortHeader(t("columns.updatedAt.label", { defaultValue: "Updated" })),
       width: TABLE_COL.date,
       hide: TABLE_HIDE.onMobile,
       selector: (row) => row.updatedAt ?? "",
@@ -150,28 +167,32 @@ export default function DataSourceTable({
 
   return (
     <div ref={tableRef}>
-      <DataTable
-        ariaLabel={t("tableLabel", { defaultValue: "Sorgenti dati" })}
-        columns={columns}
-        data={list}
-        theme={currentTheme}
-        onSort={handleSort}
-        onRowClicked={(row) => navigate(ROUTES.editDataSource(row.id))}
-        pagination
-        paginationComponentOptions={{
-          rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Rows per page:" }),
-          rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "of" }),
-          selectAllRowsItem: false,
-        }}
-        {...paginationIcons}
-        customStyles={dataTableStyles}
-        highlightOnHover
-        noDataComponent={
-          <div className="py-10 text-base-content/70">
-            {t("noDataComponent", { defaultValue: "No data sources found" })}
-          </div>
-        }
-      />
+      <SortStatus sortState={sortState} />
+      {list.length === 0 ? (
+        /* An empty list is a status message, not a table with free text inside (#119) */
+        <p role="status" className="py-6 text-base-content/70">
+          {t("noDataComponent", { defaultValue: "Nessuna sorgente dati creata" })}
+        </p>
+      ) : (
+        <DataTable
+          ariaLabel={t("tableLabel", { defaultValue: "Sorgenti dati" })}
+          columns={columns}
+          data={list}
+          theme={currentTheme}
+          onSort={handleSort}
+          sortIcon={sortIcon}
+          onRowClicked={(row) => navigate(ROUTES.editDataSource(row.id))}
+          pagination
+          paginationComponentOptions={{
+            rowsPerPageText: t("pagination.rowsPerPage", { defaultValue: "Righe per pagina:" }),
+            rangeSeparatorText: t("pagination.rangeSeparator", { defaultValue: "di" }),
+            selectAllRowsItem: false,
+          }}
+          {...paginationIcons}
+          customStyles={dataTableStyles}
+          highlightOnHover
+        />
+      )}
     </div>
   );
 }

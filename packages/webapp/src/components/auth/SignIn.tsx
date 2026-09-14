@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
@@ -113,7 +113,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                       {...register("email", { required: true })}
                     />
                     {errors["email"] && (
-                      <span className="text-error">
+                      <span className="text-error" role="alert">
                         {t(`form.fields.email.errors.required`)}
                       </span>
                     )}
@@ -145,7 +145,7 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
                   </div>
                 </div>
 
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-error" role="alert">{message}</p>}
                 {unverifiedEmail && (
                   <div className="text-sm">
                     <button

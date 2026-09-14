@@ -6,7 +6,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaInfo, FaThLarge } from "react-icons/fa";
 import { FaGripVertical, FaTrashCan } from "react-icons/fa6";
@@ -15,6 +15,7 @@ import EditStepComponent from "../../components/EditStepComponent";
 import TextSlot from "../../components/TextSlot";
 import AppLayout from "../../components/layout";
 import Dialog from "../../components/layout/Dialog";
+import NewTabLink from "../../components/layout/NewTabLink";
 import Loading from "../../components/layout/Loading";
 import * as api from "../../lib/api";
 import useDashboardEditStore, {
@@ -24,6 +25,7 @@ import useDashboardEditStore, {
 } from "../../lib/store/dashboard-edit.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { HOME_ROUTE, ROUTES } from "../../router";
+import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 // ─── Grid constants ───────────────────────────────────────────────────────────
 // 12 cols everywhere (bootstrap-style). User picks conceptual spans 1–3.
@@ -132,6 +134,17 @@ function ChartSelection({
       .catch(console.error);
   }, [assignedCharts]);
 
+  if (available.length === 0) {
+    return (
+      <div className="flex flex-col gap-3 min-w-[260px]">
+        <p role="status">{t(`components.chartSelection.empty`)}</p>
+        <NewTabLink href={ROUTES.editChart()} className="btn btn-primary self-start">
+          {t(`components.chartSelection.createChart`)}
+        </NewTabLink>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2 min-w-[260px]">
       <label htmlFor="select-chart" className="label-text">
@@ -183,7 +196,7 @@ function TextSlotEditor({
         <button
           type="button"
           aria-pressed={!showPreview}
-          className={`tab ${!showPreview ? "tab-active" : ""}`}
+          className={`tab text-base-content opacity-100 ${!showPreview ? "tab-active bg-base-100 shadow-sm font-semibold underline" : "font-medium"}`}
           onClick={() => setShowPreview(false)}
         >
           {t(`components.textSlot.tabs.write`, "Scrivi")}
@@ -191,7 +204,7 @@ function TextSlotEditor({
         <button
           type="button"
           aria-pressed={showPreview}
-          className={`tab ${showPreview ? "tab-active" : ""}`}
+          className={`tab text-base-content opacity-100 ${showPreview ? "tab-active bg-base-100 shadow-sm font-semibold underline" : "font-medium"}`}
           onClick={() => setShowPreview(true)}
         >
           {t(`components.textSlot.tabs.preview`, "Anteprima")}
@@ -245,7 +258,7 @@ function SlotToolbar({
       title={t(`components.slotToolbar.dragHint`, "Trascina per spostare lo slot")}
     >
       <FaGripVertical
-        className="shrink-0 text-base-content/50"
+        className="shrink-0 text-base-content/70"
         aria-hidden="true"
       />
 
@@ -377,6 +390,7 @@ function DashboardEditPage() {
   } = useDashboardEditStore();
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveStatus, setSaveStatus] = useState("");
 
   async function saveHandler() {
     setIsSaving(true);
@@ -391,6 +405,7 @@ function DashboardEditPage() {
         // Reloading would drop unsaved empty slots from the editor
         if (emptySlots === 0) reload();
         toast.success(t("header.actions.save.success", "Dashboard salvata con successo"));
+        setSaveStatus(t("header.actions.save.success", "Dashboard salvata con successo"));
         if (emptySlots > 0) {
           toast(
             t(
@@ -402,10 +417,12 @@ function DashboardEditPage() {
         }
       } else {
         toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
+        setSaveStatus(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
       }
     } catch (error) {
       console.log(error);
       toast.error(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
+        setSaveStatus(t("header.actions.save.error", "Errore durante il salvataggio della dashboard"));
     } finally {
       setIsSaving(false);
     }
@@ -417,6 +434,7 @@ function DashboardEditPage() {
 
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
+  const chartA11y = useChartA11yProps();
 
   // Memoize layouts to avoid rebuilding on every render
   const layouts = useMemo(() => buildLayouts(layout), [layout]);
@@ -427,6 +445,10 @@ function DashboardEditPage() {
 
   return (
     <AppLayout>
+      {/* Save outcome announced without moving the focus (WCAG 4.1.3, #135) */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {saveStatus}
+      </div>
       <Helmet>
         <title>{`${t(`head.title.label`)}`}</title>
         <meta name="description" content={t(`head.meta.description.content`)} />
@@ -523,7 +545,7 @@ function DashboardEditPage() {
                             setName(e.target.value);
                           }}
                           placeholder={name}
-                          className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/40"
+                          className="input input-bordered py-2 px-3 w-full text-base bg-base-100 placeholder:text-base-content/65"
                         />
                         <label
                           htmlFor="chart_description"
@@ -543,7 +565,7 @@ function DashboardEditPage() {
                           placeholder={t(
                             `body.options.setup.form.fields.description.placeholder`,
                           )}
-                          className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/40"
+                          className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/65"
                         />
                       </div>
                     </div>
@@ -560,7 +582,7 @@ function DashboardEditPage() {
                   </div>
                   <div>
                     <h2 className="card-title text-xl">{t(`slots.title`)}</h2>
-                    <p className="text-sm text-base-content/60">
+                    <p className="text-sm text-base-content/70">
                       {t(`slots.description`)}
                     </p>
                   </div>
@@ -592,13 +614,9 @@ function DashboardEditPage() {
                   </div>
 
                   {api.isPublishingEnabled() && publish && (
-                    <a
-                      href={`${ROUTES.viewDashboard(id)}`}
-                      target="_blank"
-                      className="btn btn-outline"
-                    >
+                    <NewTabLink href={ROUTES.viewDashboard(id)} className="btn btn-outline">
                       {t(`slots.actions.viewChart.label`)}
-                    </a>
+                    </NewTabLink>
                   )}
                 </div>
               </div>
@@ -606,7 +624,7 @@ function DashboardEditPage() {
             {/* Working area — ResponsiveGrid measures this element's width */}
             <div className="rounded-lg border border-dashed border-base-300 bg-base-200/60 p-2 min-h-[160px]">
               {layout.length === 0 && (
-                <div className="flex items-center justify-center h-36 text-base-content/60">
+                <div className="flex items-center justify-center h-36 text-base-content/70">
                   {t(
                     `slots.empty`,
                     "Nessuno slot: usa “Aggiungi slot” per un grafico o “Aggiungi testo” per un blocco di testo.",
@@ -672,6 +690,7 @@ function DashboardEditPage() {
                               {...currentChart}
                               rowHeight={chartHeight}
                               hFactor={1}
+                              {...chartA11y}
                             />
                           </ColorSchemeProvider>
                         ) : (

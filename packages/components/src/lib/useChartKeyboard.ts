@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import type { EChartsType } from "echarts";
 
 /**
@@ -9,23 +9,65 @@ import type { EChartsType } from "echarts";
  *    series, so the same information visible on mouse hover is also
  *    available with the keyboard (WCAG 2.1.1, 1.4.13)
  *  - ArrowLeft/ArrowRight cycle data points, ArrowUp/ArrowDown cycle series
+ *  - every move updates `announcement` with the active point (category,
+ *    series, value and position), to be rendered in a live region OUTSIDE
+ *    the role="img" container: the tooltip is drawn on canvas and would
+ *    otherwise be invisible to screen readers (WCAG 4.1.3)
+ *  - the active point is put in the ECharts "emphasis" state (highlight
+ *    action) so the keyboard position is visible on the canvas, like the
+ *    hover state is for the mouse (WCAG 2.4.7); the previous point is
+ *    downplayed on every move and on blur
  *  - on blur the tooltip is hidden
  *
- * The hook returns the props that should be spread on the container wrapping
- * the chart canvas.
+ * Returns `containerProps` to spread on the container wrapping the chart
+ * canvas, and `announcement` for the sibling live region.
  */
+
+/** Style for the screen-reader-only live region next to the chart. */
+export const chartLiveRegionStyle: CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
+type InstanceSource = EChartsType | null | (() => EChartsType | null | undefined);
+
 export function useChartKeyboard(
-  echartInstance: EChartsType | null,
+  instanceSource: InstanceSource,
   ariaLabel: string,
 ) {
+  // echarts-for-react disposes and re-creates the instance when the theme
+  // changes (the colour scheme resolves after mount): a captured instance
+  // goes stale silently, getOption() returns null and nothing happens. The
+  // source is read lazily on every action, through a ref so the handlers
+  // stay stable and the unmount cleanup does not run on every render.
+  const sourceRef = useRef<InstanceSource>(instanceSource);
+  sourceRef.current = instanceSource;
+  const getInstance = useCallback((): EChartsType | null => {
+    const src = sourceRef.current;
+    const inst = typeof src === "function" ? src() : src;
+    if (!inst) return null;
+    if (typeof inst.isDisposed === "function" && inst.isDisposed()) return null;
+    return inst;
+  }, []);
   const [active, setActive] = useState<{ seriesIndex: number; dataIndex: number }>(
     { seriesIndex: 0, dataIndex: 0 },
   );
   const activeRef = useRef(active);
   activeRef.current = active;
+  const [announcement, setAnnouncement] = useState("");
+
+  const highlighted = useRef<{ seriesIndex: number; dataIndex: number } | null>(null);
 
   const showTip = useCallback(
     (seriesIndex: number, dataIndex: number) => {
+      const echartInstance = getInstance();
       if (!echartInstance) return;
       try {
         echartInstance.dispatchAction({
@@ -33,27 +75,43 @@ export function useChartKeyboard(
           seriesIndex,
           dataIndex,
         });
+        // An axis tooltip puts every series of that category in emphasis:
+        // downplay them all, then highlight only the active point so the
+        // keyboard position is unambiguous.
+        const count = (echartInstance.getOption() as { series?: unknown[] })?.series?.length ?? 0;
+        for (let i = 0; i < count; i++) {
+          echartInstance.dispatchAction({ type: "downplay", seriesIndex: i });
+        }
+        echartInstance.dispatchAction({ type: "highlight", seriesIndex, dataIndex });
+        highlighted.current = { seriesIndex, dataIndex };
       } catch {
         /* echarts may not be ready yet */
       }
     },
-    [echartInstance],
+    [getInstance],
   );
 
   const hideTip = useCallback(() => {
+    const echartInstance = getInstance();
     if (!echartInstance) return;
     try {
+      const prev = highlighted.current;
+      if (prev) {
+        echartInstance.dispatchAction({ type: "downplay", ...prev });
+        highlighted.current = null;
+      }
       echartInstance.dispatchAction({ type: "hideTip" });
     } catch {
       /* noop */
     }
-  }, [echartInstance]);
+  }, [getInstance]);
 
   const getSeries = useCallback((): any[] => {
+    const echartInstance = getInstance();
     if (!echartInstance) return [];
     const option = echartInstance.getOption() as { series?: any[] } | undefined;
     return option?.series ?? [];
-  }, [echartInstance]);
+  }, [getInstance]);
 
   const getDataLength = useCallback(
     (seriesIndex: number): number => {
@@ -72,12 +130,55 @@ export function useChartKeyboard(
     };
   }, [hideTip]);
 
+  /** Text description of a data point, mirroring the canvas tooltip. */
+  const describePoint = useCallback(
+    (seriesIndex: number, dataIndex: number): string => {
+      const series = getSeries();
+      const serie = series[seriesIndex];
+      if (!serie || !Array.isArray(serie.data)) return "";
+      const item = serie.data[dataIndex];
+      let value: unknown = item;
+      let itemName: string | undefined;
+      if (item && typeof item === "object" && !Array.isArray(item)) {
+        value = (item as { value?: unknown }).value;
+        itemName = (item as { name?: string }).name;
+      }
+      // Category from the category axis (bar/line); pie and map points carry
+      // their own name instead.
+      let category = itemName;
+      const echartInstance = getInstance();
+      if (!category && echartInstance) {
+        try {
+          const opt = echartInstance.getOption() as {
+            xAxis?: any[];
+            yAxis?: any[];
+          };
+          const axes = [...(opt.xAxis ?? []), ...(opt.yAxis ?? [])];
+          const catAxis = axes.find(
+            (a) => a?.type === "category" && Array.isArray(a.data),
+          );
+          const cat = catAxis?.data?.[dataIndex];
+          if (cat != null) category = String(cat);
+        } catch {
+          /* noop */
+        }
+      }
+      const label = [category, serie.name].filter(Boolean).join(", ");
+      const position = `(${dataIndex + 1}/${serie.data.length})`;
+      return `${label ? `${label}: ` : ""}${value ?? ""} ${position}`;
+    },
+    [getInstance, getSeries],
+  );
+
   const onFocus = useCallback(() => {
-    showTip(activeRef.current.seriesIndex, activeRef.current.dataIndex);
-  }, [showTip]);
+    const { seriesIndex, dataIndex } = activeRef.current;
+    showTip(seriesIndex, dataIndex);
+    setAnnouncement(describePoint(seriesIndex, dataIndex));
+  }, [showTip, describePoint]);
 
   const onBlur = useCallback(() => {
     hideTip();
+    setAnnouncement("");
   }, [hideTip]);
 
   const onKeyDown = useCallback(
@@ -147,18 +248,27 @@ export function useChartKeyboard(
       if (handled) {
         event.preventDefault();
         setActive({ seriesIndex, dataIndex });
-        showTip(seriesIndex, dataIndex);
+        if (event.key === "Escape") {
+          setAnnouncement("");
+        } else {
+          showTip(seriesIndex, dataIndex);
+          setAnnouncement(describePoint(seriesIndex, dataIndex));
+        }
       }
     },
-    [getDataLength, getSeries, hideTip, showTip],
+    [describePoint, getDataLength, getSeries, hideTip, showTip],
   );
 
   return {
-    tabIndex: 0,
-    role: "img" as const,
-    "aria-label": ariaLabel,
-    onFocus,
-    onBlur,
-    onKeyDown,
+    containerProps: {
+      tabIndex: 0,
+      className: "gi-chart-focusable",
+      role: "img" as const,
+      "aria-label": ariaLabel,
+      onFocus,
+      onBlur,
+      onKeyDown,
+    },
+    announcement,
   };
 }

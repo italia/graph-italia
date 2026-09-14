@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface GenericDialogProps {
   title: string;
@@ -32,13 +33,16 @@ export default function GenericDialog({
   toggle,
   confirmCb,
   cancelCb,
-  labels = {
-    confirm: "Confirm",
-    cancel: "Cancel",
-  },
+  labels,
   confirmDisabled = false,
 }: GenericDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const { t } = useTranslation("components", {
+    keyPrefix: "components.dialog",
+  });
+  const confirmLabel = labels?.confirm ?? t("confirm", "Conferma");
+  const cancelLabel = labels?.cancel ?? t("cancel", "Annulla");
 
   // Handle closing with ESC and click outside
   const handleBackdropClick = useCallback(
@@ -62,6 +66,10 @@ export default function GenericDialog({
     if (ref.current) {
       if (toggle) {
         ref.current.showModal();
+        // showModal() would land the focus on the first focusable element
+        // (the X button): move it to the title so the screen reader announces
+        // the modal context first (WCAG 2.4.3).
+        requestAnimationFrame(() => titleRef.current?.focus());
       } else {
         ref.current.close();
       }
@@ -88,7 +96,7 @@ export default function GenericDialog({
         {/* Title with h2 for accessibility - Italian Design guideline.
             DOM order: title first so screen readers announce the modal
             purpose before the close affordance (WCAG 1.3.2). */}
-        <h2 id="modal-title" className="font-bold text-xl pr-8">
+        <h2 id="modal-title" ref={titleRef} tabIndex={-1} className="font-bold text-xl pr-8 outline-none">
           {title}
         </h2>
 
@@ -102,30 +110,38 @@ export default function GenericDialog({
           </p>
         )}
 
-        {/* Close button (X) — visually top-right via absolute positioning,
-            but placed after the title in the DOM. */}
-        <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
-          onClick={() => cancelCb()}
-          aria-label="Close modal">
-          <span aria-hidden="true">✕</span>
-        </button>
+        {/* Close button (X): only for close-only dialogs. A confirm dialog
+            already has "Annulla" among its actions, and two controls with the
+            same purpose are ambiguous (#133, WCAG 3.2.4). */}
+        {!confirmCb && (
+          <button type="button" className="btn btn-sm btn-circle btn-outline absolute right-3 top-3"
+            onClick={() => cancelCb()}
+            aria-label={t("close", "Chiudi")}>
+            <span aria-hidden="true">✕</span>
+          </button>
+        )}
 
         {/* Modal content */}
         <div className="py-4">{children}</div>
 
-        {/* Action buttons - Positioned at bottom right as per Italian Design guidelines */}
-        <div className="modal-action">
-          {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
-            {labels.cancel}
-          </button>}
-          {confirmCb && <button type="button"
-            className="btn btn-primary"
-            onClick={() => confirmCb()}
-            disabled={confirmDisabled}
-          >
-            {labels.confirm}
-          </button>}
-        </div>
+        {/* Action buttons - Positioned at bottom right as per Italian Design
+            guidelines. A close-only dialog keeps a single close control (the X
+            at the top right, WCAG 3.2.4): the bottom cancel button is rendered
+            only next to a confirm action, where it plays a distinct role. */}
+        {confirmCb && (
+          <div className="modal-action">
+            {cancelCb && <button type="button" className="btn btn-outline" onClick={() => cancelCb()}>
+              {cancelLabel}
+            </button>}
+            <button type="button"
+              className="btn btn-primary"
+              onClick={() => confirmCb()}
+              disabled={confirmDisabled}
+            >
+              {confirmLabel}
+            </button>
+          </div>
+        )}
       </div>
     </dialog>
   );

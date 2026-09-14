@@ -11,6 +11,11 @@
         "oidc": {
             "loading": "Verifica del tuo account in corso…",
             "alreadyRegistered": "Hai già completato la registrazione. Accesso in corso…"
+        },
+        "registered": {
+            "title": "Registrazione completata",
+            "body": "Ti abbiamo inviato un'email con il link per attivare il tuo account. Dopo l'attivazione potrai accedere con la tua email e la password scelta.",
+            "cta": "Vai all'accesso"
         }
     },
     "charts": {
@@ -32,7 +37,8 @@
                     "description": {
                         "content": "Creazione grafico"
                     }
-                }
+                },
+                "mapTitle": "Modifica mappa"
             },
             "header": {
                 "pageTitle": {
@@ -44,7 +50,12 @@
                     "untitled": "Grafico senza titolo",
                     "actions": {
                         "viewChart": {
-                            "label": "Apri il grafico"
+                            "label": "Apri il grafico",
+                            "unsaved": "Salva le modifiche per aprire il grafico pubblicato"
+                        },
+                        "editTitle": {
+                            "label": "Modifica titolo",
+                            "done": "Fine"
                         }
                     }
                 },
@@ -55,6 +66,9 @@
                     "save": {
                         "default": "Salva",
                         "isSaving": "Salvataggio..."
+                    },
+                    "saveAndExit": {
+                        "default": "Salva e chiudi"
                     }
                 }
             },
@@ -84,7 +98,13 @@
                                 },
                                 "description": {
                                     "label": "Descrizione grafico",
-                                    "placeholder": "Aggiungi una descrizione"
+                                    "placeholder": "Descrivi cosa mostra il grafico",
+                                    "hint": "Obbligatoria: è il testo alternativo del grafico per chi usa uno screen reader. Racconta cosa mostra e il dato principale.",
+                                    "error": "Inserisci una descrizione del grafico: serve come testo alternativo."
+                                },
+                                "showDescription": {
+                                    "label": "Mostra la descrizione nella pagina del grafico",
+                                    "hint": "Se disattivata, la descrizione resta disponibile alle tecnologie assistive ma non viene mostrata sotto il titolo."
                                 }
                             }
                         }
@@ -149,7 +169,7 @@
                         "isSaving": "Salvataggio...",
                         "success": "Dashboard salvata con successo",
                         "error": "Errore durante il salvataggio della dashboard",
-                        "skippedEmpty": "Gli slot senza contenuto non vengono salvati"
+                        "skippedEmpty": "Gli elementi senza contenuto non vengono salvati"
                     }
                 }
             },
@@ -184,15 +204,15 @@
             },
             "slots": {
                 "title": "Componi la dashboard",
-                "description": "Aggiungi slot con grafici o blocchi di testo e disponili nella griglia",
-                "hint": "Trascina uno slot dalla sua barra superiore per spostarlo, oppure usa i controlli L (larghezza), A (altezza) e le frecce.",
-                "empty": "Nessuno slot: usa “Aggiungi slot” per un grafico o “Aggiungi testo” per un blocco di testo.",
+                "description": "Aggiungi grafici o blocchi di testo e disponili nella griglia",
+                "hint": "Trascina un elemento dalla sua barra superiore per spostarlo, oppure usa i controlli L (larghezza), A (altezza) e le frecce.",
+                "empty": "Nessun elemento: usa “Aggiungi grafico” per un grafico o “Aggiungi testo” per un blocco di testo.",
                 "actions": {
                     "addSlot": {
-                        "label": "Aggiungi slot"
+                        "label": "Aggiungi grafico"
                     },
                     "viewChart": {
-                        "label": "Visualizza grafico"
+                        "label": "Visualizza dashboard"
                     },
                     "addText": {
                         "label": "Aggiungi testo"
@@ -217,10 +237,12 @@
                                 }
                             }
                         }
-                    }
+                    },
+                    "empty": "Non hai ancora grafici da aggiungere: la dashboard raccoglie grafici creati dall'Area privata.",
+                    "createChart": "Crea un grafico"
                 },
                 "slotToolbar": {
-                    "dragHint": "Trascina per spostare lo slot",
+                    "dragHint": "Trascina per spostare l'elemento",
                     "width": {
                         "label": "Larghezza",
                         "short": "L"
@@ -230,7 +252,7 @@
                         "short": "A"
                     },
                     "move": {
-                        "label": "Sposta slot",
+                        "label": "Sposta elemento",
                         "left": "Sposta a sinistra",
                         "up": "Sposta in alto",
                         "down": "Sposta in basso",
@@ -243,7 +265,7 @@
                         },
                         "remove": {
                             "label": "Rimuovi",
-                            "title": "Rimuovi slot"
+                            "title": "Rimuovi elemento"
                         }
                     }
                 },
@@ -413,6 +435,18 @@
                         "default": "Reimposta",
                         "isSaving": "Salvataggio..."
                     }
+                },
+                "preview": {
+                    "actions": {
+                        "viewChart": {
+                            "label": "Apri il gruppo KPI"
+                        }
+                    },
+                    "heading": "Anteprima"
+                },
+                "pageTitle": {
+                    "new": "Nuovo gruppo KPI",
+                    "edit": "Modifica gruppo KPI"
                 }
             },
             "body": {
@@ -433,7 +467,9 @@
                                 },
                                 "description": {
                                     "label": "Descrizione",
-                                    "placeholder": "Inserisci una descrizione..."
+                                    "placeholder": "Descrivi cosa mostra il grafico",
+                                    "hint": "Obbligatoria: è il testo alternativo del grafico per chi usa uno screen reader. Racconta cosa mostra e il dato principale.",
+                                    "error": "Inserisci una descrizione del grafico: serve come testo alternativo."
                                 }
                             }
                         }
@@ -458,6 +494,13 @@
                 },
                 "messages": {
                     "noKpi": "Nessun KPI. Aggiungi un nuovo KPI."
+                },
+                "steps": {
+                    "status": {
+                        "completed": "completato",
+                        "active": "in corso",
+                        "locked": "bloccato"
+                    }
                 }
             },
             "modals": {
@@ -495,9 +538,26 @@
             }
         },
         "loadRemoteDataPage": {
-            "title": "Carica dati remoti",
-            "description": "Qui alcune fonti di Open Data con dati reali che puoi utilizzare",
-            "link": "Dati Italia, Governo e servizi pubblici"
+            "title": "Dataset di esempio",
+            "intro": "Una raccolta di dataset Open Data reali, non di grafici già pronti: puoi consultarli qui e usarli come base per creare un grafico.",
+            "howTo": "Per usarne uno in un grafico: copia l'URL del dataset, poi nell'editor del grafico, al passaggio \"Carica i tuoi dati\", scegli la scheda \"URL remoto\" e incollalo.",
+            "linkIntro": "Altre fonti Open Data:",
+            "link": "Dati Italia, Governo e servizi pubblici",
+            "examples": {
+                "title": "Dataset disponibili",
+                "view": "Visualizza dati",
+                "copyUrl": "Copia URL",
+                "copied": "URL copiato: incollalo nel passaggio \"Carica i tuoi dati\" del grafico",
+                "downloadJson": "Scarica JSON",
+                "copyError": "Impossibile copiare l'URL"
+            },
+            "preview": {
+                "title": "Anteprima dati",
+                "description": "I dati del dataset selezionato, o di un altro URL a tua scelta, vengono mostrati qui sotto. Questa anteprima non carica i dati in nessun grafico.",
+                "loading": "Caricamento del dataset in corso…",
+                "loaded": "Dataset \"{{title}}\" caricato nell'anteprima",
+                "error": "Impossibile caricare il dataset"
+            }
         }
     },
     "home": {
@@ -517,13 +577,18 @@
             "dashboards": "Le mie dashboard",
             "noDashboards": "Le mie dashboard",
             "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare.",
-            "datasources": "Sorgenti dati"
+            "datasources": "File sorgente dati",
+            "chartsDescription": "Qui trovi l'elenco dei tuoi progetti per tipologia. Puoi modificare la visibilità, copiare il link o il codice embed per la pubblicazione e modificarlo.",
+            "dashboardsDescription": "Le dashboard sono un raccoglitore di più grafici e blocchi di testo in un'unica pagina.",
+            "datasourcesDescription": "Elenco dei file CSV o URL utilizzati come sorgente dati, possono essere aggiornati anche tramite API REST."
         },
         "projectSwitcher": {
             "title": "I Tuoi Progetti",
             "selectPrompt": "Seleziona Progetto",
             "newBtn": "Nuovo Progetto",
-            "help": "I progetti raggruppano grafici, dashboard e sorgenti dati. Il progetto attivo determina cosa vedi e dove viene salvato ciò che crei."
+            "help": "Qui trovi l'elenco dei tuoi grafici, dashboard e file sorgenti dati.",
+            "personal": "Progetti personali",
+            "ariaLabel": "Cambia progetto"
         },
         "body": {
             "actions": {
@@ -564,8 +629,10 @@
                             "label": "Titolo"
                         },
                         "description": {
-                            "label": "Descrizione (facoltativa)",
-                            "placeholder": "Aggiungi una descrizione"
+                            "label": "Descrizione",
+                            "placeholder": "Descrivi cosa mostra",
+                            "optionalLabel": "Descrizione (facoltativa)",
+                            "hint": "Obbligatoria per grafici, mappe e KPI: è il testo alternativo per chi usa uno screen reader."
                         }
                     }
                 },
@@ -651,6 +718,16 @@
                         }
                     }
                 }
+            },
+            "renameProject": {
+                "title": "Rinomina progetto",
+                "description": "Inserisci un nuovo nome per questo progetto.",
+                "confirm": "Rinomina",
+                "form": {
+                    "name": {
+                        "label": "Nome del progetto"
+                    }
+                }
             }
         },
         "toasts": {
@@ -665,6 +742,15 @@
             "datasourceDeleted": "Sorgente dati eliminata",
             "datasourceDeleteError": "Errore durante l'eliminazione della sorgente dati",
             "createError": "Errore durante la creazione"
+        },
+        "createDialog": {
+            "defaultNames": {
+                "chart": "Grafico del {{date}}",
+                "dash": "Dashboard del {{date}}",
+                "datasource": "Sorgente dati del {{date}}",
+                "kpi": "Gruppo KPI del {{date}}",
+                "map": "Mappa del {{date}}"
+            }
         }
     },
     "verify": {
@@ -722,11 +808,17 @@
             "create": "Crea Key",
             "deleteTitle": "Elimina API Key",
             "deleteDesc": "Sei sicuro di voler eliminare questa API key? L'azione non può essere annullata.",
-            "delete": "Elimina"
+            "delete": "Elimina",
+            "copy": "Copia negli appunti",
+            "copied": "Copiato negli appunti",
+            "done": "Fine"
         },
         "form": {
             "role": "Ruolo",
-            "expire": "Scadenza (minuti)"
+            "expire": "Scadenza (minuti)",
+            "personal": "Personale",
+            "project": "Progetto",
+            "selectProject": "Seleziona un progetto"
         },
         "toasts": {
             "created": "Chiave API creata con successo",
@@ -743,6 +835,11 @@
             "intro": "Le chiavi API permettono ad applicazioni esterne (script, siti web, integrazioni) di accedere ai dati di un progetto senza effettuare il login. Ogni chiave è legata a un solo progetto: con ruolo READONLY consente solo la lettura di grafici, dashboard e sorgenti dati, con READWRITE anche la loro creazione e modifica.",
             "secret": "La chiave completa viene mostrata una sola volta, al momento della creazione: conservala in un luogo sicuro. In caso di dubbio puoi revocarla e crearne una nuova.",
             "exampleLabel": "Esempio d'uso:"
+        },
+        "actions": {
+            "delete": "Elimina",
+            "reinstate": "Riattiva",
+            "revoke": "Revoca"
         }
     },
     "orgs": {
@@ -786,7 +883,11 @@
             "create": "Crea",
             "add": "Invita",
             "delete": "Elimina",
-            "remove": "Rimuovi"
+            "remove": "Rimuovi",
+            "revoke": "Revoca",
+            "revokeProjectTitle": "Revoca l'accesso dell'organizzazione",
+            "revokeProjectDesc": "Il progetto verrà rimosso da questa organizzazione e tornerà personale. Confermi?",
+            "revokeProjectName": "Progetto"
         },
         "form": {
             "orgName": "Nome Organizzazione",
@@ -816,6 +917,31 @@
             "intro": "Le organizzazioni servono a far collaborare un gruppo di persone sugli stessi progetti: tutti i membri vedono e possono modificare grafici, dashboard e sorgenti dati dei progetti associati all'organizzazione. Chi crea l'organizzazione ne è amministratore e può invitare membri via email, cambiarne il ruolo e associare o revocare progetti.",
             "members": "I membri con ruolo ADMIN possono invitare o rimuovere membri e gestire l'organizzazione; i membri USER accedono ai progetti associati senza poteri di amministrazione.",
             "projects": "“Trasferisci Progetto” associa un tuo progetto personale a questa organizzazione: tutti i membri potranno vederlo e modificarlo. Non è una cessione di proprietà — resti proprietario e puoi revocare l'associazione in qualsiasi momento (icona ⇄ accanto al progetto); con la revoca il progetto torna personale."
+        },
+        "actions": {
+            "revokeProject": "Revoca l'accesso dell'organizzazione"
+        },
+        "unknownOwner": "Sconosciuto"
+    },
+    "settings": {
+        "title": "Modifica password",
+        "description": "Scegli una nuova password per il tuo account.",
+        "changePassword": {
+            "success": "Password aggiornata con successo."
+        }
+    },
+    "publicChart": {
+        "errors": {
+            "generic": "Impossibile caricare il grafico: riprova più tardi.",
+            "notFound": "Questo grafico non esiste o è stato eliminato.",
+            "private": "Questo grafico non è pubblico: chi lo ha creato non lo ha ancora pubblicato."
+        },
+        "previewNotice": "La pubblicazione è disattivata su questa istanza: stai vedendo un'anteprima riservata, non una pagina pubblica.",
+        "download": {
+            "label": "Scarica il grafico",
+            "png": "Scarica PNG",
+            "svg": "Scarica SVG",
+            "error": "Impossibile esportare il grafico"
         }
     }
 }

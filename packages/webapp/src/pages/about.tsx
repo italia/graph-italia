@@ -17,18 +17,6 @@ interface StepItem {
   body: string;
 }
 
-interface LevelItem {
-  badge: string;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface StackItem {
-  layer: string;
-  items: string[];
-}
-
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const CHART_SNIPPET = `import { ChartProvider } from 'graph-italia-components';
@@ -67,8 +55,6 @@ const DASHBOARD_SNIPPET = `import { DashboardGridProvider } from 'graph-italia-c
   rowHeight={400}
   detectUserPrefColorsSchema
 />`;
-
-const NPM_INSTALL = "npm install graph-italia-components";
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -162,7 +148,7 @@ function CodeBlock({
         <button
           type="button"
           onClick={copy}
-          className="btn btn-ghost btn-xs gap-1.5 text-neutral-content/50 hover:text-neutral-content"
+          className="btn btn-ghost btn-xs gap-1.5 text-neutral-content/80 hover:text-neutral-content"
           aria-label={copyLabel}
         >
           {copied ? (
@@ -190,11 +176,14 @@ function CodeBlock({
             </>
           )}
         </button>
+        <div role="status" className="sr-only">
+          {copied ? copiedLabel : ""}
+        </div>
       </div>
       <pre className="p-5 text-xs leading-relaxed text-neutral-content/80 overflow-x-auto font-mono whitespace-pre">
         {code}
       </pre>
-      <p className="px-5 pb-4 text-xs text-neutral-content/40 italic">{note}</p>
+      <p className="px-5 pb-4 text-xs text-neutral-content/70 italic">{note}</p>
     </div>
   );
 }
@@ -207,8 +196,6 @@ export default function AboutPage() {
 
   const features = t("features.items", { returnObjects: true }) as FeatureItem[];
   const steps = t("integration.steps", { returnObjects: true }) as StepItem[];
-  const levels = t("adoption.levels", { returnObjects: true }) as LevelItem[];
-  const stack = t("architecture.stack", { returnObjects: true }) as StackItem[];
   const badges = t("hero.badges", { returnObjects: true }) as string[];
 
   return (
@@ -244,7 +231,7 @@ export default function AboutPage() {
            ══════════════════════════════════════════════════════════════════ */}
         <section
           className="relative flex flex-col justify-center pt-20 pb-28 lg:pt-32 lg:pb-40"
-          aria-label="Hero"
+          aria-label={t("sections.hero")}
         >
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8">
@@ -269,20 +256,23 @@ export default function AboutPage() {
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <a
+                href={user ? HOME_ROUTE : "/login"}
+                className="btn btn-primary btn-lg"
+              >
+                {user ? t("hero.ctas.myCharts") : t("hero.ctas.login")}
+              </a>
+              <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-primary btn-lg gap-2"
+                className="btn btn-outline btn-lg gap-2"
               >
                 <GitHubIcon className="w-5 h-5" />
                 {t("hero.ctas.github")}
               </a>
-              <a href="/quickstart" className="btn btn-outline btn-lg">
-                {t("hero.ctas.docs")}
-              </a>
             </div>
 
-            <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-base-content/55 list-none p-0">
+            <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-base-content/70 list-none p-0">
               {badges.map((label) => (
                 <li key={label} className="flex items-center gap-2">
                   <CheckIcon className="h-4 w-4 text-primary/70 shrink-0" />
@@ -290,24 +280,6 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
-          </div>
-        </section>
-
-        <Divider />
-
-        {/* ══════════════════════════════════════════════════════════════════
-            VALUE PROPOSITION
-           ══════════════════════════════════════════════════════════════════ */}
-        <section
-          className="py-16 lg:py-24 bg-base-200/60"
-          aria-labelledby="why-heading"
-        >
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-            <SectionLabel>{t("why.label")}</SectionLabel>
-            <SectionHeading id="why-heading">{t("why.title")}</SectionHeading>
-            <p className="mt-6 text-lg leading-relaxed text-base-content/65 [text-wrap:balance]">
-              {t("why.body")}
-            </p>
           </div>
         </section>
 
@@ -332,7 +304,7 @@ export default function AboutPage() {
               {features.map((f) => (
                 <article
                   key={f.title}
-                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6 shadow-sm"
+                  className="flex flex-col rounded-2xl border border-base-300 bg-base-100 p-6"
                 >
                   <span className="text-3xl mb-4 select-none" aria-hidden="true">
                     {f.emoji}
@@ -409,113 +381,9 @@ export default function AboutPage() {
         <Divider />
 
         {/* ══════════════════════════════════════════════════════════════════
-            OPEN SOURCE / ADOPTION LEVELS
-           ══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 lg:py-24" aria-labelledby="adoption-heading">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <SectionLabel>{t("adoption.label")}</SectionLabel>
-              <SectionHeading id="adoption-heading">
-                {t("adoption.title")}
-              </SectionHeading>
-              <p className="mt-4 text-lg text-base-content/65 max-w-2xl mx-auto">
-                {t("adoption.subtitle")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {levels.map((level, i) => (
-                <div
-                  key={level.badge}
-                  className={`flex flex-col rounded-2xl border p-6 shadow-sm ${i === 1
-                    ? "border-primary/40 bg-primary/5 ring-1 ring-primary/20"
-                    : "border-base-300 bg-base-100"
-                    }`}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="badge badge-primary badge-outline text-xs font-bold">
-                      {level.badge}
-                    </span>
-                    <span className="text-2xl select-none" aria-hidden="true">
-                      {level.icon}
-                    </span>
-                  </div>
-                  <h3 className="text-base font-semibold text-base-content mb-2">
-                    {level.title}
-                  </h3>
-                  <p className="text-sm text-base-content/65 leading-relaxed flex-grow">
-                    {level.description}
-                  </p>
-                  {i === 0 && (
-                    <code className="mt-5 block rounded-lg bg-base-300 px-4 py-3 text-xs font-mono text-base-content/80 select-all break-all">
-                      {NPM_INSTALL}
-                    </code>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 text-center">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary btn-lg gap-2"
-              >
-                <GitHubIcon className="w-5 h-5" />
-                {t("adoption.cta")}
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <Divider />
-
-        {/* ══════════════════════════════════════════════════════════════════
-            ARCHITECTURE
-           ══════════════════════════════════════════════════════════════════ */}
-        <section
-          className="py-16 lg:py-24 bg-base-200/60"
-          aria-labelledby="arch-heading"
-        >
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <SectionLabel>{t("architecture.label")}</SectionLabel>
-              <SectionHeading id="arch-heading">
-                {t("architecture.title")}
-              </SectionHeading>
-            </div>
-
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-              {stack.map((s) => (
-                <div
-                  key={s.layer}
-                  className="rounded-2xl border border-base-300 bg-base-100 p-6"
-                >
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-base-content/50 mb-4">
-                    {s.layer}
-                  </h3>
-                  <ul className="space-y-2 list-none p-0">
-                    {s.items.map((item) => (
-                      <li key={item}>
-                        <span className="badge badge-ghost badge-sm font-mono">
-                          {item}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <Divider />
-
-        {/* ══════════════════════════════════════════════════════════════════
             CTA BAND
            ══════════════════════════════════════════════════════════════════ */}
-        <section className="py-16 lg:py-20" aria-label="Call to action">
+        <section className="py-16 lg:py-20" aria-label={t("sections.cta")}>
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl font-extrabold tracking-tight text-base-content sm:text-3xl">
               {t("cta.title")}
@@ -537,61 +405,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <Divider />
-
-        {/* ══════════════════════════════════════════════════════════════════
-            FOOTER BAND
-           ══════════════════════════════════════════════════════════════════ */}
-        <section
-          className="py-10 bg-base-300/30"
-          aria-label="About this project"
-        >
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-3">
-            <p className="text-xl font-bold text-base-content">
-              {t("aboutFooter.title")}
-            </p>
-            <p className="text-sm text-base-content/50">
-              {t("aboutFooter.copyright")}
-            </p>
-            <p className="text-sm text-base-content/50">
-              {t("aboutFooter.license")}{" "}
-              <a
-                href="https://www.gnu.org/licenses/gpl-3.0.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link link-primary"
-              >
-                {t("aboutFooter.licenseName")}
-              </a>
-              .
-            </p>
-            <nav
-              className="flex flex-wrap items-center justify-center gap-2 pt-2"
-              aria-label="Project links"
-            >
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ghost btn-sm gap-1.5"
-              >
-                <GitHubIcon className="w-4 h-4" />
-                {t("aboutFooter.links.github")}
-              </a>
-              <a href="/quickstart" className="btn btn-ghost btn-sm">
-                {t("aboutFooter.links.docs")}
-              </a>
-              <a
-                href="https://github.com/issues"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ghost btn-sm"
-              >
-                {t("aboutFooter.links.issues")}
-              </a>
-            </nav>
-          </div>
-        </section>
       </div>
     </Layout>
   );

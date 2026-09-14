@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import toast from "../lib/toast";
 import { useNavigate } from "react-router-dom";
 import * as api from "../lib/api";
 import { HOME_ROUTE } from "../router";
@@ -120,7 +120,7 @@ function ChartSave({ item, handleSave }: any) {
           />
           {errors["name"] && (
             <label className="label">
-              <span className="label-text-alt text-error">
+              <span className="label-text-alt text-error" role="alert">
                 Name is required
               </span>
             </label>
@@ -131,7 +131,7 @@ function ChartSave({ item, handleSave }: any) {
         <div className="form-control">
           <label className="label" htmlFor="chart-description">
             <span className="label-text font-medium">Description</span>
-            <span className="label-text-alt text-base-content/50">
+            <span className="label-text-alt text-base-content/70">
               Optional
             </span>
           </label>
@@ -160,7 +160,7 @@ function ChartSave({ item, handleSave }: any) {
               <span className="label-text font-medium block">
                 Publish chart
               </span>
-              <span className="label-text-alt text-base-content/60">
+              <span className="label-text-alt text-base-content/70">
                 Make the chart publicly visible
               </span>
             </div>

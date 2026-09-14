@@ -8,7 +8,7 @@ import { Media } from "react-data-table-component";
 // trailing columns (dates, actions) align pixel-perfect across the tables.
 export const TABLE_COL = {
   type: "110px",
-  remote: "125px",
+  remote: "185px",
   visibility: "130px",
   source: "130px",
   date: "170px",
@@ -39,8 +39,6 @@ const dataTableStyles = {
     style: {
       fontSize: "1rem",
       fontWeight: 700,
-      textTransform: "uppercase" as const,
-      letterSpacing: "0.02em",
     },
   },
   cells: {

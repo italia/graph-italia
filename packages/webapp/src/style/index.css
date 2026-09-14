@@ -183,6 +183,13 @@
   background-image: none !important;
   padding-right: 24px;
 }
+/* The library pins its arrow to the top of the select wrapper (top: 0); with
+   the 1rem font size above the select is taller than the 24px the library
+   assumes, so the arrow sat above the centre line. Centre it vertically. */
+.rdt_Pagination select + svg {
+  top: 50% !important;
+  transform: translateY(-50%);
+}
 .rdt_Pagination select:focus-visible {
   outline: 2px solid var(--color-primary, #0066cc);
   outline-offset: 2px;
@@ -233,6 +240,101 @@
 [data-theme="scuro"] .rdt_Pagination select:focus-visible,
 [data-theme="scuro"] .rdt_TableCol_Sortable:focus-visible {
   outline-color: #66b3ff;
+}
+
+/* Sortable-header buttons (APG pattern): visually identical to the previous
+   plain-text header, with their own visible keyboard focus now that the
+   columnheader div has left the tab order. */
+.rdt-sort-header-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.rdt-sort-header-btn:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+[data-theme="scuro"] .rdt-sort-header-btn:focus-visible {
+  outline-color: #66b3ff;
+}
+
+/* DaisyUI 5 renders .label (form field labels) at 60% of the current colour:
+   #7a7c7f on white, 4.19:1, below WCAG 1.4.3 (#130). 75% gives about 7:1 on
+   white and keeps the label lighter than the field value; the dark theme
+   inherits the same ratio from its base-content. */
+.label {
+  color: color-mix(in oklab, currentColor 75%, transparent);
+}
+
+/* DaisyUI renders .menu-title at 40% of base-content (2.9:1 on white):
+   raise it so the documentation sidebar labels pass WCAG 1.4.3 (#123). */
+.menu .menu-title {
+  color: color-mix(in oklab, var(--color-base-content) 75%, transparent);
+}
+
+/* Outline badges ("Livello 1/2/3" on the homepage) reuse the primary blue for
+   text and border: 2.89:1 on the dark cards, below the 4.5:1 required for
+   text. Same readable blue as the foreground overrides above (7.25:1). */
+[data-theme="scuro"] .badge-primary.badge-outline {
+  color: #66b3ff;
+  border-color: #66b3ff;
+}
+
+/* Primary/secondary buttons in dark (WCAG 1.4.11 / 1.4.3): Bootstrap Italia's
+   "varianti di colore su sfondo scuro" invert the primary button to white
+   (white fill with primary label, white border/label for the outlines), which
+   both passes contrast and keeps the active state clearly distinct from the
+   dimmed disabled one.
+   @see https://italia.github.io/bootstrap-italia/docs/componenti/buttons/#varianti-di-colore
+   DaisyUI mechanics: --btn-color drives fill/border, --btn-fg the label,
+   --btn-rest-fg the resting label of outline variants. */
+[data-theme="scuro"] .btn-primary:not(.btn-outline):not(.btn-ghost) {
+  --btn-color: #ffffff;
+  --btn-fg: #0066cc;
+}
+[data-theme="scuro"] .btn-outline.btn-primary {
+  --btn-color: #ffffff;
+  --btn-fg: #0066cc;
+  --btn-rest-fg: #ffffff;
+  --btn-border: #ffffff;
+}
+[data-theme="scuro"] .btn-outline.btn-secondary {
+  --btn-rest-fg: #ffffff;
+  --btn-border: #ffffff;
+}
+
+[data-theme="scuro"] .btn-italia-primary {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #0066cc;
+}
+[data-theme="scuro"] .btn-italia-primary:hover {
+  background-color: #d9d9d9;
+  border-color: #d9d9d9;
+  color: #0066cc;
+}
+[data-theme="scuro"] .btn-italia-primary-outline {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+[data-theme="scuro"] .btn-italia-primary-outline:hover {
+  background-color: #ffffff;
+  color: #0066cc;
+  border-color: #ffffff;
+}
+[data-theme="scuro"] .btn-italia-secondary-outline {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+[data-theme="scuro"] .btn-italia-secondary-outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: #ffffff;
 }
 
 /* https://github.com/react-grid-layout/react-grid-layout/issues/1329#issuecomment-1518921042 */

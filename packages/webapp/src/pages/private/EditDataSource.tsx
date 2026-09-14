@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/react";
 import dayjs from "dayjs";
 import { Helmet } from "react-helmet";
-import toast from "react-hot-toast";
+import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
 import { FaCog, FaDatabase, FaInfo } from "react-icons/fa";
 import { startTransition, useEffect, useRef, useState } from "react";
@@ -23,6 +23,7 @@ import DataHelper from "../../components/load-data/DataHelper.tsx";
 
 export default function EditDataSource() {
   const { t } = useTranslation("pages", { keyPrefix: "charts.editChart" });
+  const { t: tDs } = useTranslation("components", { keyPrefix: "components.loadData.dataSource" });
   const { id: paramId } = useParams();
   const navigate = useNavigate();
   const [state, send] = useMachine(stepMachine);
@@ -262,7 +263,7 @@ export default function EditDataSource() {
                         setDsName(e.target.value);
                       }}
                       placeholder={getDefaultName()}
-                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input input-bordered py-2 px-3 w-full bg-base-100 placeholder:text-base-content/65"
                     />
                     <label htmlFor="ds_description" className="mt-4 text-base-content/70">
                       {t("body.options.setup.form.fields.description.label")}
@@ -276,7 +277,7 @@ export default function EditDataSource() {
                         setDsDescription(e.target.value);
                       }}
                       placeholder={t("body.options.setup.form.fields.description.placeholder")}
-                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/40"
+                      className="input textarea input-bordered input-sm w-full bg-base-100 placeholder:text-base-content/65"
                     />
                   </div>
                 </div>
@@ -310,9 +311,9 @@ export default function EditDataSource() {
                         className="toggle toggle-sm toggle-secondary cursor-pointer"
                       />
                       <label htmlFor="ds_transposed" className="cursor-pointer">
-                        <span className="text-sm font-medium">Transposed</span>
-                        <p className="text-xs text-base-content/60">
-                          Swap rows and columns when consuming this data source
+                        <span className="text-sm font-medium">{tDs("transposed.label")}</span>
+                        <p className="text-xs text-base-content/70">
+                          {tDs("transposed.hint")}
                         </p>
                       </label>
                     </div>
@@ -326,7 +327,7 @@ export default function EditDataSource() {
                   </div>
                 </div>
               ) : (
-                <div role="status" className="text-sm text-base-content/60 px-2">
+                <div role="status" className="text-sm text-base-content/70 px-2">
                   {currentData && !haveData
                     ? t("body.options.configuration.statusAwaitingSeries")
                     : t("body.options.configuration.status")}

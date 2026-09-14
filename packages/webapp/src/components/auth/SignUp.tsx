@@ -51,6 +51,9 @@ function SignUp({
   const { t } = useTranslation("components", {
     keyPrefix: "components.auth.signup",
   });
+  const { t: tToggle } = useTranslation("components", {
+    keyPrefix: "components.auth.passwordToggle",
+  });
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
@@ -79,7 +82,7 @@ function SignUp({
           broadcastAuth("login"); // let other open tabs pick up the new session
           navigate(HOME_ROUTE);
         } else {
-          setMessage("Error while registering");
+          setMessage(t("form.errors.generic"));
         }
         return;
       }
@@ -88,7 +91,7 @@ function SignUp({
       if (result?.uid) {
         handleRegistered?.();
       } else {
-        setMessage("Error while registering");
+        setMessage(t("form.errors.generic"));
       }
     } catch (error) {
       console.log("error", error);
@@ -126,7 +129,7 @@ function SignUp({
                       className="input input-bordered w-full"
                     />
                     {errors["email"] && (
-                      <p className="text-error">
+                      <p className="text-error" role="alert">
                         {t(`form.fields.email.errors.required`)}
                       </p>
                     )}
@@ -154,8 +157,11 @@ function SignUp({
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-content rounded-e-md focus:text-primary"
+                        aria-label={showPassword ? tToggle("hide") : tToggle("show")}
+                        aria-pressed={showPassword}
                       >
                         <svg
+                          aria-hidden="true"
                           className="shrink-0 size-3.5"
                           width="24"
                           height="24"
@@ -228,7 +234,7 @@ function SignUp({
                       {...register("confirmPassword")}
                     />
                     {errors["confirmPassword"] && (
-                      <p className="text-error">
+                      <p className="text-error" role="alert">
                         {errors["confirmPassword"].message}
                       </p>
                     )}
@@ -267,13 +273,13 @@ function SignUp({
                     </label>
                   </div>
                   {errors["policyAcknologment"] && (
-                    <p className="pl-4 text-error">
+                    <p className="pl-4 text-error" role="alert">
                       {errors["policyAcknologment"].message}
                     </p>
                   )}
                 </div>
 
-                {message && <p className="text-error">{message}</p>}
+                {message && <p className="text-error" role="alert">{message}</p>}
                 <div>
                   <button type="submit" className="btn btn-primary w-full">
                     {t(`form.actions.submit.label`)}

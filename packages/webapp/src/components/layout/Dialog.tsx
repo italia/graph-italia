@@ -1,11 +1,17 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 export default function Dialog({ title, children, toggle, callback }: any) {
+  const { t } = useTranslation("components", { keyPrefix: "components.dialog" });
   const ref = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (ref.current) {
       if (toggle) {
         ref.current.showModal();
+        // Land the initial focus on the title, not on the first button, so the
+        // screen reader announces the modal context first (WCAG 2.4.3).
+        requestAnimationFrame(() => titleRef.current?.focus());
       } else {
         ref.current.close();
       }
@@ -13,15 +19,21 @@ export default function Dialog({ title, children, toggle, callback }: any) {
   }, [toggle, ref, children]);
 
   return (
-    <dialog ref={ref} className="modal">
+    <dialog
+      ref={ref}
+      className="modal"
+      // Escape closes a native <dialog> on its own: without this the parent
+      // still believes it is open and re-opens it on the next render
+      onClose={() => callback()}
+    >
       <div className="modal-box max-w-6xl max-h-full">
-        <h2 className="font-bold text-lg ">{title}</h2>
+        <h2 ref={titleRef} tabIndex={-1} className="font-bold text-lg outline-none">{title}</h2>
         <div className="mx-auto">
           {children}
         </div>
         <div className="modal-action">
-          <button className="btn btn-primary" onClick={() => callback()}>
-            Close
+          <button type="button" className="btn btn-primary" onClick={() => callback()}>
+            {t("close", "Chiudi")}
           </button>
         </div>
       </div>
