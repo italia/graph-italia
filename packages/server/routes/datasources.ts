@@ -4,6 +4,7 @@ import { validator as zValidator, resolver, describeRoute } from "hono-openapi";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
 import { checkAuth, requireAuth, canModify, canRead } from "../lib/middlewares";
+import { sanitizePublish } from "../lib/publishing";
 import type { AppVariables } from "../types";
 
 type Env = { Variables: AppVariables };
@@ -125,7 +126,7 @@ router.post(
       if (!projectId) return c.json({ error: "No project found" }, 500);
       if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-      const result = await db.createDataSource({ projectId, ...(body as any) });
+      const result = await db.createDataSource(sanitizePublish({ projectId, ...(body as any) }));
 
 
 
@@ -156,7 +157,7 @@ router.put(
       const ds = await db.findDataSourceById(id);
       if (!ds) return c.json({ error: "Not Found" }, 404);
       if (!(await canModify(c, ds.projectId))) return c.json({ error: "Write access required" }, 403);
-      return c.json(await db.updateDataSource(id, body as any));
+      return c.json(await db.updateDataSource(id, sanitizePublish(body as any)));
 
     } catch (e) {
       logger.error("DataSource update error", e instanceof Error ? e : undefined);

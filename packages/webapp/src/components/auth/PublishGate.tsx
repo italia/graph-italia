@@ -13,7 +13,8 @@ interface PublishGateProps {
  * Guards the /display/* (public "show") routes. When public publishing is
  * enabled (the default), passes children through unauthenticated exactly as
  * before — these pages read the publish-gated public endpoint themselves.
- * When VITE_ENABLE_PUBLIC_PUBLISHING is disabled on this instance, /display/*
+ * When public publishing is disabled on this instance (the server's
+ * ENABLE_PUBLIC_PUBLISHING, read at startup from GET /config), /display/*
  * is no longer a public share page: it becomes an authenticated-only preview,
  * so anonymous visitors are redirected to /login instead of seeing the chart.
  */

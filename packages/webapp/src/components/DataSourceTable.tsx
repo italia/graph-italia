@@ -5,7 +5,7 @@ import { FaPenToSquare, FaTrashCan } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import type { DatasourceItem } from "../lib/api";
+import { isPublishingEnabled, type DatasourceItem } from "../lib/api";
 import { useAriaSort } from "../hooks/useAriaSort";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
@@ -95,18 +95,20 @@ export default function DataSourceTable({
         </div>
       ),
     },
-    {
+    // Senza pubblicazione pubblica ogni sorgente è privata: la colonna non
+    // direbbe nulla.
+    ...(isPublishingEnabled() ? [{
       name: t("columns.visibility.label", { defaultValue: "Visibility" }),
       width: TABLE_COL.visibility,
       hide: TABLE_HIDE.onTablet,
-      cell: (row) => (
+      cell: (row: DatasourceItem) => (
         <span className="text-sm">
           {row.publish
             ? t("columns.visibility.values.public", { defaultValue: "Public" })
             : t("columns.visibility.values.private", { defaultValue: "Private" })}
         </span>
       ),
-    },
+    }] : []),
     {
       name: t("columns.source.label", { defaultValue: "Source" }),
       width: TABLE_COL.source,

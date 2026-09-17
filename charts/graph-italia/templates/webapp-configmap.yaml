@@ -9,8 +9,7 @@ metadata:
 data:
   config.json: |
     {
-      "VITE_SERVER_URL": {{ if .Values.webapp.config.serverUrl }}{{ .Values.webapp.config.serverUrl | quote }}{{ else }}"http://localhost:3003"{{ end }},
-      "VITE_ENABLE_PUBLIC_PUBLISHING": {{ .Values.webapp.config.enablePublicPublishing | quote }}
+      "VITE_SERVER_URL": {{ if .Values.webapp.config.serverUrl }}{{ .Values.webapp.config.serverUrl | quote }}{{ else }}"http://localhost:3003"{{ end }}
     }
 {{- end }}
 

@@ -113,17 +113,27 @@ export const getServerUrlWithApi = (): string => {
   return `${getServerUrl()}/api`;
 };
 
-// Same runtime-config-with-fallback pattern as getServerUrl: instance operators can
-// disable public chart/dashboard sharing (publish toggle, /display/*, /embed/*) without
-// a rebuild, via ConfigMap (/config.json) in Kubernetes or VITE_ENABLE_PUBLIC_PUBLISHING
-// at build time. Defaults to enabled (only "false" turns it off) to preserve prior behavior
-// for self-hosted deployments that never set the flag.
-export const isPublishingEnabled = (): boolean => {
-  const raw =
-    (typeof window !== "undefined" && window.__ENV__?.VITE_ENABLE_PUBLIC_PUBLISHING) ||
-    import.meta.env.VITE_ENABLE_PUBLIC_PUBLISHING;
-  return raw !== "false";
-};
+// Public publishing is a server-side setting (ENABLE_PUBLIC_PUBLISHING): the API
+// is what actually enforces it, so the webapp asks rather than carrying its own
+// copy of the flag. loadPublishingConfig() runs once at startup (main.tsx) before
+// the first render, so every isPublishingEnabled() call below is synchronous and
+// sees the same value the server does.
+let publishingEnabled: boolean | null = null;
+
+export async function loadPublishingConfig(): Promise<boolean> {
+  try {
+    const response = await axios.get(`${getServerUrlWithApi()}/config`);
+    publishingEnabled = response.data?.publicPublishing === true;
+  } catch (error) {
+    // Fail closed: an instance we cannot ask is treated as "no public surface",
+    // so a config blip never exposes a publish toggle that the API would refuse.
+    console.warn("Could not read instance config, assuming publishing is off", error);
+    publishingEnabled = false;
+  }
+  return publishingEnabled;
+}
+
+export const isPublishingEnabled = (): boolean => publishingEnabled === true;
 // let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
 /** getSuggestions */

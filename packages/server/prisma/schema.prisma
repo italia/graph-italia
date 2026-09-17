@@ -239,7 +239,7 @@ model Dashboard {
   id          String  @id @default(cuid())
   name        String?
   description String? @default("")
-  publish     Boolean @default(true)
+  publish     Boolean @default(false)
 
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String

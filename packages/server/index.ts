@@ -18,6 +18,7 @@ import projectRoutes from "./routes/projects.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
+import { isPublicPublishingEnabled } from "./lib/publishing.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
 import { apiKeyUsageLogger } from "./lib/middlewares.ts";
 
@@ -130,6 +131,13 @@ app.get("/", (c) => c.json({
 		sha: BUILD_SHA,
 		buildTime: BUILD_TIME
 	}
+}));
+
+// Public instance configuration — read by the webapp at startup (no auth: it
+// must answer before anyone logs in). The publishing flag lives here, on the
+// server, so that API and UI can never disagree about it.
+app.get("/config", (c) => c.json({
+	publicPublishing: isPublicPublishingEnabled(),
 }));
 
 // Deep health check for k8s readiness probes (verifies database connection)

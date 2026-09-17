@@ -4,6 +4,7 @@ import * as z from "zod";
 import { rateLimiter } from "hono-rate-limiter";
 import db from "../lib/db";
 import { checkAuth, requireAuth, canModify, canRead } from "../lib/middlewares";
+import { isPublicPublishingEnabled, sanitizePublish } from "../lib/publishing";
 import { logger } from "../lib/logger";
 import type { AppVariables, ParsedToken } from "../types";
 import {
@@ -160,6 +161,8 @@ router.get(
 	zValidator("param", detailSchema),
 	async (c) => {
 		try {
+			// Istanza senza superficie pubblica: la rotta non esiste proprio.
+			if (!isPublicPublishingEnabled()) return c.json({ error: "Not Found" }, 404);
 			const { id } = c.req.valid("param");
 			let result = await db.findChartById(id);
 			if (!result) return c.json({ error: "Not Found" }, 404);
@@ -229,7 +232,7 @@ router.post(
 			if (!projectId) return c.json({ error: "No project found" }, 500);
 			if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-			const result = await db.createChart({ projectId, ...body });
+			const result = await db.createChart(sanitizePublish({ projectId, ...body }));
 			logger.info("Chart created", { chartId: result.id, projectId, chartType: body.chart });
 			return c.json(result, 201);
 		} catch (err) {
@@ -259,6 +262,11 @@ router.post(
 			const chart = await db.findChartById(chartId);
 			if (!chart) return c.json({ message: "Not Found" }, 404);
 			if (!(await canModify(c, chart.projectId))) return c.json({ message: "Write access required" }, 403);
+			// Niente da pubblicare su un'istanza senza superficie pubblica. Lo
+			// spegnimento resta permesso, così si può sempre rientrare.
+			if (!isPublicPublishingEnabled() && !chart.publish) {
+				return c.json({ message: "Public publishing is disabled on this instance" }, 403);
+			}
 
 			const result = await db.publishChart(chartId, !chart.publish);
 			logger.info("Chart publish toggled", { chartId, published: result.publish });
@@ -323,7 +331,7 @@ router.put(
 			if (!chart) return c.json({ message: "Not Found" }, 404);
 			if (!(await canModify(c, chart.projectId))) return c.json({ message: "Write access required" }, 403);
 
-			const result = await db.updateChart(chartId, chartData);
+			const result = await db.updateChart(chartId, sanitizePublish(chartData));
 			logger.debug("Chart updated", { chartId });
 			return c.json(result);
 		} catch (err) {

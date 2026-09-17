@@ -23,6 +23,7 @@ import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboar
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 
 import { RenderChart } from "graph-italia-components";
+import { isPublishingEnabled } from "../lib/api";
 import toast from "../lib/toast";
 import { type ShareInfo, buildShareInfo, shareInfoString } from "../lib/shareInfo";
 import { useTranslation } from "react-i18next";
@@ -241,7 +242,9 @@ export default function ChartTable({
       sortable: true,
     },
 
-    {
+    // Senza pubblicazione pubblica ogni elemento è privato: la colonna non
+    // direbbe nulla.
+    ...(isPublishingEnabled() ? [{
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.visibility.label`),
       width: TABLE_COL.visibility,
       hide: TABLE_HIDE.onTablet,
@@ -263,30 +266,15 @@ export default function ChartTable({
           )}
         </div>
       ),
-    },
+    }] : []),
 
     {
       name: t(`${COLUMNS_TRANSLATION_KEY_PATH}.share.label`),
       width: TABLE_COL.share,
       hide: TABLE_HIDE.onTablet,
-      cell: (row: FieldDataType) =>
-        !row.publish ? (
-          // A private chart's public URL always answers 401: don't offer links
-          // that can never work.
-          <span
-            className="text-base-content/70"
-            title={t("actions.sharePrivateHint", {
-              defaultValue: "Per condividere, rendi pubblico il grafico",
-            })}
-          >
-            —
-            <span className="sr-only">
-              {t("actions.sharePrivateHint", {
-                defaultValue: "Per condividere, rendi pubblico il grafico",
-              })}
-            </span>
-          </span>
-        ) : (
+      // Vale anche per i grafici privati: questi valori servono a consumarli via
+      // API con una chiave dv_, non a condividerli pubblicamente.
+      cell: (row: FieldDataType) => (
         <div className="flex gap-2">
           <button
             type="button"

@@ -17,6 +17,7 @@ import { useAriaSort } from "../hooks/useAriaSort";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
+import { isPublishingEnabled } from "../lib/api";
 import toast from "../lib/toast";
 import { type ShareInfo, buildShareInfo, shareInfoString } from "../lib/shareInfo";
 import type { FieldDataType } from "../types";
@@ -124,18 +125,20 @@ export default function DashboardTable({
         </div>
       ),
     },
-    {
+    // Senza pubblicazione pubblica ogni dashboard è privata: la colonna non
+    // direbbe nulla.
+    ...(isPublishingEnabled() ? [{
       name: t(`columns.visibility.label`),
       width: TABLE_COL.visibility,
       hide: TABLE_HIDE.onTablet,
-      cell: (row) => (
+      cell: (row: FieldDataType) => (
         <span className="text-sm">
           {row.publish
             ? t(`columns.visibility.values.public`, { defaultValue: "Pubblico" })
             : t(`columns.visibility.values.private`, { defaultValue: "Privato" })}
         </span>
       ),
-    },
+    }] : []),
     {
       ...sortHeader(t(`columns.createdAt.label`)),
       width: TABLE_COL.date,

@@ -51,9 +51,9 @@ All paths below are relative to `ROUTES_PREFIX` (`/api` by default). Auth column
 |---|---|---|---|
 | `/auth/*` | `routes/auth.ts` | mixed | Register, login, logout, email verification (PIN + link), password recovery/reset, resend verification, `GET /auth/user` (current session). Rate-limited to 10 req/min. |
 | `/apikeys` | `routes/apikeys.ts` | session | Create/list/revoke/reinstate API keys for the caller's projects, view per-key usage logs. |
-| `/charts` | `routes/charts.ts` | session\|key (public for `/charts/show/:id`) | CRUD for charts, publish toggle, `GET /charts/show/:id` (public, published-only). |
+| `/charts` | `routes/charts.ts` | session\|key (public for `/charts/show/:id`) | CRUD for charts, publish toggle, `GET /charts/show/:id` (public, published-only — 404 when public publishing is off, see below). |
 | `/charts/kpi-group` | `routes/kpi-group.ts` | session\|key (create is session-only) | KPI-group chart CRUD — a chart made of multiple KPI tiles sharing one data source. |
-| `/dashboards` | `routes/dashboards.ts` | session\|key (public for `/dashboards/show/:id`) | CRUD for dashboards, slot layout updates, `GET /dashboards/show/:id` (public, published-only). |
+| `/dashboards` | `routes/dashboards.ts` | session\|key (public for `/dashboards/show/:id`) | CRUD for dashboards, slot layout updates, `GET /dashboards/show/:id` (public, published-only — 404 when public publishing is off, see below). |
 | `/datasources` | `routes/datasources.ts` | session\|key | CRUD for data sources (CSV/remote URL), link/unlink charts to a data source. |
 | `/hints` | `routes/hints.ts` | session | OpenAI-backed chart suggestions from uploaded data. |
 | `/orgs` | `routes/orgs.ts` | session | Org CRUD, membership management, org↔project associations. |
@@ -61,7 +61,17 @@ All paths below are relative to `ROUTES_PREFIX` (`/api` by default). Auth column
 | `/admin/*` | `routes/admin.ts` | admin | List/delete users, force-activate a user, resend activation, trigger password reset — admin-only user management. |
 | `/oidc/*` (mounted outside `ROUTES_PREFIX`, at `/api/oidc`) | `routes/oidc.ts` | — | OIDC login/callback/logout, work in progress for SPID/CIE-style federated login. |
 
-Plus infrastructure endpoints outside the API surface: `GET /` (liveness), `GET /health/ready` (readiness, checks DB connectivity), `GET /metrics` (Prometheus scrape, mounted outside `ROUTES_PREFIX`).
+Plus `GET /config` (public: instance settings the webapp needs before login — currently `{ publicPublishing }`), and infrastructure endpoints outside the API surface: `GET /` (liveness), `GET /health/ready` (readiness, checks DB connectivity), `GET /metrics` (Prometheus scrape, mounted outside `ROUTES_PREFIX`).
+
+## Public publishing toggle
+
+`ENABLE_PUBLIC_PUBLISHING` (env, defaults to enabled — only the literal `"false"` turns it off) decides whether this instance has a public surface at all. It lives here rather than in the webapp because the API is what enforces it; the webapp reads it from `GET /config` at startup and mirrors it in the UI, so the two can never disagree. `lib/publishing.ts` is the single implementation:
+
+- **`GET /charts/show/:id` and `GET /dashboards/show/:id` answer 404** when it is off, whatever the row's `publish` value — these are the only anonymous read endpoints, so turning them off removes the public surface entirely.
+- **Nothing can be flipped to `publish: true`.** `POST /charts/publish/:id` returns 403 when it would publish (un-publishing stays allowed, so an instance that is switched off can always be cleaned up), and create/update on charts, dashboards, KPI groups and data sources are sanitised to `publish: false` rather than rejected, so older clients keep working — they just cannot make anything public.
+- **Authenticated reads are untouched.** `GET /charts/:id` and `GET /dashboards/:id` go through `requireAuth` + `canRead` and never look at `publish`, so a session or a project-scoped `dv_` API key reads private charts and dashboards exactly as before. This is how `packages/components` (`ChartProvider`, `DashboardProvider`) consumes them, and it is the intended path on an instance with publishing off.
+
+Note that turning the flag off does not rewrite existing data: rows already at `publish: true` stay that way, they simply stop being reachable anonymously. `Chart`, `Dashboard` and `DataSource` all default to `publish: false`.
 
 ## Seeds
 

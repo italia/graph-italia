@@ -4,6 +4,7 @@ import * as z from "zod";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
 import { canModify, canRead, checkAuth, requireAuth } from "../lib/middlewares";
+import { sanitizePublish } from "../lib/publishing";
 import type { AppVariables, ParsedToken } from "../types";
 
 type Env = { Variables: AppVariables };
@@ -116,7 +117,7 @@ router.post(
 				data: [],
 				...body,
 			};
-			const result = await db.createKpiGroup(chartData);
+			const result = await db.createKpiGroup(sanitizePublish(chartData));
 			return c.json({ id: result.id }, 201);
 		} catch (err) {
 			logger.error("KpiGroup create error", err instanceof Error ? err : undefined);
@@ -147,13 +148,13 @@ router.put(
 			const id = c.req.valid("param").id;
 			const body = c.req.valid("json");
 			const { dataSource, config } = body;
-			const { name = "", description = "", publish = true } = body;
+			const { name = "", description = "", publish = false } = body;
 
 			const kpi = await db.findKpiGroupById(id);
 			if (!kpi) return c.json({ error: "Not Found" }, 404);
 			if (!(await canModify(c, kpi.projectId))) return c.json({ error: "Write access required" }, 403);
 
-			await db.updateKpiGroup(id, { name, description, publish, config, data: dataSource });
+			await db.updateKpiGroup(id, sanitizePublish({ name, description, publish, config, data: dataSource }));
 			return c.json({ id });
 		} catch (err) {
 			logger.error("KpiGroup update error", err instanceof Error ? err : undefined);

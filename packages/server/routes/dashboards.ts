@@ -4,6 +4,7 @@ import * as z from "zod";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
 import { canModify, canRead, checkAuth, requireAuth } from "../lib/middlewares";
+import { isPublicPublishingEnabled, sanitizePublish } from "../lib/publishing";
 import type { AppVariables } from "../types";
 
 type Env = { Variables: AppVariables };
@@ -131,6 +132,8 @@ router.get(
 	zValidator("param", detailSchema),
 	async (c) => {
 		try {
+			// Istanza senza superficie pubblica: la rotta non esiste proprio.
+			if (!isPublicPublishingEnabled()) return c.json({ error: "Not Found" }, 404);
 			const { id } = c.req.valid("param");
 			const result = await db.findDashboardByIdWithIncludes(id);
 			if (!result) return c.json({ error: "Not Found" }, 404);
@@ -164,7 +167,7 @@ router.post(
 			if (!projectId) return c.json({ error: "No project found" }, 500);
 			if (!(await canModify(c, projectId))) return c.json({ error: "Write access required" }, 403);
 
-			const result = await db.dashboardDb.create({ projectId, ...body });
+			const result = await db.dashboardDb.create(sanitizePublish({ projectId, ...body }));
 
 			logger.info("Dashboard created", { dashboardId: result.id, projectId });
 			return c.json(result, 201);
@@ -285,7 +288,7 @@ router.put(
 			if (!dashboard) return c.json({ message: "Not Found" }, 404);
 			if (!(await canModify(c, dashboard.projectId))) return c.json({ message: "Write access required" }, 403);
 
-			const result = await db.dashboardDb.update(dashboardId, dashboardData);
+			const result = await db.dashboardDb.update(dashboardId, sanitizePublish(dashboardData));
 			logger.debug("Dashboard updated", { dashboardId });
 			return c.json(result);
 		} catch (err) {
