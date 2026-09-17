@@ -21,6 +21,11 @@ const getSignupSchema = (
   const signupSchema = z
     .object({
       email: z.string().email({ message: "Invalid email address" }),
+      // Obbligatoria sul form anche se il modello utente la tiene opzionale.
+      pa: z
+        .string()
+        .trim()
+        .min(1, { message: t(`form.fields.pa.errors.required`) }),
       password: passwordSchema,
       confirmPassword: passwordSchema,
       policyAcknologment: z.boolean().refine((val) => val === true, {
@@ -66,16 +71,16 @@ function SignUp({
     reset,
   } = useForm({
     resolver: zodResolver(signupSchema),
-    defaultValues: { email: oidc?.defaultEmail ?? "" },
+    defaultValues: { email: oidc?.defaultEmail ?? "", pa: "" },
   });
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");
     try {
-      const { email, password } = submittedData;
+      const { email, password, pa } = submittedData;
 
       if (oidc) {
-        const result = await api.oidcSignup({ email, password });
+        const result = await api.oidcSignup({ email, password, pa });
         if (result?.auth) {
           const user = await api.getUser();
           setUser(user);
@@ -87,7 +92,7 @@ function SignUp({
         return;
       }
 
-      const result = await api.register({ email, password });
+      const result = await api.register({ email, password, pa });
       if (result?.uid) {
         handleRegistered?.();
       } else {
@@ -131,6 +136,30 @@ function SignUp({
                     {errors["email"] && (
                       <p className="text-error" role="alert">
                         {t(`form.fields.email.errors.required`)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="pa"
+                    className="block text-sm font-medium leading-6"
+                  >
+                    {t(`form.fields.pa.label`)}
+                  </label>
+                  <div className="mt-2 form-control">
+                    <input
+                      id="pa"
+                      {...register("pa")}
+                      type="text"
+                      required
+                      autoComplete="organization"
+                      className="input input-bordered w-full"
+                    />
+                    {errors["pa"] && (
+                      <p className="text-error" role="alert">
+                        {errors["pa"].message}
                       </p>
                     )}
                   </div>

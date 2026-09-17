@@ -161,6 +161,12 @@
                                 "required": "Questo campo è obbligatorio"
                             }
                         },
+                        "pa": {
+                            "label": "Pubblica Amministrazione di Appartenenza",
+                            "errors": {
+                                "required": "Questo campo è obbligatorio"
+                            }
+                        },
                         "password": {
                             "label": "Password",
                             "placeholder": "Inserisci una nuova password",
@@ -778,13 +784,17 @@
                 }
             },
             "modals": {
-                "embedChart": {
-                    "title": "Incorpora questo grafico"
-                },
                 "previewChart": {
                     "title": "Anteprima grafico"
                 }
             }
+        },
+        "shareInfoDialog": {
+            "title": "API URL, ID e host",
+            "apiUrl": "API URL",
+            "id": "ID",
+            "host": "Host",
+            "copyValue": "Copia {{label}}"
         },
         "checkGeo": {
             "form": {
@@ -863,6 +873,9 @@
                 },
                 "updatedAt": {
                     "label": "Aggiornato il"
+                },
+                "share": {
+                    "label": "Condividi"
                 },
                 "actions": {
                     "label": "Azioni"

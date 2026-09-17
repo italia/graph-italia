@@ -274,6 +274,8 @@ router.post(
         const body = await c.req.json().catch(() => ({} as Record<string, unknown>))
         const email = typeof body?.email === 'string' ? body.email.trim() : ''
         const password = typeof body?.password === 'string' ? body.password : ''
+        // Pubblica Amministrazione di appartenenza: chiesta dal form, opzionale sul modello.
+        const pa = typeof body?.pa === 'string' && body.pa.trim() ? body.pa.trim() : undefined
         if (!email || !password) {
             return c.json({ error: { message: 'email and password are required' } }, 400)
         }
@@ -284,7 +286,7 @@ router.post(
             return c.json({ error: { message: 'email already in use' } }, 409)
         }
 
-        const user = await db.createUserByEmailAndPassword({ email, password, sub })
+        const user = await db.createUserByEmailAndPassword({ email, password, sub, pa })
         await db.setVerified(user.id)
 
         const { accessToken } = generateTokens(user)

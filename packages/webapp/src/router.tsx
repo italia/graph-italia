@@ -64,7 +64,8 @@ export const ROUTES = {
   editApiKeys: "/private/edit/apikeys",
   editOrgs: "/private/edit/orgs",
   editSettings: "/private/edit/settings",
-  godModeOn: "/private/god-mode-on",
+  // Admin-only
+  admin: "/admin",
   // Display / embed
   viewChart: (id: string) => `/display/charts/${id}`,
   embedChart: (id: string) => `/embed/charts/${id}`,
@@ -258,8 +259,9 @@ const routes = [
       </ProtectedRoute>
     ),
   },
+  // Area di amministrazione: accessibile solo ai ruoli ADMIN (AdminRoute).
   {
-    path: "/private/god-mode-on",
+    path: "/admin",
     element: (
       <AdminRoute>
         <GodModeOnPage />

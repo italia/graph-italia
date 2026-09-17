@@ -315,12 +315,13 @@ function Home() {
       label: "Dashboard",
       icon: <FaRegSquare size={24} aria-hidden="true" />,
     },
-    {
-      id: 5,
-      key: "datasource",
-      label: "Data Source",
-      icon: <FaDatabase size={24} aria-hidden="true" />,
-    },
+    // Voce "Sorgente dati" temporaneamente nascosta dal dialog "Crea nuovo".
+    // {
+    //   id: 5,
+    //   key: "datasource",
+    //   label: "Data Source",
+    //   icon: <FaDatabase size={24} aria-hidden="true" />,
+    // },
   ];
 
   async function handleCreateFromDialog(id: number, key: ItemTypeNames) {
@@ -548,72 +549,78 @@ function Home() {
                 />
               </div>
             </section>
-            <section
-              aria-labelledby="dashboards-section-heading"
-              className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
-            >
-              <div>
-                <h2
-                  id="dashboards-section-heading"
-                  className="text-lg mb-4 font-normal"
-                >
-                  {t(`header.dashboards`)}
-                </h2>
-                <p className="text-base-content/70 -mt-3 mb-4">
-                  {t(
-                    "header.dashboardsDescription",
-                    "Le dashboard sono un raccoglitore di più grafici e blocchi di testo in un'unica pagina.",
+            {/* Sezione nascosta finché non esiste almeno una dashboard */}
+            {(dashboardLoading || (dashboardList?.length ?? 0) > 0) && (
+              <section
+                aria-labelledby="dashboards-section-heading"
+                className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
+              >
+                <div>
+                  <h2
+                    id="dashboards-section-heading"
+                    className="text-lg mb-4 font-normal"
+                  >
+                    {t(`header.dashboards`)}
+                  </h2>
+                  <p className="text-base-content/70 -mt-3 mb-4">
+                    {t(
+                      "header.dashboardsDescription",
+                      "Le dashboard sono un raccoglitore di più grafici e blocchi di testo in un'unica pagina.",
+                    )}
+                  </p>
+                  {dashboardLoading ? (
+                    <Loading />
+                  ) : (
+                    <DashboardTable
+                      list={dashboardList ?? []}
+                      handleDeleteDashboard={(id) =>
+                        setPendingDeleteDashboardId(id)
+                      }
+                      handleEditDashboard={(item) =>
+                        navigate(ROUTES.editDashboard(item.id ?? ""))
+                      }
+                      handleViewDashboard={(id) =>
+                        navigate(ROUTES.viewDashboard(id))
+                      }
+                    />
                   )}
-                </p>
-                {dashboardLoading ? (
-                  <Loading />
-                ) : (
-                  <DashboardTable
-                    list={dashboardList ?? []}
-                    handleDeleteDashboard={(id) =>
-                      setPendingDeleteDashboardId(id)
-                    }
-                    handleEditDashboard={(item) =>
-                      navigate(ROUTES.editDashboard(item.id ?? ""))
-                    }
-                    handleViewDashboard={(id) =>
-                      navigate(ROUTES.viewDashboard(id))
-                    }
-                  />
-                )}
-              </div>
-            </section>
+                </div>
+              </section>
+            )}
 
-            <section
-              aria-labelledby="datasources-section-heading"
-              className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
-            >
-              <div>
-                <h2
-                  id="datasources-section-heading"
-                  className="text-lg mb-4 font-normal"
-                >
-                  {t("header.datasources", "File sorgente dati")}
-                </h2>
-                <p className="text-base-content/70 -mt-3 mb-4">
-                  {t(
-                    "header.datasourcesDescription",
-                    "Elenco dei file CSV o URL utilizzati come sorgente dati, possono essere aggiornati anche tramite API REST.",
+            {/* Sezione nascosta finché non esiste almeno un file sorgente dati */}
+            {(datasourceLoading || datasourceList.length > 0) && (
+              <section
+                aria-labelledby="datasources-section-heading"
+                className="card border border-base-300 bg-base-100 shadow-md p-6 mb-6"
+              >
+                <div>
+                  <h2
+                    id="datasources-section-heading"
+                    className="text-lg mb-4 font-normal"
+                  >
+                    {t("header.datasources", "File sorgente dati")}
+                  </h2>
+                  <p className="text-base-content/70 -mt-3 mb-4">
+                    {t(
+                      "header.datasourcesDescription",
+                      "Elenco dei file CSV o URL utilizzati come sorgente dati, possono essere aggiornati anche tramite API REST.",
+                    )}
+                  </p>
+                  {datasourceLoading ? (
+                    <Loading />
+                  ) : (
+                    <DataSourceTable
+                      list={datasourceList}
+                      handleDelete={(id) => setPendingDeleteDatasourceId(id)}
+                      handleEdit={(item) =>
+                        navigate(ROUTES.editDataSource(item.id))
+                      }
+                    />
                   )}
-                </p>
-                {datasourceLoading ? (
-                  <Loading />
-                ) : (
-                  <DataSourceTable
-                    list={datasourceList}
-                    handleDelete={(id) => setPendingDeleteDatasourceId(id)}
-                    handleEdit={(item) =>
-                      navigate(ROUTES.editDataSource(item.id))
-                    }
-                  />
-                )}
-              </div>
-            </section>
+                </div>
+              </section>
+            )}
           </>
         )}
       </div>

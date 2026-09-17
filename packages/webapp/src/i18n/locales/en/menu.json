@@ -43,6 +43,9 @@
                         "label": "Change Password"
                     }
                 }
+            },
+            "admin": {
+                "label": "Administration"
             }
         }
     }

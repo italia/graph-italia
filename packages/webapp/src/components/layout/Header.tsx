@@ -9,7 +9,7 @@ import { MENU, ROUTES } from "../../router";
 import LanguageSwitcher from "./LanguageSwitcher.tsx";
 import { handleDropdownKeyDown } from "../../lib/dropdownKeyboard";
 import { useMobileMenuFocus } from "../../lib/useMobileMenuFocus";
-import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket, FaUserGear, FaChartBar } from "react-icons/fa6";
+import { FaUsers, FaKey, FaEnvelope, FaTrash, FaArrowRightFromBracket, FaUserGear, FaChartBar, FaUserShield } from "react-icons/fa6";
 import ThemeSwitcherComponent from "./ThemeSwitcher.tsx";
 
 
@@ -335,6 +335,20 @@ export default function Header() {
                       ))}
                       <div className="divider my-0 opacity-20"></div>
                     </>
+                  )}
+
+                  {/* Amministrazione: solo per gli utenti con ruolo ADMIN */}
+                  {user.role === "ADMIN" && (
+                    <li>
+                      <a
+                        href={ROUTES.admin}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-base-content no-underline hover:bg-base-200 hover: text-base-content transition-colors duration-150"
+                        onClick={() => setDropdownUserOpen(false)}
+                      >
+                        <FaUserShield className="w-4 h-4 opacity-70" aria-hidden="true" />
+                        <span>{translateMenu("menu.items.admin.label")}</span>
+                      </a>
+                    </li>
                   )}
 
                   {/* <li>

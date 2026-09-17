@@ -161,6 +161,12 @@
                                 "required": "This field is required"
                             }
                         },
+                        "pa": {
+                            "label": "Public Administration you belong to",
+                            "errors": {
+                                "required": "This field is required"
+                            }
+                        },
                         "password": {
                             "label": "Password",
                             "placeholder": "Enter a new password",
@@ -778,13 +784,17 @@
                 }
             },
             "modals": {
-                "embedChart": {
-                    "title": "Embed this Chart"
-                },
                 "previewChart": {
                     "title": "Preview Chart"
                 }
             }
+        },
+        "shareInfoDialog": {
+            "title": "API URL, ID and host",
+            "apiUrl": "API URL",
+            "id": "ID",
+            "host": "Host",
+            "copyValue": "Copy {{label}}"
         },
         "checkGeo": {
             "form": {
@@ -863,6 +873,9 @@
                 },
                 "updatedAt": {
                     "label": "Updated At"
+                },
+                "share": {
+                    "label": "Share"
                 },
                 "actions": {
                     "label": "Actions"

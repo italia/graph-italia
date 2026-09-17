@@ -1,16 +1,26 @@
 import dayjs from "dayjs";
 import { useCallback, useRef } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
-import { FaArrowUpRightFromSquare, FaPenToSquare, FaTrashCan } from "react-icons/fa6";
+import {
+  FaArrowUpRightFromSquare,
+  FaCopy,
+  FaPenToSquare,
+  FaShareNodes,
+  FaTrashCan,
+} from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useCopyToClipboard } from "usehooks-ts";
 import { useAriaSort } from "../hooks/useAriaSort";
 import { usePaginationSelectKeyboard } from "../hooks/usePaginationSelectKeyboard";
 import { useSettingsStore } from "../lib/store/settings_store.ts";
 import { ROUTES } from "../router.tsx";
+import toast from "../lib/toast";
+import { type ShareInfo, buildShareInfo, shareInfoString } from "../lib/shareInfo";
 import type { FieldDataType } from "../types";
+import ShareInfoDialog from "./ShareInfoDialog";
 import registerDarkTheme from "./layout/DataTableDarkTheme.ts";
 import SortHeaderButton, { SortStatus, sortIcon } from "./layout/SortHeaderButton";
 import dataTableStyles, {
@@ -76,6 +86,23 @@ export default function DashboardTable({
 
   const navigate = useNavigate();
 
+  const [share, setShare] = useState<ShareInfo | null>(null);
+  const [, copy] = useCopyToClipboard();
+  const [copyStatus, setCopyStatus] = useState<string>("");
+
+  const handleCopy = (text: string) => () => {
+    copy(text)
+      .then(() => {
+        toast.success("Copied to clipboard!");
+        setCopyStatus("Copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error("Failed to copy!", error);
+        toast.error("Failed to copy!");
+        setCopyStatus("Failed to copy!");
+      });
+  };
+
   const columns: TableColumn<FieldDataType>[] = [
     {
       ...sortHeader(t(`columns.name.label`)),
@@ -126,6 +153,34 @@ export default function DashboardTable({
       sortable: true,
       cell: (row) =>
         row.updatedAt ? dayjs(row.updatedAt).format("YYYY-MM-DD HH:mm") : "—",
+    },
+    {
+      name: t(`columns.share.label`, { defaultValue: "Condividi" }),
+      width: TABLE_COL.share,
+      hide: TABLE_HIDE.onTablet,
+      cell: (row) => (
+        <div className="flex gap-2">
+          <button
+            type="button"
+            aria-label={t("actions.share", { defaultValue: "API URL, ID e host della dashboard" })}
+            title={t("actions.share", { defaultValue: "API URL, ID e host della dashboard" })}
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={() => setShare(buildShareInfo("dashboards", row.id))}
+          >
+            <FaShareNodes fill={actionColor} size={actionSize} aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            aria-label={t("actions.copyLink", { defaultValue: "Copia API URL, ID e host" })}
+            title={t("actions.copyLink", { defaultValue: "Copia API URL, ID e host" })}
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={handleCopy(shareInfoString(buildShareInfo("dashboards", row.id)))}
+          >
+            <FaCopy fill={actionColor} size={actionSize} aria-hidden="true" />
+          </button>
+        </div>
+      ),
     },
     {
       name: t(`columns.actions.label`),
@@ -186,6 +241,9 @@ export default function DashboardTable({
 
   return (
     <div ref={tableRef}>
+      <div role="status" aria-live="polite" className="sr-only">
+        {copyStatus}
+      </div>
       <SortStatus sortState={sortState} />
       {list.length === 0 ? (
         /* An empty list is a status message, not a table with free text inside (#119) */
@@ -212,6 +270,11 @@ export default function DashboardTable({
           highlightOnHover
         />
       )}
+      <ShareInfoDialog
+        share={share}
+        onClose={() => setShare(null)}
+        onCopy={handleCopy}
+      />
     </div>
   );
 }

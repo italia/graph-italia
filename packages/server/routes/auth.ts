@@ -104,7 +104,10 @@ router.get("/user", describeRoute({
 
 const registerSchema = z.object({
 	email: z.email({ error: "Invalid email address" }),
-	password: passwordSchema
+	password: passwordSchema,
+	// Pubblica Amministrazione di appartenenza: required by the signup form,
+	// optional here (and on the model) so existing clients keep working.
+	pa: z.string().trim().min(1).optional()
 })
 
 const registerSuccessSchema = z.object({
@@ -150,7 +153,7 @@ router.post("/register",
 		}
 	}), zValidator("json", registerSchema), async (c) => {
 		try {
-			const { email, password } = c.req.valid("json");
+			const { email, password, pa } = c.req.valid("json");
 			if (!email || !password) {
 				return c.json(
 					{
@@ -168,7 +171,7 @@ router.post("/register",
 				return c.json({ error: { message: "Email already in use." } }, 409);
 			}
 
-			const user = await db.createUserByEmailAndPassword({ email, password });
+			const user = await db.createUserByEmailAndPassword({ email, password, pa });
 			const pin = await db.createCode(user.id, "ACTIVATION");
 
 			logger.info("User registered, sending activation email", {

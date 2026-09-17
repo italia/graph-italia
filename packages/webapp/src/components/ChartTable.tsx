@@ -7,7 +7,6 @@ import {
   FaChartBar,
   FaChartLine,
   FaChartPie,
-  FaCode,
   FaCopy,
   FaEye,
   FaLink,
@@ -16,6 +15,7 @@ import {
   FaMapLocationDot,
   FaPenToSquare,
   FaRegSquare,
+  FaShareNodes,
   FaTrashCan,
 } from "react-icons/fa6";
 import { useAriaSort } from "../hooks/useAriaSort";
@@ -24,6 +24,7 @@ import { useSettingsStore } from "../lib/store/settings_store.ts";
 
 import { RenderChart } from "graph-italia-components";
 import toast from "../lib/toast";
+import { type ShareInfo, buildShareInfo, shareInfoString } from "../lib/shareInfo";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useCopyToClipboard } from "usehooks-ts";
@@ -36,6 +37,7 @@ import dataTableStyles, {
   TABLE_NAME_MIN_WIDTH,
 } from "./layout/dataTableStyles.ts";
 import Dialog from "./layout/Dialog";
+import ShareInfoDialog from "./ShareInfoDialog";
 import { paginationIcons } from "./layout/paginationIcons";
 import { useChartA11yProps } from "../hooks/useChartA11yProps";
 
@@ -56,7 +58,7 @@ export default function ChartTable({
   const { t } = useTranslation("components", {
     keyPrefix: "components.chartTable",
   });
-  const [show, setShow] = useState<string | null>(null);
+  const [share, setShare] = useState<ShareInfo | null>(null);
   const [data, setData] = useState<FieldDataType | null>(null);
 
   const { settings } = useSettingsStore();
@@ -288,26 +290,20 @@ export default function ChartTable({
         <div className="flex gap-2">
           <button
             type="button"
-            aria-label={t("actions.embed", { defaultValue: "Codice embed" })}
-            title={t("actions.embed", { defaultValue: "Codice embed" })}
+            aria-label={t("actions.share", { defaultValue: "API URL, ID e host del grafico" })}
+            title={t("actions.share", { defaultValue: "API URL, ID e host del grafico" })}
             className="btn btn-ghost btn-xs btn-square"
-            onClick={() =>
-              setShow(
-                `<iframe width="600" height="400" src="${window.location.origin}${ROUTES.embedChart(row.id ?? "")}" frameborder="0" allowfullscreen></iframe>`,
-              )
-            }
+            onClick={() => setShare(buildShareInfo("charts", row.id))}
           >
-            <FaCode fill={actionColor} size={actionSize} aria-hidden="true" />
+            <FaShareNodes fill={actionColor} size={actionSize} aria-hidden="true" />
           </button>
 
           <button
             type="button"
-            aria-label={t("actions.copyLink", { defaultValue: "Copia link" })}
-            title={t("actions.copyLink", { defaultValue: "Copia link" })}
+            aria-label={t("actions.copyLink", { defaultValue: "Copia API URL, ID e host" })}
+            title={t("actions.copyLink", { defaultValue: "Copia API URL, ID e host" })}
             className="btn btn-ghost btn-xs btn-square"
-            onClick={handleCopy(
-              `${window.location.origin}${ROUTES.viewChart(row.id ?? "")}`,
-            )}
+            onClick={handleCopy(shareInfoString(buildShareInfo("charts", row.id)))}
           >
             <FaCopy fill={actionColor} size={actionSize} aria-hidden="true" />
           </button>
@@ -440,17 +436,11 @@ export default function ChartTable({
           {data && <RenderChart {...data} {...chartA11y} />}
         </div>
       </Dialog>
-      <Dialog
-        toggle={show ? true : false}
-        title={t(`modals.embedChart.title`)}
-        callback={() => setShow(null)}
-      >
-        <div className="mockup-code">
-          <pre data-prefix="">
-            <code>{show}</code>
-          </pre>
-        </div>
-      </Dialog>
+      <ShareInfoDialog
+        share={share}
+        onClose={() => setShare(null)}
+        onCopy={handleCopy}
+      />
     </div>
   );
 }

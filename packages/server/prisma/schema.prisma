@@ -114,6 +114,7 @@ model User {
   id       String  @id @default(cuid())
   email    String  @unique
   sub      String? @unique // OIDC subject identifier (SPID/CIE); null for email/password users
+  pa       String? // Pubblica Amministrazione di appartenenza; required by the signup form, optional here for existing rows
   password String
   verified Boolean @default(false)
   role     Role    @default(USER)

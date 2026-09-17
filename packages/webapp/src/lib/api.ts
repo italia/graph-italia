@@ -90,7 +90,9 @@ axios.interceptors.response.use(
 // Runtime configuration loaded from ConfigMap (in Kubernetes) or from /config.json
 // The config is loaded at app startup in main.tsx and stored in window.__ENV__
 // Falls back to import.meta.env (from .env file at build-time) for development, then to default
-const getServerUrl = (): string => {
+// Esportata anche per la UI: è l'`endpoint` che il pacchetto components
+// (ChartProvider) richiede insieme al chartId.
+export const getServerUrl = (): string => {
   let baseServerUrl; // = import.meta.env.VITE_SERVER_URL;
   // Priority 1: Runtime config from ConfigMap (/config.json)
   if (typeof window !== "undefined" && window.__ENV__?.VITE_SERVER_URL) {
@@ -228,9 +230,11 @@ export async function login({
 export async function register({
   email,
   password,
+  pa,
 }: {
   email: string;
   password: string;
+  pa?: string;
 }): Promise<{ uid: string } | null> {
   try {
     const response = await axios.post(
@@ -238,6 +242,7 @@ export async function register({
       {
         email,
         password,
+        pa,
       }
     );
     const data = response.data;
@@ -364,13 +369,16 @@ export async function getOidcSignupStatus(t?: string | null): Promise<OidcSignup
 export async function oidcSignup({
   email,
   password,
+  pa,
 }: {
   email: string;
   password: string;
+  pa?: string;
 }): Promise<{ auth: boolean }> {
   const response = await axios.post(`${getServerUrl()}/api/oidc/signup`, {
     email,
     password,
+    pa,
   });
   return response.data;
 }

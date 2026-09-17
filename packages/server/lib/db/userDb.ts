@@ -73,13 +73,15 @@ export async function createUserByEmailAndPassword({
 	email,
 	password,
 	sub,
+	pa,
 }: {
 	email: string;
 	password: string;
 	sub?: string;
+	pa?: string;
 }) {
 	const passwordHash = bcrypt.hashSync(password, 12);
-	const created = await prisma.user.create({ data: { email, password: passwordHash, sub } });
+	const created = await prisma.user.create({ data: { email, password: passwordHash, sub, pa } });
 	await createDefaultProject(created.id, created.email);
 	return created;
 }
