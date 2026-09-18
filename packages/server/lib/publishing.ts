@@ -21,8 +21,12 @@ export function isPublicPublishingEnabled(): boolean {
  * Forces `publish` to false on a create/update payload when public publishing
  * is off. Sanitising rather than rejecting keeps older clients working: they
  * simply cannot make anything public.
+ *
+ * Takes any object and is a no-op on payloads that carry no `publish` at all,
+ * so call sites can pass their DTO straight through without narrowing it.
  */
-export function sanitizePublish<T extends { publish?: boolean }>(payload: T): T {
+export function sanitizePublish<T extends object>(payload: T): T {
 	if (isPublicPublishingEnabled()) return payload;
-	return payload.publish ? { ...payload, publish: false } : payload;
+	const publish = (payload as { publish?: boolean }).publish;
+	return publish ? { ...payload, publish: false } : payload;
 }

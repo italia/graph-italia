@@ -1,8 +1,9 @@
 import { startTransition, useEffect, useState } from "react";
 import DataMngTable from "../DataMngTable";
 import { transposeData } from "../../lib/utils";
-import type { MatrixType, AISuggestion } from "../../types";
-import * as api from "../../lib/api";
+import type { MatrixType } from "../../types";
+// import type { MatrixType, AISuggestion } from "../../types";
+// import * as api from "../../lib/api";
 import { useTranslation } from "react-i18next";
 
 type DataHelperProps = {
@@ -13,15 +14,16 @@ type DataHelperProps = {
 export default function DataHelper({ rawData, setData }: DataHelperProps) {
   const { t } = useTranslation("components", { keyPrefix: "components.loadData.dataHelper" });
   const [currentData, setCurrentData] = useState<MatrixType>(rawData);
-  const [isLoadingHints, setIsLoadingHints] = useState(false);
-  const [hints, setHints] = useState<AISuggestion[] | null>(null);
-  const [hintsError, setHintsError] = useState<string | null>(null);
+  // Ispezione AI disattivata — vedi il blocco commentato più in basso.
+  // const [isLoadingHints, setIsLoadingHints] = useState(false);
+  // const [hints, setHints] = useState<AISuggestion[] | null>(null);
+  // const [hintsError, setHintsError] = useState<string | null>(null);
 
   // Re-sync when a new file is uploaded
   useEffect(() => {
     setCurrentData(rawData);
-    setHints(null);
-    setHintsError(null);
+    // setHints(null);
+    // setHintsError(null);
   }, [rawData]);
 
   function transpose() {
@@ -33,30 +35,32 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
   function reset() {
     startTransition(() => {
       setCurrentData(rawData);
-      setHints(null);
-      setHintsError(null);
+      // setHints(null);
+      // setHintsError(null);
     });
   }
 
-  async function getHints() {
-    setIsLoadingHints(true);
-    setHints(null);
-    setHintsError(null);
-    try {
-      const result = await api.getSuggestions(currentData);
-      if (Array.isArray(result)) {
-        setHints(result as AISuggestion[]);
-      } else {
-        setHintsError(t("errors.none"));
-      }
-    } catch (err: unknown) {
-      setHintsError(
-        err instanceof Error ? err.message : t("errors.failed"),
-      );
-    } finally {
-      setIsLoadingHints(false);
-    }
-  }
+  // Ispezione AI disattivata: la chiamata a POST /api/hints (OpenAI) resta
+  // implementata lato server, ma non è più raggiungibile da qui.
+  // async function getHints() {
+  //   setIsLoadingHints(true);
+  //   setHints(null);
+  //   setHintsError(null);
+  //   try {
+  //     const result = await api.getSuggestions(currentData);
+  //     if (Array.isArray(result)) {
+  //       setHints(result as AISuggestion[]);
+  //     } else {
+  //       setHintsError(t("errors.none"));
+  //     }
+  //   } catch (err: unknown) {
+  //     setHintsError(
+  //       err instanceof Error ? err.message : t("errors.failed"),
+  //     );
+  //   } finally {
+  //     setIsLoadingHints(false);
+  //   }
+  // }
 
   return (
     <div className="space-y-4">
@@ -94,7 +98,8 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
         </div>
       </div>
 
-      {/* AI inspection */}
+      {/* Ispezione AI disattivata — il pulsante e le schede dei suggerimenti
+          restano qui, commentati, insieme a getHints() più sopra.
       <div className="p-4 bg-base-200 rounded-lg space-y-3">
         <button
           type="button"
@@ -186,6 +191,7 @@ export default function DataHelper({ rawData, setData }: DataHelperProps) {
           </div>
         )}
       </div>
+      */}
 
       {/* Confirm selection */}
       <button

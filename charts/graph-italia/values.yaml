@@ -222,6 +222,11 @@ server:
     # webapp (which reads this via GET /api/config) hides the publish toggle,
     # disables /embed/* and turns /display/* into an authenticated preview.
     ENABLE_PUBLIC_PUBLISHING: "true"
+    # Mail transport: "resend" (default) or "smtp" (nodemailer against any SMTP
+    # connector — Mailgun, SES, a corporate relay). Credentials belong in a
+    # secret, not here: RESEND_API_KEY for resend, SMTP_HOST/SMTP_PORT/
+    # SMTP_USER/SMTP_PASSWORD/SMTP_SECURE for smtp.
+    MAIL_PROVIDER: "resend"
     # NOTE: CORS_AT_INGRESS is injected automatically by the server-deployment
     # template when ingress.cors.enabled=true — do not set it here (it would
     # produce a duplicate env var).

@@ -84,7 +84,7 @@ This is a Bun workspace monorepo with five packages:
 - **Health endpoints**: `GET /` (liveness), `GET /health/ready` (readiness — checks DB connection)
 - **Metrics**: Prometheus scrape at `/metrics`, mounted outside `ROUTES_PREFIX`
 - **API docs**: OpenAPI 3.0 spec at `/openapi.json`, Scalar UI at `/docs`
-- **External services**: Resend (email), OpenAI (AI chart hints), AWS S3 (file uploads)
+- **External services**: email (Resend or SMTP/nodemailer, selected by `MAIL_PROVIDER` — see `lib/mailer.ts`), OpenAI (AI chart hints), AWS S3 (file uploads)
 
 ### Webapp structure (`packages/webapp`)
 - **Router**: React Router v7. All routes are defined centrally in `src/router.tsx`; use the `ROUTES` helper object instead of hardcoding path strings.
@@ -113,7 +113,9 @@ This is a Bun workspace monorepo with five packages:
 DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
 JWT_SECRET=
 APP_URL=                  # Frontend URL (used in email links)
-RESEND_API_KEY=
+MAIL_PROVIDER=           # 'resend' (default) or 'smtp'
+RESEND_API_KEY=          # MAIL_PROVIDER=resend
+SMTP_HOST=               # MAIL_PROVIDER=smtp (plus SMTP_PORT/USER/PASSWORD/SECURE)
 OPENAI_API_KEY=
 DOMAINS=                  # CORS whitelist (comma-separated)
 ROUTES_PREFIX=/api

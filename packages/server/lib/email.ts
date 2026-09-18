@@ -1,89 +1,30 @@
 import type { User } from "@prisma/client";
-import { Resend } from "resend";
 import { logger } from "./logger";
+import { maskEmail, sendMail as sendMailViaProvider } from "./mailer";
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-// The Resend SDK throws synchronously on construction when the key is empty.
-// In tests (and any local dev without email configured) we want imports of
-// this module to succeed without crashing; the actual send call below will
-// surface a clear error if the client is missing.
-const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 const SENDER_EMAIL = process.env.SENDER_EMAIL || "";
 const HOST = process.env.HOST_URL || "/";
 const APP_URL = process.env.APP_URL || "/";
 const COPY = "Graph Italia";
 
-async function sendMail(addresses: string[], html: string, subject: string = "Activate Account") {
-  const startTime = performance.now();
-
-  if (!resend) {
-    logger.warn('Email send skipped: RESEND_API_KEY not configured', {
-      email: {
-        to: addresses.map(e => e.replace(/(.{2}).*@/, '$1***@')),
-        subject,
-      },
-    });
-    return { data: null, error: { name: 'NoApiKey', message: 'RESEND_API_KEY not configured' } };
-  }
-
-  try {
-    const result = await resend.emails.send({
-      from: `${COPY} <${SENDER_EMAIL}>`,
-      to: addresses,
-      subject,
-      html,
-      headers: {
-        "X-Entity-Ref-ID": `graph-italia-${Date.now()}`, // Prevents threading in Gmail
-      },
-    });
-
-    const duration = Math.round(performance.now() - startTime);
-
-    if (result.error) {
-      logger.error('Email send failed', undefined, {
-        email: {
-          to: addresses.map(e => e.replace(/(.{2}).*@/, '$1***@')), // Mask email
-          subject,
-          provider: 'resend',
-        },
-        error: {
-          code: result.error.name,
-          message: result.error.message,
-        },
-        duration_ms: duration,
-      });
-      return result;
-    }
-
-    logger.info('Email sent successfully', {
-      email: {
-        id: result.data?.id,
-        to: addresses.map(e => e.replace(/(.{2}).*@/, '$1***@')), // Mask email
-        subject,
-        provider: 'resend',
-      },
-      duration_ms: duration,
-    });
-
-    return result;
-  } catch (error) {
-    const duration = Math.round(performance.now() - startTime);
-    logger.error('Email send exception', error instanceof Error ? error : undefined, {
-      email: {
-        to: addresses.map(e => e.replace(/(.{2}).*@/, '$1***@')),
-        subject,
-        provider: 'resend',
-      },
-      duration_ms: duration,
-    });
-    throw error;
-  }
+/**
+ * Templates and the app-level send calls live here; the transport (Resend or
+ * SMTP) is chosen in `lib/mailer.ts`, so this module — and every route that
+ * imports it — is unaffected by which provider is configured.
+ */
+function sendMail(addresses: string[], html: string, subject: string = "Activate Account") {
+  return sendMailViaProvider({
+    to: addresses,
+    subject,
+    html,
+    from: `${COPY} <${SENDER_EMAIL}>`,
+  });
 }
 
 export function sendActivationEmail(user: User, pin: string) {
   logger.info('Sending activation email', {
     userId: user.id,
-    email: user.email.replace(/(.{2}).*@/, '$1***@'),
+    email: maskEmail(user.email),
   });
   const html = activationTemplate(user.id, pin);
   return sendMail([user.email], html, "Activate Your Account");
@@ -92,7 +33,7 @@ export function sendActivationEmail(user: User, pin: string) {
 export async function sendResetPasswordEmail(user: User, pin: string) {
   logger.info('Sending password reset email', {
     userId: user.id,
-    email: user.email.replace(/(.{2}).*@/, '$1***@'),
+    email: maskEmail(user.email),
   });
   const html = resetTemplate(user.id, pin);
   return sendMail([user.email], html, "Reset Password");

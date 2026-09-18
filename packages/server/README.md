@@ -63,6 +63,21 @@ All paths below are relative to `ROUTES_PREFIX` (`/api` by default). Auth column
 
 Plus `GET /config` (public: instance settings the webapp needs before login — currently `{ publicPublishing }`), and infrastructure endpoints outside the API surface: `GET /` (liveness), `GET /health/ready` (readiness, checks DB connectivity), `GET /metrics` (Prometheus scrape, mounted outside `ROUTES_PREFIX`).
 
+## Email
+
+Transactional email (account activation, password reset, org invitations) goes through **two interchangeable providers**, picked at runtime by `MAIL_PROVIDER`:
+
+| Provider | File | Configuration |
+|---|---|---|
+| `resend` (default) | `lib/mailer-resend.ts` | `RESEND_API_KEY` |
+| `smtp` | `lib/mailer-smtp.ts` | `SMTP_HOST`, `SMTP_PORT` (587), `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_SECURE` |
+
+`lib/mailer.ts` holds the shared contract (`SendMailArgs`, `SendMailResult`, `maskEmail`) and routes each send to the selected provider; `lib/email.ts` owns the HTML templates and the app-level `sendActivationEmail` / `sendResetPasswordEmail`, and is unaware of which transport runs. Routes import `lib/email.ts` only, so nothing outside these three files changes when the provider does.
+
+The SMTP path is nodemailer against any SMTP connector — Mailgun, Amazon SES or a plain relay all speak it — which is what makes it the provider-independent option. `SENDER_EMAIL` sets the From address for both, and both mask recipients in logs.
+
+Neither provider throws on missing configuration: an unset `RESEND_API_KEY` or `SMTP_HOST` logs a warning and returns an error result, so local development and tests run without email set up. Since a failed send does not block registration, check the logs (`provider`, `duration_ms`, masked `to`) when an account never receives its PIN.
+
 ## Public publishing toggle
 
 `ENABLE_PUBLIC_PUBLISHING` (env, defaults to enabled — only the literal `"false"` turns it off) decides whether this instance has a public surface at all. It lives here rather than in the webapp because the API is what enforces it; the webapp reads it from `GET /config` at startup and mirrors it in the UI, so the two can never disagree. `lib/publishing.ts` is the single implementation:
