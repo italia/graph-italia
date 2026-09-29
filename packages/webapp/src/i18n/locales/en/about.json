@@ -3,8 +3,7 @@
     "chip": "Open Source · GPL-3.0",
     "headline1": "Shape your data",
     "headlineGradient": "by turning it into charts",
-    "headline2": "that are clear and accessible",
-    "subheadline": "Use Graph Italia to turn your data, from a CSV or JSON file, into interactive charts. The intuitive interface makes navigation easy and keeps the platform accessible to everyone.",
+    "subheadline": "Use Graph Italia to turn your data, from a CSV or JSON file, into interactive charts. The intuitive interface makes navigation easy and the platform simple to use.",
     "ctas": {
       "login": "Log in",
       "myCharts": "Go to my charts",
@@ -12,7 +11,7 @@
     },
     "badges": [
       "Simple",
-      "Accessible",
+      "Easy",
       "Immediate"
     ]
   },
@@ -43,8 +42,8 @@
       },
       {
         "emoji": "♿",
-        "title": "Accessibility by design",
-        "description": "All Graph Italia components follow the web accessibility guidelines."
+        "title": "Accessible charts by design",
+        "description": "All the components used to build the charts follow the web accessibility guidelines."
       },
       {
         "emoji": "🌍",
@@ -56,7 +55,7 @@
   "integration": {
     "label": "Integration via API keys",
     "title": "Simplified integration",
-    "subtitle": "Embed the charts created on Graph Italia in your website in three steps thanks to API keys.",
+    "subtitle": "Embed the charts created on Graph Italia in your website in just three steps using API keys.",
     "steps": [
       {
         "title": "Create and configure",
