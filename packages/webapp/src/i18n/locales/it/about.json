@@ -3,8 +3,7 @@
     "chip": "Open Source · GPL-3.0",
     "headline1": "Dai forma ai tuoi dati",
     "headlineGradient": "trasformandoli in grafici",
-    "headline2": "chiari e accessibili",
-    "subheadline": "Usa Graph Italia per convertire la tua base dati da un file CSV o JSON in grafici interattivi. L'interfaccia intuitiva facilita la navigazione e rende la piattaforma accessibile a tutti.",
+    "subheadline": "Usa Graph Italia per convertire la tua base dati da un file CSV o JSON in grafici interattivi. L'interfaccia intuitiva facilita la navigazione e semplifica l'utilizzo della piattaforma.",
     "ctas": {
       "login": "Accedi",
       "myCharts": "Vai ai miei grafici",
@@ -12,7 +11,7 @@
     },
     "badges": [
       "Semplice",
-      "Accessibile",
+      "Facile",
       "Immediato"
     ]
   },
@@ -43,8 +42,8 @@
       },
       {
         "emoji": "♿",
-        "title": "Accessibilità by design",
-        "description": "Tutti i componenti di Graph Italia rispettano le linee guida di accessibilità per il web."
+        "title": "Grafici accessibili by design",
+        "description": "Tutti i componenti usati nella creazione dei grafici rispettano le linee guida di accessibilità per il web."
       },
       {
         "emoji": "🌍",
@@ -56,7 +55,7 @@
   "integration": {
     "label": "Integrazione tramite API key",
     "title": "Integrazione semplificata",
-    "subtitle": "Integra i grafici creati su Graph Italia sul tuo sito in tre passi grazie alle chiavi API.",
+    "subtitle": "Integra i grafici creati su Graph Italia nel tuo sito in soli tre passi utilizzando le chiavi API.",
     "steps": [
       {
         "title": "Crea e configura",

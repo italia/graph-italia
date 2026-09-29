@@ -246,8 +246,7 @@ export default function AboutPage() {
               {t("hero.headline1")}{" "}
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent py-1 inline-block">
                 {t("hero.headlineGradient")}
-              </span>{" "}
-              {t("hero.headline2")}
+              </span>
             </h1>
 
             <p className="mt-6 text-lg leading-8 text-base-content/65 max-w-3xl mx-auto sm:text-xl [text-wrap:balance]">
