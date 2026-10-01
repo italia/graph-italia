@@ -1,22 +1,21 @@
 # Caricare i dati
 
-Ogni grafico nasce dai suoi dati. Nell'editor, il passaggio **Carica i tuoi dati** offre tre modalità.
+Il caricamento dei dati sorgente è la prima fase per la creazione dei tuoi elementi. Puoi farlo in tre modalità.
 
 ## File CSV
 
-Carica un file CSV dal tuo computer. Requisiti:
+Carica un file CSV dal tuo computer. Perché il file venga letto correttamente, dovrà essere impostato nel seguente modo:
 
-- la **prima riga** deve contenere i nomi delle colonne;
-- il separatore viene riconosciuto automaticamente;
+- la **prima riga** deve contenere i nomi delle colonne, così il separatore viene riconosciuto automaticamente;
 - i valori numerici possono usare il punto come separatore decimale.
 
 ## File JSON
 
-In alternativa puoi caricare un file JSON contenente un array di oggetti con le stesse chiavi (una per colonna).
+In alternativa, puoi caricare un file JSON contenente un array (struttura dati) di oggetti con le stesse chiavi (una per colonna).
 
-## URL remoto
+## URL esterno
 
-Incolla l'indirizzo di un CSV o JSON pubblicato sul web (ad esempio un file su GitHub o un'API di open data). Il grafico **resta collegato alla fonte**: quando il grafico è pubblico, il server riscarica i dati dall'URL se la copia salvata è più vecchia di **24 ore**, riapplicando le trasformazioni che hai definito. È il modo giusto per grafici che devono restare aggiornati senza interventi manuali.
+Incolla la URL di un CSV o JSON pubblicato sul web (ad esempio, un file su GitHub o un'API di open data). Il grafico **resta collegato alla fonte**: quando il grafico è pubblico e la versione salvata ha più di **24 ore**, Graph Italia recupera i dati dall'URL e applica i cambiamenti che hai definito. In questo modo i grafici restano aggiornati senza interventi manuali.
 
 ## Sistemare la tabella
 

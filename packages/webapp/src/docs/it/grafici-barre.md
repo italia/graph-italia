@@ -1,28 +1,28 @@
 # Grafico a barre
 
-Il grafico a barre confronta valori tra categorie: casi per regione, importi per ente, candidature per anno.
+Il grafico a barre confronta valori tra categorie, ad esempio: casi per regione, importi per ente, candidature per anno.
 
 ## Quando usarlo
 
-- Confronti tra poche decine di categorie al massimo;
-- classifiche e distribuzioni;
-- confronti tra più serie sulla stessa categoria (barre affiancate o impilate).
+- Per confrontare poche decine di categorie al massimo;
+- per classifiche e distribuzioni;
+- per confrontare più serie sulla stessa categoria (barre affiancate o impilate).
 
-## Creazione
+## Come creare il grafico
 
-1. **Crea nuovo → Grafico** e carica i dati (vedi [Caricare i dati](/docs/caricare-dati)).
+1. Vai su **Crea nuovo**, seleziona **Grafico** e carica i tuoi dati (per maggiori informazioni vedi [Caricare i dati](/docs/caricare-dati)).
 2. Scegli la colonna categoria e una o più serie numeriche.
 3. In **Configura il grafico** seleziona **Grafico a barre**.
 
-## Opzioni principali
+## Configurazioni principali
 
-- **Direzione**: verticale (barre in piedi) oppure orizzontale, più leggibile quando le etichette di categoria sono lunghe o le categorie sono molte;
-- **Valori impilati**: con più serie, somma le barre in un'unica colonna per mostrare il totale e la composizione;
+- **Direzione**: se le barre saranno orientate in verticale oppure orizzontale. I grafici a barre in orizzontale risultano più leggibili quando le etichette di categoria sono lunghe o le categorie sono molte;
+- **Valori impilati**: somma le barre in un'unica colonna per mostrare il totale e la composizione su un grafico con più serie;
 - **Scala logaritmica**: utile quando i valori hanno ordini di grandezza molto diversi (attenzione: rende i confronti visivi meno intuitivi, il tooltip mostra sempre il valore reale);
 - **Palette**, **legenda** e relativa posizione, **altezza** del grafico;
-- **Configurazioni avanzate**: tooltip, griglia e assi (etichette, margini, formattazione dei valori).
+- **Configurazioni avanzate**: tooltip, griglia e assi (etichette e spiegazioni contestuali, margini, formattazione dei valori).
 
 ## Suggerimenti
 
-- Ordina i dati prima del caricamento se vuoi una classifica: il grafico rispetta l'ordine delle righe;
-- se le categorie sono tante, valuta la direzione orizzontale e un'altezza maggiore.
+- Se devi creare una classifica, ordina i dati nel file sorgente prima del caricamento: il grafico rispetta l'ordine delle righe;
+- se il grafico possiede molte categorie, valuta la direzione orizzontale e un'altezza maggiore.

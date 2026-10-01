@@ -1,18 +1,18 @@
 # Introduzione
 
-Graph Italia è la piattaforma per creare, pubblicare e condividere visualizzazioni di dati: grafici, mappe, indicatori numerici (KPI) e dashboard. È pensata per le pubbliche amministrazioni e per chi lavora con dati aperti, ma funziona con qualsiasi dataset tabellare.
+Graph Italia è la piattaforma che trasforma i tuoi dati in grafici, mappe, indicatori numerici (KPI) e dashboard. È pensata per semplificare la visualizzazione dei dati della pubblica amministrazione e funziona con qualsiasi dataset tabellare.
 
-## Come è organizzata
+## Come è strutturata
 
-- **Progetto**: il contenitore di tutto il tuo lavoro. Ogni account parte con un progetto personale; puoi crearne altri dal selettore in alto nell'Area Privata e condividerli tramite le [organizzazioni](/docs/organizzazioni).
-- **Elementi**: dentro un progetto crei grafici, gruppi KPI, mappe, dashboard e sorgenti dati. Li trovi elencati nelle tre sezioni dell'Area Privata.
-- **Visibilità**: ogni elemento è **pubblico** (visibile a chiunque abbia il link, incorporabile in altri siti) o **privato** (visibile solo dall'Area Privata). La imposti nella sezione Informazioni dell'editor.
+- **Progetti personali**: qui trovi l'elenco di tutti gli elementi che hai creato. Ogni account ha già un progetto personale, potrai crearne altri e condividerli con altre persone utilizzando la funzionalità [Organizzazioni](/docs/organizzazioni).
+- **Elementi**: gli elementi sono i materiali che hai creato: grafici, gruppi KPI, mappe, dashboard e sorgenti dati, e li trovi elencati nella tua Area Privata.
+- **Visibilità**: ogni elemento può essere impostato con visibilità **pubblica** (visibile a chiunque abbia il link e incorporabile in altri siti) oppure **privata** (visibile solo all'interno della tua Area Privata). Puoi cambiare la visibilità dei tuoi elementi nella sezione **Informazioni** all'interno dell'editor.
 
-## Il flusso tipico
+## Primi passi
 
-1. Dall'**Area Privata** premi **Crea nuovo** e scegli il tipo di elemento.
-2. Carichi i dati (file CSV, JSON o un URL remoto) e li sistemi con le trasformazioni.
-3. Configuri l'aspetto guardando l'anteprima in tempo reale.
-4. Salvi, pubblichi e condividi il link o il codice embed.
+1. Dalla tua **Area Privata**, clicca su **Crea nuovo** e scegli la tipologia di elemento che vuoi creare.
+2. Carica i dati da un file locale (file CSV, JSON) o da una URL esterna. Verifica che i dati siano stati importati correttamente oppure sistemali.
+3. Configura l'aspetto dell'elemento usando l'anteprima in tempo reale.
+4. Salva, pubblica e condividi il link o il codice embed.
 
-Se è la tua prima volta, parti dalla guida [Come iniziare](/quickstart): copre questo flusso in cinque minuti. I capitoli di questa documentazione approfondiscono ogni parte.
+Leggi la guida [Come iniziare](/quickstart) per maggiori informazioni pratiche per l'utilizzo. I capitoli di questa documentazione invece approfondiscono ogni parte.
