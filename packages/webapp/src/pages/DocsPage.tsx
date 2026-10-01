@@ -45,7 +45,7 @@ const GROUPS: ChapterGroup[] = [
   {
     label: "Dati e collaborazione",
     chapters: [
-      { slug: "sorgenti-dati", title: "Sorgenti dati", content: sorgentiDati },
+      { slug: "sorgenti-dati", title: "Dataset", content: sorgentiDati },
       { slug: "condivisione", title: "Pubblicare e condividere", content: condivisione },
       { slug: "organizzazioni", title: "Progetti e organizzazioni", content: organizzazioni },
     ],

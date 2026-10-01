@@ -1,17 +1,17 @@
 # Pubblicare e condividere
 
-## Visibilità
+## Visibilità degli elementi
 
-Ogni elemento ha una visibilità, impostabile nella sezione **Informazioni** del suo editor:
+Per ogni elemento che crei, puoi impostare la visibilità nella sezione **Informazioni** dell'editor. Gli elementi possono essere:
 
-- **Pubblico**: chiunque abbia il link può vederlo, senza account; può essere incorporato in altri siti;
-- **Privato**: visibile solo dall'Area Privata; il link pubblico risponde con un avviso e i pulsanti di condivisione non sono disponibili.
+- **Pubblici**: chiunque abbia il link può vederli e possono essere incorporati in altri siti;
+- **Privati**: visibili solo nella tua Area Privata, il link pubblico risponde con un avviso e i pulsanti di condivisione non sono disponibili.
 
-## Link pubblico
+## Come condividere un link pubblico
 
-Dalla colonna **Condividi** della lista copi il link diretto alla pagina di visualizzazione (`/display/charts/...` per i grafici, `/display/dashboards/...` per le dashboard).
+Nella colonna **Condividi** della lista trovi il link diretto alla pagina di visualizzazione: `/display/charts/...` per i grafici e `/display/dashboards/...` per le dashboard.
 
-## Incorporare in un altro sito (embed)
+## Come incorporare un elemento in un altro sito (embed)
 
 Il pulsante con l'icona del codice genera un **iframe** pronto da incollare nel tuo sito:
 
@@ -25,4 +25,4 @@ Il pulsante con l'icona del codice genera un **iframe** pronto da incollare nel 
 
 ## Aggiornamento dei dati
 
-Un grafico pubblico collegato a un URL remoto si aggiorna da solo: alla prima visualizzazione dopo 24 ore dall'ultimo aggiornamento, il server riscarica la fonte e riapplica le trasformazioni salvate.
+I grafici pubblici collegati a una URL remota vengono aggiornati da soli alla prima visualizzazione dopo 24 ore dall'ultimo aggiornamento: il server riscarica la fonte e riapplica le trasformazioni salvate.

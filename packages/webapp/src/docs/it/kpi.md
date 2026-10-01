@@ -1,10 +1,14 @@
 # Gruppi KPI
 
-Un gruppo KPI mostra indicatori numerici di sintesi come riquadri affiancati: il colpo d'occhio prima dei grafici di dettaglio.
+Un gruppo KPI è una sintesi dei dati numerici presenti nel grafico.
 
-## Creazione
+## Quando usarlo
 
-1. **Crea nuovo → Gruppo KPI**, assegna un titolo.
+Per facilitare la lettura e mostrare i dati numerici in modo sintetico in un colpo d'occhio.
+
+## Come creare un gruppo KPI
+
+1. Vai su **Crea nuovo**, seleziona **Gruppo KPI** e assegna un titolo.
 2. Nell'editor aggiungi un KPI alla volta con il modulo **Aggiungi KPI**.
 
 ## I campi di un KPI
@@ -18,8 +22,8 @@ Un gruppo KPI mostra indicatori numerici di sintesi come riquadri affiancati: il
 
 ## Configurazione
 
-Nella sezione **Configurazione** scegli la disposizione dei riquadri: **orizzontale** (affiancati, consigliata nelle dashboard) o **verticale** (impilati). L'anteprima a destra mostra il risultato mentre lavori; da lì modifichi o elimini i singoli KPI.
+Nella sezione **Configurazione** scegli la disposizione dei riquadri: **orizzontale** (affiancati, consigliata nelle dashboard) o **verticale** (impilati). L'anteprima a destra si aggiorna contestualmente, in quella sezione modifichi o elimini i singoli KPI.
 
-## Nelle dashboard
+## Come inserirlo nelle dashboard
 
 Un gruppo KPI si inserisce in una dashboard come qualsiasi grafico: uno slot a tutta larghezza con disposizione orizzontale è il formato più efficace.

@@ -1,25 +1,24 @@
-# Sorgenti dati
+# Dataset
 
-Le sorgenti dati sono i dataset riutilizzabili del progetto: un catalogo di tabelle indipendente dai singoli grafici.
+I dataset sono le sorgenti dati riutilizzabili del progetto: un catalogo di tabelle indipendente da utilizzare sui grafici.
 
-## A cosa servono
+## Come usare i dataset
 
-- Tenere in un unico posto i dataset del progetto, con nome, descrizione e visibilità;
-- consultarli e modificarli in una tabella editabile senza passare da un grafico;
-- **leggerli e aggiornarli via API REST**: un sistema esterno (uno script schedulato, un gestionale) può mantenere aggiornato il dataset con una API key in lettura/scrittura (vedi [API](/docs/api)).
+- Nella sezione dedicata trovi tutti i dataset del progetto, con nome, descrizione e visibilità. Potrai consultarli e modificarli in una tabella editabile senza dover modificare i grafici in cui sono stati richiamati;
+- in alternativa, potrai **leggerli e aggiornarli via API REST**: un sistema esterno (uno script programmato, un gestionale) può mantenere aggiornato il dataset con una API key in lettura/scrittura (vedi [API](/docs/api)).
 
-## Tipi di sorgente
+## Tipologie di sorgente dei dataset
 
-- **Locale**: un file CSV caricato; i dati vivono nella piattaforma;
-- **Remota**: un URL a un CSV o JSON pubblicato altrove; i dati vengono scaricati alla creazione.
+- **Locale**: il dataset è un file CSV caricato dal tuo computer; i dati sono caricati nella piattaforma;
+- **Remota**: il dataset proviene da un URL (CSV o JSON) pubblicato su un sito esterno; i dati vengono scaricati da Graph Italia quando il dataset viene creato.
 
-## Creazione e gestione
+## Come creare un dataset
 
-1. **Crea nuovo → Sorgente dati**, assegna un nome.
-2. Carica il file o indica l'URL.
-3. Dalla lista **Sorgenti dati** dell'Area Privata apri la matita per vedere e modificare i dati.
+1. Vai su **Crea nuovo**, seleziona **Sorgente dati** e assegna un nome.
+2. Carica il file CSV o indica una URL.
+3. Dalla lista **File sorgente dati** nella tua Area Privata vai sull'editor per vedere e modificare i dati.
 
-## Limiti attuali
+## Limitazioni
 
 - La copia dei dati di una sorgente remota non si aggiorna automaticamente (l'aggiornamento a 24 ore vale per i grafici collegati direttamente a un URL);
 - i grafici non si collegano ancora a una sorgente dal loro editor: per ora la sorgente è un catalogo consultabile e un punto di accesso via API.
