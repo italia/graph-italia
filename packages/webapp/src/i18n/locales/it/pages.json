@@ -943,5 +943,28 @@
             "svg": "Scarica SVG",
             "error": "Impossibile esportare il grafico"
         }
+    },
+    "docs": {
+        "groups": {
+            "gettingStarted": "Primi passi",
+            "visualizations": "Visualizzazioni",
+            "dataAndCollaboration": "Dati e collaborazione",
+            "developers": "Per chi sviluppa"
+        },
+        "chapters": {
+            "introduzione": "Introduzione",
+            "caricare-dati": "Caricare i dati",
+            "grafici-barre": "Grafico a barre",
+            "grafici-linee": "Grafico a linee",
+            "grafici-torta": "Grafico a torta",
+            "mappe": "Mappe",
+            "kpi": "Gruppi KPI",
+            "dashboard": "Dashboard",
+            "sorgenti-dati": "Dataset",
+            "condivisione": "Pubblicare e condividere",
+            "organizzazioni": "Progetti e organizzazioni",
+            "api": "API REST",
+            "strumenti": "Strumenti"
+        }
     }
 }
