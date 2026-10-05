@@ -942,5 +942,28 @@
             "svg": "Download SVG",
             "error": "Could not export the chart"
         }
+    },
+    "docs": {
+        "groups": {
+            "gettingStarted": "Getting started",
+            "visualizations": "Visualizations",
+            "dataAndCollaboration": "Data and collaboration",
+            "developers": "For developers"
+        },
+        "chapters": {
+            "introduzione": "Introduction",
+            "caricare-dati": "Loading data",
+            "grafici-barre": "Bar chart",
+            "grafici-linee": "Line chart",
+            "grafici-torta": "Pie chart",
+            "mappe": "Maps",
+            "kpi": "KPI groups",
+            "dashboard": "Dashboard",
+            "sorgenti-dati": "Datasets",
+            "condivisione": "Publishing and sharing",
+            "organizzazioni": "Projects and organizations",
+            "api": "REST API",
+            "strumenti": "Tools"
+        }
     }
 }

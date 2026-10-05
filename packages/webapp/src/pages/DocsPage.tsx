@@ -6,60 +6,111 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import Layout from "../components/layout";
 import { ROUTES } from "../router";
 
-import introduzione from "../docs/it/introduzione.md?raw";
-import caricareDati from "../docs/it/caricare-dati.md?raw";
-import graficiBarre from "../docs/it/grafici-barre.md?raw";
-import graficiLinee from "../docs/it/grafici-linee.md?raw";
-import graficiTorta from "../docs/it/grafici-torta.md?raw";
-import mappe from "../docs/it/mappe.md?raw";
-import kpi from "../docs/it/kpi.md?raw";
-import dashboard from "../docs/it/dashboard.md?raw";
-import sorgentiDati from "../docs/it/sorgenti-dati.md?raw";
-import condivisione from "../docs/it/condivisione.md?raw";
-import organizzazioni from "../docs/it/organizzazioni.md?raw";
-import api from "../docs/it/api.md?raw";
-import strumenti from "../docs/it/strumenti.md?raw";
+import type { AppLanguage } from "../lib/store/settings_store";
 
-type Chapter = { slug: string; title: string; content: string };
-type ChapterGroup = { label: string; chapters: Chapter[] };
+import itIntroduzione from "../docs/it/introduzione.md?raw";
+import itCaricareDati from "../docs/it/caricare-dati.md?raw";
+import itGraficiBarre from "../docs/it/grafici-barre.md?raw";
+import itGraficiLinee from "../docs/it/grafici-linee.md?raw";
+import itGraficiTorta from "../docs/it/grafici-torta.md?raw";
+import itMappe from "../docs/it/mappe.md?raw";
+import itKpi from "../docs/it/kpi.md?raw";
+import itDashboard from "../docs/it/dashboard.md?raw";
+import itSorgentiDati from "../docs/it/sorgenti-dati.md?raw";
+import itCondivisione from "../docs/it/condivisione.md?raw";
+import itOrganizzazioni from "../docs/it/organizzazioni.md?raw";
+import itApi from "../docs/it/api.md?raw";
+import itStrumenti from "../docs/it/strumenti.md?raw";
+
+import enIntroduzione from "../docs/en/introduzione.md?raw";
+import enCaricareDati from "../docs/en/caricare-dati.md?raw";
+import enGraficiBarre from "../docs/en/grafici-barre.md?raw";
+import enGraficiLinee from "../docs/en/grafici-linee.md?raw";
+import enGraficiTorta from "../docs/en/grafici-torta.md?raw";
+import enMappe from "../docs/en/mappe.md?raw";
+import enKpi from "../docs/en/kpi.md?raw";
+import enDashboard from "../docs/en/dashboard.md?raw";
+import enSorgentiDati from "../docs/en/sorgenti-dati.md?raw";
+import enCondivisione from "../docs/en/condivisione.md?raw";
+import enOrganizzazioni from "../docs/en/organizzazioni.md?raw";
+import enApi from "../docs/en/api.md?raw";
+import enStrumenti from "../docs/en/strumenti.md?raw";
+
+// Chapter slugs are language-independent so /docs/<slug> links keep working
+// whatever the UI language; the sidebar titles come from pages.json ("docs").
+const SLUGS = [
+  "introduzione",
+  "caricare-dati",
+  "grafici-barre",
+  "grafici-linee",
+  "grafici-torta",
+  "mappe",
+  "kpi",
+  "dashboard",
+  "sorgenti-dati",
+  "condivisione",
+  "organizzazioni",
+  "api",
+  "strumenti",
+] as const;
+type Slug = (typeof SLUGS)[number];
+
+const CONTENT: Record<AppLanguage, Record<Slug, string>> = {
+  it: {
+    introduzione: itIntroduzione,
+    "caricare-dati": itCaricareDati,
+    "grafici-barre": itGraficiBarre,
+    "grafici-linee": itGraficiLinee,
+    "grafici-torta": itGraficiTorta,
+    mappe: itMappe,
+    kpi: itKpi,
+    dashboard: itDashboard,
+    "sorgenti-dati": itSorgentiDati,
+    condivisione: itCondivisione,
+    organizzazioni: itOrganizzazioni,
+    api: itApi,
+    strumenti: itStrumenti,
+  },
+  en: {
+    introduzione: enIntroduzione,
+    "caricare-dati": enCaricareDati,
+    "grafici-barre": enGraficiBarre,
+    "grafici-linee": enGraficiLinee,
+    "grafici-torta": enGraficiTorta,
+    mappe: enMappe,
+    kpi: enKpi,
+    dashboard: enDashboard,
+    "sorgenti-dati": enSorgentiDati,
+    condivisione: enCondivisione,
+    organizzazioni: enOrganizzazioni,
+    api: enApi,
+    strumenti: enStrumenti,
+  },
+};
+
+type ChapterGroup = { key: string; chapters: Slug[] };
 
 const GROUPS: ChapterGroup[] = [
+  { key: "gettingStarted", chapters: ["introduzione", "caricare-dati"] },
   {
-    label: "Primi passi",
-    chapters: [
-      { slug: "introduzione", title: "Introduzione", content: introduzione },
-      { slug: "caricare-dati", title: "Caricare i dati", content: caricareDati },
-    ],
+    key: "visualizations",
+    chapters: ["grafici-barre", "grafici-linee", "grafici-torta", "mappe", "kpi", "dashboard"],
   },
   {
-    label: "Visualizzazioni",
-    chapters: [
-      { slug: "grafici-barre", title: "Grafico a barre", content: graficiBarre },
-      { slug: "grafici-linee", title: "Grafico a linee", content: graficiLinee },
-      { slug: "grafici-torta", title: "Grafico a torta", content: graficiTorta },
-      { slug: "mappe", title: "Mappe", content: mappe },
-      { slug: "kpi", title: "Gruppi KPI", content: kpi },
-      { slug: "dashboard", title: "Dashboard", content: dashboard },
-    ],
+    key: "dataAndCollaboration",
+    chapters: ["sorgenti-dati", "condivisione", "organizzazioni"],
   },
-  {
-    label: "Dati e collaborazione",
-    chapters: [
-      { slug: "sorgenti-dati", title: "Dataset", content: sorgentiDati },
-      { slug: "condivisione", title: "Pubblicare e condividere", content: condivisione },
-      { slug: "organizzazioni", title: "Progetti e organizzazioni", content: organizzazioni },
-    ],
-  },
-  {
-    label: "Per chi sviluppa",
-    chapters: [
-      { slug: "api", title: "API REST", content: api },
-      { slug: "strumenti", title: "Strumenti", content: strumenti },
-    ],
-  },
+  { key: "developers", chapters: ["api", "strumenti"] },
 ];
 
-const ALL_CHAPTERS = GROUPS.flatMap((group) => group.chapters);
+const isSlug = (value: string | undefined): value is Slug =>
+  SLUGS.includes(value as Slug);
+
+/** Markdown for a chapter in the current language, falling back to Italian. */
+function chapterContent(slug: Slug, language: string): string {
+  const lang = (language in CONTENT ? language : "it") as AppLanguage;
+  return CONTENT[lang][slug];
+}
 
 /** Internal links in the markdown go through the SPA router. */
 function MarkdownLink({
@@ -85,13 +136,20 @@ function MarkdownLink({
 
 export default function DocsPage() {
   const { section } = useParams();
-  const { t } = useTranslation("menu");
+  const { t, i18n } = useTranslation("menu");
+  const { t: tDocs } = useTranslation("pages", { keyPrefix: "docs" });
 
-  const current = ALL_CHAPTERS.find((chapter) => chapter.slug === section);
-  if (!section) return <Navigate to={ROUTES.docs(ALL_CHAPTERS[0].slug)} replace />;
-  if (!current) return <Navigate to={ROUTES.docs()} replace />;
+  if (!section) return <Navigate to={ROUTES.docs(SLUGS[0])} replace />;
+  if (!isSlug(section)) return <Navigate to={ROUTES.docs()} replace />;
+
+  const current = {
+    slug: section,
+    title: tDocs(`chapters.${section}`),
+    content: chapterContent(section, i18n.language),
+  };
 
   const docsLabel = t("menu.items.docs.label", { defaultValue: "Documentazione" });
+  const quickStartLabel = t("menu.items.quickStart.label", { defaultValue: "Come iniziare" });
 
   return (
     <Layout>
@@ -109,27 +167,27 @@ export default function DocsPage() {
           <ul className="menu w-full p-0 gap-1">
             <li>
               <Link to={ROUTES.quickStart} className="font-normal">
-                Come iniziare
+                {quickStartLabel}
               </Link>
             </li>
             {GROUPS.map((group) => (
-              <li key={group.label}>
+              <li key={group.key}>
                 <span className="menu-title text-base uppercase opacity-70 px-3 pt-4">
-                  {group.label}
+                  {tDocs(`groups.${group.key}`)}
                 </span>
                 <ul className="p-0 gap-1">
-                  {group.chapters.map((chapter) => (
-                    <li key={chapter.slug}>
+                  {group.chapters.map((slug) => (
+                    <li key={slug}>
                       <Link
-                        to={ROUTES.docs(chapter.slug)}
-                        aria-current={chapter.slug === current.slug ? "page" : undefined}
+                        to={ROUTES.docs(slug)}
+                        aria-current={slug === current.slug ? "page" : undefined}
                         className={
-                          chapter.slug === current.slug
+                          slug === current.slug
                             ? "active font-normal"
                             : "font-normal"
                         }
                       >
-                        {chapter.title}
+                        {tDocs(`chapters.${slug}`)}
                       </Link>
                     </li>
                   ))}
