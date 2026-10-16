@@ -53,17 +53,11 @@ export function setUserRole(id: string, role: "USER" | "ADMIN") {
 	return prisma.user.update({ where: { id }, data: { role } });
 }
 
+// Emails are compared case-insensitively everywhere (login, signup, recovery,
+// org invites, SPID/CIE matching): users, forms and identity providers do not
+// agree on casing. The column's unique constraint is still case-sensitive, so
+// new accounts are stored lowercased (see createUserByEmailAndPassword).
 export function findUserByEmail(email: string) {
-	return prisma.user.findUnique({
-		where: {
-			email,
-		},
-	});
-}
-
-// Case-insensitive: the email is what links an OIDC login to an account, and
-// the identity provider and the signup form may not agree on its casing.
-export function findUserByEmailInsensitive(email: string) {
 	return prisma.user.findFirst({
 		where: { email: { equals: email.trim(), mode: "insensitive" } },
 	});
@@ -102,7 +96,7 @@ export async function createUserByEmailAndPassword({
 	const passwordHash = password ? bcrypt.hashSync(password, 12) : null;
 	const created = await prisma.user.create({
 		data: {
-			email,
+			email: email.trim().toLowerCase(),
 			password: passwordHash,
 			pa,
 			identities: sub ? { create: { sub } } : undefined,

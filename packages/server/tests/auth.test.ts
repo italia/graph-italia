@@ -17,6 +17,9 @@ type TestVariables = {
 
 const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
+// bun test loads the local .env: start from the default (password auth on)
+// whatever the developer is trying out; the SPID/CIE-only suites set it themselves.
+delete process.env["ENABLE_PASSWORD_AUTH"];
 process.env["APP_URL"] = "http://localhost:3000";
 
 const USER_ID        = "user-verified";

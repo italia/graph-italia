@@ -136,7 +136,7 @@ const normalizeEmail = (email?: string) => email?.trim().toLowerCase() || undefi
 // Sola lettura: account per email fornita dall'IdP, altrimenti per `sub` già collegato.
 const findOidcUser = async (sub: string, idpEmail?: string) => {
     if (idpEmail) {
-        const byEmail = await db.findUserByEmailInsensitive(idpEmail)
+        const byEmail = await db.findUserByEmail(idpEmail)
         if (byEmail) return byEmail
     }
     return db.findUserByOidcSub(sub)
@@ -351,7 +351,7 @@ router.post(
             return c.json({ error: 'Code invalid or expired.' }, 400)
         }
 
-        const existing = await db.findUserByEmailInsensitive(pending.email)
+        const existing = await db.findUserByEmail(pending.email)
         if (existing) {
             clearEmailVerification(c)
             await linkAndLogin(c, existing, sub)
@@ -440,7 +440,7 @@ router.post(
         }
 
         // Email confermata con il codice ma account creato nel frattempo: collegalo.
-        const byEmail = await db.findUserByEmailInsensitive(email)
+        const byEmail = await db.findUserByEmail(email)
         if (byEmail) {
             clearEmailVerification(c)
             await linkAndLogin(c, byEmail, sub)

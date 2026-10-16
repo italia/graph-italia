@@ -97,9 +97,11 @@ Note that turning the flag off does not rewrite existing data: rows already at `
 
 ## SPID/CIE account matching
 
+Emails are compared case-insensitively everywhere (`findUserByEmail`) and new accounts are stored lowercased.
+
 The **email** is what links a SPID/CIE login to an account (`routes/oidc.ts`). Identities live in `OidcIdentity` (one row per `sub`), so the same account can be reached from SPID and from CIE, which issue different subjects.
 
-- **The identity provider sends an email** (IAM Proxy is trusted): `/api/oidc/login` looks the account up by that email (case-insensitive) — including accounts created with email/password — links the `sub`, marks the account verified and opens the session. With no matching account the user lands on the webapp's `/oidc/signup` with the email locked.
+- **The identity provider sends an email** (IAM Proxy is trusted): `/api/oidc/login` looks the account up by that email — including accounts created with email/password — links the `sub`, marks the account verified and opens the session. With no matching account the user lands on the webapp's `/oidc/signup` with the email locked.
 - **No email from the identity provider** (CIE never sends one, SPID not always): an already linked `sub` logs straight in. Otherwise `/oidc/signup` asks for an email and `POST /api/oidc/signup/email/send` mails a 6-digit code; `POST /api/oidc/signup/email/verify` checks it. If the email belongs to an account, the `sub` is linked and the session opens; if not, signup continues with that email. From then on the linked `sub` is enough.
 - The code state lives in the signed, short-lived `oidc-email` cookie (`lib/oidcEmailVerification.ts`), bound to the OIDC `sub`, with the PIN stored as an HMAC keyed by `JWT_SECRET`. `POST /api/oidc/signup` never takes the email from its body: it uses the IdP email or the verified one.
 
