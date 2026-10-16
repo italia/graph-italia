@@ -65,8 +65,13 @@ dbSeed:
   #   key: "DATABASE_URL"
   # Users to seed (if not set, uses default users from seed script)
   # These will be exposed as SEED_USERS env var (JSON array)
+  # An existing email (case-insensitive) only gets the role/verified given here,
+  # never a new password. `password` is optional: omit it for SPID/CIE-only
+  # accounts. For admins, server.env.ADMIN_EMAILS needs no seed job at all.
   users: []
     # - email: "admin@example.com"
+    #   role: "ADMIN"
+    # - email: "editor@example.com"
     #   password: "secure-password-here"
     #   verified: true
     # - email: "user@example.com"

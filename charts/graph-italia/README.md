@@ -310,4 +310,4 @@ kubectl describe ingress graph-italia -n graph-italia
 - Usa `--reuse-values` per mantenere i secrets tra upgrade
 - I valori di default sono in `values.yaml` (template senza dati sensibili)
 - I jobs di migration/seed vengono eliminati automaticamente dopo il successo
-- Il seed è idempotente: salta utenti già esistenti
+- Il seed è idempotente: per gli utenti già esistenti (email confrontata senza maiuscole/minuscole) applica solo `role`/`verified` indicati, mai la password; per gli admin è più semplice `ADMIN_EMAILS`
