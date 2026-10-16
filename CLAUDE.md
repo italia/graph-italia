@@ -137,6 +137,8 @@ OIDC_REDIRECT_URI=        # http://127.0.0.1:3003/api/oidc/callback — the libr
 OIDC_SCOPES=              # optional, e.g. 'openid profile email'; empty = all scopes the IdP advertises
 ```
 
+In the deployed environments these are Helm values (`server.env.*`). The release workflow upgrades with `--reuse-values`, so chart defaults don't reach existing releases: `ENABLE_PASSWORD_AUTH`, `ADMIN_EMAILS` and the `OIDC_*` settings are read from the GitHub Environment (`production` / `test`) variables and secrets and passed with `--set-string` only when set (see `charts/graph-italia/README.md`).
+
 **packages/webapp/.env**
 ```
 VITE_SERVER_URL=http://127.0.0.1:3003

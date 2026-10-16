@@ -175,12 +175,36 @@ jobs:
           kubectl config use-context graph-italia
 
       - name: 🎯 Deploy to Kubernetes
+        env:
+          # Server settings managed from GitHub: Settings → Environments →
+          # production → variables / secrets. Only the ones that are set are
+          # passed to Helm; the others keep the release's current value
+          # (--reuse-values), so an unset variable never wipes a value.
+          ENABLE_PASSWORD_AUTH: ${{ vars.ENABLE_PASSWORD_AUTH }}
+          ADMIN_EMAILS: ${{ vars.ADMIN_EMAILS }}
+          OIDC_ISSUER: ${{ vars.OIDC_ISSUER }}
+          OIDC_CLIENT_ID: ${{ vars.OIDC_CLIENT_ID }}
+          OIDC_REDIRECT_URI: ${{ vars.OIDC_REDIRECT_URI }}
+          OIDC_SCOPES: ${{ vars.OIDC_SCOPES }}
+          OIDC_CLIENT_SECRET: ${{ secrets.OIDC_CLIENT_SECRET }}
+          OIDC_AUTH_SECRET: ${{ secrets.OIDC_AUTH_SECRET }}
         run: |
+          # --set-string keeps "false" a string; commas (ADMIN_EMAILS) are
+          # escaped because Helm would otherwise split the value on them.
+          ENV_ARGS=()
+          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
+            value="${!name}"
+            if [ -n "$value" ]; then
+              ENV_ARGS+=(--set-string "server.env.${name}=${value//,/\\,}")
+              echo "server.env.${name} set from the production environment"
+            fi
+          done
           helm upgrade --install graph-italia \
             oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/graph-italia \
             --version ${{ needs.prepare.outputs.version }} \
             --namespace graph-italia \
             --reuse-values \
+            "${ENV_ARGS[@]}" \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
             --set dbMigration.enabled=true \
@@ -316,12 +340,36 @@ jobs:
           kubectl config use-context graph-italia-test
 
       - name: 🎯 Deploy to graph-italia-test
+        env:
+          # Server settings managed from GitHub: Settings → Environments →
+          # test → variables / secrets. Only the ones that are set are
+          # passed to Helm; the others keep the release's current value
+          # (--reuse-values), so an unset variable never wipes a value.
+          ENABLE_PASSWORD_AUTH: ${{ vars.ENABLE_PASSWORD_AUTH }}
+          ADMIN_EMAILS: ${{ vars.ADMIN_EMAILS }}
+          OIDC_ISSUER: ${{ vars.OIDC_ISSUER }}
+          OIDC_CLIENT_ID: ${{ vars.OIDC_CLIENT_ID }}
+          OIDC_REDIRECT_URI: ${{ vars.OIDC_REDIRECT_URI }}
+          OIDC_SCOPES: ${{ vars.OIDC_SCOPES }}
+          OIDC_CLIENT_SECRET: ${{ secrets.OIDC_CLIENT_SECRET }}
+          OIDC_AUTH_SECRET: ${{ secrets.OIDC_AUTH_SECRET }}
         run: |
+          # --set-string keeps "false" a string; commas (ADMIN_EMAILS) are
+          # escaped because Helm would otherwise split the value on them.
+          ENV_ARGS=()
+          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
+            value="${!name}"
+            if [ -n "$value" ]; then
+              ENV_ARGS+=(--set-string "server.env.${name}=${value//,/\\,}")
+              echo "server.env.${name} set from the test environment"
+            fi
+          done
           helm upgrade --install graph-italia-test \
             oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/graph-italia \
             --version ${{ needs.prepare.outputs.version }} \
             --namespace graph-italia-test \
             --reuse-values \
+            "${ENV_ARGS[@]}" \
             --set webapp.image.tag="${{ needs.prepare.outputs.version }}" \
             --set server.image.tag="${{ needs.prepare.outputs.version }}" \
             --set dbMigration.enabled=true \
