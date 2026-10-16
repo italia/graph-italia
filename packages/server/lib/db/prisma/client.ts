@@ -70,6 +70,11 @@ export type Membership = Prisma.MembershipModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model OidcIdentity
+ * 
+ */
+export type OidcIdentity = Prisma.OidcIdentityModel
+/**
  * Model ApiKey
  * 
  */

@@ -12,6 +12,7 @@ bun run dev:webapp    # Start only the frontend webapp
 
 # From packages/server — local OIDC provider for testing the OIDC flow
 bun run mock-oidc-server.ts   # Mock IdP on http://127.0.0.1:9090 (auto-login, userinfo with SPID/CIE claims)
+                              # MOCK_OIDC_SUB / MOCK_OIDC_EMAIL / MOCK_OIDC_NO_EMAIL=true pick the simulated identity
 ```
 
 ### Building
@@ -80,7 +81,10 @@ This is a Bun workspace monorepo with five packages:
 - **Route files**: `admin`, `auth`, `oidc`, `charts`, `dashboards`, `datasources`, `kpi-group`, `hints` (OpenAI), `apikeys`, `orgs`, `projects`
 - **Middleware stack** (in `index.ts`): Prometheus metrics → Pino logging → API key usage logger → CSRF → CORS (public `*` for chart/dashboard routes; full CRUD CORS only in dev/localhost)
 - **Auth middleware** (`lib/middlewares.ts`): `checkAuth` reads the `access_token` cookie or `Authorization: Bearer` header. API keys use the `dv_` prefix; JWTs are plain tokens. Use `requireAuth` on protected routes — it resolves and sets `projectId` in context. `requireUser` loads the DB user without a project; `requireAdmin` additionally gates admin-only routes. `routes/admin.ts` (mounted at `/admin`, guarded by `checkAuth → requireUser → requireAdmin`) handles user administration: list/delete users, force-activate an account, resend activation, and trigger a password reset.
-- **OIDC auth (`feat/iamproxy-signup`)**: `routes/oidc.ts` implements OpenID Connect alongside the traditional email/password flow — both issue the *same* application JWT, and `checkAuth`/`requireAuth` are unchanged. The OIDC routes mount on a separate `oidcApp` at the root (outside `ROUTES_PREFIX`) in `index.ts`: `/api/oidc/login`, `/api/oidc/callback`, `/api/oidc/logout`, plus the signup pair `GET /api/oidc/signup/status` and `POST /api/oidc/signup`. `login`/`callback` use `@hono/oidc-auth`; the signup routes read the OIDC session (keyed by `sub`) to check whether the account already exists and to prefill/complete registration, then issue the app JWT. A **claims hook** in `routes/oidc.ts` queries the provider's `userinfo_endpoint` with the access token to fetch SPID/CIE attributes (notably `fiscal_number`), falling back to ID-token claims. Real IdP config (IAM Proxy Italia) lives outside the app and is set at middleware instantiation (a known TODO in `index.ts`), not via env. Frontend: `redirectToLoginOidc()` is wired into `webapp/src/components/auth/SignIn.tsx`, and the post-login signup form lives at `OidcSignupPage` (`ROUTES.oidcSignup` = `/oidc/signup`), backed by `getOidcSignupStatus()` / `oidcSignup()` in `webapp/src/lib/api.ts`.
+- **OIDC auth (SPID/CIE via IAM Proxy Italia)**: `routes/oidc.ts` implements OpenID Connect alongside the email/password flow — both issue the *same* application JWT, and `checkAuth`/`requireAuth` are unchanged. The OIDC routes mount on a separate `oidcApp` at the root (outside `ROUTES_PREFIX`) in `index.ts`: `/api/oidc/login`, `/api/oidc/callback`, `/api/oidc/logout`, plus signup routes `GET /api/oidc/signup/status`, `POST /api/oidc/signup/email/send`, `POST /api/oidc/signup/email/verify` and `POST /api/oidc/signup`. `login`/`callback` use `@hono/oidc-auth`, configured from `OIDC_*` env vars (see below). A **claims hook** queries the provider's `userinfo_endpoint` with the access token for SPID/CIE attributes (notably `fiscal_number`), falling back to ID-token claims.
+  - **Account matching is by email.** Identities live in `OidcIdentity` (one row per `sub`; an account can have several, since SPID and CIE issue different subjects). If the IdP sends an email (trusted), login finds the account by email case-insensitively — password accounts included — links the `sub` and marks it verified. If not (CIE never sends one, SPID not always), a linked `sub` logs straight in; otherwise `/oidc/signup` asks for an email and confirms it with a 6-digit code, then links an existing account with that email or creates one. The code state is a signed short-lived `oidc-email` cookie bound to `sub` (`lib/oidcEmailVerification.ts`, PIN stored as HMAC with `JWT_SECRET`). `POST /api/oidc/signup` never takes the email from its body.
+  - **SPID/CIE-only mode**: `ENABLE_PASSWORD_AUTH="false"` (`lib/passwordAuth.ts`, default enabled) makes the password endpoints under `/auth` (register, login, recover, resend, verify, confirm, reset-password, pwd) and the admin activation/reset mailers return 403; OIDC signup then creates accounts with `password = null`. `/auth/user` and `/auth/logout` stay available. Exposed to the webapp as `passwordAuth` in `GET /config`, alongside `publicPublishing`.
+  - Frontend: `SignIn.tsx` (only the SPID/CIE button when `isPasswordAuthEnabled()` is false), `OidcSignupPage` (`ROUTES.oidcSignup` = `/oidc/signup`) with `OidcEmailVerification` for the code step and `SignUp` in OIDC mode (email read-only), `PasswordAuthGate` on `/verify/:uid`, `/recover-password`, `/change-password`. API helpers in `webapp/src/lib/api.ts`.
 - **Health endpoints**: `GET /` (liveness), `GET /health/ready` (readiness — checks DB connection)
 - **Metrics**: Prometheus scrape at `/metrics`, mounted outside `ROUTES_PREFIX`
 - **API docs**: OpenAPI 3.0 spec at `/openapi.json`, Scalar UI at `/docs`
@@ -91,7 +95,7 @@ This is a Bun workspace monorepo with five packages:
 - **State**: Zustand stores under `src/lib/store/` (user, dashboard, KPI, project, settings); XState (`src/lib/stepMachine.ts`) for chart-creation wizard
 - **Pages**: `src/pages/` — `auth/`, `display/` (public view), `embed/` (iframe), `private/` (editor), `utils/`
 - **API client**: `src/lib/api.ts` uses axios with a request interceptor that injects `x-project-id` from localStorage
-- **Runtime config**: Loads `/config.json` at startup (`main.tsx`) into `window.__ENV__` for Kubernetes ConfigMap support; falls back to `import.meta.env` (from `.env`) for local dev.
+- **Runtime config**: Loads `/config.json` at startup (`main.tsx`) into `window.__ENV__` for Kubernetes ConfigMap support; falls back to `import.meta.env` (from `.env`) for local dev. Then `loadInstanceConfig()` reads the server's `GET /api/config` once, so `isPublishingEnabled()` / `isPasswordAuthEnabled()` are synchronous everywhere (both fail closed if the call fails).
 - **i18n**: i18next with Italian as the default language
 - **Styling**: TailwindCSS v4 + DaisyUI v5
 
@@ -121,7 +125,14 @@ DOMAINS=                  # CORS whitelist (comma-separated)
 ROUTES_PREFIX=/api
 PORT=3003
 NODE_ENV=development
-OIDC_CLIENT_ID=           # Optional; defaults to 'my-client-id'. Used by the mock OIDC server to sign ID tokens. Real IdP (IAM Proxy Italia) config is not env-driven yet.
+ENABLE_PUBLIC_PUBLISHING= # 'false' removes the public chart/dashboard surface (default enabled)
+ENABLE_PASSWORD_AUTH=     # 'false' = SPID/CIE only, no email/password login or signup (default enabled)
+OIDC_ISSUER=              # IdP issuer URL (mock: http://127.0.0.1:9090)
+OIDC_CLIENT_ID=           # mock: 'my-client-id' (the mock also signs ID tokens with this audience)
+OIDC_CLIENT_SECRET=       # client auth is client_secret_basic only
+OIDC_AUTH_SECRET=         # >= 32 random chars, signs the oidc-auth session cookie
+OIDC_REDIRECT_URI=        # http://127.0.0.1:3003/api/oidc/callback — the library default '/callback' does not match our mount
+OIDC_SCOPES=              # optional, e.g. 'openid profile email'; empty = all scopes the IdP advertises
 ```
 
 **packages/webapp/.env**
@@ -130,4 +141,4 @@ VITE_SERVER_URL=http://127.0.0.1:3003
 ```
 
 ### Key schema models
-`User`, `Chart` (type + JSON config + JSON data), `Dashboard`, `Slot` (Chart↔Dashboard junction with custom settings), `DataSource` (CSV or remote URL), `SourceLink` (Chart↔DataSource), `Project`, `ProjectMember`, `Org`, `Membership`, `OrgProject`, `ApiKey` (`dv_`-prefixed, scoped to a project, READONLY or READWRITE role), `Code` (email verification pins).
+`User` (`password` nullable for SPID/CIE-only accounts), `OidcIdentity` (one per OIDC `sub`, many per user), `Chart` (type + JSON config + JSON data), `Dashboard`, `Slot` (Chart↔Dashboard junction with custom settings), `DataSource` (CSV or remote URL), `SourceLink` (Chart↔DataSource), `Project`, `ProjectMember`, `Org`, `Membership`, `OrgProject`, `ApiKey` (`dv_`-prefixed, scoped to a project, READONLY or READWRITE role), `Code` (email verification pins).

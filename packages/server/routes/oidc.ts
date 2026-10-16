@@ -12,8 +12,20 @@ import { Hono, type Context } from "hono";
 import { describeRoute, resolver } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
+import type { User } from "../lib/db/prisma/client";
+import { sendOidcEmailCode } from "../lib/email";
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
+import {
+    clearEmailVerification,
+    emailCodeMatches,
+    readEmailVerification,
+    setPendingEmailVerification,
+    setVerifiedEmail,
+} from "../lib/oidcEmailVerification";
+import { isPasswordAuthEnabled } from "../lib/passwordAuth";
+import generatePin from "../lib/pin";
+import { tryConsume } from "../lib/rateLimit";
 
 declare module 'hono' {
     interface OidcAuthClaims {
@@ -110,11 +122,42 @@ router.get(
     }
 );
 
+// ─── Collegamento account ─────────────────────────────────────────────────────
+// L'email è la chiave che lega un accesso SPID/CIE a un account:
+// - se IAM Proxy la fornisce (fidata) si cerca l'account per email, anche se
+//   registrato con password, e gli si collega il `sub`;
+// - se manca (CIE, a volte SPID) l'utente la inserisce e la conferma con un
+//   codice in fase di registrazione; da lì il `sub` resta collegato all'account
+//   (OidcIdentity) e agli accessi successivi basta quello.
+// Un account può avere più `sub` (SPID e CIE ne emettono di diversi).
+
+const normalizeEmail = (email?: string) => email?.trim().toLowerCase() || undefined
+
+// Sola lettura: account per email fornita dall'IdP, altrimenti per `sub` già collegato.
+const findOidcUser = async (sub: string, idpEmail?: string) => {
+    if (idpEmail) {
+        const byEmail = await db.findUserByEmailInsensitive(idpEmail)
+        if (byEmail) return byEmail
+    }
+    return db.findUserByOidcSub(sub)
+}
+
+// Collega il `sub` all'account e apre la sessione applicativa. L'email è stata
+// verificata (dall'IdP o con il codice), quindi l'account risulta attivo anche se
+// era una registrazione con password mai confermata.
+const linkAndLogin = async (c: Context, user: User, sub: string) => {
+    await db.linkOidcIdentity(user.id, sub)
+    const active = user.verified ? user : await db.setVerified(user.id)
+    const { accessToken } = generateTokens(active)
+    setAccessTokenCookie(c, accessToken)
+    return active
+}
+
 // ─── OIDC login ───────────────────────────────────────────────────────────────
 // Route protetta: se non autenticato, oidcAuthMiddleware avvia il flusso verso il
 // provider e imposta il cookie `continue` su questa stessa URL. Al ritorno dal
 // /callback la sessione oidc-auth è disponibile, quindi getAuth() restituisce i
-// claim: qui creiamo/carichiamo l'utente e generiamo il JWT applicativo.
+// claim: qui risolviamo l'account (vedi sopra) e generiamo il JWT applicativo.
 router.use('/login', oidcAuthMiddleware())
 router.get(
     '/login',
@@ -135,41 +178,38 @@ router.get(
     async (c) => {
         const oidcAuth = await resolveOidcAuth(c)
         logger.info('OIDC auth claims', oidcAuth ?? {})
-        // L'identità è il `sub` OIDC (stabile per SPID/CIE), non l'email.
         if (!oidcAuth?.sub) {
             //TODO: redirect to a page that explains the error and how to fix it
             return c.json({ error: 'OIDC auth failed' }, 401)
         }
+        const sub = oidcAuth.sub
 
-        const user = await db.findUserBySub(oidcAuth.sub)
+        const user = await findOidcUser(sub, normalizeEmail(oidcAuth.email))
         if (!user) {
-            // Primo accesso: nessun account collegato a questo `sub`. Non creiamo nulla
-            // qui — reindirizziamo alla pagina di registrazione frontend, che rileggerà
-            // `sub`/claims dalla sessione OIDC (il param `t` è solo indicativo lato UI).
-            logger.info('OIDC first access, redirecting to signup', { sub: oidcAuth.sub })
-            return c.redirect(`${APP_URL}/oidc/signup?t=${encodeURIComponent(oidcAuth.sub)}`)
+            // Nessun account per questa email/sub: la pagina di registrazione rilegge
+            // claims e stato dalla sessione OIDC (il param `t` è solo indicativo lato UI).
+            logger.info('OIDC first access, redirecting to signup', { sub })
+            return c.redirect(`${APP_URL}/oidc/signup?t=${encodeURIComponent(sub)}`)
         }
 
-        const { accessToken } = generateTokens(user)
-        setAccessTokenCookie(c, accessToken)
-
-        logger.info('User logged in via OIDC', { userId: user.id, sub: oidcAuth.sub })
+        await linkAndLogin(c, user, sub)
+        logger.info('User logged in via OIDC', { userId: user.id, sub })
         return c.redirect(APP_URL)
     }
 );
 
 // ─── OIDC signup: stato registrazione ──────────────────────────────────────────
 // Interrogato dalla pagina /oidc/signup PRIMA di mostrare il form: dice se l'utente
-// legato a questo `sub` ha già completato la registrazione, e restituisce i claim
-// (email/nome) per precompilare il form. L'identità arriva dalla sessione OIDC, mai
-// dal query param.
+// è già registrato, se l'email arriva dall'IdP o è già stata confermata con il
+// codice (altrimenti il form deve prima chiederla e verificarla) e restituisce i
+// claim per precompilarlo. L'identità arriva dalla sessione OIDC, mai dal query param.
 router.get(
     '/signup/status',
     describeRoute(({
-        description: 'Reports whether the OIDC user (by sub) has already completed signup',
+        description: 'Reports whether the OIDC user is already registered and whether their email is known and verified',
         responses: {
             200: {
-                description: "Get the claims for the OIDC user",
+                description: "Signup state for the OIDC user",
                 content: {
                     "application/json": {
                         schema: {
@@ -177,6 +217,8 @@ router.get(
                             properties: {
                                 registered: { type: "boolean" },
                                 email: { type: "string" },
+                                emailFromIdp: { type: "boolean" },
+                                emailVerified: { type: "boolean" },
                                 given_name: { type: "string" },
                                 family_name: { type: "string" },
                             }
@@ -198,24 +240,138 @@ router.get(
         if (!oidcAuth?.sub) {
             return c.json({ error: 'OIDC session required' }, 401)
         }
-        const existing = await db.findUserBySub(oidcAuth.sub)
+        const idpEmail = normalizeEmail(oidcAuth.email)
+        const existing = await findOidcUser(oidcAuth.sub, idpEmail)
+        const pending = idpEmail ? null : readEmailVerification(c, oidcAuth.sub)
         return c.json({
             registered: !!existing,
-            email: oidcAuth.email ?? '',
+            email: idpEmail ?? pending?.email ?? '',
+            emailFromIdp: !!idpEmail,
+            emailVerified: !!idpEmail || pending?.verified === true,
             given_name: oidcAuth.given_name ?? '',
             family_name: oidcAuth.family_name ?? '',
         })
     }
 );
 
+// ─── OIDC signup: invio codice di verifica email ───────────────────────────────
+// Solo quando l'IdP non fornisce l'email: la invia all'indirizzo indicato
+// dall'utente e lega il codice (HMAC) al `sub` in un cookie firmato.
+const emailBodySchema = z.object({ email: z.email() })
+
+router.post(
+    '/signup/email/send',
+    describeRoute(({
+        description: 'Mails a verification code to the email typed by an OIDC user whose identity provider sent none',
+        responses: {
+            200: { description: "Code sent" },
+            400: { description: "Invalid email, or email already provided by the identity provider", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+            401: { description: "Unauthorized: OIDC session required", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+            429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+        }
+    })),
+    async (c) => {
+        const oidcAuth = await resolveOidcAuth(c)
+        if (!oidcAuth?.sub) {
+            return c.json({ error: 'OIDC session required' }, 401)
+        }
+        if (normalizeEmail(oidcAuth.email)) {
+            return c.json({ error: 'Email already provided by the identity provider' }, 400)
+        }
+        const parsed = emailBodySchema.safeParse(await c.req.json().catch(() => ({})))
+        if (!parsed.success) {
+            return c.json({ error: 'Invalid email address' }, 400)
+        }
+        const email = normalizeEmail(parsed.data.email)!
+
+        const perSub = tryConsume('oidc:email:send', oidcAuth.sub, { windowMs: 60 * 60 * 1000, max: 5 })
+        if (!perSub.ok) {
+            c.header('Retry-After', `${perSub.retryAfterSec}`)
+            return c.json({ error: 'Too many attempts. Try again later.' }, 429)
+        }
+
+        const code = generatePin()
+        setPendingEmailVerification(c, oidcAuth.sub, email, code)
+        await sendOidcEmailCode(email, code)
+        return c.json({ sent: true })
+    }
+);
+
+// ─── OIDC signup: conferma codice email ────────────────────────────────────────
+// Se il codice è corretto l'email è verificata: se esiste già un account con
+// quell'email gli si collega il `sub` e si apre la sessione ({ auth: true });
+// altrimenti l'email resta confermata nel cookie per il completamento della
+// registrazione ({ auth: false }).
+const codeBodySchema = z.object({ code: z.string().trim().min(1) })
+
+router.post(
+    '/signup/email/verify',
+    describeRoute(({
+        description: 'Checks the email verification code; logs in when the email already belongs to an account',
+        responses: {
+            200: {
+                description: "Email verified",
+                content: {
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                auth: { type: "boolean" },
+                                email: { type: "string" },
+                            }
+                        }
+                    }
+                }
+            },
+            400: { description: "Code invalid or expired", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+            401: { description: "Unauthorized: OIDC session required", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+            429: { description: "Too many requests", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+        }
+    })),
+    async (c) => {
+        const oidcAuth = await resolveOidcAuth(c)
+        if (!oidcAuth?.sub) {
+            return c.json({ error: 'OIDC session required' }, 401)
+        }
+        const sub = oidcAuth.sub
+        const parsed = codeBodySchema.safeParse(await c.req.json().catch(() => ({})))
+        if (!parsed.success) {
+            return c.json({ error: 'Code invalid or expired.' }, 400)
+        }
+
+        // Il PIN è di 6 cifre: limita i tentativi per `sub` anche cambiando IP.
+        const perSub = tryConsume('oidc:email:verify', sub, { windowMs: 15 * 60 * 1000, max: 10 })
+        if (!perSub.ok) {
+            c.header('Retry-After', `${perSub.retryAfterSec}`)
+            return c.json({ error: 'Too many attempts. Try again later.' }, 429)
+        }
+
+        const pending = readEmailVerification(c, sub)
+        if (!pending || !emailCodeMatches(pending, parsed.data.code)) {
+            return c.json({ error: 'Code invalid or expired.' }, 400)
+        }
+
+        const existing = await db.findUserByEmailInsensitive(pending.email)
+        if (existing) {
+            clearEmailVerification(c)
+            await linkAndLogin(c, existing, sub)
+            logger.info('OIDC identity linked to existing account by verified email', { userId: existing.id, sub })
+            return c.json({ auth: true, email: pending.email })
+        }
+
+        setVerifiedEmail(c, sub, pending.email)
+        return c.json({ auth: false, email: pending.email })
+    }
+);
+
 // ─── OIDC signup: completamento ────────────────────────────────────────────────
-// Crea l'account collegato al `sub` (letto dalla sessione OIDC) e apre la sessione
-// applicativa. L'email arriva dal form: se è già usata da un altro account viene
-// bloccata (nessun collegamento automatico).
+// Crea l'account collegato al `sub` e apre la sessione applicativa. L'email non
+// arriva dal form: è quella fornita dall'IdP oppure quella confermata con il
+// codice. Se nel frattempo esiste già un account con quell'email, lo si collega.
 router.post(
     '/signup',
     describeRoute(({
-        description: 'Completes OIDC signup: creates the account linked to sub and logs in',
+        description: 'Completes OIDC signup: creates the account for the verified email, links sub and logs in',
         "responses": {
             200: {
                 description: "User registered via OIDC",
@@ -239,21 +395,13 @@ router.post(
                 }
             },
             400: {
-                description: "Invalid request body",
+                description: "No verified email, or invalid request body",
                 content: {
                     "application/json": {
                         schema: resolver(errorMessageSchema),
                     }
                 }
             },
-            409: {
-                description: "Email already in use",
-                content: {
-                    "application/json": {
-                        schema: resolver(errorMessageSchema),
-                    }
-                }
-            }
         }
     })),
     async (c) => {
@@ -262,35 +410,46 @@ router.post(
             return c.json({ error: 'OIDC session required' }, 401)
         }
         const sub = oidcAuth.sub
+        const idpEmail = normalizeEmail(oidcAuth.email)
 
         // Già registrato (es. doppio submit / navigazione ripetuta): apri la sessione.
-        const existingBySub = await db.findUserBySub(sub)
-        if (existingBySub) {
-            const { accessToken } = generateTokens(existingBySub)
-            setAccessTokenCookie(c, accessToken)
+        const existing = await findOidcUser(sub, idpEmail)
+        if (existing) {
+            await linkAndLogin(c, existing, sub)
             return c.json({ auth: true })
         }
 
-        const body = await c.req.json().catch(() => ({} as Record<string, unknown>))
-        const email = typeof body?.email === 'string' ? body.email.trim() : ''
-        const password = typeof body?.password === 'string' ? body.password : ''
-        // Pubblica Amministrazione di appartenenza: chiesta dal form, opzionale sul modello.
-        const pa = typeof body?.pa === 'string' && body.pa.trim() ? body.pa.trim() : undefined
-        if (!email || !password) {
-            return c.json({ error: { message: 'email and password are required' } }, 400)
+        const pending = idpEmail ? null : readEmailVerification(c, sub)
+        const email = idpEmail ?? (pending?.verified ? pending.email : undefined)
+        if (!email) {
+            return c.json({ error: { message: 'a verified email is required' } }, 400)
         }
 
-        // Email già in uso da un altro account (senza sub): blocca.
-        const existingByEmail = await db.findUserByEmail(email)
-        if (existingByEmail) {
-            return c.json({ error: { message: 'email already in use' } }, 409)
+        const body = await c.req.json().catch(() => ({} as Record<string, unknown>))
+        // Pubblica Amministrazione di appartenenza: chiesta dal form, opzionale sul modello.
+        const pa = typeof body?.pa === 'string' && body.pa.trim() ? body.pa.trim() : undefined
+        // Con l'accesso via password attivo la registrazione SPID/CIE imposta anche una
+        // password (utilizzabile in alternativa); in modalità solo SPID/CIE l'account
+        // nasce senza password e la si ignora anche se inviata.
+        let password: string | undefined
+        if (isPasswordAuthEnabled()) {
+            password = typeof body?.password === 'string' ? body.password : ''
+            if (!password) {
+                return c.json({ error: { message: 'password is required' } }, 400)
+            }
+        }
+
+        // Email confermata con il codice ma account creato nel frattempo: collegalo.
+        const byEmail = await db.findUserByEmailInsensitive(email)
+        if (byEmail) {
+            clearEmailVerification(c)
+            await linkAndLogin(c, byEmail, sub)
+            return c.json({ auth: true })
         }
 
         const user = await db.createUserByEmailAndPassword({ email, password, sub, pa })
-        await db.setVerified(user.id)
-
-        const { accessToken } = generateTokens(user)
-        setAccessTokenCookie(c, accessToken)
+        clearEmailVerification(c)
+        await linkAndLogin(c, user, sub)
         logger.info('User registered via OIDC', { userId: user.id, sub })
         return c.json({ auth: true })
     }

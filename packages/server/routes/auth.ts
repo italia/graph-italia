@@ -12,6 +12,7 @@ import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
 import { checkAuth, requireUser } from "../lib/middlewares";
+import { requirePasswordAuth } from "../lib/passwordAuth";
 import { rateLimit, tryConsume } from "../lib/rateLimit";
 import type { ParsedToken } from "../types";
 
@@ -27,6 +28,13 @@ const router = new Hono();
 
 // Apply auth check middleware to all routes
 router.use("*", checkAuth);
+
+// Everything that involves a password or its email lifecycle is off when the
+// instance requires SPID/CIE (ENABLE_PASSWORD_AUTH="false"). /user and /logout
+// are session endpoints shared with the OIDC flow and stay available.
+for (const path of ["/register", "/login", "/recover", "/resend", "/verify", "/confirm/*", "/reset-password", "/pwd"]) {
+	router.use(path, requirePasswordAuth);
+}
 
 // GET CURRENT USER INFO
 
@@ -240,7 +248,9 @@ router.post("/login",
 				return c.json({ error: { message: "Invalid credentials." } }, 401);
 			}
 
-			const passwordMatch = await bcrypt.compare(password, existingUser.password);
+			// Accounts created through SPID/CIE-only signup have no password.
+			const passwordMatch = existingUser.password !== null
+				&& await bcrypt.compare(password, existingUser.password);
 			if (!passwordMatch) {
 				return c.json({ error: { message: "Invalid credentials." } }, 401);
 			}

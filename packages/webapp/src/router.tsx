@@ -20,6 +20,7 @@ import EditOrgsPage from "./pages/private/EditOrgs";
 import EditSettingsPage from "./pages/private/EditSettings";
 import GodModeOnPage from "./pages/private/GodModeOn";
 import AdminRoute from "./components/auth/AdminRoute";
+import PasswordAuthGate from "./components/auth/PasswordAuthGate";
 import PublishGate from "./components/auth/PublishGate";
 import EmbedGate from "./components/embed/EmbedGate";
 import QuickStartPage from "./pages/QuickStartPage";
@@ -290,15 +291,27 @@ const routes = [
   },
   {
     path: "/verify/:uid",
-    element: <VerifyPage />,
+    element: (
+      <PasswordAuthGate>
+        <VerifyPage />
+      </PasswordAuthGate>
+    ),
   },
   {
     path: "/recover-password",
-    element: <RecoverPage action={"recover"} />,
+    element: (
+      <PasswordAuthGate>
+        <RecoverPage action={"recover"} />
+      </PasswordAuthGate>
+    ),
   },
   {
     path: "/change-password",
-    element: <RecoverPage action={"change"} />,
+    element: (
+      <PasswordAuthGate>
+        <RecoverPage action={"change"} />
+      </PasswordAuthGate>
+    ),
   },
   //TOOLS
   //load data page

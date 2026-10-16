@@ -194,24 +194,29 @@ export default function GodModeOnPage() {
               >
                 <FaCircleCheck />
               </button>
-              <button
-                type="button"
-                className="btn btn-outline btn-xs btn-square"
-                title="Resend activation email"
-                onClick={() => setPendingAction({ type: "resend", user: row })}
-              >
-                <FaEnvelope />
-              </button>
+              {/* Activation and reset mails are password-only (403 on a SPID/CIE-only instance). */}
+              {api.isPasswordAuthEnabled() && (
+                <button
+                  type="button"
+                  className="btn btn-outline btn-xs btn-square"
+                  title="Resend activation email"
+                  onClick={() => setPendingAction({ type: "resend", user: row })}
+                >
+                  <FaEnvelope />
+                </button>
+              )}
             </>
           )}
-          <button
-            type="button"
-            className="btn btn-outline btn-xs btn-square"
-            title="Send password reset email"
-            onClick={() => setPendingAction({ type: "reset", user: row })}
-          >
-            <FaKey />
-          </button>
+          {api.isPasswordAuthEnabled() && (
+            <button
+              type="button"
+              className="btn btn-outline btn-xs btn-square"
+              title="Send password reset email"
+              onClick={() => setPendingAction({ type: "reset", user: row })}
+            >
+              <FaKey />
+            </button>
+          )}
           <button
             type="button"
             className="btn btn-outline btn-xs btn-square"

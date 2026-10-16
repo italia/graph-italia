@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import { sign } from "jsonwebtoken";
 import type { IAccessTokenPayload } from "../lib/jwt";
@@ -85,6 +85,7 @@ mock.module("../lib/logger", () => ({
 mock.module("../lib/email", () => ({
 	sendActivationEmail: mock(async () => {}),
 	sendResetPasswordEmail: mock(async () => {}),
+	sendOidcEmailCode: mock(async () => {}),
 }));
 
 mock.module("bcrypt", () => ({
@@ -360,5 +361,33 @@ describe("PUT /auth/pwd — change password (requires auth)", () => {
 			...withJson({}, { password: "NewP@ss1!" }),
 		});
 		expect(res.status).toBe(401);
+	});
+});
+
+describe("ENABLE_PASSWORD_AUTH=false — SPID/CIE only", () => {
+	beforeAll(() => { process.env["ENABLE_PASSWORD_AUTH"] = "false"; });
+	afterAll(() => { delete process.env["ENABLE_PASSWORD_AUTH"]; });
+
+	test.each([
+		["POST", "/auth/register", { email: NEW_EMAIL, password: CORRECT_PASSWORD }],
+		["POST", "/auth/login", { email: USER_EMAIL, password: CORRECT_PASSWORD }],
+		["POST", "/auth/recover", { email: USER_EMAIL }],
+		["POST", "/auth/resend", { email: UNVERIFIED_EMAIL }],
+		["POST", "/auth/verify", { uid: UNVERIFIED_ID, code: VALID_PIN }],
+		["POST", "/auth/reset-password", { uid: USER_ID, code: VALID_PIN, password: "NewP@ss1!" }],
+		["PUT", "/auth/pwd", { password: "NewP@ss1!" }],
+	])("%s %s → 403", async (method, path, body) => {
+		const res = await app.request(path, { method, ...withJson(userHeaders(), body) });
+		expect(res.status).toBe(403);
+	});
+
+	test("GET /auth/confirm/:uid/:code → 403", async () => {
+		const res = await app.request(`/auth/confirm/${UNVERIFIED_ID}/${VALID_PIN}`);
+		expect(res.status).toBe(403);
+	});
+
+	test("POST /auth/logout still works → 200", async () => {
+		const res = await app.request("/auth/logout", { method: "POST" });
+		expect(res.status).toBe(200);
 	});
 });

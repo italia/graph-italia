@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { TFunction } from "i18next";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { z as zod } from "zod";
@@ -15,29 +15,40 @@ import PasswordRequirements from "./PasswordRequirements";
 const getSignupSchema = (
   z: typeof zod,
   t: TFunction<"translation", undefined>,
+  withPassword: boolean,
 ) => {
-  const passwordSchema = getPasswordSchema(z, t);
+  const baseSchema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+    // Obbligatoria sul form anche se il modello utente la tiene opzionale.
+    pa: z
+      .string()
+      .trim()
+      .min(1, { message: t(`form.fields.pa.errors.required`) }),
+    policyAcknologment: z.boolean().refine((val) => val === true, {
+      message: t(`form.fields.policyAcknologment.errors.mustAccept`),
+    }),
+  });
+  // SPID/CIE-only signup: the account has no password.
+  if (!withPassword) return baseSchema;
 
-  const signupSchema = z
-    .object({
-      email: z.string().email({ message: "Invalid email address" }),
-      // Obbligatoria sul form anche se il modello utente la tiene opzionale.
-      pa: z
-        .string()
-        .trim()
-        .min(1, { message: t(`form.fields.pa.errors.required`) }),
+  const passwordSchema = getPasswordSchema(z, t);
+  return baseSchema
+    .extend({
       password: passwordSchema,
       confirmPassword: passwordSchema,
-      policyAcknologment: z.boolean().refine((val) => val === true, {
-        message: t(`form.fields.policyAcknologment.errors.mustAccept`),
-      }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t(`form.errors.passwordDontMatch`),
       path: ["confirmPassword"],
     });
+};
 
-  return signupSchema;
+type SignupFormValues = {
+  email: string;
+  pa: string;
+  policyAcknologment: boolean;
+  password?: string;
+  confirmPassword?: string;
 };
 
 function SignUp({
@@ -48,8 +59,9 @@ function SignUp({
   setLogin?: (login: boolean) => void;
   handleRegistered?: () => void;
   // When present the form runs in OIDC mode: it completes signup against the
-  // server-side OIDC session (`sub`) and logs the user in directly.
-  oidc?: { sub?: string; defaultEmail?: string };
+  // server-side OIDC session (`sub`) and logs the user in directly. The email is
+  // already verified (from the identity provider or the code step) and read-only.
+  oidc?: { email: string };
 }) {
   const navigate = useNavigate();
   const { setUser } = useUserStore();
@@ -62,16 +74,18 @@ function SignUp({
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
-  const signupSchema = getSignupSchema(zod, t);
+  // Password fields are dropped only for OIDC signup on a SPID/CIE-only instance;
+  // the plain email/password form is never rendered there (see AuthPage).
+  const withPassword = !oidc || api.isPasswordAuthEnabled();
+  const signupSchema = getSignupSchema(zod, t, withPassword);
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(signupSchema),
-    defaultValues: { email: oidc?.defaultEmail ?? "", pa: "" },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema) as Resolver<SignupFormValues>,
+    defaultValues: { email: oidc?.email ?? "", pa: "" },
   });
 
   const onSubmit = async (submittedData: any) => {
@@ -80,7 +94,7 @@ function SignUp({
       const { email, password, pa } = submittedData;
 
       if (oidc) {
-        const result = await api.oidcSignup({ email, password, pa });
+        const result = await api.oidcSignup({ password, pa });
         if (result?.auth) {
           const user = await api.getUser();
           setUser(user);
@@ -130,6 +144,7 @@ function SignUp({
                       {...register("email", { required: true })}
                       type="email"
                       required
+                      readOnly={!!oidc}
                       autoComplete="email"
                       className="input input-bordered w-full"
                     />
@@ -165,110 +180,114 @@ function SignUp({
                   </div>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-content"
-                  >
-                    {t(`form.fields.password.label`)}
-                  </label>
-                  <div className="mt-2">
-                    <div className="relative">
-                      <input
-                        id="hs-toggle-password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder={t(`form.fields.password.placeholder`)}
-                        className="input input-bordered w-full"
-                        {...register("password")}
-                        onFocus={() => setPasswordFocused(true)}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-content rounded-e-md focus:text-primary"
-                        aria-label={showPassword ? tToggle("hide") : tToggle("show")}
-                        aria-pressed={showPassword}
+                {withPassword && (
+                  <>
+                    <div>
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium leading-6 text-content"
                       >
-                        <svg
-                          aria-hidden="true"
-                          className="shrink-0 size-3.5"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path
-                            className={"block"}
-                            d="M9.88 9.88a3 3 0 1 0 4.24 4.24"
-                          ></path>
-                          <path
-                            className={"block"}
-                            d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
-                          ></path>
-                          <path
-                            className={"block"}
-                            d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
-                          ></path>
-                          <line
-                            className={showPassword ? "hidden" : "block"}
-                            x1="2"
-                            x2="22"
-                            y1="2"
-                            y2="22"
-                          ></line>
-                          <path
-                            className={"block"}
-                            d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
-                          ></path>
-                          <circle
-                            className={"block"}
-                            cx="12"
-                            cy="12"
-                            r="3"
-                          ></circle>
-                        </svg>
-                      </button>
+                        {t(`form.fields.password.label`)}
+                      </label>
+                      <div className="mt-2">
+                        <div className="relative">
+                          <input
+                            id="hs-toggle-password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t(`form.fields.password.placeholder`)}
+                            className="input input-bordered w-full"
+                            {...register("password")}
+                            onFocus={() => setPasswordFocused(true)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-content rounded-e-md focus:text-primary"
+                            aria-label={showPassword ? tToggle("hide") : tToggle("show")}
+                            aria-pressed={showPassword}
+                          >
+                            <svg
+                              aria-hidden="true"
+                              className="shrink-0 size-3.5"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <path
+                                className={"block"}
+                                d="M9.88 9.88a3 3 0 1 0 4.24 4.24"
+                              ></path>
+                              <path
+                                className={"block"}
+                                d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                              ></path>
+                              <path
+                                className={"block"}
+                                d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                              ></path>
+                              <line
+                                className={showPassword ? "hidden" : "block"}
+                                x1="2"
+                                x2="22"
+                                y1="2"
+                                y2="22"
+                              ></line>
+                              <path
+                                className={"block"}
+                                d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+                              ></path>
+                              <circle
+                                className={"block"}
+                                cx="12"
+                                cy="12"
+                                r="3"
+                              ></circle>
+                            </svg>
+                          </button>
+                        </div>
+                        {/* <input
+                        id='password'
+                        type='password'
+                        placeholder='new password'
+                        className='w-full rounded-md'
+                        {...register('password')}
+                      /> */}
+                        <PasswordRequirements
+                          password={watch("password") ?? ""}
+                          visible={passwordFocused}
+                        />
+                      </div>
                     </div>
-                    {/* <input
-                    id='password'
-                    type='password'
-                    placeholder='new password'
-                    className='w-full rounded-md'
-                    {...register('password')}
-                  /> */}
-                    <PasswordRequirements
-                      password={watch("password") ?? ""}
-                      visible={passwordFocused}
-                    />
-                  </div>
-                </div>
 
-                <div>
-                  <label
-                    htmlFor="confirm-password"
-                    className="block text-sm font-medium leading-6 text-content"
-                  >
-                    {t(`form.fields.confirmPassword.label`)}
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="confirm-password"
-                      type="password"
-                      className="input input-bordered w-full"
-                      placeholder=""
-                      {...register("confirmPassword")}
-                    />
-                    {errors["confirmPassword"] && (
-                      <p className="text-error" role="alert">
-                        {errors["confirmPassword"].message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                    <div>
+                      <label
+                        htmlFor="confirm-password"
+                        className="block text-sm font-medium leading-6 text-content"
+                      >
+                        {t(`form.fields.confirmPassword.label`)}
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="confirm-password"
+                          type="password"
+                          className="input input-bordered w-full"
+                          placeholder=""
+                          {...register("confirmPassword")}
+                        />
+                        {errors["confirmPassword"] && (
+                          <p className="text-error" role="alert">
+                            {errors["confirmPassword"].message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 <div>
                   <div className="flex items-start">

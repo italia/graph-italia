@@ -5,6 +5,7 @@ import db from "../lib/db";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 import { checkAuth, requireUser, requireAdmin } from "../lib/middlewares";
 import { logger } from "../lib/logger";
+import { requirePasswordAuth } from "../lib/passwordAuth";
 import type { ParsedToken } from "../types";
 
 const router = new Hono();
@@ -112,6 +113,7 @@ router.post(
 			404: { description: "User not found" },
 		},
 	}),
+	requirePasswordAuth,
 	zValidator("param", paramsSchema),
 	async (c) => {
 		const { id } = c.req.valid("param");
@@ -144,6 +146,7 @@ router.post(
 			404: { description: "User not found" },
 		},
 	}),
+	requirePasswordAuth,
 	zValidator("param", paramsSchema),
 	async (c) => {
 		const { id } = c.req.valid("param");

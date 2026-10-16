@@ -10,7 +10,24 @@
         },
         "oidc": {
             "loading": "Checking your account…",
-            "alreadyRegistered": "You have already completed registration. Signing you in…"
+            "alreadyRegistered": "You have already completed registration. Signing you in…",
+            "emailStep": {
+                "title": "Confirm your email",
+                "description": "Your SPID/CIE login did not provide an email address. Enter it and we will send you a code to confirm it. If you already have an account with this email, it will be linked to your SPID/CIE identity.",
+                "emailLabel": "Email address",
+                "send": "Send code",
+                "sent": "We sent a code to {{email}}. It expires in 15 minutes.",
+                "codeLabel": "Verification code",
+                "verify": "Confirm",
+                "changeEmail": "Change email",
+                "resend": "Send the code again",
+                "errors": {
+                    "invalidEmail": "Invalid email address.",
+                    "invalidCode": "Code invalid or expired.",
+                    "tooMany": "Too many attempts. Try again later.",
+                    "generic": "Something went wrong. Try again later."
+                }
+            }
         },
         "registered": {
             "title": "Registration complete",
@@ -927,7 +944,8 @@
         "description": "Choose a new password for your account.",
         "changePassword": {
             "success": "Password updated successfully."
-        }
+        },
+        "oidcOnly": "You sign in with SPID/CIE: there is no password to manage."
     },
     "publicChart": {
         "errors": {

@@ -63,21 +63,24 @@ export function hashToken(token: string) {
 	return crypto.createHash("sha512").update(token).digest("hex");
 }
 
-export function setAccessTokenCookie(c: Context, token: string) {
-	const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-	// Secure everywhere except explicit local dev — so test/staging (which run over
-	// HTTPS but set NODE_ENV=test) also get a Secure cookie, not only production.
-	// Local dev (NODE_ENV=development or unset → http://localhost) stays non-secure.
-	const insecureCookie =
+// Secure everywhere except explicit local dev — so test/staging (which run over
+// HTTPS but set NODE_ENV=test) also get a Secure cookie, not only production.
+// Local dev (NODE_ENV=development or unset → http://localhost) stays non-secure.
+export function isSecureCookie() {
+	return !(
 		process.env.NODE_ENV === "development" ||
 		!process.env.NODE_ENV ||
-		process.env.COOKIE_INSECURE === "true";
+		process.env.COOKIE_INSECURE === "true"
+	);
+}
 
+export function setAccessTokenCookie(c: Context, token: string) {
+	const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 	setCookie(c, "access_token", token, {
 		expires,
 		httpOnly: true,
 		sameSite: "Lax",
-		secure: !insecureCookie,
+		secure: isSecureCookie(),
 		path: "/",
 	});
 	logger.debug("Access token cookie set", { expires: expires.toISOString() });

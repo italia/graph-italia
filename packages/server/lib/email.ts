@@ -40,7 +40,17 @@ export async function sendResetPasswordEmail(user: User, pin: string) {
 }
 
 
-// const fontFamily = "font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;";
+// SPID/CIE signup without an email from the identity provider: the user typed
+// one and must prove they own it. No account exists yet, hence no uid/link.
+export function sendOidcEmailCode(email: string, pin: string) {
+  logger.info('Sending SPID/CIE email verification code', {
+    email: maskEmail(email),
+  });
+  return sendMail([email], oidcEmailCodeTemplate(pin), "Confirm Your Email");
+}
+
+
+// const fontFamily ="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;";
 
 function resetTemplate(uid: string, pin: string) {
   const url = `${APP_URL}/verify/${uid}?action=reset&code=${pin}`;
@@ -78,5 +88,27 @@ function activationTemplate(uid: string, pin: string) {
     <div style="margin-top:30px;margin-bottom:30px">${code}</div>
     <p style="font-size:14px;line-height:24px;margin:24px 0;color:#ababab;margin-top:14px;margin-bottom:16px"> If you didn't register, you can safely ignore this email, the account never activated will be automatically deleted after some days.</p>
     <p style="font-size:16px;line-height:22px;margin:16px 0;color:#898989;margin-top:45px">${COPY}</p> 
+    </td></tr></tbody></table></body></html>`;
+}
+
+function oidcEmailCodeTemplate(pin: string) {
+  const code = pin
+    .split("")
+    .map((item: string) => {
+      return `<span><code style="display:inline;padding:16px 4.5%;width:auto;margin:0 4px;background-color:#f4f4f4;border-radius:5px;border:1px solid #eee;color:#333">${item}</code></span>`;
+    })
+    .join("");
+  return `
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html dir="ltr" lang="en">
+    <head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="x-apple-disable-message-reformatting" />
+    </head>
+    <div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0">Confirm Email</div>
+    <body style="background-color:#fff;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:37.5em;padding:0 12px;margin:0 auto;background-color:#fefefe;border:1px solid #eee"><tbody><tr style="width:100%"><td>
+    <h1 style="color:#333;font-size:24px;font-weight:bold;margin:20px 0 40px 0;padding:0">Confirm Email</h1>
+    <p style="font-size:14px;line-height:24px;margin:24px 0;color:#333;margin-bottom:14px">To complete your SPID/CIE access, enter this code on the registration page. It expires in 15 minutes.</p>
+    <div style="margin-top:30px;margin-bottom:30px">${code}</div>
+    <p style="font-size:14px;line-height:24px;margin:24px 0;color:#ababab;margin-top:14px;margin-bottom:16px">If you didn't request it, you can safely ignore this email.</p>
+    <p style="font-size:16px;line-height:22px;margin:16px 0;color:#898989;margin-top:45px">${COPY}</p>
     </td></tr></tbody></table></body></html>`;
 }

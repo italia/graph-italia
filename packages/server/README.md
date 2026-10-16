@@ -88,6 +88,35 @@ Neither provider throws on missing configuration: an unset `RESEND_API_KEY` or `
 
 Note that turning the flag off does not rewrite existing data: rows already at `publish: true` stay that way, they simply stop being reachable anonymously. `Chart`, `Dashboard` and `DataSource` all default to `publish: false`.
 
+## SPID/CIE-only authentication
+
+`ENABLE_PASSWORD_AUTH` (env, defaults to enabled — only the literal `"false"` turns it off) decides whether email/password authentication exists on this instance. Like the publishing toggle, the API enforces it and the webapp mirrors it from `GET /config` (`passwordAuth`). `lib/passwordAuth.ts` is the single implementation:
+
+- **SPID/CIE becomes the only way in.** `POST /auth/register`, `/auth/login`, `/auth/recover`, `/auth/resend`, `/auth/verify`, `/auth/reset-password`, `PUT /auth/pwd` and `GET /auth/confirm/:uid/:code` answer 403, as do the admin `resend-activation` and `reset-password` mailers. `GET /auth/user` and `POST /auth/logout` are shared with the OIDC flow and keep working.
+- **Signup goes through OIDC.** With the flag off, `POST /api/oidc/signup` creates the account with `password = null`; with it on, the same endpoint still requires a password, so the account can also sign in with email/password.
+
+## SPID/CIE account matching
+
+The **email** is what links a SPID/CIE login to an account (`routes/oidc.ts`). Identities live in `OidcIdentity` (one row per `sub`), so the same account can be reached from SPID and from CIE, which issue different subjects.
+
+- **The identity provider sends an email** (IAM Proxy is trusted): `/api/oidc/login` looks the account up by that email (case-insensitive) — including accounts created with email/password — links the `sub`, marks the account verified and opens the session. With no matching account the user lands on the webapp's `/oidc/signup` with the email locked.
+- **No email from the identity provider** (CIE never sends one, SPID not always): an already linked `sub` logs straight in. Otherwise `/oidc/signup` asks for an email and `POST /api/oidc/signup/email/send` mails a 6-digit code; `POST /api/oidc/signup/email/verify` checks it. If the email belongs to an account, the `sub` is linked and the session opens; if not, signup continues with that email. From then on the linked `sub` is enough.
+- The code state lives in the signed, short-lived `oidc-email` cookie (`lib/oidcEmailVerification.ts`), bound to the OIDC `sub`, with the PIN stored as an HMAC keyed by `JWT_SECRET`. `POST /api/oidc/signup` never takes the email from its body: it uses the IdP email or the verified one.
+
+### OIDC configuration
+
+`@hono/oidc-auth` reads its configuration from the environment:
+
+| Variable | Notes |
+|---|---|
+| `OIDC_ISSUER` | Issuer URL (serves `/.well-known/openid-configuration`). Mock: `http://127.0.0.1:9090` |
+| `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` | The client is authenticated with `client_secret_basic` only. Mock: `my-client-id` / any value |
+| `OIDC_AUTH_SECRET` | At least 32 random characters; signs the `oidc-auth` session cookie |
+| `OIDC_REDIRECT_URI` | `<server>/api/oidc/callback` — the library default (`/callback`) does not match our mount |
+| `OIDC_SCOPES` | Optional, e.g. `openid profile email`; empty requests every scope the IdP advertises |
+
+`mock-oidc-server.ts` takes `MOCK_OIDC_SUB`, `MOCK_OIDC_EMAIL` and `MOCK_OIDC_NO_EMAIL=true` to exercise the matching cases locally.
+
 ## Seeds
 
 Scripts under `seeds/`, run with `bun run seeds/<script>.ts` from `packages/server` (or via the root-level shortcuts where noted):

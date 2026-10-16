@@ -62,6 +62,7 @@ mock.module("../lib/db/apiKeyDb", () => ({
 mock.module("../lib/email", () => ({
 	sendActivationEmail: mock(async () => undefined),
 	sendResetPasswordEmail: mock(async () => undefined),
+	sendOidcEmailCode: mock(async () => {}),
 }));
 
 mock.module("../lib/db", () => ({

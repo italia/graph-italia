@@ -4,10 +4,15 @@ import { useSearchParams } from "react-router-dom";
 import SignIn from "../../components/auth/SignIn";
 import SignUp from "../../components/auth/SignUp";
 import Layout from "../../components/layout";
+import { isPasswordAuthEnabled } from "../../lib/api";
 
 function AuthPage() {
   const [searchParams] = useSearchParams();
-  const [login, setLogin] = useState(searchParams.get("mode") !== "register");
+  // On a SPID/CIE-only instance signup happens through the OIDC login, so the
+  // email/password registration form is never shown.
+  const [login, setLogin] = useState(
+    !isPasswordAuthEnabled() || searchParams.get("mode") !== "register",
+  );
   const [registered, setRegistered] = useState(false);
   const { t } = useTranslation("pages", { keyPrefix: "auth" });
   const registeredHeading = useRef<HTMLHeadingElement>(null);

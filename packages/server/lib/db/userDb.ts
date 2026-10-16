@@ -61,11 +61,29 @@ export function findUserByEmail(email: string) {
 	});
 }
 
-export function findUserBySub(sub: string) {
-	return prisma.user.findUnique({
-		where: {
-			sub,
-		},
+// Case-insensitive: the email is what links an OIDC login to an account, and
+// the identity provider and the signup form may not agree on its casing.
+export function findUserByEmailInsensitive(email: string) {
+	return prisma.user.findFirst({
+		where: { email: { equals: email.trim(), mode: "insensitive" } },
+	});
+}
+
+export async function findUserByOidcSub(sub: string) {
+	const identity = await prisma.oidcIdentity.findUnique({
+		where: { sub },
+		include: { user: true },
+	});
+	return identity?.user ?? null;
+}
+
+// Idempotent: (re)points `sub` at the user, so a subject always belongs to the
+// account its email last resolved to.
+export function linkOidcIdentity(userId: string, sub: string) {
+	return prisma.oidcIdentity.upsert({
+		where: { sub },
+		create: { sub, userId },
+		update: { userId },
 	});
 }
 
@@ -76,12 +94,20 @@ export async function createUserByEmailAndPassword({
 	pa,
 }: {
 	email: string;
-	password: string;
+	// Omitted for SPID/CIE-only signups: the account then has no password at all.
+	password?: string;
 	sub?: string;
 	pa?: string;
 }) {
-	const passwordHash = bcrypt.hashSync(password, 12);
-	const created = await prisma.user.create({ data: { email, password: passwordHash, sub, pa } });
+	const passwordHash = password ? bcrypt.hashSync(password, 12) : null;
+	const created = await prisma.user.create({
+		data: {
+			email,
+			password: passwordHash,
+			pa,
+			identities: sub ? { create: { sub } } : undefined,
+		},
+	});
 	await createDefaultProject(created.id, created.email);
 	return created;
 }
