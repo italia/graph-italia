@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { FaCircleCheck, FaCrown, FaEnvelope, FaKey, FaShield, FaTrash } from "react-icons/fa6";
+import { FaCircleCheck, FaCrown, FaEnvelope, FaKey, FaShield, FaTrash, FaUserShield } from "react-icons/fa6";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import Layout from "../../components/layout/index.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import registerDarkTheme from "../../components/layout/DataTableDarkTheme.ts";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
+import { useUserStore } from "../../lib/store/user_store.ts";
 import * as api from "../../lib/api.ts";
 import type { AdminUser } from "../../lib/api.ts";
 
 registerDarkTheme();
 
-type ActionType = "delete" | "activate" | "resend" | "reset";
+type ActionType = "delete" | "activate" | "resend" | "reset" | "promote" | "demote";
 
 interface PendingAction {
   type: ActionType;
@@ -23,6 +24,8 @@ const ACTION_LABELS: Record<ActionType, string> = {
   activate: "Activate",
   resend: "Resend activation",
   reset: "Reset password",
+  promote: "Make admin",
+  demote: "Remove admin",
 };
 
 const ACTION_DESCRIPTIONS: Record<ActionType, (email: string) => string> = {
@@ -30,6 +33,8 @@ const ACTION_DESCRIPTIONS: Record<ActionType, (email: string) => string> = {
   activate: (email) => `Force-activate ${email} without email verification.`,
   resend: (email) => `Resend the activation email to ${email}.`,
   reset: (email) => `Send a password reset email to ${email}.`,
+  promote: (email) => `Give ${email} the ADMIN role. It applies at their next sign-in.`,
+  demote: (email) => `Remove the ADMIN role from ${email}. Their current session keeps it until it expires (up to 24h).`,
 };
 
 export default function GodModeOnPage() {
@@ -40,6 +45,7 @@ export default function GodModeOnPage() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const { settings } = useSettingsStore();
+  const currentUserId = useUserStore((state) => state.user?.userId);
   const theme = settings?.preferredTheme === "dark" ? "dark" : "default";
 
   const showToast = useCallback((msg: string, ok = true) => {
@@ -78,10 +84,15 @@ export default function GodModeOnPage() {
         ok = await api.adminResendActivation(user.id);
       } else if (type === "reset") {
         ok = await api.adminResetPassword(user.id);
+      } else if (type === "promote" || type === "demote") {
+        const role = type === "promote" ? "ADMIN" : "USER";
+        ok = await api.adminSetUserRole(user.id, role);
+        if (ok) setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, role } : u)));
       }
       showToast(ok ? `${ACTION_LABELS[type]} done` : "Operation failed", ok);
-    } catch {
-      showToast("Operation failed", false);
+    } catch (error) {
+      // Surface the server's reason (e.g. "Cannot remove the last admin.").
+      showToast(api.getErrorMessage(error, "Operation failed"), false);
     } finally {
       setBusy(false);
       setPendingAction(null);
@@ -215,6 +226,17 @@ export default function GodModeOnPage() {
               onClick={() => setPendingAction({ type: "reset", user: row })}
             >
               <FaKey />
+            </button>
+          )}
+          {/* The server refuses changing your own role (no self-lockout) and demoting the last admin. */}
+          {row.id !== currentUserId && (
+            <button
+              type="button"
+              className={`btn btn-outline btn-xs btn-square ${row.role === "ADMIN" ? "btn-error" : ""}`}
+              title={row.role === "ADMIN" ? "Remove admin role" : "Make admin"}
+              onClick={() => setPendingAction({ type: row.role === "ADMIN" ? "demote" : "promote", user: row })}
+            >
+              <FaUserShield />
             </button>
           )}
           <button

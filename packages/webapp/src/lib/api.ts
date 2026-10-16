@@ -905,5 +905,11 @@ export async function adminResetPassword(id: string): Promise<boolean> {
   return response.status === 200;
 }
 
+/** The new role applies at the user's next sign-in (the role travels in the session token). */
+export async function adminSetUserRole(id: string, role: AdminUser["role"]): Promise<boolean> {
+  const response = await axios.patch(`${getServerUrlWithApi()}/admin/users/${id}/role`, { role });
+  return response.status === 200;
+}
+
 
 

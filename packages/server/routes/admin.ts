@@ -168,4 +168,48 @@ router.post(
 	},
 );
 
+// PATCH /admin/users/:id/role — promote to / demote from ADMIN
+const roleSchema = z.object({ role: z.enum(["USER", "ADMIN"]) });
+
+router.patch(
+	"/users/:id/role",
+	describeRoute({
+		description: "Change a user's role (USER/ADMIN). Admin only. The role travels in the session token, so the change applies at the user's next sign-in.",
+		responses: {
+			200: { description: "Role changed" },
+			400: { description: "Cannot change your own role, or would remove the last admin", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			404: { description: "User not found" },
+		},
+	}),
+	zValidator("param", paramsSchema),
+	zValidator("json", roleSchema),
+	async (c) => {
+		const { id } = c.req.valid("param");
+		const { role } = c.req.valid("json");
+		const caller = c.get("user") as ParsedToken;
+
+		// Mirrors the delete guard: an admin cannot lock themselves out.
+		if (caller.userId === id) {
+			return c.json({ error: "Cannot change your own role." }, 400);
+		}
+
+		try {
+			const target = await db.findUserById(id);
+			if (!target) return c.json({ error: "User not found." }, 404);
+			if (target.role === role) return c.json({ ok: true, role }, 200);
+
+			if (role === "USER" && (await db.countAdmins()) <= 1) {
+				return c.json({ error: "Cannot remove the last admin." }, 400);
+			}
+
+			await db.setUserRole(id, role);
+			logger.info("Admin: user role changed", { targetUserId: id, role, byAdmin: caller.userId });
+			return c.json({ ok: true, role }, 200);
+		} catch (err) {
+			logger.error("Admin: failed to change role", err instanceof Error ? err : undefined);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
+
 export default router;

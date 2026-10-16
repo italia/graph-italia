@@ -53,6 +53,10 @@ export function setUserRole(id: string, role: "USER" | "ADMIN") {
 	return prisma.user.update({ where: { id }, data: { role } });
 }
 
+export function countAdmins() {
+	return prisma.user.count({ where: { role: "ADMIN" } });
+}
+
 // Emails are compared case-insensitively everywhere (login, signup, recovery,
 // org invites, SPID/CIE matching): users, forms and identity providers do not
 // agree on casing. The column's unique constraint is still case-sensitive, so
