@@ -20,6 +20,7 @@ process.env["JWT_SECRET"] = JWT_SECRET;
 // bun test loads the local .env: start from the default (password auth on)
 // whatever the developer is trying out; the SPID/CIE-only suites set it themselves.
 delete process.env["ENABLE_PASSWORD_AUTH"];
+delete process.env["ADMIN_EMAILS"];
 process.env["APP_URL"] = "http://localhost:3000";
 
 const USER_ID        = "user-verified";
@@ -105,6 +106,8 @@ mock.module("../lib/db/apiKeyDb", () => ({
 	createApiLog:       mock(async () => undefined),
 }));
 
+const setUserRoleMock = mock(async (id: string, role: string) => ({ ...DB_USER, id, role }));
+
 mock.module("../lib/db", () => ({
 	default: {
 		findUserByEmail: mock(async (email: string) => {
@@ -130,6 +133,7 @@ mock.module("../lib/db", () => ({
 		destroyCodes: mock(async () => {}),
 		changePassword: mock(async () => {}),
 		getDefaultProjectId: mock(async () => null),
+		setUserRole: setUserRoleMock,
 	},
 }));
 
@@ -392,5 +396,30 @@ describe("ENABLE_PASSWORD_AUTH=false — SPID/CIE only", () => {
 	test("POST /auth/logout still works → 200", async () => {
 		const res = await app.request("/auth/logout", { method: "POST" });
 		expect(res.status).toBe(200);
+	});
+});
+
+describe("ADMIN_EMAILS", () => {
+	afterAll(() => { delete process.env["ADMIN_EMAILS"]; });
+
+	test("listed email (any case) is promoted to ADMIN at login", async () => {
+		process.env["ADMIN_EMAILS"] = "someone@else.it, VERIFIED@test.com";
+		setUserRoleMock.mockClear();
+		const res = await app.request("/auth/login", {
+			method: "POST",
+			...withJson({}, { email: USER_EMAIL, password: CORRECT_PASSWORD }),
+		});
+		expect(res.status).toBe(200);
+		expect(setUserRoleMock).toHaveBeenCalledWith(USER_ID, "ADMIN");
+	});
+
+	test("unlisted email keeps its role", async () => {
+		process.env["ADMIN_EMAILS"] = "someone@else.it";
+		setUserRoleMock.mockClear();
+		await app.request("/auth/login", {
+			method: "POST",
+			...withJson({}, { email: USER_EMAIL, password: CORRECT_PASSWORD }),
+		});
+		expect(setUserRoleMock).not.toHaveBeenCalled();
 	});
 });

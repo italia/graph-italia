@@ -11,6 +11,7 @@ import {
 import { Hono, type Context } from "hono";
 import { describeRoute, resolver } from "hono-openapi";
 import * as z from "zod";
+import { withAdminEmails } from "../lib/adminEmails";
 import db from "../lib/db";
 import type { User } from "../lib/db/prisma/client";
 import { sendOidcEmailCode } from "../lib/email";
@@ -147,7 +148,7 @@ const findOidcUser = async (sub: string, idpEmail?: string) => {
 // era una registrazione con password mai confermata.
 const linkAndLogin = async (c: Context, user: User, sub: string) => {
     await db.linkOidcIdentity(user.id, sub)
-    const active = user.verified ? user : await db.setVerified(user.id)
+    const active = await withAdminEmails(user.verified ? user : await db.setVerified(user.id))
     const { accessToken } = generateTokens(active)
     setAccessTokenCookie(c, accessToken)
     return active

@@ -95,6 +95,10 @@ Note that turning the flag off does not rewrite existing data: rows already at `
 - **SPID/CIE becomes the only way in.** `POST /auth/register`, `/auth/login`, `/auth/recover`, `/auth/resend`, `/auth/verify`, `/auth/reset-password`, `PUT /auth/pwd` and `GET /auth/confirm/:uid/:code` answer 403, as do the admin `resend-activation` and `reset-password` mailers. `GET /auth/user` and `POST /auth/logout` are shared with the OIDC flow and keep working.
 - **Signup goes through OIDC.** With the flag off, `POST /api/oidc/signup` creates the account with `password = null`; with it on, the same endpoint still requires a password, so the account can also sign in with email/password.
 
+## Bootstrap admins
+
+`ADMIN_EMAILS` (comma-separated, case-insensitive) lists emails that receive the `ADMIN` role when they sign in, through SPID/CIE or email/password (`lib/adminEmails.ts`, applied wherever a session is issued). It only grants: removing an email from the list does not demote anyone, so roles changed from the admin panel are never overridden at the next login. It needs no password, unlike the seed script, and also promotes accounts that already exist.
+
 ## SPID/CIE account matching
 
 Emails are compared case-insensitively everywhere (`findUserByEmail`) and new accounts are stored lowercased.

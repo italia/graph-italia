@@ -8,6 +8,7 @@ process.env["JWT_SECRET"] = JWT_SECRET;
 // bun test loads the local .env: start from the default (password auth on)
 // whatever the developer is trying out; the SPID/CIE-only suites set it themselves.
 delete process.env["ENABLE_PASSWORD_AUTH"];
+delete process.env["ADMIN_EMAILS"];
 process.env["APP_URL"] = "http://localhost:3000";
 
 const LINKED_SUB = "sub-linked"; // already linked to LINKED_USER

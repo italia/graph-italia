@@ -11,6 +11,7 @@ import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
+import { withAdminEmails } from "../lib/adminEmails";
 import { checkAuth, requireUser } from "../lib/middlewares";
 import { requirePasswordAuth } from "../lib/passwordAuth";
 import { rateLimit, tryConsume } from "../lib/rateLimit";
@@ -263,7 +264,7 @@ router.post("/login",
 				return c.json({ error: { message: "Please verify your email before logging in." } }, 401);
 			}
 
-			const { accessToken } = generateTokens(existingUser);
+			const { accessToken } = generateTokens(await withAdminEmails(existingUser));
 			setAccessTokenCookie(c, accessToken);
 
 			logger.info("User logged in", {
@@ -466,7 +467,7 @@ router.post("/verify",
 		const userValue = await db.setVerified(dbUser.id);
 		await db.consumeCode(record.id);
 
-		const { accessToken } = generateTokens(userValue);
+		const { accessToken } = generateTokens(await withAdminEmails(userValue));
 		setAccessTokenCookie(c, accessToken);
 
 		logger.info("User verified successfully", { userId: uid });
@@ -531,7 +532,7 @@ router.get(
 
 		const userValue = await db.setVerified(dbUser.id);
 		await db.consumeCode(record.id);
-		const { accessToken } = generateTokens(userValue);
+		const { accessToken } = generateTokens(await withAdminEmails(userValue));
 		setAccessTokenCookie(c, accessToken);
 
 		logger.info("Email confirmed successfully", { userId: uid });
@@ -587,7 +588,7 @@ router.post(
 		// Ensure the account is active after a successful recovery
 		const userValue = await db.setVerified(uid);
 
-		const { accessToken } = generateTokens(userValue);
+		const { accessToken } = generateTokens(await withAdminEmails(userValue));
 		setAccessTokenCookie(c, accessToken);
 
 		logger.info("Password reset successfully", { userId: uid });
