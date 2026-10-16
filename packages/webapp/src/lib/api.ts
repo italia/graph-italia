@@ -905,6 +905,37 @@ export async function adminResetPassword(id: string): Promise<boolean> {
   return response.status === 200;
 }
 
+export interface DuplicateEmailUser {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  verified: boolean;
+  hasPassword: boolean;
+  createdAt: string;
+  identities: number;
+  ownedProjects: number;
+  projectMemberships: number;
+  orgMemberships: number;
+}
+
+export interface DuplicateEmailGroup {
+  /** The shared email, lowercased. */
+  email: string;
+  users: DuplicateEmailUser[];
+}
+
+/** Groups of accounts whose emails differ only by case (empty when there are none). */
+export async function adminGetDuplicateEmails(): Promise<DuplicateEmailGroup[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/admin/users/duplicates`);
+  return response.status === 200 ? response.data : [];
+}
+
+/** Folds `mergeIds` into `keepId`: their projects, memberships and SPID/CIE identities move to it. */
+export async function adminMergeUsers(keepId: string, mergeIds: string[]): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/merge`, { keepId, mergeIds });
+  return response.status === 200;
+}
+
 /** The new role applies at the user's next sign-in (the role travels in the session token). */
 export async function adminSetUserRole(id: string, role: AdminUser["role"]): Promise<boolean> {
   const response = await axios.patch(`${getServerUrlWithApi()}/admin/users/${id}/role`, { role });

@@ -45,11 +45,23 @@ mock.module("../lib/email", () => ({
 
 const setUserRole = mock(async (id: string, role: string) => ({ ...USERS[id], role }));
 
+const DUPLICATE_GROUPS = [{ email: "user@test.com", users: [{ id: USER_ID }, { id: "dup-1" }] }];
+
+class MergeError extends Error {}
+const mergeUsers = mock(async (keepId: string, mergeIds: string[]) => {
+	if (mergeIds.includes("different-email")) throw new MergeError("Users do not share the same email.");
+	return { ...USERS[keepId], id: keepId };
+});
+
+mock.module("../lib/db/userMergeDb", () => ({ MergeError }));
+
 mock.module("../lib/db", () => ({
 	default: {
 		findUserById: mock(async (id: string) => USERS[id] ?? null),
 		countAdmins: mock(async () => adminCount),
 		setUserRole,
+		findDuplicateEmailGroups: mock(async () => DUPLICATE_GROUPS),
+		mergeUsers,
 	},
 }));
 
@@ -123,5 +135,55 @@ describe("PATCH /admin/users/:id/role", () => {
 	test("non-admin caller → 403", async () => {
 		const res = await patchRole(OTHER_ADMIN_ID, "USER", asUser(USER_ID, "USER"));
 		expect(res.status).toBe(403);
+	});
+});
+
+// ─── Duplicate emails ────────────────────────────────────────────────────────
+
+describe("GET /admin/users/duplicates", () => {
+	test("returns the groups → 200", async () => {
+		const res = await app.request("/admin/users/duplicates", { headers: asUser(ADMIN_ID, "ADMIN") });
+		expect(res.status).toBe(200);
+		expect(await res.json()).toEqual(DUPLICATE_GROUPS);
+	});
+
+	test("non-admin caller → 403", async () => {
+		const res = await app.request("/admin/users/duplicates", { headers: asUser(USER_ID, "USER") });
+		expect(res.status).toBe(403);
+	});
+});
+
+describe("POST /admin/users/merge", () => {
+	function merge(body: object, headers = asUser(ADMIN_ID, "ADMIN")) {
+		return app.request("/admin/users/merge", {
+			method: "POST",
+			headers: { ...headers, "Content-Type": "application/json" },
+			body: JSON.stringify(body),
+		});
+	}
+
+	test("valid merge → 200", async () => {
+		mergeUsers.mockClear();
+		const res = await merge({ keepId: USER_ID, mergeIds: ["dup-1"] });
+		expect(res.status).toBe(200);
+		expect(mergeUsers).toHaveBeenCalledWith(USER_ID, ["dup-1"]);
+	});
+
+	test("merging away your own account → 400", async () => {
+		mergeUsers.mockClear();
+		const res = await merge({ keepId: USER_ID, mergeIds: [ADMIN_ID] });
+		expect(res.status).toBe(400);
+		expect(mergeUsers).not.toHaveBeenCalled();
+	});
+
+	test("MergeError from the DB layer → 400 with its message", async () => {
+		const res = await merge({ keepId: USER_ID, mergeIds: ["different-email"] });
+		expect(res.status).toBe(400);
+		expect(await res.json()).toEqual({ error: "Users do not share the same email." });
+	});
+
+	test("empty mergeIds → 400", async () => {
+		const res = await merge({ keepId: USER_ID, mergeIds: [] });
+		expect(res.status).toBe(400);
 	});
 });

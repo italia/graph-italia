@@ -7,9 +7,11 @@ import * as orgDb from "./orgDb";
 import * as projectDb from "./projectDb";
 import * as projectMgmtDb from "./projectMgmtDb";
 import * as userdDb from "./userDb";
+import * as userMergeDb from "./userMergeDb";
 
 const db = {
 	...userdDb,
+	...userMergeDb,
 	...chartDb,
 	...dashboardDb,
 	...dataSourceDb,

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
+import { MergeError } from "../lib/db/userMergeDb";
 import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 import { checkAuth, requireUser, requireAdmin } from "../lib/middlewares";
 import { logger } from "../lib/logger";
@@ -207,6 +208,59 @@ router.patch(
 			return c.json({ ok: true, role }, 200);
 		} catch (err) {
 			logger.error("Admin: failed to change role", err instanceof Error ? err : undefined);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
+
+// GET /admin/users/duplicates — accounts whose emails differ only by case
+router.get(
+	"/users/duplicates",
+	describeRoute({
+		description: "List groups of accounts whose emails differ only by case. Admin only.",
+		responses: { 200: { description: "Duplicate groups (empty when there are none)" } },
+	}),
+	async (c) => {
+		try {
+			return c.json(await db.findDuplicateEmailGroups(), 200);
+		} catch (err) {
+			logger.error("Admin: failed to list duplicate emails", err instanceof Error ? err : undefined);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
+
+// POST /admin/users/merge — fold duplicate accounts into the one to keep
+const mergeSchema = z.object({
+	keepId: z.string().min(1),
+	mergeIds: z.array(z.string().min(1)).min(1),
+});
+
+router.post(
+	"/users/merge",
+	describeRoute({
+		description: "Merge accounts sharing the same email (case-insensitive) into keepId: projects, memberships and SPID/CIE identities move to it, the others are deleted. Admin only.",
+		responses: {
+			200: { description: "Accounts merged" },
+			400: { description: "Invalid merge (different emails, unknown users, or your own account would be deleted)", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	zValidator("json", mergeSchema),
+	async (c) => {
+		const { keepId, mergeIds } = c.req.valid("json");
+		const caller = c.get("user") as ParsedToken;
+
+		if (mergeIds.includes(caller.userId)) {
+			return c.json({ error: "Cannot merge away your own account: keep it instead." }, 400);
+		}
+
+		try {
+			const kept = await db.mergeUsers(keepId, mergeIds);
+			logger.info("Admin: users merged", { keptUserId: kept.id, mergedUserIds: mergeIds, byAdmin: caller.userId });
+			return c.json({ ok: true, id: kept.id, email: kept.email }, 200);
+		} catch (err) {
+			if (err instanceof MergeError) return c.json({ error: err.message }, 400);
+			logger.error("Admin: failed to merge users", err instanceof Error ? err : undefined);
 			return c.json({ error: "Internal error" }, 500);
 		}
 	},

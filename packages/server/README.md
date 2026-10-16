@@ -103,6 +103,8 @@ Note that turning the flag off does not rewrite existing data: rows already at `
 
 Emails are compared case-insensitively everywhere (`findUserByEmail`) and new accounts are stored lowercased.
 
+Existing rows were lowercased by migration `20261016140000_normalize_user_emails`, except accounts whose emails differ only by case: those are listed in the admin panel ("Duplicate emails", `GET /admin/users/duplicates`) and merged there (`POST /admin/users/merge`, `lib/db/userMergeDb.ts`). The admin picks the account to keep; projects, project/org memberships (higher role wins) and SPID/CIE identities move to it, it inherits verified/ADMIN/password from the merged accounts, and the others are deleted. Once the panel reports no duplicates, a `CHECK (email = lower(email))` constraint can be added in a later migration.
+
 The **email** is what links a SPID/CIE login to an account (`routes/oidc.ts`). Identities live in `OidcIdentity` (one row per `sub`), so the same account can be reached from SPID and from CIE, which issue different subjects.
 
 - **The identity provider sends an email** (IAM Proxy is trusted): `/api/oidc/login` looks the account up by that email — including accounts created with email/password — links the `sub`, marks the account verified and opens the session. With no matching account the user lands on the webapp's `/oidc/signup` with the email locked.

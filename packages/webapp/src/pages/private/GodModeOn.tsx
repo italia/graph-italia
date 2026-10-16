@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { FaCircleCheck, FaCrown, FaEnvelope, FaKey, FaShield, FaTrash, FaUserShield } from "react-icons/fa6";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import Layout from "../../components/layout/index.tsx";
+import DuplicateEmailsPanel from "../../components/admin/DuplicateEmailsPanel.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import registerDarkTheme from "../../components/layout/DataTableDarkTheme.ts";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
@@ -270,6 +271,10 @@ export default function GodModeOnPage() {
           <span className="badge badge-error badge-outline">Admin only</span>
           <span className="badge badge-ghost">{users.length} users</span>
         </div>
+      </div>
+
+      <div className="px-6">
+        <DuplicateEmailsPanel onMerged={fetchUsers} notify={showToast} />
       </div>
 
       <div className="p-6">
