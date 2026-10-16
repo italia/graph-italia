@@ -312,7 +312,7 @@ La pipeline (`.github/workflows/release.yml`) aggiorna le release con `--reuse-v
 |---|---|---|
 | `ENABLE_PASSWORD_AUTH` | variable | `false` = accesso solo SPID/CIE |
 | `ADMIN_EMAILS` | variable | `a@pa.gov.it,b@pa.gov.it` |
-| `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_REDIRECT_URI`, `OIDC_SCOPES` | variable | `https://<host>/api/oidc/callback` per il redirect |
+| `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_REDIRECT_URI`, `OIDC_SCOPES`, `OIDC_AUTH_EXTERNAL_URL` | variable | redirect `https://<host>/api/oidc/callback` (assoluto: dietro l'ingress il server vede `http://`); external URL `https://<host>` |
 | `OIDC_CLIENT_SECRET`, `OIDC_AUTH_SECRET` | secret | `OIDC_AUTH_SECRET` di almeno 32 caratteri |
 
 Si applicano solo le variabili valorizzate: una variabile assente lascia il valore attuale della release. Per tornare indietro va impostato il valore opposto (es. `ENABLE_PASSWORD_AUTH=true`), non cancellata la variabile.

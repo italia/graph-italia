@@ -186,13 +186,14 @@ jobs:
           OIDC_CLIENT_ID: ${{ vars.OIDC_CLIENT_ID }}
           OIDC_REDIRECT_URI: ${{ vars.OIDC_REDIRECT_URI }}
           OIDC_SCOPES: ${{ vars.OIDC_SCOPES }}
+          OIDC_AUTH_EXTERNAL_URL: ${{ vars.OIDC_AUTH_EXTERNAL_URL }}
           OIDC_CLIENT_SECRET: ${{ secrets.OIDC_CLIENT_SECRET }}
           OIDC_AUTH_SECRET: ${{ secrets.OIDC_AUTH_SECRET }}
         run: |
           # --set-string keeps "false" a string; commas (ADMIN_EMAILS) are
           # escaped because Helm would otherwise split the value on them.
           ENV_ARGS=()
-          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
+          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_AUTH_EXTERNAL_URL OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
             value="${!name}"
             if [ -n "$value" ]; then
               ENV_ARGS+=(--set-string "server.env.${name}=${value//,/\\,}")
@@ -351,13 +352,14 @@ jobs:
           OIDC_CLIENT_ID: ${{ vars.OIDC_CLIENT_ID }}
           OIDC_REDIRECT_URI: ${{ vars.OIDC_REDIRECT_URI }}
           OIDC_SCOPES: ${{ vars.OIDC_SCOPES }}
+          OIDC_AUTH_EXTERNAL_URL: ${{ vars.OIDC_AUTH_EXTERNAL_URL }}
           OIDC_CLIENT_SECRET: ${{ secrets.OIDC_CLIENT_SECRET }}
           OIDC_AUTH_SECRET: ${{ secrets.OIDC_AUTH_SECRET }}
         run: |
           # --set-string keeps "false" a string; commas (ADMIN_EMAILS) are
           # escaped because Helm would otherwise split the value on them.
           ENV_ARGS=()
-          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
+          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_AUTH_EXTERNAL_URL OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
             value="${!name}"
             if [ -n "$value" ]; then
               ENV_ARGS+=(--set-string "server.env.${name}=${value//,/\\,}")

@@ -135,9 +135,10 @@ OIDC_CLIENT_SECRET=       # client auth is client_secret_basic only
 OIDC_AUTH_SECRET=         # >= 32 random chars, signs the oidc-auth session cookie
 OIDC_REDIRECT_URI=        # http://127.0.0.1:3003/api/oidc/callback — the library default '/callback' does not match our mount
 OIDC_SCOPES=              # optional, e.g. 'openid profile email'; empty = all scopes the IdP advertises
+OIDC_AUTH_EXTERNAL_URL=   # deployed behind TLS-terminating ingress: public https://<host>, used for the post-login 'continue' URL
 ```
 
-In the deployed environments these are Helm values (`server.env.*`). The release workflow upgrades with `--reuse-values`, so chart defaults don't reach existing releases: `ENABLE_PASSWORD_AUTH`, `ADMIN_EMAILS` and the `OIDC_*` settings are read from the GitHub Environment (`production` / `test`) variables and secrets and passed with `--set-string` only when set (see `charts/graph-italia/README.md`).
+In the deployed environments these are Helm values (`server.env.*`). The release workflow upgrades with `--reuse-values`, so chart defaults don't reach existing releases: `ENABLE_PASSWORD_AUTH`, `ADMIN_EMAILS` and the `OIDC_*` settings (including `OIDC_AUTH_EXTERNAL_URL`) are read from the GitHub Environment (`production` / `test`) variables and secrets and passed with `--set-string` only when set (see `charts/graph-italia/README.md`).
 
 **packages/webapp/.env**
 ```
