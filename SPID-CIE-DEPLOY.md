@@ -54,7 +54,7 @@ Ci sono due strade; conviene sceglierne una sola come fonte. Se una variabile è
 
 ### A. Environments di GitHub (consigliata)
 
-Serve un amministratore del repository `italia/graph-italia`. In Settings → Environments → `production` (e `test`) si aggiungono le *variables* e i *secrets* della tabella sopra.
+Serve un amministratore del repository `italia/dataviz-monorepo`. In Settings → Environments → `production` (e `test`) si aggiungono le *variables* e i *secrets* della tabella sopra.
 
 Il valore viene applicato al deploy successivo: tag `v*.*.*` per la produzione, push su `develop` per il test. Il log del passo «Deploy» elenca i nomi delle variabili applicate, senza i valori.
 
