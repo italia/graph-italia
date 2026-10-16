@@ -113,9 +113,8 @@ model Membership {
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
-  sub      String? @unique // OIDC subject identifier (SPID/CIE); null for email/password users
   pa       String? // Pubblica Amministrazione di appartenenza; required by the signup form, optional here for existing rows
-  password String
+  password String? // null for accounts created through SPID/CIE-only signup (ENABLE_PASSWORD_AUTH=false)
   verified Boolean @default(false)
   role     Role    @default(USER)
 
@@ -126,7 +125,22 @@ model User {
   projectMember ProjectMember[]
   ownedProjects Project[]       @relation("ProjectOwner")
 
-  codes VerificationCode[]
+  codes      VerificationCode[]
+  identities OidcIdentity[]
+}
+
+// SPID/CIE (OIDC) identities linked to a user, one row per `sub`: the same
+// person gets different subjects from SPID and CIE, and both can point at the
+// same account. The account itself is matched by email (see routes/oidc.ts).
+model OidcIdentity {
+  sub    String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // ─── API Keys ───────────────────────────────────────────────────────────────

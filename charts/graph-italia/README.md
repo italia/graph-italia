@@ -304,10 +304,23 @@ kubectl get ingress -n graph-italia
 kubectl describe ingress graph-italia -n graph-italia
 ```
 
+## Variabili gestite da GitHub
+
+La pipeline (`.github/workflows/release.yml`) aggiorna le release con `--reuse-values`: i default di `values.yaml` non sovrascrivono i valori già installati. Alcune variabili del server si impostano quindi dagli Environment di GitHub (Settings → Environments → `production` / `test`) e vengono passate a Helm al deploy successivo:
+
+| Nome | Tipo | Esempio |
+|---|---|---|
+| `ENABLE_PASSWORD_AUTH` | variable | `false` = accesso solo SPID/CIE |
+| `ADMIN_EMAILS` | variable | `a@pa.gov.it,b@pa.gov.it` |
+| `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_REDIRECT_URI`, `OIDC_SCOPES`, `OIDC_AUTH_EXTERNAL_URL` | variable | redirect `https://<host>/api/oidc/callback` (assoluto: dietro l'ingress il server vede `http://`); external URL `https://<host>` |
+| `OIDC_CLIENT_SECRET`, `OIDC_AUTH_SECRET` | secret | `OIDC_AUTH_SECRET` di almeno 32 caratteri |
+
+Si applicano solo le variabili valorizzate: una variabile assente lascia il valore attuale della release. Per tornare indietro va impostato il valore opposto (es. `ENABLE_PASSWORD_AUTH=true`), non cancellata la variabile.
+
 ## Note Importanti
 
 - **Non committare mai** file `values.yaml` con dati sensibili
 - Usa `--reuse-values` per mantenere i secrets tra upgrade
 - I valori di default sono in `values.yaml` (template senza dati sensibili)
 - I jobs di migration/seed vengono eliminati automaticamente dopo il successo
-- Il seed è idempotente: salta utenti già esistenti
+- Il seed è idempotente: per gli utenti già esistenti (email confrontata senza maiuscole/minuscole) applica solo `role`/`verified` indicati, mai la password; per gli admin è più semplice `ADMIN_EMAILS`

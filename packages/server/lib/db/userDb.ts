@@ -53,19 +53,35 @@ export function setUserRole(id: string, role: "USER" | "ADMIN") {
 	return prisma.user.update({ where: { id }, data: { role } });
 }
 
+export function countAdmins() {
+	return prisma.user.count({ where: { role: "ADMIN" } });
+}
+
+// Emails are compared case-insensitively everywhere (login, signup, recovery,
+// org invites, SPID/CIE matching): users, forms and identity providers do not
+// agree on casing. The column's unique constraint is still case-sensitive, so
+// new accounts are stored lowercased (see createUserByEmailAndPassword).
 export function findUserByEmail(email: string) {
-	return prisma.user.findUnique({
-		where: {
-			email,
-		},
+	return prisma.user.findFirst({
+		where: { email: { equals: email.trim(), mode: "insensitive" } },
 	});
 }
 
-export function findUserBySub(sub: string) {
-	return prisma.user.findUnique({
-		where: {
-			sub,
-		},
+export async function findUserByOidcSub(sub: string) {
+	const identity = await prisma.oidcIdentity.findUnique({
+		where: { sub },
+		include: { user: true },
+	});
+	return identity?.user ?? null;
+}
+
+// Idempotent: (re)points `sub` at the user, so a subject always belongs to the
+// account its email last resolved to.
+export function linkOidcIdentity(userId: string, sub: string) {
+	return prisma.oidcIdentity.upsert({
+		where: { sub },
+		create: { sub, userId },
+		update: { userId },
 	});
 }
 
@@ -76,12 +92,20 @@ export async function createUserByEmailAndPassword({
 	pa,
 }: {
 	email: string;
-	password: string;
+	// Omitted for SPID/CIE-only signups: the account then has no password at all.
+	password?: string;
 	sub?: string;
 	pa?: string;
 }) {
-	const passwordHash = bcrypt.hashSync(password, 12);
-	const created = await prisma.user.create({ data: { email, password: passwordHash, sub, pa } });
+	const passwordHash = password ? bcrypt.hashSync(password, 12) : null;
+	const created = await prisma.user.create({
+		data: {
+			email: email.trim().toLowerCase(),
+			password: passwordHash,
+			pa,
+			identities: sub ? { create: { sub } } : undefined,
+		},
+	});
 	await createDefaultProject(created.id, created.email);
 	return created;
 }

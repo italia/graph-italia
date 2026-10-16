@@ -147,6 +147,9 @@
                             "label": "Sign Up"
                         }
                     }
+                },
+                "oidcOnly": {
+                    "description": "Sign-in is available only with SPID or CIE. On your first access you will be asked to complete your registration."
                 }
             },
             "signup": {

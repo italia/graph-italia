@@ -390,6 +390,7 @@ export const ModelName = {
   Org: 'Org',
   Membership: 'Membership',
   User: 'User',
+  OidcIdentity: 'OidcIdentity',
   ApiKey: 'ApiKey',
   ApiLog: 'ApiLog',
   VerificationCode: 'VerificationCode',
@@ -413,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "project" | "projectMember" | "orgProject" | "org" | "membership" | "user" | "apiKey" | "apiLog" | "verificationCode" | "dataSource" | "chart" | "sourceLink" | "dashboard" | "slot"
+    modelProps: "project" | "projectMember" | "orgProject" | "org" | "membership" | "user" | "oidcIdentity" | "apiKey" | "apiLog" | "verificationCode" | "dataSource" | "chart" | "sourceLink" | "dashboard" | "slot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -858,6 +859,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    OidcIdentity: {
+      payload: Prisma.$OidcIdentityPayload<ExtArgs>
+      fields: Prisma.OidcIdentityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OidcIdentityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OidcIdentityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>
+        }
+        findFirst: {
+          args: Prisma.OidcIdentityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OidcIdentityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>
+        }
+        findMany: {
+          args: Prisma.OidcIdentityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>[]
+        }
+        create: {
+          args: Prisma.OidcIdentityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>
+        }
+        createMany: {
+          args: Prisma.OidcIdentityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OidcIdentityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>[]
+        }
+        delete: {
+          args: Prisma.OidcIdentityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>
+        }
+        update: {
+          args: Prisma.OidcIdentityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>
+        }
+        deleteMany: {
+          args: Prisma.OidcIdentityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OidcIdentityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OidcIdentityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>[]
+        }
+        upsert: {
+          args: Prisma.OidcIdentityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OidcIdentityPayload>
+        }
+        aggregate: {
+          args: Prisma.OidcIdentityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOidcIdentity>
+        }
+        groupBy: {
+          args: Prisma.OidcIdentityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OidcIdentityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OidcIdentityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OidcIdentityCountAggregateOutputType> | number
         }
       }
     }
@@ -1548,7 +1623,6 @@ export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  sub: 'sub',
   pa: 'pa',
   password: 'password',
   verified: 'verified',
@@ -1558,6 +1632,16 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OidcIdentityScalarFieldEnum = {
+  sub: 'sub',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OidcIdentityScalarFieldEnum = (typeof OidcIdentityScalarFieldEnum)[keyof typeof OidcIdentityScalarFieldEnum]
 
 
 export const ApiKeyScalarFieldEnum = {
@@ -1978,6 +2062,7 @@ export type GlobalOmitConfig = {
   org?: Prisma.OrgOmit
   membership?: Prisma.MembershipOmit
   user?: Prisma.UserOmit
+  oidcIdentity?: Prisma.OidcIdentityOmit
   apiKey?: Prisma.ApiKeyOmit
   apiLog?: Prisma.ApiLogOmit
   verificationCode?: Prisma.VerificationCodeOmit

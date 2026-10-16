@@ -10,7 +10,24 @@
         },
         "oidc": {
             "loading": "Verifica del tuo account in corso…",
-            "alreadyRegistered": "Hai già completato la registrazione. Accesso in corso…"
+            "alreadyRegistered": "Hai già completato la registrazione. Accesso in corso…",
+            "emailStep": {
+                "title": "Conferma la tua email",
+                "description": "Il tuo accesso SPID/CIE non ci ha fornito un indirizzo email. Inseriscilo: ti invieremo un codice per confermarlo. Se hai già un account con questa email, verrà collegato alla tua identità SPID/CIE.",
+                "emailLabel": "Indirizzo email",
+                "send": "Invia codice",
+                "sent": "Ti abbiamo inviato un codice a {{email}}. Scade tra 15 minuti.",
+                "codeLabel": "Codice di verifica",
+                "verify": "Conferma",
+                "changeEmail": "Cambia email",
+                "resend": "Invia di nuovo il codice",
+                "errors": {
+                    "invalidEmail": "Indirizzo email non valido.",
+                    "invalidCode": "Codice non valido o scaduto.",
+                    "tooMany": "Troppi tentativi. Riprova più tardi.",
+                    "generic": "Si è verificato un errore. Riprova più tardi."
+                }
+            }
         },
         "registered": {
             "title": "Registrazione completata",
@@ -928,7 +945,8 @@
         "description": "Scegli una nuova password per il tuo account.",
         "changePassword": {
             "success": "Password aggiornata con successo."
-        }
+        },
+        "oidcOnly": "L'accesso avviene tramite SPID/CIE: non c'è una password da gestire."
     },
     "publicChart": {
         "errors": {

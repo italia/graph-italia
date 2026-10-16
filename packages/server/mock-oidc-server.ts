@@ -6,6 +6,15 @@ import { SignJWT, exportJWK, generateKeyPair } from 'jose'
 const PORT = 9090
 const ISSUER = `http://127.0.0.1:${PORT}`
 
+// Identità simulata, configurabile per provare i diversi casi di collegamento:
+//   MOCK_OIDC_SUB=cie-123            sub diverso (es. stessa persona via CIE)
+//   MOCK_OIDC_EMAIL=me@example.com   email fornita dall'IdP
+//   MOCK_OIDC_NO_EMAIL=true          nessuna email (come CIE): l'app la chiede e la verifica
+const MOCK_SUB = process.env.MOCK_OIDC_SUB ?? 'user-1'
+const MOCK_EMAIL = process.env.MOCK_OIDC_NO_EMAIL === 'true'
+    ? undefined
+    : (process.env.MOCK_OIDC_EMAIL ?? 'lp@lp.lp')
+
 const app = new Hono()
 
 // Genera una coppia di chiavi RSA all'avvio
@@ -66,8 +75,8 @@ app.post('/token', async (c) => {
     const clientId = process.env.OIDC_CLIENT_ID ?? 'my-client-id'
 
     const idToken = await new SignJWT({
-        sub: 'user-1',
-        email: 'lp@lp.lp',
+        sub: MOCK_SUB,
+        ...(MOCK_EMAIL ? { email: MOCK_EMAIL } : {}),
         name: 'Mario Rossi',
         nonce,
         iss: ISSUER,
@@ -92,7 +101,7 @@ app.post('/token', async (c) => {
 // esercitare il fallback userinfo del claims hook come fa IAM Proxy Italia.
 app.get('/userinfo', (c) => {
     return c.json({
-        sub: 'user-1',
+        sub: MOCK_SUB,
         given_name: 'Mario',
         family_name: 'Rossi',
         fiscal_number: 'RSSMRA80A01H501U',
@@ -105,3 +114,4 @@ app.post('/revoke', (c) => c.json({}))
 Bun.serve({ fetch: app.fetch, port: PORT })
 console.log(`✅ Mock OIDC server → ${ISSUER}`)
 console.log(`   Discovery: ${ISSUER}/.well-known/openid-configuration`)
+console.log(`   Identità: sub=${MOCK_SUB} email=${MOCK_EMAIL ?? '(nessuna)'}`)

@@ -1,33 +1,37 @@
-import { beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
+// bun test loads the local .env: start from the default (password auth on)
+// whatever the developer is trying out; the SPID/CIE-only suites set it themselves.
+delete process.env["ENABLE_PASSWORD_AUTH"];
+delete process.env["ADMIN_EMAILS"];
 process.env["APP_URL"] = "http://localhost:3000";
 
-const EXISTING_SUB = "sub-existing"; // has an account linked
-const NEW_SUB = "sub-new"; // no account yet → must sign up
-const EXISTING_EMAIL = "taken@test.com"; // belongs to another account (no sub)
-const FREE_EMAIL = "new@test.com";
+const LINKED_SUB = "sub-linked"; // already linked to LINKED_USER
+const NEW_SUB = "sub-new"; // not linked to anything
+const LINKED_EMAIL = "linked@test.com";
+const PASSWORD_EMAIL = "password-user@test.com"; // email/password account, no identity yet
+const FREE_EMAIL = "new@test.com"; // no account
 const STRONG_PASSWORD = "P@ssw0rd1!";
+const PIN = "123456";
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
-const DB_USER = {
+const LINKED_USER = {
 	id: "user-1",
-	email: "linked@test.com",
-	sub: EXISTING_SUB,
+	email: LINKED_EMAIL,
 	password: "hashed",
 	verified: true,
 	role: "USER",
 	createdAt: new Date(),
 	updatedAt: new Date(),
 };
-
-const OTHER_USER = { ...DB_USER, id: "user-2", email: EXISTING_EMAIL, sub: null };
-const CREATED_USER = { ...DB_USER, id: "user-3", email: FREE_EMAIL, sub: NEW_SUB };
+const PASSWORD_USER = { ...LINKED_USER, id: "user-2", email: PASSWORD_EMAIL, verified: false };
+const CREATED_USER = { ...LINKED_USER, id: "user-3", email: FREE_EMAIL };
 
 // The OIDC session getAuth() returns; mutated per-test.
 let currentAuth: Record<string, unknown> | null = null;
@@ -56,12 +60,26 @@ mock.module("@hono/oidc-auth", () => ({
 	revokeSession: mock(async () => {}),
 }));
 
+const sendOidcEmailCode = mock(async (_email: string, _pin: string) => ({}));
+mock.module("../lib/email", () => ({ sendOidcEmailCode }));
+mock.module("../lib/pin", () => ({ default: () => PIN }));
+
+const linkOidcIdentity = mock(async (_userId: string, _sub: string) => ({}));
+const createUserMock = mock(async (_args: Record<string, unknown>) => CREATED_USER);
+const setVerified = mock(async (id: string) => ({ ...(id === PASSWORD_USER.id ? PASSWORD_USER : CREATED_USER), verified: true }));
+
 mock.module("../lib/db", () => ({
 	default: {
-		findUserBySub: mock(async (sub: string) => (sub === EXISTING_SUB ? DB_USER : null)),
-		findUserByEmail: mock(async (email: string) => (email === EXISTING_EMAIL ? OTHER_USER : null)),
-		createUserByEmailAndPassword: mock(async () => CREATED_USER),
-		setVerified: mock(async () => CREATED_USER),
+		findUserByOidcSub: mock(async (sub: string) => (sub === LINKED_SUB ? LINKED_USER : null)),
+		findUserByEmail: mock(async (email: string) => {
+			const e = email.toLowerCase();
+			if (e === LINKED_EMAIL) return LINKED_USER;
+			if (e === PASSWORD_EMAIL) return PASSWORD_USER;
+			return null;
+		}),
+		linkOidcIdentity,
+		createUserByEmailAndPassword: createUserMock,
+		setVerified,
 	},
 }));
 
@@ -74,40 +92,74 @@ async function buildApp() {
 	return app;
 }
 
-function withJson(body: object) {
+function withJson(body: object, cookie?: string) {
 	return {
 		method: "POST",
-		headers: { "Content-Type": "application/json" },
+		headers: { "Content-Type": "application/json", ...(cookie ? { Cookie: cookie } : {}) },
 		body: JSON.stringify(body),
 	};
 }
 
+// The `oidc-email` cookie a response sets, as a request Cookie header.
+function emailCookie(res: Response) {
+	const raw = res.headers.getSetCookie().find((c) => c.startsWith("oidc-email="));
+	return raw?.split(";")[0];
+}
+
+// Runs the send-code step for the current session and returns the pending cookie.
+async function sendCode(email: string) {
+	const res = await app.request("/oidc/signup/email/send", withJson({ email }));
+	expect(res.status).toBe(200);
+	return emailCookie(res)!;
+}
+
 let app: Hono;
 beforeAll(async () => { app = await buildApp(); });
+beforeEach(() => {
+	linkOidcIdentity.mockClear();
+	createUserMock.mockClear();
+	sendOidcEmailCode.mockClear();
+	setVerified.mockClear();
+});
 
 // ─── /oidc/login ───────────────────────────────────────────────────────────────
 
 describe("GET /oidc/login", () => {
-	test("known sub → 302 to APP_URL, sets access_token cookie", async () => {
-		currentAuth = { sub: EXISTING_SUB, email: DB_USER.email };
+	test("linked sub, no email from IdP → 302 to APP_URL, sets access_token cookie", async () => {
+		currentAuth = { sub: LINKED_SUB };
 		const res = await app.request("/oidc/login");
 		expect(res.status).toBe(302);
 		expect(res.headers.get("location")).toBe("http://localhost:3000");
 		expect(res.headers.get("set-cookie")).toContain("access_token");
 	});
 
-	test("unknown sub → 302 to /oidc/signup?t=<sub>, no session cookie", async () => {
+	test("IdP email matching a password account → links the new sub, activates and logs in", async () => {
+		currentAuth = { sub: NEW_SUB, email: "Password-User@Test.com" };
+		const res = await app.request("/oidc/login");
+		expect(res.status).toBe(302);
+		expect(res.headers.get("location")).toBe("http://localhost:3000");
+		expect(res.headers.get("set-cookie")).toContain("access_token");
+		expect(linkOidcIdentity).toHaveBeenCalledWith(PASSWORD_USER.id, NEW_SUB);
+		expect(setVerified).toHaveBeenCalledWith(PASSWORD_USER.id);
+	});
+
+	test("IdP email with no account, unknown sub → 302 to signup, no session cookie", async () => {
 		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
 		const res = await app.request("/oidc/login");
 		expect(res.status).toBe(302);
-		expect(res.headers.get("location")).toBe(
-			"http://localhost:3000/oidc/signup?t=sub-new",
-		);
+		expect(res.headers.get("location")).toBe("http://localhost:3000/oidc/signup?t=sub-new");
 		expect(res.headers.get("set-cookie") ?? "").not.toContain("access_token");
 	});
 
+	test("no email from IdP, unknown sub → 302 to signup", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const res = await app.request("/oidc/login");
+		expect(res.status).toBe(302);
+		expect(res.headers.get("location")).toBe("http://localhost:3000/oidc/signup?t=sub-new");
+	});
+
 	test("no sub in session → 401", async () => {
-		currentAuth = { email: FREE_EMAIL }; // sub missing
+		currentAuth = { email: FREE_EMAIL };
 		const res = await app.request("/oidc/login");
 		expect(res.status).toBe(401);
 	});
@@ -116,20 +168,24 @@ describe("GET /oidc/login", () => {
 // ─── /oidc/signup/status ─────────────────────────────────────────────────────
 
 describe("GET /oidc/signup/status", () => {
-	test("unregistered sub → 200 { registered:false } with claims", async () => {
+	test("email from IdP → verified, prefilled", async () => {
 		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL, given_name: "Ada", family_name: "Lovelace" };
 		const res = await app.request("/oidc/signup/status");
 		expect(res.status).toBe(200);
 		const body = (await res.json()) as Record<string, unknown>;
-		expect(body.registered).toBe(false);
-		expect(body.email).toBe(FREE_EMAIL);
-		expect(body.given_name).toBe("Ada");
+		expect(body).toMatchObject({ registered: false, email: FREE_EMAIL, emailFromIdp: true, emailVerified: true, given_name: "Ada" });
 	});
 
-	test("already-registered sub → 200 { registered:true }", async () => {
-		currentAuth = { sub: EXISTING_SUB, email: DB_USER.email };
+	test("no email from IdP → must be asked and verified", async () => {
+		currentAuth = { sub: NEW_SUB };
 		const res = await app.request("/oidc/signup/status");
-		expect(res.status).toBe(200);
+		const body = (await res.json()) as Record<string, unknown>;
+		expect(body).toMatchObject({ registered: false, email: "", emailFromIdp: false, emailVerified: false });
+	});
+
+	test("linked sub → registered", async () => {
+		currentAuth = { sub: LINKED_SUB };
+		const res = await app.request("/oidc/signup/status");
 		const body = (await res.json()) as Record<string, unknown>;
 		expect(body.registered).toBe(true);
 	});
@@ -141,41 +197,134 @@ describe("GET /oidc/signup/status", () => {
 	});
 });
 
-// ─── /oidc/signup ────────────────────────────────────────────────────────────
+// ─── /oidc/signup/email/* ────────────────────────────────────────────────────
 
-describe("POST /oidc/signup", () => {
-	test("new sub + free email + strong password → 200 { auth:true }, sets cookie", async () => {
-		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
-		const res = await app.request("/oidc/signup", withJson({ email: FREE_EMAIL, password: STRONG_PASSWORD }));
-		expect(res.status).toBe(200);
-		const body = (await res.json()) as Record<string, unknown>;
-		expect(body.auth).toBe(true);
-		expect(res.headers.get("set-cookie")).toContain("access_token");
+describe("email verification (no email from IdP)", () => {
+	test("send → mails the code and sets the pending cookie", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const cookie = await sendCode(FREE_EMAIL);
+		expect(cookie).toBeDefined();
+		expect(sendOidcEmailCode).toHaveBeenCalledWith(FREE_EMAIL, PIN);
 	});
 
-	test("email already in use by another account → 409", async () => {
+	test("send refused when the IdP already provides the email → 400", async () => {
 		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
-		const res = await app.request("/oidc/signup", withJson({ email: EXISTING_EMAIL, password: STRONG_PASSWORD }));
-		expect(res.status).toBe(409);
-	});
-
-	test("missing email/password → 400", async () => {
-		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
-		const res = await app.request("/oidc/signup", withJson({ email: FREE_EMAIL }));
+		const res = await app.request("/oidc/signup/email/send", withJson({ email: FREE_EMAIL }));
 		expect(res.status).toBe(400);
 	});
 
-	test("sub already registered (double submit) → 200 { auth:true } without touching email", async () => {
-		currentAuth = { sub: EXISTING_SUB, email: DB_USER.email };
+	test("send with an invalid email → 400", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const res = await app.request("/oidc/signup/email/send", withJson({ email: "nope" }));
+		expect(res.status).toBe(400);
+	});
+
+	test("verify with a wrong code → 400", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const cookie = await sendCode(FREE_EMAIL);
+		const res = await app.request("/oidc/signup/email/verify", withJson({ code: "000000" }, cookie));
+		expect(res.status).toBe(400);
+	});
+
+	test("verify without the pending cookie → 400", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const res = await app.request("/oidc/signup/email/verify", withJson({ code: PIN }));
+		expect(res.status).toBe(400);
+	});
+
+	test("pending cookie bound to another sub → 400", async () => {
+		currentAuth = { sub: "sub-other" };
+		const cookie = await sendCode(FREE_EMAIL);
+		currentAuth = { sub: NEW_SUB };
+		const res = await app.request("/oidc/signup/email/verify", withJson({ code: PIN }, cookie));
+		expect(res.status).toBe(400);
+	});
+
+	test("verified email of an existing account → links sub and logs in", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const cookie = await sendCode(PASSWORD_EMAIL);
+		const res = await app.request("/oidc/signup/email/verify", withJson({ code: PIN }, cookie));
+		expect(res.status).toBe(200);
+		expect(await res.json()).toMatchObject({ auth: true });
+		expect(res.headers.get("set-cookie")).toContain("access_token");
+		expect(linkOidcIdentity).toHaveBeenCalledWith(PASSWORD_USER.id, NEW_SUB);
+	});
+
+	test("verified new email → { auth:false }, then signup creates the account with it", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const pending = await sendCode(FREE_EMAIL);
+		const verifyRes = await app.request("/oidc/signup/email/verify", withJson({ code: PIN }, pending));
+		expect(verifyRes.status).toBe(200);
+		expect(await verifyRes.json()).toMatchObject({ auth: false, email: FREE_EMAIL });
+		const verified = emailCookie(verifyRes)!;
+
+		const statusRes = await app.request("/oidc/signup/status", { headers: { Cookie: verified } });
+		expect(await statusRes.json()).toMatchObject({ email: FREE_EMAIL, emailVerified: true });
+
+		const res = await app.request("/oidc/signup", withJson({ pa: "Comune", password: STRONG_PASSWORD }, verified));
+		expect(res.status).toBe(200);
+		expect(createUserMock.mock.calls[0]![0]).toMatchObject({ email: FREE_EMAIL, sub: NEW_SUB, pa: "Comune" });
+	});
+});
+
+// ─── /oidc/signup ────────────────────────────────────────────────────────────
+
+describe("POST /oidc/signup", () => {
+	test("email from IdP + password → 200, account created with the IdP email", async () => {
+		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
+		// A body email is ignored: the address comes from the IdP or the verification.
+		const res = await app.request("/oidc/signup", withJson({ email: "other@test.com", password: STRONG_PASSWORD }));
+		expect(res.status).toBe(200);
+		expect(await res.json()).toMatchObject({ auth: true });
+		expect(res.headers.get("set-cookie")).toContain("access_token");
+		expect(createUserMock.mock.calls[0]![0]).toMatchObject({ email: FREE_EMAIL, sub: NEW_SUB });
+	});
+
+	test("no email from IdP and none verified → 400", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const res = await app.request("/oidc/signup", withJson({ email: FREE_EMAIL, password: STRONG_PASSWORD }));
+		expect(res.status).toBe(400);
+		expect(createUserMock).not.toHaveBeenCalled();
+	});
+
+	test("a pending (not yet verified) code is not enough → 400", async () => {
+		currentAuth = { sub: NEW_SUB };
+		const pending = await sendCode(FREE_EMAIL);
+		const res = await app.request("/oidc/signup", withJson({ password: STRONG_PASSWORD }, pending));
+		expect(res.status).toBe(400);
+	});
+
+	test("missing password while password auth is on → 400", async () => {
+		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
+		const res = await app.request("/oidc/signup", withJson({}));
+		expect(res.status).toBe(400);
+	});
+
+	test("already registered (double submit) → 200 { auth:true }, nothing created", async () => {
+		currentAuth = { sub: LINKED_SUB };
 		const res = await app.request("/oidc/signup", withJson({}));
 		expect(res.status).toBe(200);
-		const body = (await res.json()) as Record<string, unknown>;
-		expect(body.auth).toBe(true);
+		expect(await res.json()).toMatchObject({ auth: true });
+		expect(createUserMock).not.toHaveBeenCalled();
 	});
 
 	test("no OIDC session → 401", async () => {
 		currentAuth = null;
-		const res = await app.request("/oidc/signup", withJson({ email: FREE_EMAIL, password: STRONG_PASSWORD }));
+		const res = await app.request("/oidc/signup", withJson({ password: STRONG_PASSWORD }));
 		expect(res.status).toBe(401);
+	});
+});
+
+describe("POST /oidc/signup with ENABLE_PASSWORD_AUTH=false", () => {
+	beforeAll(() => { process.env["ENABLE_PASSWORD_AUTH"] = "false"; });
+	afterAll(() => { delete process.env["ENABLE_PASSWORD_AUTH"]; });
+
+	test("no password needed; account created without one even if sent", async () => {
+		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
+		const res = await app.request("/oidc/signup", withJson({ pa: "Comune", password: STRONG_PASSWORD }));
+		expect(res.status).toBe(200);
+		expect(res.headers.get("set-cookie")).toContain("access_token");
+		expect(createUserMock).toHaveBeenCalledTimes(1);
+		expect(createUserMock.mock.calls[0]![0].password).toBeUndefined();
 	});
 });

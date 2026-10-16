@@ -57,6 +57,7 @@ export const ModelName = {
   Org: 'Org',
   Membership: 'Membership',
   User: 'User',
+  OidcIdentity: 'OidcIdentity',
   ApiKey: 'ApiKey',
   ApiLog: 'ApiLog',
   VerificationCode: 'VerificationCode',
@@ -139,7 +140,6 @@ export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  sub: 'sub',
   pa: 'pa',
   password: 'password',
   verified: 'verified',
@@ -149,6 +149,16 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OidcIdentityScalarFieldEnum = {
+  sub: 'sub',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OidcIdentityScalarFieldEnum = (typeof OidcIdentityScalarFieldEnum)[keyof typeof OidcIdentityScalarFieldEnum]
 
 
 export const ApiKeyScalarFieldEnum = {

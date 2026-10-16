@@ -83,6 +83,35 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
     navigate("/recover-password");
   }
 
+  // SPID/CIE-only instance (ENABLE_PASSWORD_AUTH="false" on the server): no
+  // password form and no separate signup — a first SPID/CIE login is redirected
+  // by the server to the OIDC signup page.
+  if (!api.isPasswordAuthEnabled()) {
+    return (
+      <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="mx-auto w-full  min-w-100 card bg-base-100 shadow-sm border border-base-200">
+          <div className="card-body p-8">
+            <h1 className="text-2xl font-bold leading-9 tracking-tight text-content">
+              {t(`header.label`)}
+            </h1>
+            <p className="mt-4">{t(`oidcOnly.description`)}</p>
+            <div className="mt-8">
+              <button
+                type="button"
+                className="btn btn-primary w-full"
+                onClick={() => {
+                  window.location.href = api.redirectToLoginOidc();
+                }}
+              >
+                {t(`form.actions.oidc.label`)}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
       <div className="mx-auto w-full  min-w-100 card bg-base-100 shadow-sm border border-base-200">

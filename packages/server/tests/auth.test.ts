@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import { sign } from "jsonwebtoken";
 import type { IAccessTokenPayload } from "../lib/jwt";
@@ -17,6 +17,10 @@ type TestVariables = {
 
 const JWT_SECRET = "test-secret";
 process.env["JWT_SECRET"] = JWT_SECRET;
+// bun test loads the local .env: start from the default (password auth on)
+// whatever the developer is trying out; the SPID/CIE-only suites set it themselves.
+delete process.env["ENABLE_PASSWORD_AUTH"];
+delete process.env["ADMIN_EMAILS"];
 process.env["APP_URL"] = "http://localhost:3000";
 
 const USER_ID        = "user-verified";
@@ -85,6 +89,7 @@ mock.module("../lib/logger", () => ({
 mock.module("../lib/email", () => ({
 	sendActivationEmail: mock(async () => {}),
 	sendResetPasswordEmail: mock(async () => {}),
+	sendOidcEmailCode: mock(async () => {}),
 }));
 
 mock.module("bcrypt", () => ({
@@ -100,6 +105,8 @@ mock.module("../lib/db/apiKeyDb", () => ({
 	reinstateApiKey:    mock(async () => undefined),
 	createApiLog:       mock(async () => undefined),
 }));
+
+const setUserRoleMock = mock(async (id: string, role: string) => ({ ...DB_USER, id, role }));
 
 mock.module("../lib/db", () => ({
 	default: {
@@ -126,6 +133,7 @@ mock.module("../lib/db", () => ({
 		destroyCodes: mock(async () => {}),
 		changePassword: mock(async () => {}),
 		getDefaultProjectId: mock(async () => null),
+		setUserRole: setUserRoleMock,
 	},
 }));
 
@@ -360,5 +368,58 @@ describe("PUT /auth/pwd — change password (requires auth)", () => {
 			...withJson({}, { password: "NewP@ss1!" }),
 		});
 		expect(res.status).toBe(401);
+	});
+});
+
+describe("ENABLE_PASSWORD_AUTH=false — SPID/CIE only", () => {
+	beforeAll(() => { process.env["ENABLE_PASSWORD_AUTH"] = "false"; });
+	afterAll(() => { delete process.env["ENABLE_PASSWORD_AUTH"]; });
+
+	test.each([
+		["POST", "/auth/register", { email: NEW_EMAIL, password: CORRECT_PASSWORD }],
+		["POST", "/auth/login", { email: USER_EMAIL, password: CORRECT_PASSWORD }],
+		["POST", "/auth/recover", { email: USER_EMAIL }],
+		["POST", "/auth/resend", { email: UNVERIFIED_EMAIL }],
+		["POST", "/auth/verify", { uid: UNVERIFIED_ID, code: VALID_PIN }],
+		["POST", "/auth/reset-password", { uid: USER_ID, code: VALID_PIN, password: "NewP@ss1!" }],
+		["PUT", "/auth/pwd", { password: "NewP@ss1!" }],
+	])("%s %s → 403", async (method, path, body) => {
+		const res = await app.request(path, { method, ...withJson(userHeaders(), body) });
+		expect(res.status).toBe(403);
+	});
+
+	test("GET /auth/confirm/:uid/:code → 403", async () => {
+		const res = await app.request(`/auth/confirm/${UNVERIFIED_ID}/${VALID_PIN}`);
+		expect(res.status).toBe(403);
+	});
+
+	test("POST /auth/logout still works → 200", async () => {
+		const res = await app.request("/auth/logout", { method: "POST" });
+		expect(res.status).toBe(200);
+	});
+});
+
+describe("ADMIN_EMAILS", () => {
+	afterAll(() => { delete process.env["ADMIN_EMAILS"]; });
+
+	test("listed email (any case) is promoted to ADMIN at login", async () => {
+		process.env["ADMIN_EMAILS"] = "someone@else.it, VERIFIED@test.com";
+		setUserRoleMock.mockClear();
+		const res = await app.request("/auth/login", {
+			method: "POST",
+			...withJson({}, { email: USER_EMAIL, password: CORRECT_PASSWORD }),
+		});
+		expect(res.status).toBe(200);
+		expect(setUserRoleMock).toHaveBeenCalledWith(USER_ID, "ADMIN");
+	});
+
+	test("unlisted email keeps its role", async () => {
+		process.env["ADMIN_EMAILS"] = "someone@else.it";
+		setUserRoleMock.mockClear();
+		await app.request("/auth/login", {
+			method: "POST",
+			...withJson({}, { email: USER_EMAIL, password: CORRECT_PASSWORD }),
+		});
+		expect(setUserRoleMock).not.toHaveBeenCalled();
 	});
 });

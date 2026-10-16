@@ -65,8 +65,13 @@ dbSeed:
   #   key: "DATABASE_URL"
   # Users to seed (if not set, uses default users from seed script)
   # These will be exposed as SEED_USERS env var (JSON array)
+  # An existing email (case-insensitive) only gets the role/verified given here,
+  # never a new password. `password` is optional: omit it for SPID/CIE-only
+  # accounts. For admins, server.env.ADMIN_EMAILS needs no seed job at all.
   users: []
     # - email: "admin@example.com"
+    #   role: "ADMIN"
+    # - email: "editor@example.com"
     #   password: "secure-password-here"
     #   verified: true
     # - email: "user@example.com"
@@ -222,6 +227,20 @@ server:
     # webapp (which reads this via GET /api/config) hides the publish toggle,
     # disables /embed/* and turns /display/* into an authenticated preview.
     ENABLE_PUBLIC_PUBLISHING: "true"
+    # Set to "false" to make SPID/CIE (OIDC) the only way to log in and sign up:
+    # the email/password endpoints answer 403 and the webapp (via GET /api/config)
+    # shows only the SPID/CIE button. OIDC itself is configured with OIDC_ISSUER,
+    # OIDC_CLIENT_ID, OIDC_CLIENT_SECRET, OIDC_AUTH_SECRET (>= 32 chars),
+    # OIDC_REDIRECT_URI (absolute https://<host>/api/oidc/callback: behind the
+    # ingress the server sees http://), OIDC_AUTH_EXTERNAL_URL (https://<host>)
+    # and optionally OIDC_SCOPES —
+    # set them in the cluster like the other credentials; don't add them here
+    # empty (an empty OIDC_REDIRECT_URI is invalid, unlike an unset one).
+    ENABLE_PASSWORD_AUTH: "true"
+    # Comma-separated emails (case-insensitive) granted the ADMIN role when they
+    # sign in (SPID/CIE or password). Only grants: removing an email does not
+    # demote anyone — roles can be changed from the admin panel.
+    ADMIN_EMAILS: ""
     # Mail transport: "resend" (default) or "smtp" (nodemailer against any SMTP
     # connector — Mailgun, SES, a corporate relay). Credentials belong in a
     # secret, not here: RESEND_API_KEY for resend, SMTP_HOST/SMTP_PORT/

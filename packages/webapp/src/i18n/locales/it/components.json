@@ -147,6 +147,9 @@
                             "label": "Registrati"
                         }
                     }
+                },
+                "oidcOnly": {
+                    "description": "L'accesso avviene esclusivamente con SPID o CIE. Al primo accesso ti chiederemo di completare la registrazione."
                 }
             },
             "signup": {

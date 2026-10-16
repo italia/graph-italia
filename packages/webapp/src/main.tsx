@@ -6,7 +6,7 @@ import "./style/index.css";
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
 import AuthProvider from "./components/auth/AuthProvider";
-import { loadPublishingConfig } from "./lib/api";
+import { loadInstanceConfig } from "./lib/api";
 
 // Load runtime configuration from ConfigMap (in Kubernetes) or /config.json
 // This allows using the same build image across different environments
@@ -41,7 +41,7 @@ function App() {
 // the publishing flag has to be known before the first render, since gates and
 // editors read it synchronously.
 loadRuntimeConfig()
-  .then(() => loadPublishingConfig())
+  .then(() => loadInstanceConfig())
   .then(() => {
     ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <App />,

@@ -113,27 +113,33 @@ export const getServerUrlWithApi = (): string => {
   return `${getServerUrl()}/api`;
 };
 
-// Public publishing is a server-side setting (ENABLE_PUBLIC_PUBLISHING): the API
-// is what actually enforces it, so the webapp asks rather than carrying its own
-// copy of the flag. loadPublishingConfig() runs once at startup (main.tsx) before
-// the first render, so every isPublishingEnabled() call below is synchronous and
-// sees the same value the server does.
+// Public publishing (ENABLE_PUBLIC_PUBLISHING) and email/password authentication
+// (ENABLE_PASSWORD_AUTH) are server-side settings: the API is what actually
+// enforces them, so the webapp asks rather than carrying its own copy of the
+// flags. loadInstanceConfig() runs once at startup (main.tsx) before the first
+// render, so every isPublishingEnabled() / isPasswordAuthEnabled() call below is
+// synchronous and sees the same value the server does.
 let publishingEnabled: boolean | null = null;
+let passwordAuthEnabled: boolean | null = null;
 
-export async function loadPublishingConfig(): Promise<boolean> {
+export async function loadInstanceConfig(): Promise<void> {
   try {
     const response = await axios.get(`${getServerUrlWithApi()}/config`);
     publishingEnabled = response.data?.publicPublishing === true;
+    passwordAuthEnabled = response.data?.passwordAuth === true;
   } catch (error) {
-    // Fail closed: an instance we cannot ask is treated as "no public surface",
-    // so a config blip never exposes a publish toggle that the API would refuse.
-    console.warn("Could not read instance config, assuming publishing is off", error);
+    // Fail closed: an instance we cannot ask is treated as "no public surface"
+    // and "SPID/CIE only", so a config blip never exposes a publish toggle or a
+    // password form that the API would refuse.
+    console.warn("Could not read instance config, assuming publishing and password auth are off", error);
     publishingEnabled = false;
+    passwordAuthEnabled = false;
   }
-  return publishingEnabled;
 }
 
 export const isPublishingEnabled = (): boolean => publishingEnabled === true;
+
+export const isPasswordAuthEnabled = (): boolean => passwordAuthEnabled === true;
 // let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
 /** getSuggestions */
@@ -358,16 +364,22 @@ export function redirectToLoginOidc() {
 
 export interface OidcSignupStatus {
   registered: boolean;
+  /** From the identity provider, or the one already confirmed with the code. */
   email: string;
+  /** The identity provider sent the email (trusted): no verification needed. */
+  emailFromIdp: boolean;
+  /** The email can be used for signup: from the IdP or confirmed with the code. */
+  emailVerified: boolean;
   given_name: string;
   family_name: string;
 }
 
 /**
- * Checks — via the server-side OIDC session — whether the current OIDC user (by `sub`)
- * has already completed signup, and returns claims to prefill the form. The `t` query
- * param (the sub) is passed for reference only; the server derives identity from the
- * session. Throws on 401 (no active OIDC session).
+ * Reads — via the server-side OIDC session — the signup state of the current OIDC
+ * user: whether an account already matches (by email or linked `sub`), and whether
+ * the email still has to be asked and verified. The `t` query param (the sub) is
+ * passed for reference only; the server derives identity from the session.
+ * Throws on 401 (no active OIDC session).
  */
 export async function getOidcSignupStatus(t?: string | null): Promise<OidcSignupStatus> {
   const url = `${getServerUrl()}/api/oidc/signup/status${t ? `?t=${encodeURIComponent(t)}` : ""}`;
@@ -375,18 +387,33 @@ export async function getOidcSignupStatus(t?: string | null): Promise<OidcSignup
   return response.data;
 }
 
-/** Completes OIDC signup: creates the account linked to the session `sub` and logs in. */
+/** Mails a verification code to `email` (only when the identity provider sent none). */
+export async function sendOidcEmailCode(email: string): Promise<void> {
+  await axios.post(`${getServerUrl()}/api/oidc/signup/email/send`, { email });
+}
+
+/**
+ * Confirms the emailed code. `auth: true` means the email already belonged to an
+ * account: the SPID/CIE identity is now linked to it and the session is open.
+ */
+export async function verifyOidcEmailCode(code: string): Promise<{ auth: boolean; email: string }> {
+  const response = await axios.post(`${getServerUrl()}/api/oidc/signup/email/verify`, { code });
+  return response.data;
+}
+
+/**
+ * Completes OIDC signup: creates the account for the verified email (from the IdP
+ * or the code step — never from this body), links the session `sub` and logs in.
+ */
 export async function oidcSignup({
-  email,
   password,
   pa,
 }: {
-  email: string;
-  password: string;
+  // Omitted when password auth is off: the account is SPID/CIE-only.
+  password?: string;
   pa?: string;
 }): Promise<{ auth: boolean }> {
   const response = await axios.post(`${getServerUrl()}/api/oidc/signup`, {
-    email,
     password,
     pa,
   });
@@ -875,6 +902,43 @@ export async function adminResendActivation(id: string): Promise<boolean> {
 
 export async function adminResetPassword(id: string): Promise<boolean> {
   const response = await axios.post(`${getServerUrlWithApi()}/admin/users/${id}/reset-password`);
+  return response.status === 200;
+}
+
+export interface DuplicateEmailUser {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  verified: boolean;
+  hasPassword: boolean;
+  createdAt: string;
+  identities: number;
+  ownedProjects: number;
+  projectMemberships: number;
+  orgMemberships: number;
+}
+
+export interface DuplicateEmailGroup {
+  /** The shared email, lowercased. */
+  email: string;
+  users: DuplicateEmailUser[];
+}
+
+/** Groups of accounts whose emails differ only by case (empty when there are none). */
+export async function adminGetDuplicateEmails(): Promise<DuplicateEmailGroup[]> {
+  const response = await axios.get(`${getServerUrlWithApi()}/admin/users/duplicates`);
+  return response.status === 200 ? response.data : [];
+}
+
+/** Folds `mergeIds` into `keepId`: their projects, memberships and SPID/CIE identities move to it. */
+export async function adminMergeUsers(keepId: string, mergeIds: string[]): Promise<boolean> {
+  const response = await axios.post(`${getServerUrlWithApi()}/admin/users/merge`, { keepId, mergeIds });
+  return response.status === 200;
+}
+
+/** The new role applies at the user's next sign-in (the role travels in the session token). */
+export async function adminSetUserRole(id: string, role: AdminUser["role"]): Promise<boolean> {
+  const response = await axios.patch(`${getServerUrlWithApi()}/admin/users/${id}/role`, { role });
   return response.status === 200;
 }
 

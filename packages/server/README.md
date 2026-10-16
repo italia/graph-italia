@@ -88,13 +88,50 @@ Neither provider throws on missing configuration: an unset `RESEND_API_KEY` or `
 
 Note that turning the flag off does not rewrite existing data: rows already at `publish: true` stay that way, they simply stop being reachable anonymously. `Chart`, `Dashboard` and `DataSource` all default to `publish: false`.
 
+## SPID/CIE-only authentication
+
+`ENABLE_PASSWORD_AUTH` (env, defaults to enabled — only the literal `"false"` turns it off) decides whether email/password authentication exists on this instance. Like the publishing toggle, the API enforces it and the webapp mirrors it from `GET /config` (`passwordAuth`). `lib/passwordAuth.ts` is the single implementation:
+
+- **SPID/CIE becomes the only way in.** `POST /auth/register`, `/auth/login`, `/auth/recover`, `/auth/resend`, `/auth/verify`, `/auth/reset-password`, `PUT /auth/pwd` and `GET /auth/confirm/:uid/:code` answer 403, as do the admin `resend-activation` and `reset-password` mailers. `GET /auth/user` and `POST /auth/logout` are shared with the OIDC flow and keep working.
+- **Signup goes through OIDC.** With the flag off, `POST /api/oidc/signup` creates the account with `password = null`; with it on, the same endpoint still requires a password, so the account can also sign in with email/password.
+
+## Bootstrap admins
+
+`ADMIN_EMAILS` (comma-separated, case-insensitive) lists emails that receive the `ADMIN` role when they sign in, through SPID/CIE or email/password (`lib/adminEmails.ts`, applied wherever a session is issued). It only grants: removing an email from the list does not demote anyone, so roles changed from the admin panel are never overridden at the next login. It needs no password, unlike the seed script, and also promotes accounts that already exist.
+
+## SPID/CIE account matching
+
+Emails are compared case-insensitively everywhere (`findUserByEmail`) and new accounts are stored lowercased.
+
+Existing rows were lowercased by migration `20261016140000_normalize_user_emails`, except accounts whose emails differ only by case: those are listed in the admin panel ("Duplicate emails", `GET /admin/users/duplicates`) and merged there (`POST /admin/users/merge`, `lib/db/userMergeDb.ts`). The admin picks the account to keep; projects, project/org memberships (higher role wins) and SPID/CIE identities move to it, it inherits verified/ADMIN/password from the merged accounts, and the others are deleted. Once the panel reports no duplicates, a `CHECK (email = lower(email))` constraint can be added in a later migration.
+
+The **email** is what links a SPID/CIE login to an account (`routes/oidc.ts`). Identities live in `OidcIdentity` (one row per `sub`), so the same account can be reached from SPID and from CIE, which issue different subjects.
+
+- **The identity provider sends an email** (IAM Proxy is trusted): `/api/oidc/login` looks the account up by that email — including accounts created with email/password — links the `sub`, marks the account verified and opens the session. With no matching account the user lands on the webapp's `/oidc/signup` with the email locked.
+- **No email from the identity provider** (CIE never sends one, SPID not always): an already linked `sub` logs straight in. Otherwise `/oidc/signup` asks for an email and `POST /api/oidc/signup/email/send` mails a 6-digit code; `POST /api/oidc/signup/email/verify` checks it. If the email belongs to an account, the `sub` is linked and the session opens; if not, signup continues with that email. From then on the linked `sub` is enough.
+- The code state lives in the signed, short-lived `oidc-email` cookie (`lib/oidcEmailVerification.ts`), bound to the OIDC `sub`, with the PIN stored as an HMAC keyed by `JWT_SECRET`. `POST /api/oidc/signup` never takes the email from its body: it uses the IdP email or the verified one.
+
+### OIDC configuration
+
+`@hono/oidc-auth` reads its configuration from the environment:
+
+| Variable | Notes |
+|---|---|
+| `OIDC_ISSUER` | Issuer URL (serves `/.well-known/openid-configuration`). Mock: `http://127.0.0.1:9090` |
+| `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` | The client is authenticated with `client_secret_basic` only. Mock: `my-client-id` / any value |
+| `OIDC_AUTH_SECRET` | At least 32 random characters; signs the `oidc-auth` session cookie |
+| `OIDC_REDIRECT_URI` | `<server>/api/oidc/callback` — the library default (`/callback`) does not match our mount |
+| `OIDC_SCOPES` | Optional, e.g. `openid profile email`; empty requests every scope the IdP advertises |
+
+`mock-oidc-server.ts` takes `MOCK_OIDC_SUB`, `MOCK_OIDC_EMAIL` and `MOCK_OIDC_NO_EMAIL=true` to exercise the matching cases locally.
+
 ## Seeds
 
 Scripts under `seeds/`, run with `bun run seeds/<script>.ts` from `packages/server` (or via the root-level shortcuts where noted):
 
 | Script | Purpose |
 |---|---|
-| `seed-users.ts` | The main dev bootstrap. Idempotently upserts users (creates by email if missing, updates by `id` if given, skips existing emails), verifies every user, and ensures each has a default `Project`. Reads a `SEED_USERS` env var (JSON array of `{id?, email, password, verified?, role?}`) if set, otherwise falls back to one hardcoded default user. Run from the repo root as `bun run seed` (see root `package.json`); this is also what Helm's `db-seed` pre-upgrade hook runs in Kubernetes deploys. |
+| `seed-users.ts` | The main dev bootstrap. Idempotently upserts users: creates missing ones (email lowercased, verified unless told otherwise, with a default `Project`), updates by `id` if given, and on an existing email (case-insensitive) applies only the `role`/`verified` the entry sets — never the password — so it can promote existing users. `password` is optional (omit it for SPID/CIE-only accounts). Only the seeded users are touched. Reads a `SEED_USERS` env var (JSON array of `{id?, email, password?, verified?, role?}`) if set, otherwise falls back to one hardcoded default user. Run from the repo root as `bun run seed` (see root `package.json`); this is also what Helm's `db-seed` pre-upgrade hook runs in Kubernetes deploys. |
 | `cleanup.ts` | One-off maintenance script: deletes charts created on/after a hardcoded cutoff date. Meant to be edited per use, not run as-is against a database you care about. |
 | `generate-sample-chart-data.ts` | Generates fake analytics-style sample data (visitors, sessions, referrers, etc.) — used to seed demo charts, not real usage data. |
 | `restore-previous-data.ts` (`bun run restore:data`) | Restores a full backup (users, orgs, projects, memberships, charts, dashboards, slots) from JSON files in `seeds/data/`, in FK-safe order. For disaster recovery / migrating data into a fresh database. |
