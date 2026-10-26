@@ -12,7 +12,6 @@ import EditKpiGroupPage from "./pages/private/EditKpiGroup";
 import DashboardEditPage from "./pages/private/EditDashboard";
 import EmbedChartPage from "./pages/embed/EmbedChartPage";
 import EmbedDashboardPage from "./pages/embed/EmbedDashboardPage";
-import PolicyPage from "./pages/gdpr";
 import DocsPage from "./pages/DocsPage";
 import PrivateAreaPage from "./pages/private";
 import EditApiKeysPage from "./pages/private/EditApiKeys";
@@ -28,8 +27,10 @@ import QuickStartPage from "./pages/QuickStartPage";
 
 import ShowChartPage from "./pages/display/ShowChartPage";
 import DashboardViewPage from "./pages/display/ShowDashboardPage";
+import DataProcessorPage from "./pages/legal/DataProcessorPage";
+import LegalNotesPage from "./pages/legal/LegalNotesPage";
+import PrivacyPage from "./pages/legal/PrivacyPage";
 import RootRoute from "./pages/Splash";
-import TermsPage from "./pages/terms";
 import GenerateDataPage from "./pages/utils/GenerateDataPage";
 import GeneratePoiPage from "./pages/utils/GeneratePoiPage";
 import GeoMapUtilsPage from "./pages/utils/GeoMapUtilsPage";
@@ -46,8 +47,9 @@ export const ROUTES = {
   about: "/about",
   quickStart: "/quickstart",
   docs: (section?: string) => `/docs${section ? `/${section}` : ""}`,
-  gdpr: "/gdpr",
-  terms: "/terms-of-service",
+  privacy: "/privacy",
+  legalNotes: "/note-legali",
+  dataProcessor: "/nomina-responsabile-trattamento",
   // Auth
   login: "/login",
   oidcSignup: "/oidc/signup",
@@ -273,12 +275,16 @@ const routes = [
 
 
   {
-    path: "/gdpr",
-    element: <PolicyPage />,
+    path: ROUTES.privacy,
+    element: <PrivacyPage />,
   },
   {
-    path: "/terms-of-service",
-    element: <TermsPage />,
+    path: ROUTES.legalNotes,
+    element: <LegalNotesPage />,
+  },
+  {
+    path: ROUTES.dataProcessor,
+    element: <DataProcessorPage />,
   },
   //AUTH STUFF
   {

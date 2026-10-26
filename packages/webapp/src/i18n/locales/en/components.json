@@ -149,7 +149,8 @@
                     }
                 },
                 "oidcOnly": {
-                    "description": "Sign-in is available only with SPID or CIE. On your first access you will be asked to complete your registration."
+                    "description": "Sign-in is available only with SPID or CIE. On your first access you will be asked to complete your registration.",
+                    "termsRequired": "To sign in you must accept the terms and conditions and the privacy policy."
                 }
             },
             "signup": {
@@ -189,12 +190,8 @@
                             }
                         },
                         "policyAcknologment": {
-                            "label": {
-                                "main": "I accept the <privacyLink>privacy policy</privacyLink> agreement.",
-                                "small": "Privacy at a Glance: We value your data. Graph Italia uses only one strictly necessary, server-side cookie for authentication. We do not use third-party cookies, trackers, or analytics. We only store your email address to manage your account and keep your charts saved. Your data stays yours."
-                            },
                             "errors": {
-                                "mustAccept": "You must accept the policy agreement"
+                                "mustAccept": "You must accept the terms and conditions and the privacy policy"
                             }
                         }
                     },
@@ -234,6 +231,11 @@
             "passwordToggle": {
                 "show": "Show password",
                 "hide": "Hide password"
+            },
+            "termsAcceptance": {
+                "label": "I have read and accept the <termsLink>terms and conditions</termsLink> and the <privacyLink>privacy policy</privacyLink>",
+                "alreadyAccepted": "By signing in you confirm that you have read and accepted the <termsLink>terms and conditions</termsLink> and the <privacyLink>privacy policy</privacyLink>.",
+                "newWindow": "(opens in a new window)"
             }
         },
         "layout": {
@@ -320,7 +322,7 @@
                 },
                 "links": {
                     "tos": {
-                        "label": "Terms of service"
+                        "label": "Legal notes and terms of use"
                     },
                     "privacy": {
                         "label": "Privacy policy"

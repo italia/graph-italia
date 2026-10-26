@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { ROUTES } from "../../router";
 
 export default function Footer() {
   const { t } = useTranslation("components", {
@@ -53,10 +54,10 @@ export default function Footer() {
             <span className="sr-only">{t(`license.newWindow`)}</span>
           </a>
         </span>
-        <a href="/terms-of-service" className="underline">
+        <a href={ROUTES.legalNotes} className="underline">
           {t(`links.tos.label`)}
         </a>
-        <a href="/gdpr" className="underline">
+        <a href={ROUTES.privacy} className="underline">
           {t(`links.privacy.label`)}
         </a>
         <a

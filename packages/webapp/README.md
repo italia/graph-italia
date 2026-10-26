@@ -17,7 +17,7 @@ Routes are defined centrally in [`src/router.tsx`](src/router.tsx) (the `ROUTES`
 
 | Area | Routes | Purpose |
 |---|---|---|
-| **Public / landing** | `/`, `/about`, `/quickstart`, `/gdpr`, `/terms-of-service` | Landing page (`Splash`/`about`), a getting-started guide, and legal pages. No auth. |
+| **Public / landing** | `/`, `/about`, `/quickstart`, `/privacy`, `/note-legali`, `/nomina-responsabile-trattamento` | Landing page (`Splash`/`about`), a getting-started guide, and the legal pages (`pages/legal/`, Italian only). No auth. |
 | **Auth** | `/login`, `/verify/:uid`, `/recover-password`, `/change-password` | Registration/login (`AuthPage`), email PIN verification, password recovery and change. |
 | **Private editors** (behind `ProtectedRoute`) | `/private/home`, `/private/edit/chart/:id?`, `/private/edit/kpi/:id?`, `/private/edit/map/:id?`, `/private/edit/dashboard/:id`, `/private/edit/datasource/:id?` | The core editor: home/chart list, and per-type editors for charts, KPI groups, maps, dashboards, and data sources. `:id?` optional means the same page handles both "create new" and "edit existing". |
 | **Account & org settings** (behind `ProtectedRoute`) | `/private/edit/apikeys`, `/private/edit/orgs`, `/private/edit/settings` | Manage API keys (create/revoke/reinstate, view usage logs — see `packages/server`/`packages/client` READMEs for what a `dv_` key and its `READONLY`/`READWRITE` role actually gate), organizations and their members, and account settings. |

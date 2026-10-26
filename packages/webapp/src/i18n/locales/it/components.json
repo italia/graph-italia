@@ -149,7 +149,8 @@
                     }
                 },
                 "oidcOnly": {
-                    "description": "L'accesso avviene esclusivamente con SPID o CIE. Al primo accesso ti chiederemo di completare la registrazione."
+                    "description": "L'accesso avviene esclusivamente con SPID o CIE. Al primo accesso ti chiederemo di completare la registrazione.",
+                    "termsRequired": "Per accedere devi accettare i termini e le condizioni e la privacy policy."
                 }
             },
             "signup": {
@@ -189,12 +190,8 @@
                             }
                         },
                         "policyAcknologment": {
-                            "label": {
-                                "main": "Accetto l'<privacyLink>informativa sulla privacy</privacyLink>.",
-                                "small": "Privacy in breve: i tuoi dati sono al sicuro. Graph Italia utilizza un solo cookie strettamente necessario, lato server, per l'autenticazione. Non usiamo cookie di terze parti, tracker o strumenti di analisi. Conserviamo solo il tuo indirizzo email per gestire il tuo account e mantenere salvati i tuoi grafici. I tuoi dati rimangono tuoi."
-                            },
                             "errors": {
-                                "mustAccept": "Devi accettare l'informativa sulla privacy"
+                                "mustAccept": "Devi accettare i termini e le condizioni e la privacy policy"
                             }
                         }
                     },
@@ -234,6 +231,11 @@
             "passwordToggle": {
                 "show": "Mostra password",
                 "hide": "Nascondi password"
+            },
+            "termsAcceptance": {
+                "label": "Ho letto e accetto i <termsLink>termini e le condizioni</termsLink> e la <privacyLink>privacy policy</privacyLink>",
+                "alreadyAccepted": "Accedendo confermi di aver letto e accettato i <termsLink>termini e le condizioni</termsLink> e la <privacyLink>privacy policy</privacyLink>.",
+                "newWindow": "(si apre in una nuova finestra)"
             }
         },
         "layout": {
@@ -320,10 +322,10 @@
                 },
                 "links": {
                     "tos": {
-                        "label": "Termini del servizio"
+                        "label": "Note legali e condizioni d'uso"
                     },
                     "privacy": {
-                        "label": "Informativa sulla Privacy"
+                        "label": "Informativa privacy"
                     },
                     "accessibility": {
                         "label": "Dichiarazione di accessibilità"

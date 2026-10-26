@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "../../lib/toast";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 import * as api from "../../lib/api";
 import { broadcastAuth } from "../../lib/authChannel";
 import { useUserStore } from "../../lib/store/user_store";
+import { hasAcceptedTerms, markTermsAccepted } from "../../lib/termsAcceptance";
 import { HOME_ROUTE } from "../../router";
+import TermsAcceptanceText from "./TermsAcceptanceText";
 
 function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const { t } = useTranslation("components", {
@@ -24,6 +26,12 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [resendInfo, setResendInfo] = useState<string | null>(null);
   const [resendFailed, setResendFailed] = useState(false);
+  // SPID/CIE-only: terms must be accepted before the login redirect. Once this
+  // browser has accepted the current version the checkbox gives way to a note.
+  const [termsAlreadyAccepted] = useState(hasAcceptedTerms);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [termsError, setTermsError] = useState(false);
+  const termsCheckboxRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = async (submittedData: any) => {
     setMessage("");
@@ -83,6 +91,16 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
     navigate("/recover-password");
   }
 
+  function handleOidcOnlyLogin() {
+    if (!termsAlreadyAccepted && !termsChecked) {
+      setTermsError(true);
+      termsCheckboxRef.current?.focus();
+      return;
+    }
+    markTermsAccepted();
+    window.location.href = api.redirectToLoginOidc();
+  }
+
   // SPID/CIE-only instance (ENABLE_PASSWORD_AUTH="false" on the server): no
   // password form and no separate signup — a first SPID/CIE login is redirected
   // by the server to the OIDC signup page.
@@ -95,13 +113,44 @@ function SignIn({ setLogin }: { setLogin: (login: boolean) => void }) {
               {t(`header.label`)}
             </h1>
             <p className="mt-4">{t(`oidcOnly.description`)}</p>
+            <div className="mt-6">
+              {termsAlreadyAccepted ? (
+                <p className="text-sm leading-6">
+                  <TermsAcceptanceText i18nKey="alreadyAccepted" />
+                </p>
+              ) : (
+                <>
+                  <div className="flex items-start">
+                    <input
+                      ref={termsCheckboxRef}
+                      id="terms"
+                      type="checkbox"
+                      className="checkbox checkbox-primary"
+                      checked={termsChecked}
+                      aria-invalid={termsError}
+                      aria-describedby={termsError ? "terms-error" : undefined}
+                      onChange={(e) => {
+                        setTermsChecked(e.target.checked);
+                        if (e.target.checked) setTermsError(false);
+                      }}
+                    />
+                    <label htmlFor="terms" className="ml-3 block text-sm leading-6">
+                      <TermsAcceptanceText />
+                    </label>
+                  </div>
+                  {termsError && (
+                    <p id="terms-error" className="pl-4 text-error" role="alert">
+                      {t(`oidcOnly.termsRequired`)}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
             <div className="mt-8">
               <button
                 type="button"
                 className="btn btn-primary w-full"
-                onClick={() => {
-                  window.location.href = api.redirectToLoginOidc();
-                }}
+                onClick={handleOidcOnlyLogin}
               >
                 {t(`form.actions.oidc.label`)}
               </button>

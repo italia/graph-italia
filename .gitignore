@@ -179,3 +179,6 @@ secrets-*.yaml
 !charts/**/values.yaml
 
 .claude/
+
+# Documenti legali di partenza (.docx): servono solo per aggiornare le pagine, non vanno nel repo
+packages/webapp/src/data/*.docx

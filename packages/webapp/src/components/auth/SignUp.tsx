@@ -2,15 +2,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { TFunction } from "i18next";
 import { useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { z as zod } from "zod";
 import * as api from "../../lib/api";
 import { broadcastAuth } from "../../lib/authChannel";
 import { useUserStore } from "../../lib/store/user_store";
+import { markTermsAccepted } from "../../lib/termsAcceptance";
 import { HOME_ROUTE } from "../../router";
 import { getPasswordSchema } from "./passwordRules";
 import PasswordRequirements from "./PasswordRequirements";
+import TermsAcceptanceText from "./TermsAcceptanceText";
 
 const getSignupSchema = (
   z: typeof zod,
@@ -96,6 +98,7 @@ function SignUp({
       if (oidc) {
         const result = await api.oidcSignup({ password, pa });
         if (result?.auth) {
+          markTermsAccepted();
           const user = await api.getUser();
           setUser(user);
           broadcastAuth("login"); // let other open tabs pick up the new session
@@ -108,6 +111,7 @@ function SignUp({
 
       const result = await api.register({ email, password, pa });
       if (result?.uid) {
+        markTermsAccepted();
         handleRegistered?.();
       } else {
         setMessage(t("form.errors.generic"));
@@ -301,23 +305,7 @@ function SignUp({
                       htmlFor="policy"
                       className="ml-3 block text-sm leading-6 "
                     >
-                      <Trans
-                        t={t}
-                        i18nKey={`form.fields.policyAcknologment.label.main`}
-                        components={{
-                          privacyLink: (
-                            <a
-                              className="link link-primary font-semibold"
-                              target="_blank"
-                              href="/gdpr"
-                            />
-                          ),
-                        }}
-                      />
-                      <hr />
-                      <small>
-                        {t(`form.fields.policyAcknologment.label.small`)}
-                      </small>
+                      <TermsAcceptanceText />
                     </label>
                   </div>
                   {errors["policyAcknologment"] && (
