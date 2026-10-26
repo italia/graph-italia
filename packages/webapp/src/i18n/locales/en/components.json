@@ -317,7 +317,7 @@
                 "navLabel": "Footer links",
                 "license": {
                     "prefix": "Released under the",
-                    "name": "GNU General Public License v3",
+                    "name": "GNU Affero General Public License v3 (AGPLv3)",
                     "newWindow": "(opens in a new window)"
                 },
                 "links": {

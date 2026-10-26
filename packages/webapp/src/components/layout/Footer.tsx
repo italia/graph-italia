@@ -36,7 +36,7 @@ export default function Footer() {
         <span>
           {t(`license.prefix`)}{" "}
           <a
-            href="https://www.gnu.org/licenses/gpl-3.0.html"
+            href="https://www.gnu.org/licenses/agpl-3.0.html"
             target="_blank"
             rel="noopener noreferrer"
             className="underline inline-flex items-center gap-1"

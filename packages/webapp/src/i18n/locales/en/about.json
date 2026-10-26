@@ -1,6 +1,6 @@
 {
   "hero": {
-    "chip": "Open Source · GPL-3.0",
+    "chip": "Open Source · AGPL-3.0",
     "headline1": "Shape your data",
     "headlineGradient": "by turning it into charts",
     "subheadline": "Use Graph Italia to turn your data, from a CSV or JSON file, into interactive charts. The intuitive interface makes navigation easy and the platform simple to use.",
@@ -48,7 +48,7 @@
       {
         "emoji": "🌍",
         "title": "Open Source",
-        "description": "Released under the GNU GPL v3 license, Graph Italia was built to be adopted and integrated by other public bodies and organizations."
+        "description": "Released under the GNU AGPLv3 license, Graph Italia was built to be adopted and integrated by other public bodies and organizations."
       }
     ]
   },

@@ -1,6 +1,6 @@
 {
   "hero": {
-    "chip": "Open Source · GPL-3.0",
+    "chip": "Open Source · AGPL-3.0",
     "headline1": "Dai forma ai tuoi dati",
     "headlineGradient": "trasformandoli in grafici",
     "subheadline": "Usa Graph Italia per convertire la tua base dati da un file CSV o JSON in grafici interattivi. L'interfaccia intuitiva facilita la navigazione e semplifica l'utilizzo della piattaforma.",
@@ -48,7 +48,7 @@
       {
         "emoji": "🌍",
         "title": "Open Source",
-        "description": "Rilasciato sotto licenza GNU GPL v3, Graph Italia è stato creato per essere adottato e integrato da altri enti e organizzazioni."
+        "description": "Rilasciato sotto licenza GNU AGPLv3, Graph Italia è stato creato per essere adottato e integrato da altri enti e organizzazioni."
       }
     ]
   },
