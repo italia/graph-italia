@@ -27,5 +27,12 @@ export default defineConfig({
     setupFiles: ["./src/tests/setup.ts"],
     include: ["src/tests/**/*.test.{ts,tsx}"],
     css: false,
+    // Node 25+ enables Web Storage by default: without --localstorage-file its
+    // global localStorage has no methods and shadows happy-dom's. Turn it off
+    // in the workers so the DOM environment provides a working one (only where
+    // the flag exists: older Node would refuse to start the workers).
+    execArgv: process.allowedNodeEnvironmentFlags.has("--experimental-webstorage")
+      ? ["--no-experimental-webstorage"]
+      : [],
   },
 });
