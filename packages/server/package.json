@@ -9,7 +9,8 @@
     "dev": "bun --hot index.ts",
     "test": "bun test",
     "dev:seed": "ts-node --esm ./seeds/seed-users.ts",
-    "restore:data": "bun run seeds/restore-previous-data.ts"
+    "restore:data": "bun run seeds/restore-previous-data.ts",
+    "ipa:update": "bun run scripts/update-ipa-enti.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

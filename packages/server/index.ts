@@ -15,6 +15,7 @@ import kpiGroupRoutes from "./routes/kpi-group.ts";
 import oidcRoutes from "./routes/oidc.ts";
 import orgRoutes from "./routes/orgs.ts";
 import projectRoutes from "./routes/projects.ts";
+import ipaRoutes from "./routes/ipa.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
@@ -187,6 +188,7 @@ app.route("/charts/kpi-group", kpiGroupRoutes);
 app.route("/dashboards", dashRoutes);
 app.route("/datasources", dataSourceRoutes);
 app.route("/hints", suggestionsRoutes);
+app.route("/ipa", ipaRoutes);
 app.route("/orgs", orgRoutes);
 app.route("/projects", projectRoutes);
 

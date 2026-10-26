@@ -12,6 +12,7 @@ import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
 import { withAdminEmails } from "../lib/adminEmails";
+import { IpaUnavailableError, resolvePa } from "../lib/ipa";
 import { checkAuth, requireUser } from "../lib/middlewares";
 import { requirePasswordAuth } from "../lib/passwordAuth";
 import { rateLimit, tryConsume } from "../lib/rateLimit";
@@ -114,8 +115,9 @@ router.get("/user", describeRoute({
 const registerSchema = z.object({
 	email: z.email({ error: "Invalid email address" }),
 	password: passwordSchema,
-	// Pubblica Amministrazione di appartenenza: required by the signup form,
-	// optional here (and on the model) so existing clients keep working.
+	// Pubblica Amministrazione di appartenenza as "<codice IPA>#<denominazione>"
+	// (lib/ipa.ts): required by the signup form, optional here (and on the model)
+	// so existing clients keep working; when sent it must be an IndicePA ente.
 	pa: z.string().trim().min(1).optional()
 })
 
@@ -136,7 +138,7 @@ router.post("/register",
 				},
 			},
 			400: {
-				description: "Missing email or password",
+				description: "Missing email or password, or PA not found in IndicePA",
 				content: {
 					"application/json": {
 						schema: resolver(errorMessageSchema),
@@ -145,6 +147,14 @@ router.post("/register",
 			},
 			409: {
 				description: "User Already Exists",
+				content: {
+					"application/json": {
+						schema: resolver(errorMessageSchema),
+					},
+				},
+			},
+			503: {
+				description: "List of IndicePA public administrations not available: the PA cannot be verified",
 				content: {
 					"application/json": {
 						schema: resolver(errorMessageSchema),
@@ -162,7 +172,7 @@ router.post("/register",
 		}
 	}), zValidator("json", registerSchema), async (c) => {
 		try {
-			const { email, password, pa } = c.req.valid("json");
+			const { email, password, pa: paInput } = c.req.valid("json");
 			if (!email || !password) {
 				return c.json(
 					{
@@ -170,6 +180,21 @@ router.post("/register",
 					},
 					400,
 				);
+			}
+
+			let pa: string | undefined;
+			if (paInput) {
+				try {
+					pa = (await resolvePa(paInput)) ?? undefined;
+				} catch (err) {
+					if (err instanceof IpaUnavailableError) {
+						return c.json({ error: { message: "The list of public administrations is not available, please try again later." } }, 503);
+					}
+					throw err;
+				}
+				if (!pa) {
+					return c.json({ error: { message: "Public administration not found in IndicePA." } }, 400);
+				}
 			}
 
 			const existingUser = await db.findUserByEmail(email);

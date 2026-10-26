@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
+import { tmpdir } from "node:os";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -85,7 +86,16 @@ mock.module("../lib/db", () => ({
 
 // ─── App builder ─────────────────────────────────────────────────────────────
 
+// One-ente IndicePA file for the signup tests.
+const PA_VALUE = "c_a944#Comune di Bologna";
+
 async function buildApp() {
+	const { serializeIpaFile, toIpaFile } = await import("../lib/ipa");
+	process.env.IPA_ENTI_FILE = `${tmpdir()}/ipa-enti-oidc-test.json`;
+	await Bun.write(
+		process.env.IPA_ENTI_FILE,
+		serializeIpaFile(toIpaFile([{ code: "c_a944", name: "Comune di Bologna", type: "Pubbliche Amministrazioni" }], "2026-10-26")),
+	);
 	const { default: oidcRouter } = await import("../routes/oidc");
 	const app = new Hono();
 	app.route("/oidc", oidcRouter);
@@ -261,9 +271,9 @@ describe("email verification (no email from IdP)", () => {
 		const statusRes = await app.request("/oidc/signup/status", { headers: { Cookie: verified } });
 		expect(await statusRes.json()).toMatchObject({ email: FREE_EMAIL, emailVerified: true });
 
-		const res = await app.request("/oidc/signup", withJson({ pa: "Comune", password: STRONG_PASSWORD }, verified));
+		const res = await app.request("/oidc/signup", withJson({ pa: PA_VALUE, password: STRONG_PASSWORD }, verified));
 		expect(res.status).toBe(200);
-		expect(createUserMock.mock.calls[0]![0]).toMatchObject({ email: FREE_EMAIL, sub: NEW_SUB, pa: "Comune" });
+		expect(createUserMock.mock.calls[0]![0]).toMatchObject({ email: FREE_EMAIL, sub: NEW_SUB, pa: PA_VALUE });
 	});
 });
 
@@ -321,7 +331,7 @@ describe("POST /oidc/signup with ENABLE_PASSWORD_AUTH=false", () => {
 
 	test("no password needed; account created without one even if sent", async () => {
 		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL };
-		const res = await app.request("/oidc/signup", withJson({ pa: "Comune", password: STRONG_PASSWORD }));
+		const res = await app.request("/oidc/signup", withJson({ pa: PA_VALUE, password: STRONG_PASSWORD }));
 		expect(res.status).toBe(200);
 		expect(res.headers.get("set-cookie")).toContain("access_token");
 		expect(createUserMock).toHaveBeenCalledTimes(1);

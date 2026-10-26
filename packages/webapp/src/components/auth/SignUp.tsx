@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { TFunction } from "i18next";
 import { useState } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { Controller, useForm, type Resolver } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { z as zod } from "zod";
@@ -11,6 +11,7 @@ import { useUserStore } from "../../lib/store/user_store";
 import { markTermsAccepted } from "../../lib/termsAcceptance";
 import { HOME_ROUTE } from "../../router";
 import { getPasswordSchema } from "./passwordRules";
+import PaCombobox from "./PaCombobox";
 import PasswordRequirements from "./PasswordRequirements";
 import TermsAcceptanceText from "./TermsAcceptanceText";
 
@@ -21,11 +22,11 @@ const getSignupSchema = (
 ) => {
   const baseSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
-    // Obbligatoria sul form anche se il modello utente la tiene opzionale.
+    // Obbligatoria sul form anche se il modello utente la tiene opzionale: un
+    // ente di IndicePA scelto dall'elenco, "<codice IPA>#<denominazione>".
     pa: z
       .string()
-      .trim()
-      .min(1, { message: t(`form.fields.pa.errors.required`) }),
+      .regex(/^[A-Za-z0-9_]{1,32}#.+/, { message: t(`form.fields.pa.errors.required`) }),
     policyAcknologment: z.boolean().refine((val) => val === true, {
       message: t(`form.fields.policyAcknologment.errors.mustAccept`),
     }),
@@ -84,6 +85,7 @@ function SignUp({
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema) as Resolver<SignupFormValues>,
@@ -168,16 +170,23 @@ function SignUp({
                     {t(`form.fields.pa.label`)}
                   </label>
                   <div className="mt-2 form-control">
-                    <input
-                      id="pa"
-                      {...register("pa")}
-                      type="text"
-                      required
-                      autoComplete="organization"
-                      className="input input-bordered w-full"
+                    <Controller
+                      name="pa"
+                      control={control}
+                      render={({ field }) => (
+                        <PaCombobox
+                          id="pa"
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          inputRef={field.ref}
+                          invalid={!!errors["pa"]}
+                          describedBy={errors["pa"] ? "pa-error" : undefined}
+                        />
+                      )}
                     />
                     {errors["pa"] && (
-                      <p className="text-error" role="alert">
+                      <p id="pa-error" className="text-error" role="alert">
                         {errors["pa"].message}
                       </p>
                     )}

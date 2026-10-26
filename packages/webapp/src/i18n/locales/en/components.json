@@ -168,7 +168,7 @@
                         "pa": {
                             "label": "Public Administration you belong to",
                             "errors": {
-                                "required": "This field is required"
+                                "required": "Select your administration from the list"
                             }
                         },
                         "password": {
@@ -236,6 +236,17 @@
                 "label": "I have read and accept the <termsLink>terms and conditions</termsLink> and the <privacyLink>privacy policy</privacyLink>",
                 "alreadyAccepted": "By signing in you confirm that you have read and accepted the <termsLink>terms and conditions</termsLink> and the <privacyLink>privacy policy</privacyLink>.",
                 "newWindow": "(opens in a new window)"
+            },
+            "paCombobox": {
+                "placeholder": "Search by name, e.g. Comune di Bologna",
+                "listLabel": "IndicePA public bodies",
+                "loading": "Loading the list of public bodies…",
+                "loadError": "Could not load the IndicePA list of public bodies.",
+                "retry": "Try again",
+                "noResults": "No public body found: try another word of its name.",
+                "results_one": "{{count}} public body found",
+                "results_other": "{{count}} public bodies found",
+                "moreResults": "First {{count}} of {{total}} public bodies: add words to narrow the search"
             }
         },
         "layout": {

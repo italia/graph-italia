@@ -177,6 +177,10 @@ dist
 .vercel
 
 data
+# ...except the versioned IndicePA list of enti (lib/ipa.ts, bun run ipa:update)
+!/data/
+/data/*
+!/data/ipa-enti.json
 
 /lib/generated/prisma
 

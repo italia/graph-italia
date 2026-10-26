@@ -1,0 +1,52 @@
+name: 🏛️ Aggiorna enti IndicePA
+
+# Rigenera packages/server/data/ipa-enti.json (elenco degli enti per il campo
+# «PA di appartenenza» della registrazione) dagli open data IndicePA e apre una
+# PR verso develop quando gli enti sono cambiati. Lo script lascia il file
+# invariato se non c'è nulla di nuovo, quindi in quel caso non parte nessuna PR.
+on:
+  schedule:
+    - cron: "0 5 * * 1" # ogni lunedì alle 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: 🔄 Scarica enti e apri PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: develop
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      # lib/ipa.ts non ha dipendenze: niente bun install.
+      - name: 🏛️ Aggiorna data/ipa-enti.json
+        id: update
+        working-directory: packages/server
+        run: |
+          summary=$(bun run scripts/update-ipa-enti.ts)
+          echo "$summary"
+          echo "summary=$summary" >> "$GITHUB_OUTPUT"
+
+      - name: 📬 Apri o aggiorna la PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: develop
+          branch: chore/update-ipa-enti
+          delete-branch: true
+          add-paths: packages/server/data/ipa-enti.json
+          commit-message: "chore(server): aggiorna enti IndicePA"
+          title: "chore(server): aggiorna enti IndicePA"
+          body: |
+            Aggiornamento automatico dell'elenco degli enti IndicePA usato dal campo «PA di appartenenza» della registrazione.
+
+            `${{ steps.update.outputs.summary }}`
+
+            Fonte: open data IndicePA, dataset «Enti» (https://indicepa.gov.it/ipa-dati/dataset/enti). Generato da `.github/workflows/update-ipa-enti.yml` con `bun run ipa:update`.

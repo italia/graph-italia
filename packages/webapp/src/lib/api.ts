@@ -242,6 +242,26 @@ export async function login({
     }
   }
 }
+/** IndicePA ente, for the signup «PA di appartenenza» field (see lib/ipa.ts). */
+export interface IpaEnte {
+  code: string;
+  name: string;
+  type: string;
+}
+
+/** Every IndicePA ente, from the server's stale-while-revalidate copy. */
+export async function getIpaEnti(): Promise<IpaEnte[]> {
+  const { data } = await axios.get<{
+    types: string[];
+    enti: [code: string, name: string, type: number][];
+  }>(`${getServerUrlWithApi()}/ipa/enti`);
+  return data.enti.map(([code, name, type]) => ({
+    code,
+    name,
+    type: data.types[type] ?? "",
+  }));
+}
+
 /** Register */
 export async function register({
   email,

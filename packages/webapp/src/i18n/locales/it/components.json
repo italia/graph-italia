@@ -168,7 +168,7 @@
                         "pa": {
                             "label": "Pubblica Amministrazione di Appartenenza",
                             "errors": {
-                                "required": "Questo campo è obbligatorio"
+                                "required": "Seleziona la tua amministrazione dall'elenco"
                             }
                         },
                         "password": {
@@ -236,6 +236,17 @@
                 "label": "Ho letto e accetto i <termsLink>termini e le condizioni</termsLink> e la <privacyLink>privacy policy</privacyLink>",
                 "alreadyAccepted": "Accedendo confermi di aver letto e accettato i <termsLink>termini e le condizioni</termsLink> e la <privacyLink>privacy policy</privacyLink>.",
                 "newWindow": "(si apre in una nuova finestra)"
+            },
+            "paCombobox": {
+                "placeholder": "Cerca per nome, es. Comune di Bologna",
+                "listLabel": "Enti di IndicePA",
+                "loading": "Caricamento dell'elenco degli enti…",
+                "loadError": "Impossibile caricare l'elenco degli enti di IndicePA.",
+                "retry": "Riprova",
+                "noResults": "Nessun ente trovato: prova con un'altra parola del nome.",
+                "results_one": "{{count}} ente trovato",
+                "results_other": "{{count}} enti trovati",
+                "moreResults": "Primi {{count}} enti su {{total}}: aggiungi parole per restringere la ricerca"
             }
         },
         "layout": {

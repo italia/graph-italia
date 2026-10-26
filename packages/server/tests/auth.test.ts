@@ -1,5 +1,6 @@
-import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
+import { tmpdir } from "node:os";
 import { sign } from "jsonwebtoken";
 import type { IAccessTokenPayload } from "../lib/jwt";
 import type { ApiKeyModel } from "../lib/db/prisma/models/ApiKey";
@@ -108,6 +109,8 @@ mock.module("../lib/db/apiKeyDb", () => ({
 
 const setUserRoleMock = mock(async (id: string, role: string) => ({ ...DB_USER, id, role }));
 
+const createUserMock = mock(async (_args: Record<string, unknown>) => DB_USER);
+
 mock.module("../lib/db", () => ({
 	default: {
 		findUserByEmail: mock(async (email: string) => {
@@ -120,7 +123,7 @@ mock.module("../lib/db", () => ({
 			if (id === UNVERIFIED_ID) return DB_USER_UNVERIFIED;
 			return null;
 		}),
-		createUserByEmailAndPassword: mock(async () => DB_USER),
+		createUserByEmailAndPassword: createUserMock,
 		createCode: mock(async () => VALID_PIN),
 		findCodeByUid: mock(async (userId: string, type: string) => {
 			if (userId === NO_CODE_ID) return null;
@@ -200,6 +203,47 @@ describe("POST /auth/register", () => {
 			...withJson({}, { email: NEW_EMAIL, password: "nouppercase1!" }),
 		});
 		expect(res.status).toBe(400);
+	});
+});
+
+describe("POST /auth/register — PA from IndicePA", () => {
+	const ipaFile = `${tmpdir()}/ipa-enti-auth-test.json`;
+	beforeAll(async () => {
+		const { serializeIpaFile, toIpaFile } = await import("../lib/ipa");
+		await Bun.write(
+			ipaFile,
+			serializeIpaFile(toIpaFile([{ code: "c_a944", name: "Comune di Bologna", type: "Pubbliche Amministrazioni" }], "2026-10-26")),
+		);
+	});
+	beforeEach(() => {
+		process.env.IPA_ENTI_FILE = ipaFile;
+		createUserMock.mockClear();
+	});
+	afterAll(() => { delete process.env.IPA_ENTI_FILE; });
+
+	const register = (pa: string) =>
+		app.request("/auth/register", {
+			method: "POST",
+			...withJson({}, { email: NEW_EMAIL, password: CORRECT_PASSWORD, pa }),
+		});
+
+	test("known IPA code → saved as code#official name, whatever name the client sent", async () => {
+		const res = await register("c_a944#Comune di Bolo");
+		expect(res.status).toBe(200);
+		expect(createUserMock.mock.calls[0]![0]).toMatchObject({ pa: "c_a944#Comune di Bologna" });
+	});
+
+	test("unknown IPA code → 400", async () => {
+		expect((await register("c_zzzz#Comune inventato")).status).toBe(400);
+	});
+
+	test("free text without a code → 400", async () => {
+		expect((await register("Comune di Bologna")).status).toBe(400);
+	});
+
+	test("list file missing → 503", async () => {
+		process.env.IPA_ENTI_FILE = `${tmpdir()}/ipa-enti-missing.json`;
+		expect((await register("c_a944#Comune di Bologna")).status).toBe(503);
 	});
 });
 

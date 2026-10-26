@@ -16,6 +16,7 @@ import db from "../lib/db";
 import type { User } from "../lib/db/prisma/client";
 import { sendOidcEmailCode } from "../lib/email";
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
+import { IpaUnavailableError, resolvePa } from "../lib/ipa";
 import { logger } from "../lib/logger";
 import {
     clearEmailVerification,
@@ -396,7 +397,15 @@ router.post(
                 }
             },
             400: {
-                description: "No verified email, or invalid request body",
+                description: "No verified email, invalid request body, or PA not found in IndicePA",
+                content: {
+                    "application/json": {
+                        schema: resolver(errorMessageSchema),
+                    }
+                }
+            },
+            503: {
+                description: "List of IndicePA public administrations not available: the PA cannot be verified",
                 content: {
                     "application/json": {
                         schema: resolver(errorMessageSchema),
@@ -427,8 +436,6 @@ router.post(
         }
 
         const body = await c.req.json().catch(() => ({} as Record<string, unknown>))
-        // Pubblica Amministrazione di appartenenza: chiesta dal form, opzionale sul modello.
-        const pa = typeof body?.pa === 'string' && body.pa.trim() ? body.pa.trim() : undefined
         // Con l'accesso via password attivo la registrazione SPID/CIE imposta anche una
         // password (utilizzabile in alternativa); in modalità solo SPID/CIE l'account
         // nasce senza password e la si ignora anche se inviata.
@@ -446,6 +453,23 @@ router.post(
             clearEmailVerification(c)
             await linkAndLogin(c, byEmail, sub)
             return c.json({ auth: true })
+        }
+
+        // Pubblica Amministrazione di appartenenza: chiesta dal form, opzionale sul modello.
+        // Se inviata dev'essere un ente di IndicePA («<codice IPA>#<denominazione>», lib/ipa.ts).
+        let pa: string | undefined
+        if (typeof body?.pa === 'string' && body.pa.trim()) {
+            try {
+                pa = (await resolvePa(body.pa)) ?? undefined
+            } catch (err) {
+                if (err instanceof IpaUnavailableError) {
+                    return c.json({ error: { message: 'The list of public administrations is not available, please try again later.' } }, 503)
+                }
+                throw err
+            }
+            if (!pa) {
+                return c.json({ error: { message: 'Public administration not found in IndicePA.' } }, 400)
+            }
         }
 
         const user = await db.createUserByEmailAndPassword({ email, password, sub, pa })
