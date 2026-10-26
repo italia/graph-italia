@@ -892,6 +892,10 @@ export interface AdminUser {
   email: string;
   role: "USER" | "ADMIN";
   verified: boolean;
+  /** "<codice IPA>#<denominazione>", or a plain name for older accounts (lib/ipa.ts). */
+  pa: string | null;
+  /** Oscar PA membership check: null never requested, 0 pending, 1 belongs, 2 does not belong. */
+  paVerified: 0 | 1 | 2 | null;
   createdAt: string;
   updatedAt: string;
   ownedProjects: { id: string; name: string }[];

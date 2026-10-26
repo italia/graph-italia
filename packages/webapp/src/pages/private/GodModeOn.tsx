@@ -9,6 +9,7 @@ import registerDarkTheme from "../../components/layout/DataTableDarkTheme.ts";
 import { useSettingsStore } from "../../lib/store/settings_store.ts";
 import { useUserStore } from "../../lib/store/user_store.ts";
 import * as api from "../../lib/api.ts";
+import { parsePa } from "../../lib/ipa.ts";
 import type { AdminUser } from "../../lib/api.ts";
 
 registerDarkTheme();
@@ -19,6 +20,13 @@ interface PendingAction {
   type: ActionType;
   user: AdminUser;
 }
+
+// Oscar PA membership check (server lib/oscar.ts); null = never requested.
+const PA_VERIFIED_BADGES: Record<0 | 1 | 2, { label: string; className: string }> = {
+  0: { label: "Check pending", className: "badge-warning" },
+  1: { label: "Member", className: "badge-success" },
+  2: { label: "Not a member", className: "badge-error" },
+};
 
 const ACTION_LABELS: Record<ActionType, string> = {
   delete: "Delete",
@@ -134,6 +142,24 @@ export default function GodModeOnPage() {
           {row.verified ? "Verified" : "Unverified"}
         </span>
       ),
+    },
+    {
+      name: "PA",
+      selector: (row) => (row.pa ? parsePa(row.pa).name : ""),
+      sortable: true,
+      grow: 2,
+      cell: (row) => {
+        if (!row.pa) return <span className="opacity-40">—</span>;
+        const { code, name } = parsePa(row.pa);
+        const badge = row.paVerified === null ? null : PA_VERIFIED_BADGES[row.paVerified];
+        return (
+          <div className="py-1">
+            <div className="text-sm">{name}</div>
+            {code && <div className="font-mono text-xs opacity-40">{code}</div>}
+            {badge && <span className={`badge badge-sm mt-1 ${badge.className}`}>{badge.label}</span>}
+          </div>
+        );
+      },
     },
     {
       name: "Projects",

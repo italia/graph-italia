@@ -113,7 +113,10 @@ model Membership {
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
-  pa       String? // Pubblica Amministrazione di appartenenza; required by the signup form, optional here for existing rows
+  pa       String? // Pubblica Amministrazione di appartenenza, "<codice IPA>#<denominazione>" (lib/ipa.ts); required by the signup form, optional here for existing rows
+  // Verifica dell'appartenenza alla PA tramite Oscar (lib/oscar.ts): null = mai
+  // richiesta, 0 = in attesa, 1 = appartiene, 2 = non appartiene
+  paVerified Int? @map("pa_verified")
   password String? // null for accounts created through SPID/CIE-only signup (ENABLE_PASSWORD_AUTH=false)
   verified Boolean @default(false)
   role     Role    @default(USER)

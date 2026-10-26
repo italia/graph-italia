@@ -1624,6 +1624,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   pa: 'pa',
+  paVerified: 'paVerified',
   password: 'password',
   verified: 'verified',
   role: 'role',
@@ -1872,6 +1873,20 @@ export type ListEnumOrgRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -1903,20 +1918,6 @@ export type EnumApiKeyRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'ApiKeyRole[]'
  */
 export type ListEnumApiKeyRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApiKeyRole[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 

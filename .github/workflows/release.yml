@@ -189,11 +189,14 @@ jobs:
           OIDC_AUTH_EXTERNAL_URL: ${{ vars.OIDC_AUTH_EXTERNAL_URL }}
           OIDC_CLIENT_SECRET: ${{ secrets.OIDC_CLIENT_SECRET }}
           OIDC_AUTH_SECRET: ${{ secrets.OIDC_AUTH_SECRET }}
+          ENABLE_OSCAR_PA_VERIFICATION: ${{ vars.ENABLE_OSCAR_PA_VERIFICATION }}
+          OSCAR_URL: ${{ vars.OSCAR_URL }}
+          OSCAR_KEY: ${{ secrets.OSCAR_KEY }}
         run: |
           # --set-string keeps "false" a string; commas (ADMIN_EMAILS) are
           # escaped because Helm would otherwise split the value on them.
           ENV_ARGS=()
-          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_AUTH_EXTERNAL_URL OIDC_CLIENT_SECRET OIDC_AUTH_SECRET; do
+          for name in ENABLE_PASSWORD_AUTH ADMIN_EMAILS OIDC_ISSUER OIDC_CLIENT_ID OIDC_REDIRECT_URI OIDC_SCOPES OIDC_AUTH_EXTERNAL_URL OIDC_CLIENT_SECRET OIDC_AUTH_SECRET ENABLE_OSCAR_PA_VERIFICATION OSCAR_URL OSCAR_KEY; do
             value="${!name}"
             if [ -n "$value" ]; then
               ENV_ARGS+=(--set-string "server.env.${name}=${value//,/\\,}")

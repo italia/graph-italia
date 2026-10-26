@@ -314,6 +314,8 @@ La pipeline (`.github/workflows/release.yml`) aggiorna le release con `--reuse-v
 | `ADMIN_EMAILS` | variable | `a@pa.gov.it,b@pa.gov.it` |
 | `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_REDIRECT_URI`, `OIDC_SCOPES`, `OIDC_AUTH_EXTERNAL_URL` | variable | redirect `https://<host>/api/oidc/callback` (assoluto: dietro l'ingress il server vede `http://`); external URL `https://<host>` |
 | `OIDC_CLIENT_SECRET`, `OIDC_AUTH_SECRET` | secret | `OIDC_AUTH_SECRET` di almeno 32 caratteri |
+| `ENABLE_OSCAR_PA_VERIFICATION`, `OSCAR_URL` | variable | `true` = ogni nuovo account SPID/CIE viene inviato a Oscar per verificare l'appartenenza alla PA; `OSCAR_URL` è l'endpoint POST di Oscar |
+| `OSCAR_KEY` | secret | chiave HS256 condivisa con Oscar: firma il bearer JWT in entrambe le direzioni |
 
 Si applicano solo le variabili valorizzate: una variabile assente lascia il valore attuale della release. Per tornare indietro va impostato il valore opposto (es. `ENABLE_PASSWORD_AUTH=true`), non cancellata la variabile.
 

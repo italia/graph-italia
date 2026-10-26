@@ -16,6 +16,7 @@ import oidcRoutes from "./routes/oidc.ts";
 import orgRoutes from "./routes/orgs.ts";
 import projectRoutes from "./routes/projects.ts";
 import ipaRoutes from "./routes/ipa.ts";
+import oscarRoutes from "./routes/oscar.ts";
 
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
@@ -190,6 +191,7 @@ app.route("/datasources", dataSourceRoutes);
 app.route("/hints", suggestionsRoutes);
 app.route("/ipa", ipaRoutes);
 app.route("/orgs", orgRoutes);
+app.route("/oscar", oscarRoutes);
 app.route("/projects", projectRoutes);
 
 // ═══════════════════════════════════════════════════════════════════════════════

@@ -16,6 +16,8 @@ export function getAllUsersForAdmin() {
 			email: true,
 			role: true,
 			verified: true,
+			pa: true,
+			paVerified: true,
 			createdAt: true,
 			updatedAt: true,
 			ownedProjects: {
@@ -127,6 +129,16 @@ export function setVerified(id: string) {
 			verified: true,
 		},
 	});
+}
+
+/** Esito della verifica di appartenenza alla PA (lib/oscar.ts). */
+export function setPaVerified(id: string, paVerified: number | null) {
+	return prisma.user.update({ where: { id }, data: { paVerified } });
+}
+
+/** Invio a Oscar fallito: torna a «mai richiesta», a meno che l'esito sia già arrivato. */
+export function clearPendingPaVerification(id: string) {
+	return prisma.user.updateMany({ where: { id, paVerified: 0 }, data: { paVerified: null } });
 }
 
 export async function changePassword(id: string, newPassword: string) {

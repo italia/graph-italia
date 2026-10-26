@@ -16,8 +16,9 @@ import db from "../lib/db";
 import type { User } from "../lib/db/prisma/client";
 import { sendOidcEmailCode } from "../lib/email";
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
-import { IpaUnavailableError, resolvePa } from "../lib/ipa";
+import { IpaUnavailableError, parsePa, resolvePa } from "../lib/ipa";
 import { logger } from "../lib/logger";
+import { requestPaVerification } from "../lib/oscar";
 import {
     clearEmailVerification,
     emailCodeMatches,
@@ -476,6 +477,19 @@ router.post(
         clearEmailVerification(c)
         await linkAndLogin(c, user, sub)
         logger.info('User registered via OIDC', { userId: user.id, sub })
+
+        // Verifica dell'appartenenza alla PA con Oscar (se attiva): nome e cognome
+        // arrivano dalla sessione SPID/CIE e non vengono salvati. In background:
+        // la registrazione non aspetta Oscar.
+        const { code: paCode, name: paName } = parsePa(pa ?? '')
+        if (paCode) {
+            void requestPaVerification({
+                userId: user.id,
+                firstName: oidcAuth.given_name ?? '',
+                lastName: oidcAuth.family_name ?? '',
+                pa: { code: paCode, name: paName },
+            })
+        }
         return c.json({ auth: true })
     }
 );

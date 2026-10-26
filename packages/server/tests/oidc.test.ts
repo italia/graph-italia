@@ -69,6 +69,8 @@ const linkOidcIdentity = mock(async (_userId: string, _sub: string) => ({}));
 const createUserMock = mock(async (_args: Record<string, unknown>) => CREATED_USER);
 const setVerified = mock(async (id: string) => ({ ...(id === PASSWORD_USER.id ? PASSWORD_USER : CREATED_USER), verified: true }));
 
+const setPaVerified = mock(async (_id: string, _state: number | null) => ({}));
+
 mock.module("../lib/db", () => ({
 	default: {
 		findUserByOidcSub: mock(async (sub: string) => (sub === LINKED_SUB ? LINKED_USER : null)),
@@ -81,6 +83,8 @@ mock.module("../lib/db", () => ({
 		linkOidcIdentity,
 		createUserByEmailAndPassword: createUserMock,
 		setVerified,
+		setPaVerified,
+		clearPendingPaVerification: mock(async () => ({ count: 0 })),
 	},
 }));
 
@@ -336,5 +340,56 @@ describe("POST /oidc/signup with ENABLE_PASSWORD_AUTH=false", () => {
 		expect(res.headers.get("set-cookie")).toContain("access_token");
 		expect(createUserMock).toHaveBeenCalledTimes(1);
 		expect(createUserMock.mock.calls[0]![0].password).toBeUndefined();
+	});
+});
+
+describe("POST /oidc/signup → Oscar PA verification", () => {
+	const fetchMock = mock(async (_url: string | URL, _init?: RequestInit) => new Response(null, { status: 202 }));
+	const originalFetch = globalThis.fetch;
+	beforeAll(() => {
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		process.env["ENABLE_PASSWORD_AUTH"] = "false";
+		process.env["OSCAR_URL"] = "https://oscar.test/verifications";
+		process.env["OSCAR_KEY"] = "oscar-test-key";
+	});
+	beforeEach(() => {
+		process.env["ENABLE_OSCAR_PA_VERIFICATION"] = "true";
+		fetchMock.mockClear();
+		setPaVerified.mockClear();
+	});
+	afterAll(() => {
+		globalThis.fetch = originalFetch;
+		for (const k of ["ENABLE_PASSWORD_AUTH", "ENABLE_OSCAR_PA_VERIFICATION", "OSCAR_URL", "OSCAR_KEY"]) delete process.env[k];
+	});
+
+	test("new account → user id, SPID/CIE names and PA sent to Oscar", async () => {
+		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL, given_name: "Mario", family_name: "Rossi" };
+		const res = await app.request("/oidc/signup", withJson({ pa: PA_VALUE }));
+		expect(res.status).toBe(200);
+		await Bun.sleep(0); // the request to Oscar runs in the background
+		expect(setPaVerified).toHaveBeenCalledWith(CREATED_USER.id, 0);
+		const [url, init] = fetchMock.mock.calls[0]!;
+		expect(String(url)).toBe("https://oscar.test/verifications");
+		expect(JSON.parse(String(init?.body))).toEqual({
+			userId: CREATED_USER.id,
+			firstName: "Mario",
+			lastName: "Rossi",
+			pa: { code: "c_a944", name: "Comune di Bologna" },
+		});
+	});
+
+	test("feature off → nothing sent", async () => {
+		process.env["ENABLE_OSCAR_PA_VERIFICATION"] = "false";
+		currentAuth = { sub: NEW_SUB, email: FREE_EMAIL, given_name: "Mario", family_name: "Rossi" };
+		expect((await app.request("/oidc/signup", withJson({ pa: PA_VALUE }))).status).toBe(200);
+		await Bun.sleep(0);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	test("existing account linked instead of created → nothing sent", async () => {
+		currentAuth = { sub: NEW_SUB, email: PASSWORD_EMAIL, given_name: "Mario", family_name: "Rossi" };
+		expect((await app.request("/oidc/signup", withJson({ pa: PA_VALUE }))).status).toBe(200);
+		await Bun.sleep(0);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
