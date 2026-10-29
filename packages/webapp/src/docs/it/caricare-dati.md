@@ -15,7 +15,12 @@ In alternativa, puoi caricare un file JSON contenente un array (struttura dati) 
 
 ## URL esterno
 
+<!-- publishing:on -->
 Incolla la URL di un CSV o JSON pubblicato sul web (ad esempio, un file su GitHub o un'API di open data). Il grafico **resta collegato alla fonte**: quando il grafico è pubblico e la versione salvata ha più di **24 ore**, Graph Italia recupera i dati dall'URL e applica i cambiamenti che hai definito. In questo modo i grafici restano aggiornati senza interventi manuali.
+<!-- /publishing -->
+<!-- publishing:off -->
+Incolla la URL di un CSV o JSON pubblicato sul web (ad esempio, un file su GitHub o un'API di open data). Graph Italia scarica i dati dall'URL e applica i cambiamenti che hai definito.
+<!-- /publishing -->
 
 ## Sistemare la tabella
 

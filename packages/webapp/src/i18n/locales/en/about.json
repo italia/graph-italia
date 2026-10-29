@@ -18,7 +18,7 @@
   "features": {
     "label": "How does it work?",
     "title": "Turn your data into charts in a few steps",
-    "subtitle": "From the data set to creating and publishing charts, Graph Italia supports you through the whole workflow.",
+    "subtitle": "From your data to creating charts and integrating them in your websites, Graph Italia supports you throughout the workflow.",
     "items": [
       {
         "emoji": "📊",
@@ -33,7 +33,8 @@
       {
         "emoji": "🔄",
         "title": "Continuous updates",
-        "description": "Graph Italia keeps a history of remote data, such as data loaded from a URL, and refreshes it every 24 hours."
+        "description": "Graph Italia keeps a history of remote data, such as data loaded from a URL, and refreshes it every 24 hours.",
+        "requires": "publishing"
       },
       {
         "emoji": "🎨",
@@ -63,14 +64,14 @@
       },
       {
         "title": "Generate your API keys",
-        "body": "Once done, go to the project settings to generate a secure read-only API key: it lets you embed your work and show your data only where you decide."
+        "body": "Once done, open API Key from the user menu and generate a read-only key for the project: it lets you show your data only where you decide."
       },
       {
         "title": "Embed the code in your website",
-        "body": "Go to the React component library and enter the API key and the identifier of your chart or dashboard: the component fetches the information and renders the chart automatically."
+        "body": "Use the React component library with the API key and the identifier of your chart or dashboard: the component fetches the information and renders the chart automatically. If your website does not use React, you can use the REST API or the typed client graph-italia-cli."
       }
     ],
-    "codeNote": "You can also embed using traditional <iframe> methods for non-React websites.",
+    "codeNote": "If your website does not use React, you can integrate the data with the REST API or the typed client graph-italia-cli.",
     "copy": "Copy",
     "copied": "Copied!"
   },

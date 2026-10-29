@@ -15,7 +15,12 @@ Alternatively, you can upload a JSON file containing an array (data structure) o
 
 ## External URL
 
+<!-- publishing:on -->
 Paste the URL of a CSV or JSON published on the web (for example, a file on GitHub or an open data API). The chart **stays linked to the source**: when the chart is public and the saved version is older than **24 hours**, Graph Italia fetches the data from the URL again and applies the changes you defined. This way charts stay up to date without manual work.
+<!-- /publishing -->
+<!-- publishing:off -->
+Paste the URL of a CSV or JSON published on the web (for example, a file on GitHub or an open data API). Graph Italia downloads the data from the URL and applies the changes you defined.
+<!-- /publishing -->
 
 ## Fixing the table
 

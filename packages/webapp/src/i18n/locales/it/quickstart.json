@@ -1,12 +1,20 @@
 {
     "back": "Torna alla home",
     "title": "Come iniziare",
-    "description": "Dalla registrazione alla pubblicazione del primo grafico: segui questa guida per scoprire come utilizzare Graph Italia.",
+    "description": "Dal primo accesso all'integrazione del tuo primo grafico: segui questa guida per scoprire come utilizzare Graph Italia.",
     "guide": {
         "account": {
             "title": "Registrati e accedi",
             "items": [
                 "In alto a destra, clicca su <strong>Accedi</strong> e crea il tuo account utilizzando il tuo indirizzo email: riceverai un codice di verifica per attivarlo.",
+                "Ogni account ha già un progetto personale, potrai crearne altri e condividerli con altre persone utilizzando la funzionalità <strong>Organizzazioni</strong>."
+            ]
+        },
+        "accountSpid": {
+            "title": "Accedi con SPID o CIE",
+            "items": [
+                "In alto a destra, clicca su <strong>Accedi</strong> e autenticati con <strong>SPID</strong> o <strong>CIE</strong>: su questa istanza non è possibile registrarsi con email e password.",
+                "Al primo accesso completa il profilo: se la tua identità digitale non fornisce un indirizzo email te lo chiederemo e lo confermeremo con un codice; indica poi la pubblica amministrazione di appartenenza.",
                 "Ogni account ha già un progetto personale, potrai crearne altri e condividerli con altre persone utilizzando la funzionalità <strong>Organizzazioni</strong>."
             ]
         },
@@ -32,6 +40,13 @@
                 "Nella sezione <strong>Informazioni</strong> definisci la visibilità del grafico: se <strong>pubblico</strong> potrà essere visibile a chiunque abbia il link diretto e potrà essere incorporato in altri siti, se <strong>privato</strong> rimane visibile solo a te."
             ]
         },
+        "configurePrivate": {
+            "title": "Configura il grafico",
+            "items": [
+                "Scegli la tipologia di grafico che vuoi creare a scelta tra <strong>barre, linee, a torta o mappa</strong>, e vedi l'anteprima che si crea contestualmente.",
+                "Puoi configurare e personalizzare il tuo grafico utilizzando le impostazioni disponibili. Nelle <strong>Configurazioni avanzate</strong> troverai la possibilità di creare e impostare tooltip, griglia e assi."
+            ]
+        },
         "publish": {
             "title": "Salva, pubblica e condividi",
             "items": [
@@ -39,11 +54,26 @@
                 "Se hai creato un grafico con visibilità pubblica, nella colonna <strong>Condividi</strong> potrai copiare il link pubblico e il codice embed (iframe) da integrare nel tuo sito."
             ]
         },
+        "integrate": {
+            "title": "Salva e integra nel tuo sito",
+            "items": [
+                "Una volta ultimate le modifiche clicca su <strong>Salva</strong>: il tuo grafico comparirà nella lista dei tuoi progetti personali in <strong>Area privata</strong>.",
+                "Su questa istanza i grafici e le dashboard non hanno un link pubblico e non si possono incorporare con un iframe: restano visibili solo a te e a chi collabora al progetto.",
+                "Per mostrarli nel tuo sito o applicativo web genera una <strong>chiave API</strong> di sola lettura del progetto e usa la libreria React <strong>graph-italia-components</strong> (oppure le API REST o il client <strong>graph-italia-cli</strong>) indicando la chiave e l'identificativo dell'elemento."
+            ]
+        },
         "dashboard": {
             "title": "Componi una dashboard",
             "items": [
                 "Una dashboard è un raccoglitore di più grafici e blocchi di testo in un'unica pagina: puoi trascinare gli elementi negli spazi della griglia, regolare le altezze e larghezze e scrivere i testi.",
                 "La dashboard può essere condivisa con un link pubblico."
+            ]
+        },
+        "dashboardPrivate": {
+            "title": "Componi una dashboard",
+            "items": [
+                "Una dashboard è un raccoglitore di più grafici e blocchi di testo in un'unica pagina: puoi trascinare gli elementi negli spazi della griglia, regolare le altezze e larghezze e scrivere i testi.",
+                "La dashboard si integra nel tuo sito come i grafici, con la chiave API del progetto e il componente <strong>DashboardGridProvider</strong>."
             ]
         },
         "api": {

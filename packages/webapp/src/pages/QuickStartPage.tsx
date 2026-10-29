@@ -1,26 +1,32 @@
 import { Trans, useTranslation } from "react-i18next";
 import Layout from "../components/layout";
+import { isPasswordAuthEnabled, isPublishingEnabled } from "../lib/api";
 import { useUserStore } from "../lib/store/user_store";
 import { HOME_ROUTE } from "../router";
 
-// Section keys, in order. "account" is skipped for logged-in users: telling
+// Section keys, in order, picked for what this instance offers: SPID/CIE-only
+// sign-in, and API-key integration instead of public links and iframes when
+// publishing is off. The account step is skipped for logged-in users: telling
 // them to sign in is noise, and the final CTA points to their private area.
-const GUIDE_STEPS = [
-  "account",
-  "create",
-  "data",
-  "configure",
-  "publish",
-  "dashboard",
-  "api",
-] as const;
+function guideSteps(loggedIn: boolean): string[] {
+  const publishing = isPublishingEnabled();
+  return [
+    ...(loggedIn ? [] : [isPasswordAuthEnabled() ? "account" : "accountSpid"]),
+    "create",
+    "data",
+    publishing ? "configure" : "configurePrivate",
+    publishing ? "publish" : "integrate",
+    publishing ? "dashboard" : "dashboardPrivate",
+    "api",
+  ];
+}
 
 export default function QuickStartPage() {
   const { t } = useTranslation("quickstart");
   const { user } = useUserStore();
   const loggedIn = Boolean(user);
 
-  const steps = GUIDE_STEPS.filter((key) => !(loggedIn && key === "account"));
+  const steps = guideSteps(loggedIn);
 
   return (
     <Layout>
@@ -119,12 +125,14 @@ export default function QuickStartPage() {
                   <a href="/login" className="btn-italia btn-italia-primary">
                     {t("actions.getStarted.label")}
                   </a>
-                  <a
-                    href="/login?mode=register"
-                    className="btn-italia btn-italia-primary-outline"
-                  >
-                    {t("actions.register.label", { defaultValue: "Registrati" })}
-                  </a>
+                  {isPasswordAuthEnabled() && (
+                    <a
+                      href="/login?mode=register"
+                      className="btn-italia btn-italia-primary-outline"
+                    >
+                      {t("actions.register.label", { defaultValue: "Registrati" })}
+                    </a>
+                  )}
                 </span>
               )}
             </p>

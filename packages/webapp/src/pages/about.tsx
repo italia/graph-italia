@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/layout";
+import { isPublishingEnabled } from "../lib/api";
 import { useUserStore } from "../lib/store/user_store";
 import { HOME_ROUTE } from "../router";
 
@@ -10,6 +11,9 @@ interface FeatureItem {
   emoji: string;
   title: string;
   description: string;
+  // Shown only when this instance has the feature on (e.g. the 24h refresh of
+  // remote data runs on the public show endpoint).
+  requires?: "publishing";
 }
 
 interface StepItem {
@@ -194,7 +198,9 @@ export default function AboutPage() {
   const { user } = useUserStore();
   const { t } = useTranslation("about");
 
-  const features = t("features.items", { returnObjects: true }) as FeatureItem[];
+  const features = (t("features.items", { returnObjects: true }) as FeatureItem[]).filter(
+    (f) => f.requires !== "publishing" || isPublishingEnabled(),
+  );
   const steps = t("integration.steps", { returnObjects: true }) as StepItem[];
   const badges = t("hero.badges", { returnObjects: true }) as string[];
 

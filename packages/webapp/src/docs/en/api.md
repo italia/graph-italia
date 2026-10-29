@@ -24,7 +24,9 @@ curl -H "Authorization: Bearer dv_YOUR_KEY" \
 | Resource | Endpoint | Operations |
 | --- | --- | --- |
 | Charts | `/api/charts` | list, detail, create, update, delete |
+<!-- publishing:on -->
 | Public chart | `/api/charts/show/:id` | read without authentication (public items only) |
+<!-- /publishing -->
 | KPI groups | `/api/charts/kpi-group` | create and update KPI groups |
 | Dashboards | `/api/dashboards` | list, detail, slots |
 | Data sources | `/api/datasources` | list, detail, create, update data |

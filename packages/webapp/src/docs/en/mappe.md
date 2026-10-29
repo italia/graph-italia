@@ -37,4 +37,9 @@ You can check a GeoJSON file with the preview available at **/geo** before using
 
 ## Sharing
 
+<!-- publishing:on -->
 Like every chart, a public map has a display link and an embed code. The automatic refresh of remote data applies too (see [Loading data](/docs/caricare-dati)).
+<!-- /publishing -->
+<!-- publishing:off -->
+Like every chart, a map is integrated in your website with the component library and a project API key (see [Publishing and sharing](/docs/condivisione)).
+<!-- /publishing -->

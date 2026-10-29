@@ -1,6 +1,6 @@
 # Dashboard
 
-Una dashboard raccoglie più elementi e testi in un'unica pagina da condividere con un solo link.
+Una dashboard raccoglie più elementi e testi in un'unica pagina.
 
 ## Quando usarla
 
@@ -24,5 +24,10 @@ Usa i blocchi di testo per aggiungere introduzioni, note metodologiche e note al
 ## Salvataggio e condivisione
 
 - Clicca su **Salva** per conservare il layout e i contenuti della tua dashboard. Gli slot lasciati vuoti sulla griglia non vengono salvati;
+<!-- publishing:on -->
 - la dashboard pubblica è raggiungibile dal link presente nella lista **Le mie dashboard** e può essere incorporata in un altro sito;
+<!-- /publishing -->
+<!-- publishing:off -->
+- per mostrare la dashboard nel tuo sito usa `DashboardGridProvider` della libreria componenti con una API key del progetto (vedi [Pubblicare e condividere](/docs/condivisione));
+<!-- /publishing -->
 - i grafici mostrati nella dashboard sono quelli precedentemente salvati su Graph Italia e vengono aggiornati automaticamente quando il grafico viene cambiato.

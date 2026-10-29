@@ -4,6 +4,8 @@ import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useParams } from "react-router-dom";
 import Layout from "../components/layout";
+import { isPasswordAuthEnabled, isPublishingEnabled } from "../lib/api";
+import { applyInstanceFlags } from "../lib/docsFlags";
 import { ROUTES } from "../router";
 
 import type { AppLanguage } from "../lib/store/settings_store";
@@ -109,7 +111,10 @@ const isSlug = (value: string | undefined): value is Slug =>
 /** Markdown for a chapter in the current language, falling back to Italian. */
 function chapterContent(slug: Slug, language: string): string {
   const lang = (language in CONTENT ? language : "it") as AppLanguage;
-  return CONTENT[lang][slug];
+  return applyInstanceFlags(CONTENT[lang][slug], {
+    publishing: isPublishingEnabled(),
+    password: isPasswordAuthEnabled(),
+  });
 }
 
 /** Internal links in the markdown go through the SPA router. */

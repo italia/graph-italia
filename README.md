@@ -24,13 +24,54 @@ Il progetto è strutturato come **monorepo** per massimizzare la riusabilità de
 - **Creazione Grafici**: Upload file dati CSV (max 5mb) , o caricamento dati preformattati ad hoc da URL remoti, selezione delle serie da visualizzare, (solo una colonna come category ovvero stringhe e label, e più serie numeriche), selezione tipo di grafico fra i supportati (barre, linee, torta, mappe geografiche, KPI), e personalizzazione limitata di alcuni parametri quali legende e stili etc.
 - **Dashboards**: Creazione di dashboard a partire dai grafici creati, combinando più grafici in un'unica vista
 - **Progetti, Organizzazioni e Collaborazione**: Ogni grafico/dashboard/datasource appartiene a un `Project`; i progetti possono avere più membri e possono essere associati a una `Org` per far collaborare un intero team. Vedi la sezione dedicata [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership) più avanti per il dettaglio di ruoli e permessi.
-- **Integrazione e Condivisione**: E' possibile integrare i chart creati all'interno di siti web tramite l'utilizzo delle Api, e utilizzando apposite chiavi (`ApiKey`) per ogni progetto. Ogni progetto può avere N grafici e Dashboard. E' presente anche la possibilità di flaggare i grafici come pubblici e visualizzarli ad un url corrispondente all'identificativo alfanumerico del grafico; questa modalità permetterebbe anche l'embedding di grafici e dashboard tramite l'utilizzo di iframes all'interno di terzi siti web.
+- **Integrazione e Condivisione**: i grafici e le dashboard si integrano in siti e applicativi web tramite la libreria componenti (`packages/components`) o il client API (`packages/client`), autenticandosi con una chiave (`ApiKey`) di progetto. Ogni progetto può avere N grafici e dashboard. Se l'istanza lo consente (flag `ENABLE_PUBLIC_PUBLISHING`), un grafico o una dashboard possono anche essere resi pubblici: sono visibili a un URL corrispondente al loro identificativo e incorporabili in siti terzi tramite `<iframe>`.
 
   > [!IMPORTANT]
-  > Sebbene il progetto sia stato pensato fin dall'origine per la condivisione e pubblicazione pubblica dei grafici (rotte `display/*`, `embed/*` e gli endpoint pubblici `show`), **nella versione attualmente ospitata online dal Dipartimento per la Trasformazione Digitale questa funzionalità è disabilitata per motivi legali/di data-governance**. Sulla nostra istanza l'unico modo supportato per condividere un grafico/dashboard e i relativi dati è tramite il **client (`packages/client`) o la libreria componenti (`packages/components`), autenticandosi con una API Key di progetto**. Chi si autoospita (self-hosted) `packages/server` mantiene invece piena disponibilità delle funzionalità di pubblicazione/embed via iframe, che restano parte del codice open source.
+  > **Nell'istanza ospitata dal Dipartimento per la Trasformazione Digitale la pubblicazione pubblica è disattivata** (`ENABLE_PUBLIC_PUBLISHING="false"`) per motivi legali e di data-governance: non esistono link pubblici (`display/*`), embed via iframe (`embed/*`) né endpoint anonimi `show`. L'unico modo per mostrare grafici e dashboard nei propri siti o applicativi è il **client (`packages/client`) o la libreria componenti (`packages/components`) con una API Key di progetto**. Chi ospita una propria istanza sceglie liberamente: la pubblicazione è attiva di default. Vedi [Funzionalità configurabili](#funzionalità-configurabili-feature-flag).
 - **Persistenza e Gestione**: Vengono salvati soltanto i dati caricati e selezionati dagli utenti. Nel caso di url remoti viene mantenuta in cache l'ultima versione valida , mentre viene effettuata una nuova richiesta se i dati sono più vecchi di tot ore (24 attualmente), e i dati vengono sostituiti se la nuova chiamata ha successo.
-- **Autenticazione Utenti**: Sistema di autenticazione tramite registrazione email e password, funzionalità di recupero password tramite invio email, attivazione account post verifica email. In corso di integrazione login OIDC-based (SPID, CIE etc — vedi `routes/oidc.ts`, work in progress).
+- **Autenticazione Utenti**: due modalità, attivabili per istanza. **SPID/CIE** tramite OpenID Connect (IAM Proxy Italia), con abbinamento all'account per email e verifica dell'email con codice quando l'identità digitale non la fornisce; **email e password**, con registrazione, attivazione dell'account via email e recupero password. Il flag `ENABLE_PASSWORD_AUTH="false"` disattiva email e password e rende SPID/CIE l'unico accesso: è la configurazione dell'istanza ospitata dal Dipartimento. Alla registrazione l'utente indica la pubblica amministrazione di appartenenza, scelta dall'elenco IndicePA.
 - **Suggerimenti AI**:Funzionalità parcheggiata,e attualmente disabilitata: una volta caricati e filtrati i dati di interesse, è possibile richiederne un'analisi ad un llm con prompt opportuno che propone possibili grafici e opportune trasformazioni, aggragazioni dei dati attuali se necesario. La funzionalità è in attesa di verifica di approvazione dal reparto legal.
+
+## Funzionalità configurabili (feature flag)
+
+Alcune funzionalità si attivano o disattivano per istanza con variabili d'ambiente del server (`packages/server/.env` in locale, `server.env.*` nei values Helm). La webapp non ha flag propri: legge lo stato da `GET /api/config` all'avvio e adatta interfaccia, guida rapida e documentazione in linea.
+
+| Variabile | Default | Effetto |
+|---|---|---|
+| `ENABLE_PASSWORD_AUTH` | attivo | `"false"` = solo SPID/CIE. Le rotte email/password sotto `/auth` (registrazione, login, recupero, attivazione, cambio password) e i reinvii dal pannello admin rispondono 403; la pagina di accesso mostra solo il pulsante SPID/CIE; gli account creati via SPID/CIE non hanno password. |
+| `ENABLE_PUBLIC_PUBLISHING` | attivo | `"false"` = nessuna superficie pubblica. Gli endpoint anonimi `/charts/show/:id` e `/dashboards/show/:id` rispondono 404, niente può diventare `publish: true`, la webapp nasconde il selettore di visibilità e i pulsanti di condivisione/embed, disattiva `/embed/*` e trasforma `/display/*` in un'anteprima riservata agli utenti autenticati. Grafici e dashboard restano leggibili con sessione o API Key. |
+| `OIDC_*` | non configurato | Abilita l'accesso SPID/CIE (`OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_AUTH_SECRET`, `OIDC_REDIRECT_URI`, `OIDC_AUTH_EXTERNAL_URL`, `OIDC_SCOPES`). Necessario se `ENABLE_PASSWORD_AUTH="false"`. Vedi [SPID-CIE-DEPLOY.md](SPID-CIE-DEPLOY.md). |
+| `ADMIN_EMAILS` | vuoto | Email (separate da virgola) che ricevono il ruolo `ADMIN` all'accesso, con SPID/CIE o password. Assegna soltanto, non revoca. |
+| `ENABLE_OSCAR_PA_VERIFICATION` | disattivo | `"true"` = ogni nuovo account SPID/CIE viene inviato al servizio Oscar (`OSCAR_URL`, `OSCAR_KEY`) per verificare l'appartenenza alla PA dichiarata. L'esito è visibile solo nel pannello admin e non blocca l'accesso. |
+
+I valori sono letti a runtime: non serve ricompilare la webapp per cambiarli.
+
+### Configurazione dell'istanza ospitata dal Dipartimento
+
+| | Istanza DTD | Default open source |
+|---|---|---|
+| Accesso | solo SPID/CIE (`ENABLE_PASSWORD_AUTH="false"`) | email e password, più SPID/CIE se `OIDC_*` è configurato |
+| Link pubblici e embed via iframe | disattivati (`ENABLE_PUBLIC_PUBLISHING="false"`) | attivi |
+| Integrazione nei propri siti | libreria componenti o client API con API Key di progetto | come a sinistra, oppure link pubblico/iframe |
+
+Per mostrare un grafico nel proprio sito sull'istanza DTD:
+
+1. dalla webapp, menu utente → **API Key**, creare una chiave `READONLY` per il progetto che contiene il grafico;
+2. usare `ChartProvider` / `DashboardGridProvider` di `graph-italia-components` (React) passando chiave, endpoint del server e ID, oppure chiamare le API REST / `graph-italia-cli` dal proprio backend.
+
+```tsx
+import { ChartProvider } from "graph-italia-components";
+
+<ChartProvider apiKey="dv_..." endpoint="https://<server>" chartId="<id-grafico>" withWrapper />
+```
+
+Una chiave usata nel browser è visibile ai visitatori e consente di leggere tutto il progetto: usare sempre chiavi `READONLY`, tenere in un progetto dedicato solo ciò che si vuole mostrare, oppure fare le chiamate lato server.
+
+### Come arrivano i flag nei deploy
+
+- **Helm**: i default sono in `charts/graph-italia/values.yaml` (`server.env.ENABLE_PASSWORD_AUTH`, `server.env.ENABLE_PUBLIC_PUBLISHING`, ...).
+- **Workflow di release**: aggiorna con `--reuse-values`, quindi i default del chart non raggiungono le release esistenti. `ENABLE_PASSWORD_AUTH`, `ADMIN_EMAILS`, `OIDC_*` e `ENABLE_OSCAR_PA_VERIFICATION`/`OSCAR_URL`/`OSCAR_KEY` vengono dalle variabili e dai secret dell'Environment GitHub (`production` / `test`) e sono passati con `--set-string` solo se valorizzati. `ENABLE_PUBLIC_PUBLISHING` non è tra questi: va impostato nei values della release (`helm upgrade ... --set-string server.env.ENABLE_PUBLIC_PUBLISHING=false`), poi `--reuse-values` lo conserva.
+- **Documentazione in linea**: i capitoli in `packages/webapp/src/docs/{it,en}/*.md` possono contenere blocchi `<!-- publishing:on -->…<!-- /publishing -->` / `<!-- publishing:off -->…` e `<!-- password:on|off -->…<!-- /password -->`, mostrati solo se il flag corrispondente è attivo/disattivo (`src/lib/docsFlags.ts`). La guida rapida sceglie i passi con la stessa logica (`QuickStartPage.tsx`).
 
 ## Panoramica Generale
 
@@ -344,7 +385,7 @@ erDiagram
 
 - **Dati Remoti**: Aggiornamento automatico ogni 24h per charts remoti
 - **Sicurezza**: Helmet, CORS configurato, rate limiting (globale + più stretto su `/auth/*`), validazione input
-- **Email**: Invio email di attivazione e reset password
+- **Email**: Invio email di attivazione e reset password (solo con `ENABLE_PASSWORD_AUTH` attivo) e dei codici di verifica email per gli account SPID/CIE
 
 ---
 
@@ -443,7 +484,7 @@ flowchart TD
     Save -->|No| Config
 
     SaveDB --> Publish{Pubblicare?}
-    Publish -->|Sì| Public["Pubblica Pubblicamente<br/>(disabilitato sulla nostra istanza hosted,<br/>vedi nota importante)"]
+    Publish -->|Sì| Public["Pubblica Pubblicamente<br/>(solo con ENABLE_PUBLIC_PUBLISHING,<br/>disattivo sull'istanza DTD)"]
     Publish -->|No| Private[Salva Privato]
 
     Public --> Share[Condividi URL]
@@ -475,9 +516,9 @@ flowchart TD
 
 #### Autenticazione
 
-- Registrazione con verifica email
-- Login/logout
-- Reset/change password
+- Accesso con SPID/CIE (`/api/oidc/login`) e completamento profilo al primo accesso (`/oidc/signup`: email confermata con codice, PA di appartenenza)
+- Registrazione con verifica email, login e reset/cambio password, solo se `ENABLE_PASSWORD_AUTH` è attivo (altrimenti la pagina di accesso mostra solo SPID/CIE e le rotte password reindirizzano al login)
+- Logout
 - Protezione area privata con `ProtectedRoute` (utente autenticato) e `AdminRoute` (ruolo `ADMIN`, per `/private/god-mode-on`)
 
 #### Progetti, Organizzazioni e API Key
@@ -495,7 +536,7 @@ flowchart TD
 #### Display / Embed pubblico
 
 - `/display/charts/:id`, `/display/dashboards/:id`, `/embed/charts/:id`, `/embed/dashboards/:id`: pagine pubbliche di rendering di un chart/dashboard pubblicato, l'ultima pensata per l'uso in `<iframe>` (tema via query param `?theme=` o `postMessage`).
-- Disponibili nel codice open source per chi si autoospita; **disabilitate sulla nostra istanza hosted** — vedi la nota importante nella sezione [Scope](#scope) e in [Progetti, Organizzazioni e Ownership](#progetti-organizzazioni-e-ownership).
+- Attive solo con `ENABLE_PUBLIC_PUBLISHING` attivo (default). Con il flag a `"false"`, come sull'istanza ospitata dal Dipartimento, `/embed/*` mostra un avviso al posto del grafico e `/display/*` diventa un'anteprima riservata agli utenti autenticati — vedi [Funzionalità configurabili](#funzionalità-configurabili-feature-flag).
 
 ---
 
@@ -692,6 +733,8 @@ Dal `package.json` root:
 - `BUILD_SHA`: SHA del commit (iniettato a build time, visibile in healthcheck)
 - `BUILD_TIME`: Timestamp della build (iniettato a build time, visibile in healthcheck)
 
+Per i flag che attivano e disattivano le funzionalità (`ENABLE_PASSWORD_AUTH`, `ENABLE_PUBLIC_PUBLISHING`, `OIDC_*`, `ADMIN_EMAILS`, `ENABLE_OSCAR_PA_VERIFICATION`) vedi [Funzionalità configurabili](#funzionalità-configurabili-feature-flag); l'elenco completo è in `packages/server/sample.env`.
+
 ### Docker
 
 - `packages/server/Dockerfile`: Immagine Docker per server
@@ -844,9 +887,9 @@ dbSeed:
 
 #### Registrazione Self-Service
 
-Gli utenti possono registrarsi autonomamente tramite l'interfaccia web:
+Con `ENABLE_PASSWORD_AUTH` attivo gli utenti possono registrarsi autonomamente con email e password tramite l'interfaccia web (con `ENABLE_PASSWORD_AUTH="false"` l'account si crea al primo accesso SPID/CIE, vedi [SPID-CIE-DEPLOY.md](SPID-CIE-DEPLOY.md)):
 
-1. Accedere a `/register`
+1. Accedere a `/login?mode=register`
 2. Inserire email e password
 3. Ricevere email di verifica (via Resend)
 4. Cliccare link di verifica
@@ -1581,7 +1624,7 @@ Tutti i pacchetti del monorepo sono rilasciati sotto la stessa licenza, dichiara
 Graph Italia è pensato per essere forkato/self-hosted, non solo letto. A seconda di cosa ti serve, tre livelli di adozione:
 
 1. **Solo la libreria di rendering**: installa `graph-italia-components` da npm e renderizza il tuo JSON di chart/dashboard — non serve nessun altro pacchetto di questo monorepo.
-2. **Stack completo, dati tuoi**: fai girare `packages/server` (Hono + Prisma/PostgreSQL) contro un tuo database e punta la webapp (`VITE_SERVER_URL`) alla tua istanza — vedi `CLAUDE.md` per le variabili d'ambiente e `charts/graph-italia/` per il chart Helm se distribuisci su Kubernetes. In questa configurazione, a differenza della nostra istanza hosted, hai piena disponibilità delle funzionalità di pubblicazione pubblica/embed via iframe (vedi nota importante nella sezione [Scope](#scope)).
+2. **Stack completo, dati tuoi**: fai girare `packages/server` (Hono + Prisma/PostgreSQL) contro un tuo database e punta la webapp (`VITE_SERVER_URL`) alla tua istanza — vedi `CLAUDE.md` per le variabili d'ambiente e `charts/graph-italia/` per il chart Helm se distribuisci su Kubernetes. In questa configurazione, a differenza della nostra istanza hosted, scegli tu quali funzionalità tenere attive, compresi accesso con email e password e pubblicazione pubblica/embed via iframe (vedi [Funzionalità configurabili](#funzionalità-configurabili-feature-flag)).
 3. **Frontend tuo, server esistente**: usa `packages/client` (SDK tipizzato) o chiamate REST dirette contro l'API documentata (`/docs`) di un'istanza di `packages/server`, e costruisci la tua interfaccia al posto della webapp — è esattamente la separazione che rende `packages/client` e `packages/components` utili in modo indipendente.
 
 Essendo il fork di un progetto specifico della Pubblica Amministrazione italiana, aspettati alcuni default legati a quel contesto (localizzazione italiana, pagine legali, stile vicino a Bootstrap Italia/Italia design system) da riconfigurare o rimuovere per un uso generico. Per contatti di manutenzione vedi `publiccode.yml`.

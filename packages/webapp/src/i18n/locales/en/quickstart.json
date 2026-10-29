@@ -1,12 +1,20 @@
 {
     "back": "Back to home",
     "title": "Getting started",
-    "description": "From signing up to publishing your first chart: follow this guide to find out how to use Graph Italia.",
+    "description": "From your first sign-in to integrating your first chart: follow this guide to find out how to use Graph Italia.",
     "guide": {
         "account": {
             "title": "Sign up and log in",
             "items": [
                 "In the top right corner, click <strong>Log in</strong> and create your account with your email address: you will receive a verification code to activate it.",
+                "Every account already has a personal project; you can create more and share them with other people through the <strong>Organizations</strong> feature."
+            ]
+        },
+        "accountSpid": {
+            "title": "Sign in with SPID or CIE",
+            "items": [
+                "In the top right corner, click <strong>Log in</strong> and authenticate with <strong>SPID</strong> or <strong>CIE</strong>: on this instance you cannot sign up with email and password.",
+                "On your first sign-in complete your profile: if your digital identity does not provide an email address we will ask for one and confirm it with a code; then pick the public administration you work for.",
                 "Every account already has a personal project; you can create more and share them with other people through the <strong>Organizations</strong> feature."
             ]
         },
@@ -32,6 +40,13 @@
                 "In the <strong>Info</strong> section you define the chart visibility: if <strong>public</strong> it can be seen by anyone with the direct link and embedded in other websites, if <strong>private</strong> it stays visible to you only."
             ]
         },
+        "configurePrivate": {
+            "title": "Configure the chart",
+            "items": [
+                "Choose the kind of chart you want to create among <strong>bars, lines, pie or map</strong>, and watch the preview build up as you go.",
+                "You can configure and customize your chart with the available settings. In <strong>Advanced settings</strong> you can create and set up tooltip, grid and axes."
+            ]
+        },
         "publish": {
             "title": "Save, publish and share",
             "items": [
@@ -39,11 +54,26 @@
                 "If you created a chart with public visibility, in the <strong>Share</strong> column you can copy the public link and the embed code (iframe) to integrate in your website."
             ]
         },
+        "integrate": {
+            "title": "Save and integrate in your website",
+            "items": [
+                "Once your changes are done click <strong>Save</strong>: your chart will appear in the list of your personal projects in the <strong>private area</strong>.",
+                "On this instance charts and dashboards have no public link and cannot be embedded with an iframe: they stay visible only to you and to the people working on the project.",
+                "To show them in your website or web application generate a read-only project <strong>API key</strong> and use the React library <strong>graph-italia-components</strong> (or the REST API or the <strong>graph-italia-cli</strong> client) with the key and the item identifier."
+            ]
+        },
         "dashboard": {
             "title": "Compose a dashboard",
             "items": [
                 "A dashboard collects several charts and text blocks in a single page: you can drag the items into the grid slots, adjust heights and widths and write the texts.",
                 "A dashboard can be shared with a public link."
+            ]
+        },
+        "dashboardPrivate": {
+            "title": "Compose a dashboard",
+            "items": [
+                "A dashboard collects several charts and text blocks in a single page: you can drag the items into the grid slots, adjust heights and widths and write the texts.",
+                "A dashboard is integrated in your website like charts, with the project API key and the <strong>DashboardGridProvider</strong> component."
             ]
         },
         "api": {

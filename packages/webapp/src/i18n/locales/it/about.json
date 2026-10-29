@@ -18,7 +18,7 @@
   "features": {
     "label": "Come funziona?",
     "title": "Trasforma i tuoi dati in grafici in pochi passi",
-    "subtitle": "Dalla base dati alla creazione e pubblicazione dei grafici, Graph Italia ti accompagna su tutto il flusso di lavoro.",
+    "subtitle": "Dalla base dati alla creazione dei grafici e alla loro integrazione nei tuoi siti, Graph Italia ti accompagna su tutto il flusso di lavoro.",
     "items": [
       {
         "emoji": "📊",
@@ -33,7 +33,8 @@
       {
         "emoji": "🔄",
         "title": "Aggiornamento continuo",
-        "description": "Graph Italia memorizza nello storico i dati remoti, come quelli caricati da URL, e li aggiorna ogni 24 ore."
+        "description": "Graph Italia memorizza nello storico i dati remoti, come quelli caricati da URL, e li aggiorna ogni 24 ore.",
+        "requires": "publishing"
       },
       {
         "emoji": "🎨",
@@ -63,14 +64,14 @@
       },
       {
         "title": "Genera le tue chiavi API",
-        "body": "Una volta completato, vai alle impostazioni del progetto per generare una chiave API sicura di sola lettura: questo ti permetterà di integrarla e di mostrare i tuoi dati solo dove deciderai."
+        "body": "Una volta completato, dal menu utente apri API Key e genera una chiave di sola lettura per il progetto: ti permetterà di mostrare i tuoi dati solo dove deciderai."
       },
       {
         "title": "Integra il codice sul tuo sito",
-        "body": "Vai alla libreria dei componenti React e inserisci la chiave API e il codice identificativo del tuo grafico o dashboard: il componente recupera le informazioni e implementa il grafico automaticamente."
+        "body": "Usa la libreria dei componenti React indicando la chiave API e il codice identificativo del tuo grafico o dashboard: il componente recupera le informazioni e implementa il grafico automaticamente. Se il tuo sito non usa React, puoi usare le API REST o il client tipizzato graph-italia-cli."
       }
     ],
-    "codeNote": "Puoi anche integrare usando metodi tradizionali con <iframe> per siti non React.",
+    "codeNote": "Se il tuo sito non usa React, puoi integrare i dati con le API REST o con il client tipizzato graph-italia-cli.",
     "copy": "Copia",
     "copied": "Copiato!"
   },

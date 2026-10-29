@@ -24,7 +24,9 @@ curl -H "Authorization: Bearer dv_LA_TUA_CHIAVE" \
 | Risorsa | Endpoint | Operazioni |
 | --- | --- | --- |
 | Grafici | `/api/charts` | elenco, dettaglio, creazione, modifica, eliminazione |
+<!-- publishing:on -->
 | Grafico pubblico | `/api/charts/show/:id` | lettura senza autenticazione (solo elementi pubblici) |
+<!-- /publishing -->
 | Gruppi KPI | `/api/charts/kpi-group` | creazione e modifica dei gruppi KPI |
 | Dashboard | `/api/dashboards` | elenco, dettaglio, slot |
 | Sorgenti dati | `/api/datasources` | elenco, dettaglio, creazione, aggiornamento dati |

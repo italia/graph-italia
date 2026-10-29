@@ -1,6 +1,6 @@
 # Dashboard
 
-A dashboard gathers several items and texts in a single page to share with one link.
+A dashboard gathers several items and texts in a single page.
 
 ## When to use it
 
@@ -24,5 +24,10 @@ Use text blocks to add introductions, methodological notes and remarks to the da
 ## Saving and sharing
 
 - Click **Save** to keep the layout and contents of your dashboard. Slots left empty on the grid are not saved;
+<!-- publishing:on -->
 - the public dashboard can be reached from the link in the **My dashboards** list and can be embedded in another site;
+<!-- /publishing -->
+<!-- publishing:off -->
+- to show the dashboard in your website use `DashboardGridProvider` from the component library with a project API key (see [Publishing and sharing](/docs/condivisione));
+<!-- /publishing -->
 - the charts shown in the dashboard are the ones previously saved on Graph Italia and are updated automatically when the chart changes.
