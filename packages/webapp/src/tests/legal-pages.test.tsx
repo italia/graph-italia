@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import i18next from "i18next";
 import { axe } from "vitest-axe";
+import enResources from "../i18n/locales/en";
 import itResources from "../i18n/locales/it";
 import DataProcessorPage from "../pages/legal/DataProcessorPage";
 import LegalNotesPage from "../pages/legal/LegalNotesPage";
@@ -24,20 +25,20 @@ vi.mock("../lib/api", async (importOriginal) => ({
   redirectToLoginOidc: () => "http://server.test/api/oidc/login",
 }));
 
-function makeI18n() {
+function makeI18n(lng: "it" | "en" = "it") {
   const instance = i18next.createInstance();
   instance.use(initReactI18next).init({
-    lng: "it",
+    lng,
     fallbackLng: "it",
-    resources: { it: itResources },
+    resources: { it: itResources, en: enResources },
     interpolation: { escapeValue: false },
   });
   return instance;
 }
 
-function renderWithProviders(ui: React.ReactElement) {
+function renderWithProviders(ui: React.ReactElement, lng: "it" | "en" = "it") {
   return render(
-    <I18nextProvider i18n={makeI18n()}>
+    <I18nextProvider i18n={makeI18n(lng)}>
       <MemoryRouter>{ui}</MemoryRouter>
     </I18nextProvider>,
   );
@@ -86,6 +87,26 @@ describe.each(pages)("$name page", ({ Page, linksTo }) => {
 
   it("has no axe violations", async () => {
     const { container } = renderWithProviders(<Page />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe.each(pages)("$name page in English", ({ Page, linksTo }) => {
+  it("shows the translation, marked as English and as non-binding", () => {
+    const { container } = renderWithProviders(<Page />, "en");
+    expect(container.querySelector("article")).toHaveAttribute("lang", "en");
+    expect(container.textContent).toMatch(/Italian version is the only legally binding text/);
+    expect(container.textContent).not.toMatch(/Ultimo aggiornamento/);
+  });
+
+  it("keeps a single h1, the related links and announced new windows", async () => {
+    const { container } = renderWithProviders(<Page />, "en");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    const hrefs = [...container.querySelectorAll("a")].map((a) => a.getAttribute("href"));
+    linksTo.forEach((route) => expect(hrefs).toContain(route));
+    container.querySelectorAll('a[href^="http"]').forEach((a) => {
+      expect(a.textContent).toMatch(/opens in a new window/);
+    });
     expect(await axe(container)).toHaveNoViolations();
   });
 });

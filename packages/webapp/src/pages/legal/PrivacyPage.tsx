@@ -1,9 +1,9 @@
 import { ROUTES } from "../../router";
-import LegalPage, { LEGAL_LAST_UPDATED } from "./LegalPage";
+import LegalPage, { LEGAL_LAST_UPDATED, LEGAL_LAST_UPDATED_EN } from "./LegalPage";
 
 export default function PrivacyPage() {
   // Costruito al render: ROUTES arriva da router.tsx, che importa questa pagina.
-  const content = `
+  const it = `
 # Informativa in materia di protezione dei dati personali
 
 ai sensi degli artt. 13 e 14 del Regolamento (UE) 2016/679 (GDPR)
@@ -118,5 +118,120 @@ Per maggiori informazioni o per esercitare i propri diritti, l'interessato può 
 Se invece si ritiene che il trattamento dei dati personali avvenga in violazione di quanto previsto dal Regolamento, è possibile proporre reclamo, ai sensi dell'art. 77 del Regolamento, al [Garante per la protezione dei dati personali](https://www.garanteprivacy.it).
 `;
 
-  return <LegalPage content={content} />;
+  const en = `
+# Personal data protection notice
+
+pursuant to articles 13 and 14 of Regulation (EU) 2016/679 (GDPR)
+
+*Last updated: ${LEGAL_LAST_UPDATED_EN}*
+
+This notice is provided pursuant to articles 13 and 14 of Regulation (EU) 2016/679 (hereinafter «Regulation») with regard to the processing of personal data carried out in connection with authentication to and use of the «Graph Italia» platform (hereinafter «Platform»), made available to Public Administrations for creating, managing and integrating graphical visualisations starting from structured data, and developed as part of the implementation of the main strategic lines of the Three-Year Plan for IT in the Public Administration, with particular reference to the enhancement of public data, digital governance and support for evidence-based decision-making.
+
+See also the [Legal Notes and Terms of Use](${ROUTES.legalNotes}) of the Platform.
+
+## Data controller
+
+The data controller for the purposes indicated below is the Presidency of the Council of Ministers - Department for Digital Transformation, with registered office at Largo Pietro di Brazzà 86, 00187 Rome, tax code 80188230587 (hereinafter also «DTD» or «Controller»), who can be contacted at:
+
+- Email: [segreteria.trasformazionedigitale@governo.it](mailto:segreteria.trasformazionedigitale@governo.it)
+- Certified email (PEC): [diptrasformazionedigitale@pec.governo.it](mailto:diptrasformazionedigitale@pec.governo.it)
+
+The Controller's Data Protection Officer can be contacted at:
+
+- Email: [responsabileprotezionedatipcm@governo.it](mailto:responsabileprotezionedatipcm@governo.it)
+- Certified email (PEC): [rpd@pec.governo.it](mailto:rpd@pec.governo.it)
+
+## Purposes of processing
+
+Personal data will be processed by the Controller in order to:
+
+### 1. Enable authentication and access to the Platform, the creation of the personal account and the use of the related services
+
+The DTD developed the Platform as part of the implementation of the Three-Year Plan for IT in the Public Administration, in order to encourage Public Administrations to adopt uniform graphic standards for data representations.
+
+Personal data are therefore processed to allow users, in the course of the activities carried out on behalf of the Public Administration they belong to, to authenticate and access the Platform, create their own personal account and use the related services.
+
+Providing the data for this purpose is necessary to access and use the Platform. Failure to provide them makes it impossible to authenticate and access, create one's profile and use the services offered by the Platform.
+
+### 2. Allow browsing and use of the Platform
+
+The information systems and software procedures that operate the Platform acquire, in the course of their normal operation, some personal data whose transmission is implicit in the use of Internet communication protocols.
+
+In particular, the Platform does not use profiling cookies, but only technical cookies that are necessary for its operation and to improve its visitors' experience.
+
+The processing of such data is therefore necessary to allow authentication, access, browsing and the correct operation of the Platform.
+
+Most browsers accept cookies automatically, but they can be refused.
+
+If you do not wish to receive or store cookies, you can change the security settings of your browser, following the instructions provided by the respective vendors at the links below:
+
+- [Chrome](https://support.google.com/chrome/answer/95647?co=GENIE.Platform%3DDesktop&hl=en)
+- [Firefox](https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop)
+- [Safari](https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac)
+- [Edge](https://support.microsoft.com/en-us/help/4027947/microsoft-edge-delete-cookies)
+- [Opera](https://help.opera.com/en/latest/web-preferences/)
+
+If these cookies are disabled, the Platform may not work correctly and the user would be logged out.
+
+### 3. Handle any reports of malfunctions or improvement proposals
+
+Through the dedicated «[Issues](https://github.com/italia/graph-italia/issues)» section of the Platform, or by contacting the Controller at [tech@innovazione.gov.it](mailto:tech@innovazione.gov.it), users can report malfunctions and suggest improvements. By contacting the Controller at [accessibilita@innovazione.gov.it](mailto:accessibilita@innovazione.gov.it), users can also submit accessibility reports.
+
+The processing of personal data for this purpose is necessary to ensure the correct operation and continuous improvement of the Platform.
+
+Providing the data for this purpose is necessary to handle the user's reports and, without such data, it may not be possible to follow up on the request.
+
+### 4. Comply with legal obligations
+
+Personal data may be processed to comply with legal obligations, including compliance with any requests from the competent authorities.
+
+Providing the data for this purpose is a legal obligation and, if they are not provided, the user will not be able to register and use the Platform.
+
+## Legal bases of processing
+
+- The legal basis for the purposes of processing referred to in points 1-3 above is the performance of a task carried out in the public interest or in the exercise of official authority vested in the Controller, pursuant to art. 6(1)(e) GDPR, carried out by the DTD as part of the implementation of the strategic lines of the Three-Year Plan for IT in the Public Administration.
+- The legal basis for the purpose of processing referred to in point 4 above is compliance with its legal obligations, pursuant to art. 6(1)(c) GDPR.
+
+## Categories and sources of personal data
+
+The data processed belong to the following categories:
+
+- Identification data (first and last name, sex, place and date of birth);
+- Tax code;
+- Contact data (email address);
+- Professional information about the Public Administration of belonging;
+- Browsing data («logs») relating to access to and use of the Platform (IP address, date and time of access, information on system events and on the activities carried out by the user).
+
+When authenticating through SPID or CIE, the identification data and the further information required for authentication will be acquired, respectively, from the chosen digital identity provider or from the Ministry of the Interior. For the creation of the account and in the course of browsing and using the Platform, personal data collected directly from the data subject will be processed.
+
+## Retention of personal data
+
+For authentication and access to the Platform through SPID and CIE, personal data will be processed only for the time needed to complete the authentication procedure and will not be retained by the Controller. The data provided by the user to create their account will be retained until the account is deleted, or deletion will take place automatically after a period of inactivity of 24 months. The user's personal data may also be processed for any further period necessary to comply with legal obligations.
+
+## Categories of recipients of the data
+
+Personal data will be processed by persons expressly authorised by the Controller, belonging to the competent offices, who act on the basis of specific instructions given by the Controller regarding the purposes and methods of processing.
+
+Since the service is intended solely for the Public Administration, the user's personal details will be communicated to the administration of belonging indicated when creating the personal account, in order to verify that the Platform is actually used on behalf of that administration.
+
+Personal data may be communicated for the above purposes to external suppliers and consultants, such as IT suppliers and legal advisers.
+
+Personal data will not be transferred outside the EU.
+
+## Exercise of rights
+
+- **Right of access:** you can obtain confirmation of and information about the processing.
+- **Right to rectification:** you can rectify inaccurate data or complete them.
+- **Right to erasure:** in the cases provided for by law, the data subject has the right to obtain erasure.
+- **Right to restriction of processing:** in the cases provided for by law, the data subject can ask to restrict the processing.
+- **Right to object to processing:** on grounds relating to your particular situation, you can object to processing carried out for the performance of a task in the public interest or in the exercise of official authority.
+- **Right to data portability:** the data subject has the right to data portability in the cases provided for by law.
+- **Right to withdraw consent:** where consent is the legal basis for the processing, the data subject can withdraw it without affecting the lawfulness of the processing carried out before.
+
+For further information or to exercise their rights, the data subject can contact the Controller at the addresses indicated above.
+
+If you believe that the processing of personal data infringes the Regulation, you can lodge a complaint, pursuant to art. 77 of the Regulation, with the Italian Data Protection Authority ([Garante per la protezione dei dati personali](https://www.garanteprivacy.it)).
+`;
+
+  return <LegalPage content={{ it, en }} />;
 }

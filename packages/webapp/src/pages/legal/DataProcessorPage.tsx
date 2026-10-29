@@ -1,9 +1,9 @@
 import { ROUTES } from "../../router";
-import LegalPage, { LEGAL_LAST_UPDATED } from "./LegalPage";
+import LegalPage, { LEGAL_LAST_UPDATED, LEGAL_LAST_UPDATED_EN } from "./LegalPage";
 
 export default function DataProcessorPage() {
   // Costruito al render: ROUTES arriva da router.tsx, che importa questa pagina.
-  const content = `
+  const it = `
 # Atto di nomina a Responsabile del trattamento
 
 ai sensi dell'art. 28 del Regolamento (UE) 2016/679
@@ -103,5 +103,105 @@ Per quanto non espressamente previsto si applicano le disposizioni del Regolamen
 Il presente atto non comporta alcun compenso per il Responsabile.
 `;
 
-  return <LegalPage content={content} />;
+  const en = `
+# Deed of appointment as Data Processor
+
+pursuant to art. 28 of Regulation (EU) 2016/679
+
+*Annex to the [Legal Notes and Terms of Use](${ROUTES.legalNotes}) – Last updated: ${LEGAL_LAST_UPDATED_EN}*
+
+## Art. 1 – Subject matter and scope of the Appointment
+
+With this deed of appointment (hereinafter also «Appointment»), which forms an integral part of the terms of use of the Graph Italia Platform (hereinafter also «Platform») contained in the document «[Graph Italia Project – Legal Notes and Terms of Use](${ROUTES.legalNotes})» (hereinafter also «Terms and Conditions»), to which the Appointment is annexed, the Public Administration that adheres to the Terms and Conditions (hereinafter also «Controller») designates, as data controller, the Presidency of the Council of Ministers - Department for Digital Transformation (the «DTD» or the «Processor») as data processor pursuant to art. 28 of Regulation (EU) 2016/679 (hereinafter also «Regulation» or «GDPR») for the processing of personal data carried out in the course of providing the services governed by those Terms and Conditions (hereinafter also «Services»).
+
+## Art. 2 – Obligations of the Processor
+
+The Processor will process any personal data uploaded to the Platform by the persons who use it on behalf of the Controller (hereinafter also «Users») exclusively for the purposes and for the time strictly necessary to provide the Services, in compliance with the Regulation, Legislative Decree 196/2003 as amended (hereinafter also «Code»), and any other act, measure, regulation or provision of the competent data protection authorities (hereinafter also «Data Protection Legislation»), as well as with the Controller's instructions set out in this Appointment.
+
+The Processor undertakes to maintain, for the whole duration of the processing, sufficient guarantees in terms of expert knowledge, reliability and resources to implement appropriate technical and organisational measures, so as to ensure that the processing complies with the requirements of the Data Protection Legislation.
+
+In performing its functions, the Processor undertakes to:
+
+a) process the data in accordance with the documented instructions given by the Controller with this deed;
+
+b) ensure that the persons who process personal data on behalf of the Processor are duly instructed pursuant to art. 29 of the Regulation and adequately trained in personal data protection, comply with the instructions given by the Controller to the Processor and have committed themselves to confidentiality or are under an appropriate statutory obligation of confidentiality;
+
+c) not disclose or make known the personal data to third parties, except where strictly necessary to provide the Services through the Platform;
+
+d) pursuant to art. 30(2) of the Regulation, keep a Record of the processing activities carried out on behalf of the Controller and cooperate with the Controller and with the Italian Data Protection Authority, making the said Record available upon request;
+
+e) adopt a suitable procedure for managing personal data breaches, cooperating fully with the Controller in order to eliminate or at least minimise the impact of such events;
+
+f) not transfer personal data (including through sub-processors) to a third country or an international organisation without the Controller's prior written authorisation, unless required to do so by Union or Member State law to which the Processor is subject (in such a case, the Processor informs the Controller of that legal requirement before the transfer, unless that law prohibits such information on important grounds of public interest) and in any case in compliance with the Data Protection Legislation.
+
+## Art. 3 – Types of personal data processed
+
+The Processor will process any personal data that Users upload to the Platform in order to provide the related Services. Such personal data may consist of common data (such as personal details and contact data) as well as, possibly, special categories of personal data pursuant to art. 9 of the Regulation or data relating to criminal convictions and offences pursuant to art. 10 GDPR.
+
+The Controller remains responsible for verifying the existence of an appropriate lawful basis for processing the personal data uploaded to the Platform.
+
+## Art. 4 – Categories of data subjects
+
+The Processor will process, on behalf of the Controller, the personal data of the natural persons to whom the personal data uploaded by Users to the Platform for creating, managing and integrating graphical visualisations relate.
+
+## Art. 5 – Nature of the Processing
+
+The processing carried out by the Processor consists of receiving and processing the personal data uploaded by Users to the Platform.
+
+## Art. 6 – Purpose of the Processing
+
+The processing is carried out by the Processor in order to allow Users to use the Platform for creating, managing and integrating graphical visualisations.
+
+## Art. 7 – Duration of the Processing
+
+Unless otherwise indicated by the Controller, the personal data uploaded by Users to the Platform will be processed only for the time needed to create, manage and integrate the graphical visualisations and will not be retained by the Processor, without prejudice to any retention required to comply with legal obligations.
+
+## Art. 8 – Security measures
+
+The Processor undertakes to adopt appropriate technical and organisational measures to ensure a suitable level of security of personal data, pursuant to art. 32 of the Regulation, necessary to prevent or minimise any reasonably foreseeable risk connected with the accidental or unlawful destruction, loss, alteration, unauthorised disclosure of, or access to, the data processed. Such security measures must comply with best practices in security, including IT security, taking into account the state of the art and the costs of implementation, as well as the nature, scope, context and purposes of the processing. The Processor also undertakes to adopt and maintain all technical, operational and organisational measures that are appropriate and proportionate to managing the potential risks to the security of the Platform, in accordance with the applicable cybersecurity legislation.
+
+Such measures shall include, among others:
+
+- the pseudonymisation and/or encryption of personal data;
+- the ability to ensure the ongoing confidentiality, integrity, availability and resilience of the systems and services processing personal data;
+- the ability to restore the availability of and access to data in a timely manner in the event of a physical or technical incident;
+- a process for regularly testing, assessing and evaluating the effectiveness of technical and organisational measures for ensuring the security of the processing.
+
+## Art. 9 – Sub-processors
+
+The Controller authorises the Processor, pursuant to art. 28(2) GDPR, to engage one or more sub-processors to carry out specific processing activities on behalf of the Controller.
+
+The Processor ensures that the sub-processors it engages provide sufficient guarantees to implement appropriate technical and organisational measures in such a manner that the processing meets the requirements of the Data Protection Legislation.
+
+## Art. 10 – Assistance
+
+The Processor, taking into account the nature of the processing and the information available to it, assists the Controller, at the latter's request and within the limits of the information and means reasonably available, in responding to requests for the exercise of data subjects' rights. Where data subjects exercise such rights with the Processor, the latter shall not respond to those requests on its own (unless expressly authorised to do so by the Controller) and shall promptly forward them to the Controller, and in any case within 10 days of receipt.
+
+The Processor promptly notifies the Controller of any communications, inspections or requests for information from the Italian Data Protection Authority or (insofar as they concern the processing of personal data carried out on behalf of the Controller) from any other authority and, within the limits of the information available and of the activities within its sphere of control, assists the Controller in the case of requests made by such authorities concerning the processing of personal data carried out in the operation of the Platform.
+
+Where requested by the Controller, the Processor also assists it in ensuring compliance with the obligations set out in articles 32 to 36 GDPR, taking into account the nature of the processing and the information available to the Processor or to sub-processors.
+
+## Art. 11 – Personal data breaches
+
+The Processor informs the Controller without undue delay of any personal data breach affecting the personal data processed on its behalf. At the Controller's request, the Processor provides, within the limits of the information reasonably available, the relevant information and documentation needed to allow the Controller to fulfil the obligations set out in articles 33 and 34 of the Regulation.
+
+## Art. 12 – Data Protection Officer
+
+The Processor has appointed a Data Protection Officer, who can be contacted at:
+
+- Email: [responsabileprotezionedatipcm@governo.it](mailto:responsabileprotezionedatipcm@governo.it)
+- Certified email (PEC): [rpd@pec.governo.it](mailto:rpd@pec.governo.it)
+
+## Art. 13 – Duration
+
+This appointment takes effect from the date of acceptance of the Terms and Conditions and remains in force for the whole duration of the relationship they govern, ending automatically on the date they cease to apply, for any reason.
+
+## Art. 14 – Final provisions
+
+For anything not expressly provided for herein, the provisions of the Regulation and of the Code apply.
+
+This deed does not entail any fee for the Processor.
+`;
+
+  return <LegalPage content={{ it, en }} />;
 }

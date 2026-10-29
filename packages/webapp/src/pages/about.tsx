@@ -267,7 +267,7 @@ export default function AboutPage() {
                 {user ? t("hero.ctas.myCharts") : t("hero.ctas.login")}
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/italia/graph-italia/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline btn-lg gap-2"

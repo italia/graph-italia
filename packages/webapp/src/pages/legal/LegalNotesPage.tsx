@@ -1,9 +1,9 @@
 import { ROUTES } from "../../router";
-import LegalPage, { LEGAL_LAST_UPDATED } from "./LegalPage";
+import LegalPage, { LEGAL_LAST_UPDATED, LEGAL_LAST_UPDATED_EN } from "./LegalPage";
 
 export default function LegalNotesPage() {
   // Costruito al render: ROUTES arriva da router.tsx, che importa questa pagina.
-  const content = `
+  const it = `
 # Progetto Graph Italia – Note legali e Condizioni di utilizzo
 
 *Ultimo aggiornamento: ${LEGAL_LAST_UPDATED}*
@@ -87,5 +87,89 @@ Il Dipartimento può sospendere o disattivare gli account e rimuovere i contenut
 L'accettazione delle presenti Note legali e Condizioni d'uso equivale a tutti gli effetti all'accettazione dei relativi allegati, che ne costituiscono parte integrante e sostanziale, inclusa la [nomina a responsabile del trattamento](${ROUTES.dataProcessor}) ai sensi dell'art. 28 del Regolamento (UE) 2016/679.
 `;
 
-  return <LegalPage content={content} />;
+  const en = `
+# Graph Italia Project – Legal Notes and Terms of Use
+
+*Last updated: ${LEGAL_LAST_UPDATED_EN}*
+
+## Part I – Legal notes
+
+### 1. Owner and purpose of the project
+
+The Presidency of the Council of Ministers - Department for Digital Transformation (hereinafter also «Department» or «DTD»), with registered office at Largo Pietro di Brazzà 86, 00187 Rome, provides the Graph Italia platform ([https://graph.developers.italia.it](https://graph.developers.italia.it)) to enable Public Administrations to create, manage and integrate graphical visualisations starting from structured data.
+
+The DTD undertakes to ensure the correct and adequate operation of the platform. Reports or suggestions can be sent to [tech@innovazione.gov.it](mailto:tech@innovazione.gov.it); accessibility reports can be sent to [accessibilita@innovazione.gov.it](mailto:accessibilita@innovazione.gov.it). Malfunctions and improvement proposals can also be reported through the [Issues](https://github.com/italia/graph-italia/issues) section of the project repository.
+
+### 2. Source code and reuse
+
+The source code is published at [https://github.com/italia/graph-italia](https://github.com/italia/graph-italia) under the [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.html) licence, pursuant to articles 68 and 69 of Legislative Decree no. 82 of 7 March 2005 (Digital Administration Code, «CAD»), and to the AgID Guidelines on the acquisition and reuse of software.
+
+These Legal Notes and Terms of Use apply exclusively to the instance managed by the Department. Anyone who reuses the solution independently assumes full responsibility for it, including for the features that are not active on the Department's instance.
+
+### 3. Trademarks and distinctive signs
+
+The licence referred to in article 2 does not extend to logos, trademarks, coats of arms and other distinctive signs, including the emblem of the Italian Republic and the institutional distinctive signs of the Presidency of the Council of Ministers and of the Department, whose use remains subject to the legislation in force. The Department reserves the right to take action against unauthorised uses of such signs that may cause confusion about the institutional origin of the contents.
+
+### 4. Links to external websites
+
+Links to third-party websites are provided merely as a service to users and do not imply approval of, or shared responsibility for, the lawfulness, completeness and correctness of the information they contain.
+
+### 5. Limitation of liability
+
+The Department does not guarantee the absence of errors, the constant updating of information or the continuity of the service.
+
+The Graph Italia platform does not automatically certify the quality, correctness or lawfulness of the uploaded data, nor does it automatically verify the legal nature of the uploaded data. These aspects remain the responsibility of the party that creates and manages the project, and users are therefore required to use only data that they can lawfully process and publish.
+
+The Department is not liable for damages arising from access to the platform, from the impossibility of accessing it or from the use of the information it contains, nor for the connectivity services used for access. Liability that cannot be excluded under the legislation in force remains unaffected.
+
+### 6. Accessibility
+
+The Department is committed to making the platform accessible pursuant to Law no. 4 of 9 January 2004 and to the AgID Guidelines. The accessibility statement is available at [https://form.agid.gov.it/PCM/Graph_Italia/dichiarazione](https://form.agid.gov.it/PCM/Graph_Italia/dichiarazione).
+
+## Part II – Terms of use
+
+These Terms govern the use of the features that require registration. Creating an account implies their acceptance.
+
+### 7. Who can access
+
+Access is reserved to staff of public administrations acting for institutional purposes. Access takes place through SPID or CIE, pursuant to article 64, paragraph 2-quater, of the CAD. Once logged in, the user will be asked to create their own account and, to that end, to provide an email address and to state, under their own responsibility, the public administration they belong to.
+
+The Department carries out checks on this statement. A false statement results in the deactivation of the account and may be relevant for the user's disciplinary liability.
+
+The account is personal and non-transferable.
+
+### 8. Use of the platform
+
+The user uses the platform solely for the institutional purposes of the administration they belong to and in compliance with the legislation in force. In particular, it is forbidden to upload unlawful content or content that infringes the rights of third parties, to introduce malicious code, to compromise the operation of the platform or the security of other users' data, or to access resources for which one is not authorised.
+
+### 9. Data that may be uploaded
+
+The platform is intended for the representation of data that the user administration is entitled to process in the exercise of its institutional functions.
+
+Should the user upload personal data for which that administration acts as data controller, such personal data will be processed pursuant to Regulation (EU) 2016/679 (hereinafter «Regulation») and Legislative Decree 196/2003 as amended (hereinafter «Code»), as set out in the following article.
+
+The user verifies in advance the nature of the data and the existence of an appropriate lawful basis for processing the personal data, and limits the upload to what is necessary. The platform does not carry out any automatic check in this respect.
+
+### 10. Processing of personal data
+
+The user administration acts as controller of any personal data entered into the platform, pursuant to article 4, point 7), of the Regulation, and is responsible for determining the purposes, verifying the lawfulness, accuracy and updating of the data, identifying the legal basis and fulfilling the obligations towards data subjects. With regard to such data, the Department acts as processor pursuant to article 28 of the Regulation and processes them exclusively on behalf of the controlling administration and on the basis of the instructions it gives, as provided for by the deed of appointment as data processor set out in the annex «[Appointment as Data Processor](${ROUTES.dataProcessor})», which constitutes a legal act pursuant to article 28, paragraph 3, of the Regulation. The Department does not certify the quality, correctness or lawfulness of the uploaded data and does not use them for its own purposes.
+
+The Department instead acts as controller of the users' personal data processed for the purposes of access, authentication to the platform and creation of the personal account, as well as to ensure the correct operation of the platform and to handle any reports or improvement proposals, as described in the [information notice provided pursuant to article 13 of the Regulation](${ROUTES.privacy}).
+
+### 11. Service availability and retention
+
+The platform is made available as is, without any guarantee of specific service levels or of continuity of provision. Users are advised to keep a copy of relevant data and configurations at their own administration.
+
+Contents are retained for the time necessary for the purposes of the service, according to the terms set out in the [privacy notice](${ROUTES.privacy}). Accounts inactive for 24 months are deactivated after notice, and the associated contents are deleted. The user may request the deletion of their account at any time by email to [tech@innovazione.gov.it](mailto:tech@innovazione.gov.it).
+
+### 12. Suspension and removal
+
+The Department may suspend or deactivate accounts and remove uploaded contents in case of breach of these Terms, false statement of the administration of belonging, use that harms the security or functionality of the platform, or a qualified report of unlawful contents. In urgent cases related to security or to the lawfulness of contents, the measure may be taken without notice; the user and, where necessary, the administration of belonging are informed.
+
+### 13. Contractual documents and acceptance
+
+Acceptance of these Legal Notes and Terms of Use is equivalent for all purposes to acceptance of the related annexes, which form an integral and substantial part of them, including the [appointment as data processor](${ROUTES.dataProcessor}) pursuant to art. 28 of Regulation (EU) 2016/679.
+`;
+
+  return <LegalPage content={{ it, en }} />;
 }
