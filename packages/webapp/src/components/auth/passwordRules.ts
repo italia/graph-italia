@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import type { z as zod, ZodType, ZodTypeDef } from "zod";
+import type { z as zod, ZodType } from "zod";
 
 export type PasswordRuleKey =
   | "minLength"
@@ -23,7 +23,7 @@ export function getPasswordSchema(
   z: typeof zod,
   t: TFunction<"translation", undefined>,
 ) {
-  let schema: ZodType<string, ZodTypeDef, string> = z.string();
+  let schema: ZodType<string, string> = z.string();
   for (const rule of PASSWORD_RULES) {
     schema = schema.refine(rule.test, {
       message: t(`form.fields.password.errors.${rule.key}`),
