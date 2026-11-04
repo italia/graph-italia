@@ -96,6 +96,9 @@ COPY --from=build /usr/src/app/packages/server/lib ./packages/server/lib
 COPY --from=build /usr/src/app/packages/server/routes ./packages/server/routes
 COPY --from=build /usr/src/app/packages/server/package.json ./packages/server/
 
+# IndicePA enti for the signup PA field (served by GET /ipa/enti, checked on signup)
+COPY --from=build /usr/src/app/packages/server/data ./packages/server/data
+
 # Copy Prisma schema and migrations for runtime jobs
 COPY --from=build /usr/src/app/packages/server/prisma ./packages/server/prisma
 
