@@ -85,10 +85,27 @@ describe("GET /ipa/enti", () => {
 		expect(await res.json()).toEqual(await readIpaFile());
 	});
 
-	test("304 when the ETag matches, also the weak one of a gzipped response", async () => {
+	test("304 when the ETag matches, also when a proxy made it weak", async () => {
 		const etag = (await app.request("/ipa/enti")).headers.get("ETag")!;
 		expect((await app.request("/ipa/enti", { headers: { "If-None-Match": etag } })).status).toBe(304);
 		expect((await app.request("/ipa/enti", { headers: { "If-None-Match": `W/${etag}` } })).status).toBe(304);
+	});
+
+	test("gzips for browsers without relying on CompressionStream", async () => {
+		// The production image runs a Bun without CompressionStream.
+		const original = globalThis.CompressionStream;
+		// @ts-expect-error simulate the missing global
+		delete globalThis.CompressionStream;
+		try {
+			const res = await app.request("/ipa/enti", { headers: { "Accept-Encoding": "gzip, deflate, br" } });
+			expect(res.status).toBe(200);
+			expect(res.headers.get("Content-Encoding")).toBe("gzip");
+			expect(res.headers.get("Vary")).toContain("Accept-Encoding");
+			const body = Bun.gunzipSync(new Uint8Array(await res.arrayBuffer()));
+			expect(JSON.parse(new TextDecoder().decode(body))).toEqual(await readIpaFile());
+		} finally {
+			globalThis.CompressionStream = original;
+		}
 	});
 
 	test("503 when the file is missing", async () => {
