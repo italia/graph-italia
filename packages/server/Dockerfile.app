@@ -1,5 +1,5 @@
 # BASE Stage - Use slim Bun image with Node.js for Prisma CLI
-FROM oven/bun:1.3.1-slim AS base
+FROM oven/bun:1.4.4-slim AS base
 
 # Install Node.js (needed for Prisma CLI in both build and runtime)
 RUN apt-get update -qq && \
@@ -70,7 +70,7 @@ RUN for dir in root_node_modules server_node_modules; do \
     done
 
 # RELEASE Stage - Include Node.js for Prisma CLI in runtime jobs
-FROM oven/bun:1.3.1-slim AS release
+FROM oven/bun:1.4.4-slim AS release
 
 WORKDIR /usr/src/app
 
