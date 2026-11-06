@@ -1,4 +1,4 @@
-publiccodeYmlVersion: "0.4"
+publiccodeYmlVersion: 0.7.0
 name: GraphItalia
 applicationSuite: GraphItalia
 url: https://github.com/italia/graph-italia
@@ -12,9 +12,13 @@ organisation:
   name: DTD Dipartimento Trasformazione Digitale
 developmentStatus: stable
 softwareType: standalone/web
+supports:
+  - id: alias:spid
+  - id: alias:cie
+  - id: alias:eidas
+  - id: alias:gdpr
 intendedAudience:
   scope:
-    - government
     - science-and-technology
     - education
     - culture
