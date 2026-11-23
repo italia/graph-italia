@@ -125,15 +125,6 @@ export const getFields = (availabelPalettes: any, defaultPalette: string) => [
     layout: "3",
   },
   {
-    label: "Show Zoom",
-    name: "zoom",
-    type: "select",
-    options: ["none", "both_axis", "x_axis", "y_axis"],
-    required: false,
-    chartType: ["line"],
-    otherProps: {},
-  },
-  {
     label: "Smooth lines",
     name: "smooth",
     type: "number",
@@ -193,6 +184,15 @@ export const getFields = (availabelPalettes: any, defaultPalette: string) => [
     chartType: ["bar"],
     otherProps: {},
     layout: "",
+  },
+  {
+    label: "Show Zoom",
+    name: "zoom",
+    type: "select",
+    options: ["none", "both_axis", "x_axis", "y_axis"],
+    required: false,
+    chartType: ["line", "bar"],
+    otherProps: {},
   },
 
   {
