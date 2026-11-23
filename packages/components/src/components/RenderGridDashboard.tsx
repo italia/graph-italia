@@ -49,6 +49,12 @@ export interface RenderDashboardProps {
    */
   showDataTransposed?: boolean;
   /**
+   * When true, every slot takes the full width, one below the other in reading
+   * order, whatever the container width. Use it where the grid does not fit,
+   * e.g. inside padded or narrow containers. Defaults to false.
+   */
+  singleColumn?: boolean;
+  /**
    * Extra info merged into each chart's ChartWrapper info (labels, source
    * text, footer text, etc.). Applied on top of the per-chart name/description
    * defaults. Only used when withWrapper is true.
@@ -96,6 +102,7 @@ export function RenderGridDashboard({
   withWrapper = false,
   showPoweredBy = false,
   showDataTransposed = false,
+  singleColumn = false,
   wrapperLabels = {},
   wrapperFuncts = {},
 }: RenderDashboardProps) {
@@ -151,12 +158,15 @@ export function RenderGridDashboard({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(12, 1fr)",
+          // minmax(0, 1fr): a plain 1fr track never shrinks below its content,
+          // so a chart canvas drawn at a wider size kept the grid wider than a
+          // narrower (e.g. padded) container and the chart never resized.
+          gridTemplateColumns: "repeat(12, minmax(0, 1fr))",
           gap: margin,
         }}
       >
         {sorted.map(({ settings, chart }) => {
-          const colSpan = toColSpan(settings.w, bp);
+          const colSpan = singleColumn ? 12 : toColSpan(settings.w, bp);
           const slotHeight =
             rowHeight * settings.h + margin * (settings.h - 1);
           return (
@@ -164,6 +174,7 @@ export function RenderGridDashboard({
               key={settings.i}
               style={{
                 gridColumn: `span ${colSpan}`,
+                minWidth: 0,
                 overflow: withWrapper ? "visible" : "hidden",
                 borderRadius: 8,
                 border: "1px solid rgba(128,128,128,0.15)",

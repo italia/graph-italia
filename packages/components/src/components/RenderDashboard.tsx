@@ -55,6 +55,12 @@ export interface RenderDashboardProps {
    */
   showDataTransposed?: boolean;
   /**
+   * When true, every slot takes the full width, one below the other in reading
+   * order, whatever the container width. Use it where the grid does not fit,
+   * e.g. inside padded or narrow containers. Defaults to false.
+   */
+  singleColumn?: boolean;
+  /**
    * Extra info merged into each chart's ChartWrapper info (labels, source
    * text, footer text, etc.). Applied on top of the per-chart name/description
    * defaults. Only used when withWrapper is true.
@@ -138,6 +144,7 @@ export function RenderDashboard({
   withWrapper = false,
   showPoweredBy = false,
   showDataTransposed = false,
+  singleColumn = false,
   wrapperLabels = {},
   wrapperFuncts = {},
 }: RenderDashboardProps) {
@@ -155,6 +162,36 @@ export function RenderDashboard({
     );
     return { layouts: buildLayouts(items), items, chartMap };
   }, [data.slots]);
+
+  const slotHeight = (h: number) => rowHeight * h + margin * (h - 1);
+  const slotStyle: React.CSSProperties = {
+    overflow: withWrapper ? "visible" : "hidden",
+    borderRadius: 8,
+    border: "1px solid rgba(128,128,128,0.15)",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  };
+
+  function renderSlot(chart: FieldDataType | undefined, chartHeight: number) {
+    if (!chart) return null;
+    return withWrapper ? (
+      <ChartWrapper
+        data={chart}
+        info={{
+          text: chart.description ?? "",
+          title: chart.name ?? "",
+          subTitle: "",
+          ...wrapperLabels,
+        }}
+        rowHeight={chartHeight}
+        hFactor={1}
+        showPoweredBy={showPoweredBy}
+        showDataTransposed={showDataTransposed}
+        {...wrapperFuncts}
+      />
+    ) : (
+      <RenderChart {...chart} rowHeight={chartHeight} hFactor={1} />
+    );
+  }
 
   return (
     <div>
@@ -182,55 +219,42 @@ export function RenderDashboard({
         </p>
       )}
 
-      <ResponsiveGrid
-        layouts={layouts}
-        breakpoints={BREAKPOINTS}
-        cols={ALL_COLS}
-        rowHeight={rowHeight}
-        margin={[margin, margin]}
-        isDraggable={false}
-        isResizable={false}
-      >
-        {items.map((item) => {
-          const chart = chartMap[item.i] as FieldDataType;
-          const chartHeight = rowHeight * item.h + margin * (item.h - 1);
-
-          return (
-            <div
-              key={item.i}
-              style={{
-                overflow: withWrapper ? "visible" : "hidden",
-                borderRadius: 8,
-                border: "1px solid rgba(128,128,128,0.15)",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-              }}
-            >
-              {chart && (withWrapper ? (
-                <ChartWrapper
-                  data={chart}
-                  info={{
-                    text: chart.description ?? "",
-                    title: chart.name ?? "",
-                    subTitle: "",
-                    ...wrapperLabels,
-                  }}
-                  rowHeight={chartHeight}
-                  hFactor={1}
-                  showPoweredBy={showPoweredBy}
-                  showDataTransposed={showDataTransposed}
-                  {...wrapperFuncts}
-                />
-              ) : (
-                <RenderChart
-                  {...chart}
-                  rowHeight={chartHeight}
-                  hFactor={1}
-                />
-              ))}
+      {singleColumn ? (
+        // Full-width slots stacked in reading order, outside react-grid-layout:
+        // nothing depends on measuring the container.
+        <div style={{ display: "flex", flexDirection: "column", gap: margin }}>
+          {[...items]
+            .sort((a, b) => (a.y !== b.y ? a.y - b.y : a.x - b.x))
+            .map((item) => (
+              <div
+                key={item.i}
+                style={{
+                  ...slotStyle,
+                  minWidth: 0,
+                  ...(withWrapper ? { minHeight: slotHeight(item.h) } : { height: slotHeight(item.h) }),
+                }}
+              >
+                {renderSlot(chartMap[item.i], slotHeight(item.h))}
+              </div>
+            ))}
+        </div>
+      ) : (
+        <ResponsiveGrid
+          layouts={layouts}
+          breakpoints={BREAKPOINTS}
+          cols={ALL_COLS}
+          rowHeight={rowHeight}
+          margin={[margin, margin]}
+          isDraggable={false}
+          isResizable={false}
+        >
+          {items.map((item) => (
+            <div key={item.i} style={slotStyle}>
+              {renderSlot(chartMap[item.i], slotHeight(item.h))}
             </div>
-          );
-        })}
-      </ResponsiveGrid>
+          ))}
+        </ResponsiveGrid>
+      )}
     </div>
   );
 }

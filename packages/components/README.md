@@ -274,6 +274,12 @@ import { DashboardGridProvider } from "graph-italia-components";
 />
 ```
 
+**Narrow or padded containers.** The dashboard grid picks its columns from the width of the element it is rendered in. If the layout still does not fit your page (e.g. a dashboard inside a padded column or a sidebar), pass `singleColumn` to `DashboardGridProvider`, `DashboardProvider`, `RenderDashboard` or `RenderGridDashboard`: every slot then takes the full width, one below the other in reading order, keeping its height.
+
+```tsx
+<DashboardGridProvider apiKey="dv_..." endpoint="https://..." dashboardId="..." singleColumn />
+```
+
 Both `ChartProvider`/`DashboardProvider`/`DashboardGridProvider` accept `loadingElement`/`errorElement` overrides for custom loading/error UI, and internally wrap their content in `ColorSchemeProvider` when `detectUserPrefColorsSchema` is set — you don't need to add your own provider in that case. If you're driving the scheme yourself (e.g. from your host app's own theme state), wrap them in your own `<ColorSchemeProvider scheme={...}>` instead and leave `detectUserPrefColorsSchema` off.
 
 The API key must be `dv_`-prefixed and is sent as `Authorization: Bearer <apiKey>` to `{endpoint}{routePrefix}/charts/{chartId}` or `/dashboards/{dashboardId}` (`routePrefix` defaults to `/api`). See the `packages/client` README for how API keys, roles, and scopes work on the server side.

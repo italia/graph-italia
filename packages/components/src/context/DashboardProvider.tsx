@@ -36,6 +36,12 @@ export interface DashboardProviderProps {
    */
   showDataTransposed?: boolean;
   /**
+   * When true, every slot takes the full width, one below the other in reading
+   * order, whatever the container width. Use it where the grid does not fit,
+   * e.g. inside padded or narrow containers. Defaults to false.
+   */
+  singleColumn?: boolean;
+  /**
    * Extra info merged into each chart's ChartWrapper info (labels, source
    * text, footer text, etc.). Applied on top of the per-chart name/description
    * defaults. Only used when withWrapper is true.
@@ -170,6 +176,7 @@ export function DashboardProvider({
   withWrapper = true,
   showPoweredBy = false,
   showDataTransposed = false,
+  singleColumn = false,
   wrapperLabels = {},
   wrapperFuncts = {},
   loadingElement,
@@ -231,6 +238,7 @@ export function DashboardProvider({
       withWrapper={withWrapper}
       showPoweredBy={showPoweredBy}
       showDataTransposed={showDataTransposed}
+      singleColumn={singleColumn}
       wrapperLabels={wrapperLabels}
       wrapperFuncts={wrapperFuncts}
     />
