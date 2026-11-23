@@ -42,7 +42,7 @@ Alcune funzionalità si attivano o disattivano per istanza con variabili d'ambie
 | `ENABLE_PUBLIC_PUBLISHING` | attivo | `"false"` = nessuna superficie pubblica. Gli endpoint anonimi `/charts/show/:id` e `/dashboards/show/:id` rispondono 404, niente può diventare `publish: true`, la webapp nasconde il selettore di visibilità e i pulsanti di condivisione/embed, disattiva `/embed/*` e trasforma `/display/*` in un'anteprima riservata agli utenti autenticati. Grafici e dashboard restano leggibili con sessione o API Key. |
 | `OIDC_*` | non configurato | Abilita l'accesso SPID/CIE (`OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_AUTH_SECRET`, `OIDC_REDIRECT_URI`, `OIDC_AUTH_EXTERNAL_URL`, `OIDC_SCOPES`). Necessario se `ENABLE_PASSWORD_AUTH="false"`. Vedi [SPID-CIE-DEPLOY.md](SPID-CIE-DEPLOY.md). |
 | `ADMIN_EMAILS` | vuoto | Email (separate da virgola) che ricevono il ruolo `ADMIN` all'accesso, con SPID/CIE o password. Assegna soltanto, non revoca. |
-| `ENABLE_OSCAR_PA_VERIFICATION` | disattivo | `"true"` = ogni nuovo account SPID/CIE viene inviato al servizio Oscar (`OSCAR_URL`, `OSCAR_KEY`) per verificare l'appartenenza alla PA dichiarata. L'esito è visibile solo nel pannello admin e non blocca l'accesso. |
+| `ENABLE_OSCAR_PA_VERIFICATION` | disattivo | `"true"` = ogni nuovo account SPID/CIE viene inviato al servizio Oscar (`OSCAR_URL`, `OSCAR_KEY`) per verificare l'appartenenza alla PA dichiarata. L'esito è visibile solo nel pannello admin e non blocca l'accesso. Flusso, payload e prove in [OSCAR.md](OSCAR.md). |
 
 I valori sono letti a runtime: non serve ricompilare la webapp per cambiarli.
 
