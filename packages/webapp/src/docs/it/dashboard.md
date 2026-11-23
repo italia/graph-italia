@@ -19,7 +19,7 @@ La dashboard è molto efficace quando si ha la necessità di raccogliere su una 
 
 ## Come usare i blocchi di testo
 
-Usa i blocchi di testo per aggiungere introduzioni, note metodologiche e note alla dashboard. I blocchi di testo vengono scritti in **markdown** (titoli, grassetti, elenchi, link). Nella pagina pubblica i testi a tutta larghezza occupano solo lo spazio necessario.
+Usa i blocchi di testo per aggiungere introduzioni, note metodologiche e note alla dashboard. I blocchi di testo vengono scritti in **markdown** (titoli, grassetti, elenchi, link). Quando la dashboard viene visualizzata, i testi a tutta larghezza occupano solo lo spazio necessario.
 
 ## Salvataggio e condivisione
 
@@ -28,6 +28,6 @@ Usa i blocchi di testo per aggiungere introduzioni, note metodologiche e note al
 - la dashboard pubblica è raggiungibile dal link presente nella lista **Le mie dashboard** e può essere incorporata in un altro sito;
 <!-- /publishing -->
 <!-- publishing:off -->
-- per mostrare la dashboard nel tuo sito usa `DashboardGridProvider` della libreria componenti con una API key del progetto (vedi [Pubblicare e condividere](/docs/condivisione));
+- per mostrare la dashboard nel tuo sito usa `DashboardGridProvider` della libreria componenti con una API key del progetto (vedi [Condividere e integrare](/docs/condivisione));
 <!-- /publishing -->
 - i grafici mostrati nella dashboard sono quelli precedentemente salvati su Graph Italia e vengono aggiornati automaticamente quando il grafico viene cambiato.

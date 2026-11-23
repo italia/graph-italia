@@ -4,7 +4,12 @@ Datasets are the reusable data sources of the project: an independent catalogue 
 
 ## How to use datasets
 
+<!-- publishing:on -->
 - In the dedicated section you find all the datasets of the project, with name, description and visibility. You can browse and edit them in an editable table without touching the charts that use them;
+<!-- /publishing -->
+<!-- publishing:off -->
+- In the dedicated section you find all the datasets of the project, with name and description. You can browse and edit them in an editable table without touching the charts that use them;
+<!-- /publishing -->
 - alternatively, you can **read and update them through the REST API**: an external system (a scheduled script, a management system) can keep the dataset up to date with a read/write API key (see [API](/docs/api)).
 
 ## Dataset source types
@@ -20,5 +25,10 @@ Datasets are the reusable data sources of the project: an independent catalogue 
 
 ## Limitations
 
-- The copy of the data of a remote source does not refresh automatically (the 24-hour refresh applies to charts linked directly to a URL);
+<!-- publishing:on -->
+- The copy of the data of a remote source does not refresh automatically (the 24-hour refresh applies to public charts linked directly to a URL);
+<!-- /publishing -->
+<!-- publishing:off -->
+- The copy of the data of a remote source does not refresh automatically;
+<!-- /publishing -->
 - charts cannot yet be linked to a source from their editor: for now the source is a browsable catalogue and an access point through the API.

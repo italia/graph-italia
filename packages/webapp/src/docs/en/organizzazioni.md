@@ -19,7 +19,9 @@ You can move a project from personal to part of an organization. To do so, go to
 - you remain the owner of the project;
 - you can **revoke** the association at any time; when revoked, the project goes back to being personal.
 
-## Project visibility in the organization
+## Who sees the organization's projects
 
 - Members of the organization can see and edit the items of the associated projects;
+<!-- publishing:on -->
 - the public/private visibility of the items stays independent: private means "only those who access the project", not "only me".
+<!-- /publishing -->

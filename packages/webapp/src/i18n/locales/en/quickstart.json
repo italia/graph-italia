@@ -21,7 +21,7 @@
         "create": {
             "title": "Create a new item",
             "items": [
-                "In your <strong>private area</strong> click <strong>Create new</strong> and choose the kind of item you want to create: a chart, a KPI group, a map, a dashboard or a data source.",
+                "In your <strong>private area</strong> click <strong>Create new</strong> and choose the kind of item you want to create: a chart, a KPI group, a map or a dashboard.",
                 "Give your item a title and, if needed, add a description to make it easier to identify. Both can be changed from the editor."
             ]
         },
@@ -36,40 +36,27 @@
             "title": "Configure the chart",
             "items": [
                 "Choose the kind of chart you want to create among <strong>bars, lines, pie or map</strong>, and watch the preview build up as you go.",
-                "You can configure and customize your chart with the available settings. In <strong>Advanced settings</strong> you can create and set up tooltip, grid and axes.",
-                "In the <strong>Info</strong> section you define the chart visibility: if <strong>public</strong> it can be seen by anyone with the direct link and embedded in other websites, if <strong>private</strong> it stays visible to you only."
-            ]
-        },
-        "configurePrivate": {
-            "title": "Configure the chart",
-            "items": [
-                "Choose the kind of chart you want to create among <strong>bars, lines, pie or map</strong>, and watch the preview build up as you go.",
                 "You can configure and customize your chart with the available settings. In <strong>Advanced settings</strong> you can create and set up tooltip, grid and axes."
             ]
         },
-        "publish": {
-            "title": "Save, publish and share",
+        "share": {
+            "title": "Save, share and integrate",
             "items": [
                 "Once your changes are done click <strong>Save</strong>: your chart will appear in the list of your personal projects in the <strong>private area</strong>.",
-                "If you created a chart with public visibility, in the <strong>Share</strong> column you can copy the public link and the embed code (iframe) to integrate in your website."
+                "To work on it with your colleagues create an <strong>organization</strong> (user menu → <strong>Organizations</strong>), invite the members by email and transfer the project: everyone sees and edits the same items, and you remain its owner.",
+                "To show them in your website or web application generate a read-only project <strong>API key</strong> and use the React library <strong>graph-italia-components</strong> (or the REST API or the <strong>graph-italia-cli</strong> client) with the key and the item identifier."
             ]
         },
-        "integrate": {
-            "title": "Save and integrate in your website",
+        "sharePrivate": {
+            "title": "Save, share and integrate",
             "items": [
                 "Once your changes are done click <strong>Save</strong>: your chart will appear in the list of your personal projects in the <strong>private area</strong>.",
-                "On this instance charts and dashboards have no public link and cannot be embedded with an iframe: they stay visible only to you and to the people working on the project.",
+                "To work on it with your colleagues create an <strong>organization</strong> (user menu → <strong>Organizations</strong>), invite the members by email and transfer the project: everyone sees and edits the same items, and you remain its owner.",
+                "On this instance publishing is turned off: charts and dashboards have no public link and stay visible only to the people who access the project.",
                 "To show them in your website or web application generate a read-only project <strong>API key</strong> and use the React library <strong>graph-italia-components</strong> (or the REST API or the <strong>graph-italia-cli</strong> client) with the key and the item identifier."
             ]
         },
         "dashboard": {
-            "title": "Compose a dashboard",
-            "items": [
-                "A dashboard collects several charts and text blocks in a single page: you can drag the items into the grid slots, adjust heights and widths and write the texts.",
-                "A dashboard can be shared with a public link."
-            ]
-        },
-        "dashboardPrivate": {
             "title": "Compose a dashboard",
             "items": [
                 "A dashboard collects several charts and text blocks in a single page: you can drag the items into the grid slots, adjust heights and widths and write the texts.",
@@ -79,8 +66,7 @@
         "api": {
             "title": "Information for developers",
             "items": [
-                "From the menu you can generate an <strong>API key</strong> (read-only or read/write) to use the project's REST APIs.",
-                "<strong>Data sources</strong> are datasets that can be reused and updated via API too: they are useful to feed data from a script or an external system."
+                "From the menu you can generate an <strong>API key</strong> (read-only or read/write) to use the project's REST APIs."
             ]
         }
     },

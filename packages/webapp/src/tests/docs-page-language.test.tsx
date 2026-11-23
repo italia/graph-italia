@@ -38,6 +38,33 @@ function renderDocs(lng: "it" | "en", path = "/docs/mappe") {
   return instance;
 }
 
+describe("DocsPage datasets chapter", () => {
+  // Hidden like the "Sorgente dati" entry of the "Crea nuovo" dialog.
+  it("is not listed and its URL falls back to the docs", () => {
+    renderDocs("it", "/docs/sorgenti-dati");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Introduzione");
+    const nav = within(screen.getByRole("navigation", { name: "Documentazione" }));
+    expect(nav.queryByRole("link", { name: "Dataset" })).not.toBeInTheDocument();
+    expect(document.querySelector('a[href="/docs/sorgenti-dati"]')).toBeNull();
+  });
+});
+
+describe("DocsPage sharing chapter", () => {
+  // loadInstanceConfig() is never called here, so publishing reads as off.
+  it("covers team sharing and says publishing is off on this instance", () => {
+    renderDocs("it", "/docs/condivisione");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Condividere e integrare");
+    const nav = within(screen.getByRole("navigation", { name: "Documentazione" }));
+    expect(nav.getByRole("link", { name: "Condividere e integrare", current: "page" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Condividere con il tuo team" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "La pubblicazione su questa istanza" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("ENABLE_PUBLIC_PUBLISHING")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Visibilità/ })).not.toBeInTheDocument();
+  });
+});
+
 describe("DocsPage follows the UI language", () => {
   it("renders the Italian chapter and sidebar by default", () => {
     renderDocs("it");

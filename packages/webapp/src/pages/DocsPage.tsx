@@ -18,7 +18,9 @@ import itGraficiTorta from "../docs/it/grafici-torta.md?raw";
 import itMappe from "../docs/it/mappe.md?raw";
 import itKpi from "../docs/it/kpi.md?raw";
 import itDashboard from "../docs/it/dashboard.md?raw";
-import itSorgentiDati from "../docs/it/sorgenti-dati.md?raw";
+// Capitolo "Dataset" temporaneamente nascosto, come la voce "Sorgente dati"
+// del dialog "Crea nuovo" (pages/private/index.tsx): i file restano in docs/.
+// import itSorgentiDati from "../docs/it/sorgenti-dati.md?raw";
 import itCondivisione from "../docs/it/condivisione.md?raw";
 import itOrganizzazioni from "../docs/it/organizzazioni.md?raw";
 import itApi from "../docs/it/api.md?raw";
@@ -32,7 +34,7 @@ import enGraficiTorta from "../docs/en/grafici-torta.md?raw";
 import enMappe from "../docs/en/mappe.md?raw";
 import enKpi from "../docs/en/kpi.md?raw";
 import enDashboard from "../docs/en/dashboard.md?raw";
-import enSorgentiDati from "../docs/en/sorgenti-dati.md?raw";
+// import enSorgentiDati from "../docs/en/sorgenti-dati.md?raw";
 import enCondivisione from "../docs/en/condivisione.md?raw";
 import enOrganizzazioni from "../docs/en/organizzazioni.md?raw";
 import enApi from "../docs/en/api.md?raw";
@@ -49,7 +51,7 @@ const SLUGS = [
   "mappe",
   "kpi",
   "dashboard",
-  "sorgenti-dati",
+  // "sorgenti-dati",
   "condivisione",
   "organizzazioni",
   "api",
@@ -67,7 +69,7 @@ const CONTENT: Record<AppLanguage, Record<Slug, string>> = {
     mappe: itMappe,
     kpi: itKpi,
     dashboard: itDashboard,
-    "sorgenti-dati": itSorgentiDati,
+    // "sorgenti-dati": itSorgentiDati,
     condivisione: itCondivisione,
     organizzazioni: itOrganizzazioni,
     api: itApi,
@@ -82,7 +84,7 @@ const CONTENT: Record<AppLanguage, Record<Slug, string>> = {
     mappe: enMappe,
     kpi: enKpi,
     dashboard: enDashboard,
-    "sorgenti-dati": enSorgentiDati,
+    // "sorgenti-dati": enSorgentiDati,
     condivisione: enCondivisione,
     organizzazioni: enOrganizzazioni,
     api: enApi,
@@ -100,7 +102,7 @@ const GROUPS: ChapterGroup[] = [
   },
   {
     key: "dataAndCollaboration",
-    chapters: ["sorgenti-dati", "condivisione", "organizzazioni"],
+    chapters: [/* "sorgenti-dati", */ "condivisione", "organizzazioni"],
   },
   { key: "developers", chapters: ["api", "strumenti"] },
 ];

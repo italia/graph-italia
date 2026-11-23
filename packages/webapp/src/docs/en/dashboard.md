@@ -19,7 +19,7 @@ The dashboard is very effective when you need to collect several charts and diff
 
 ## How to use text blocks
 
-Use text blocks to add introductions, methodological notes and remarks to the dashboard. Text blocks are written in **markdown** (headings, bold, lists, links). On the public page, full-width texts take up only the space they need.
+Use text blocks to add introductions, methodological notes and remarks to the dashboard. Text blocks are written in **markdown** (headings, bold, lists, links). When the dashboard is displayed, full-width texts take up only the space they need.
 
 ## Saving and sharing
 
@@ -28,6 +28,6 @@ Use text blocks to add introductions, methodological notes and remarks to the da
 - the public dashboard can be reached from the link in the **My dashboards** list and can be embedded in another site;
 <!-- /publishing -->
 <!-- publishing:off -->
-- to show the dashboard in your website use `DashboardGridProvider` from the component library with a project API key (see [Publishing and sharing](/docs/condivisione));
+- to show the dashboard in your website use `DashboardGridProvider` from the component library with a project API key (see [Sharing and integrating](/docs/condivisione));
 <!-- /publishing -->
 - the charts shown in the dashboard are the ones previously saved on Graph Italia and are updated automatically when the chart changes.

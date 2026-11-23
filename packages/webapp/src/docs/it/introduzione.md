@@ -19,7 +19,7 @@ Puoi creare un account con email e password, confermato da un codice di verifica
 - **Visibilità**: ogni elemento può essere impostato con visibilità **pubblica** (visibile a chiunque abbia il link e incorporabile in altri siti) oppure **privata** (visibile solo all'interno della tua Area Privata). Puoi cambiare la visibilità dei tuoi elementi nella sezione **Informazioni** all'interno dell'editor.
 <!-- /publishing -->
 <!-- publishing:off -->
-- **Integrazione**: su questa istanza gli elementi non hanno un link pubblico e non si possono incorporare con un iframe. Per mostrarli nel tuo sito o applicativo usi la libreria componenti o il client API con una **API key** del progetto (vedi [Pubblicare e condividere](/docs/condivisione)).
+- **Integrazione**: su questa istanza gli elementi non hanno un link pubblico e non si possono incorporare con un iframe. Per mostrarli nel tuo sito o applicativo usi la libreria componenti o il client API con una **API key** del progetto (vedi [Condividere e integrare](/docs/condivisione)).
 <!-- /publishing -->
 
 ## Primi passi

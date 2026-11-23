@@ -19,7 +19,7 @@ You can create an account with email and password, confirmed by a verification c
 - **Visibility**: each item can be set to **public** (visible to anyone with the link and embeddable in other sites) or **private** (visible only inside your Private Area). You can change the visibility of your items in the **Setup Info** section of the editor.
 <!-- /publishing -->
 <!-- publishing:off -->
-- **Integration**: on this instance items have no public link and cannot be embedded with an iframe. To show them in your website or application you use the component library or the API client with a project **API key** (see [Publishing and sharing](/docs/condivisione)).
+- **Integration**: on this instance items have no public link and cannot be embedded with an iframe. To show them in your website or application you use the component library or the API client with a project **API key** (see [Sharing and integrating](/docs/condivisione)).
 <!-- /publishing -->
 
 ## First steps

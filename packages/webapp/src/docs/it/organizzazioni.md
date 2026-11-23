@@ -19,7 +19,9 @@ Puoi trasferire un progetto da personale a parte di un'organizzazione. Per farlo
 - resti proprietario del progetto;
 - puoi **revocare** l'associazione in qualsiasi momento; con la revoca il progetto torna personale.
 
-## Visibilità dei progetti nell'organizzazione
+## Chi vede i progetti dell'organizzazione
 
 - I membri dell'organizzazione vedono e modificano gli elementi dei progetti associati;
+<!-- publishing:on -->
 - la visibilità pubblico/privato degli elementi resta indipendente: privato significa "solo chi accede al progetto", non "solo io".
+<!-- /publishing -->

@@ -67,6 +67,45 @@ import { ChartProvider } from "graph-italia-components";
 
 Una chiave usata nel browser è visibile ai visitatori e consente di leggere tutto il progetto: usare sempre chiavi `READONLY`, tenere in un progetto dedicato solo ciò che si vuole mostrare, oppure fare le chiamate lato server.
 
+### Pubblicazione pubblica: link e embed
+
+Graph Italia, come software open source, permette di rendere pubblici grafici, mappe, gruppi KPI e dashboard: un link aperto a tutti e un `<iframe>` da incorporare in siti terzi. La funzione è attiva di default e si spegne con `ENABLE_PUBLIC_PUBLISHING="false"` (vedi la tabella sopra). La documentazione in linea della webapp non spiega link pubblici ed embed: sull'istanza DTD non esistono, e il capitolo *Condividere e integrare* rimanda qui. Le istruzioni seguenti valgono per le istanze che la lasciano attiva.
+
+**Attivarla sulla propria istanza**
+
+- In locale: non impostare `ENABLE_PUBLIC_PUBLISHING` in `packages/server/.env`, o impostarlo a qualsiasi valore diverso da `"false"`.
+- Con Helm: `server.env.ENABLE_PUBLIC_PUBLISHING` nei values; su una release esistente `helm upgrade ... --reuse-values --set-string server.env.ENABLE_PUBLIC_PUBLISHING=true`.
+- Il server legge il flag all'avvio e lo espone in `GET /api/config` (`publicPublishing`): la webapp mostra di conseguenza selettore di visibilità, pulsanti di condivisione e rotte `/display/*` ed `/embed/*`, senza ricompilarla.
+
+**Rendere pubblico un elemento**
+
+Nell'editor, sezione **Informazioni**, l'interruttore di visibilità imposta l'elemento come **pubblico** o **privato**. Un elemento privato è visibile solo a chi accede al progetto (owner, membri diretti, membri delle Org associate); il suo link pubblico risponde con un avviso. Il default per i nuovi elementi è pubblico solo se la pubblicazione è attiva.
+
+**Condividere il link pubblico**
+
+Nella colonna **Condividi** delle liste dell'Area Privata c'è il link diretto alla pagina di visualizzazione:
+
+- grafici, mappe e gruppi KPI: `https://<webapp>/display/charts/<id>`
+- dashboard: `https://<webapp>/display/dashboards/<id>`
+
+Le pagine leggono i dati dagli endpoint anonimi `GET /api/charts/show/:id` e `GET /api/dashboards/show/:id`, che rispondono solo per gli elementi pubblici.
+
+**Incorporare in un altro sito (embed)**
+
+Il pulsante con l'icona del codice, nella stessa colonna, genera un `<iframe>` pronto da incollare:
+
+```html
+<iframe width="600" height="400" src="https://<webapp>/embed/charts/<id>" frameborder="0" allowfullscreen></iframe>
+```
+
+- L'embed mostra solo la visualizzazione, senza testata e piè di pagina; per le dashboard il percorso è `/embed/dashboards/<id>`.
+- Il tema segue le preferenze del visitatore (chiaro/scuro); si forza con `?theme=light` o `?theme=dark` in coda all'URL, oppure a runtime via `postMessage` (vedi `packages/components/README.md`).
+- `width` e `height` vanno regolati sulla pagina che ospita l'iframe. Gli endpoint pubblici hanno CORS aperto (`CORS_ORIGIN` nel chart Helm).
+
+**Aggiornamento automatico dei dati remoti**
+
+I grafici pubblici collegati a una URL remota vengono aggiornati alla prima visualizzazione pubblica dopo 24 ore dall'ultimo aggiornamento: il server riscarica la fonte e riapplica le trasformazioni salvate. Con la pubblicazione spenta questo aggiornamento non avviene, perché passa dall'endpoint `show`.
+
 ### Come arrivano i flag nei deploy
 
 - **Helm**: i default sono in `charts/graph-italia/values.yaml` (`server.env.ENABLE_PASSWORD_AUTH`, `server.env.ENABLE_PUBLIC_PUBLISHING`, ...).

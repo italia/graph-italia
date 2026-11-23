@@ -596,6 +596,7 @@
             "dashboardsEmpty": "You haven't created any dashboard yet. Use \"Create new\" to start.",
             "datasources": "Data source files",
             "chartsDescription": "Here you find the list of your items by type. You can change their visibility, copy the link or the embed code for publishing, and edit them.",
+            "chartsDescriptionPrivate": "Here you find the list of your items by type: open them to edit or delete them.",
             "dashboardsDescription": "Dashboards collect several charts and text blocks in a single page.",
             "datasourcesDescription": "List of the CSV files or URLs used as data sources; they can also be updated through the REST API."
         },
@@ -667,7 +668,7 @@
                     },
                     "dash": {
                         "label": "Dashboard",
-                        "description": "A composable grid of charts and text blocks, to share or embed in other sites."
+                        "description": "A composable grid of charts, maps, KPIs and text blocks in a single page."
                     },
                     "datasource": {
                         "label": "Data Source",
@@ -978,7 +979,7 @@
             "kpi": "KPI groups",
             "dashboard": "Dashboard",
             "sorgenti-dati": "Datasets",
-            "condivisione": "Publishing and sharing",
+            "condivisione": "Sharing and integrating",
             "organizzazioni": "Projects and organizations",
             "api": "REST API",
             "strumenti": "Tools"

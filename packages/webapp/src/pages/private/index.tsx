@@ -535,10 +535,9 @@ function Home() {
                 {t(`header.charts`)}
               </h2>
               <p className="text-base-content/70 -mt-3 mb-4">
-                {t(
-                  "header.chartsDescription",
-                  "Qui trovi l'elenco dei tuoi progetti per tipologia. Puoi modificare la visibilità, copiare il link o il codice embed per la pubblicazione e modificarlo.",
-                )}
+                {api.isPublishingEnabled()
+                  ? t("header.chartsDescription")
+                  : t("header.chartsDescriptionPrivate")}
               </p>
 
               <div>

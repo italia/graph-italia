@@ -21,7 +21,7 @@
         "create": {
             "title": "Crea un nuovo elemento",
             "items": [
-                "All'interno dell'<strong>Area privata</strong> clicca su <strong>Crea nuovo</strong> e scegli la tipologia di elemento che vuoi creare: un grafico, un gruppo KPI, una mappa, una dashboard oppure una sorgente dati.",
+                "All'interno dell'<strong>Area privata</strong> clicca su <strong>Crea nuovo</strong> e scegli la tipologia di elemento che vuoi creare: un grafico, un gruppo KPI, una mappa oppure una dashboard.",
                 "Dai un titolo al tuo elemento, se necessario puoi aggiungere una descrizione per facilitarne l'identificazione. Entrambe le informazioni possono essere cambiate dall'editor."
             ]
         },
@@ -36,40 +36,27 @@
             "title": "Configura il grafico",
             "items": [
                 "Scegli la tipologia di grafico che vuoi creare a scelta tra <strong>barre, linee, a torta o mappa</strong>, e vedi l'anteprima che si crea contestualmente.",
-                "Puoi configurare e personalizzare il tuo grafico utilizzando le impostazioni disponibili. Nelle <strong>Configurazioni avanzate</strong> troverai la possibilità di creare e impostare tooltip, griglia e assi.",
-                "Nella sezione <strong>Informazioni</strong> definisci la visibilità del grafico: se <strong>pubblico</strong> potrà essere visibile a chiunque abbia il link diretto e potrà essere incorporato in altri siti, se <strong>privato</strong> rimane visibile solo a te."
-            ]
-        },
-        "configurePrivate": {
-            "title": "Configura il grafico",
-            "items": [
-                "Scegli la tipologia di grafico che vuoi creare a scelta tra <strong>barre, linee, a torta o mappa</strong>, e vedi l'anteprima che si crea contestualmente.",
                 "Puoi configurare e personalizzare il tuo grafico utilizzando le impostazioni disponibili. Nelle <strong>Configurazioni avanzate</strong> troverai la possibilità di creare e impostare tooltip, griglia e assi."
             ]
         },
-        "publish": {
-            "title": "Salva, pubblica e condividi",
+        "share": {
+            "title": "Salva, condividi e integra",
             "items": [
                 "Una volta ultimate le modifiche clicca su <strong>Salva</strong>: il tuo grafico comparirà nella lista dei tuoi progetti personali in <strong>Area privata</strong>.",
-                "Se hai creato un grafico con visibilità pubblica, nella colonna <strong>Condividi</strong> potrai copiare il link pubblico e il codice embed (iframe) da integrare nel tuo sito."
+                "Per lavorarci con i colleghi crea un'<strong>organizzazione</strong> (menu utente → <strong>Organizzazioni</strong>), invita i membri via email e trasferisci il progetto: tutti vedono e modificano gli stessi elementi, e tu ne resti proprietario.",
+                "Per mostrarli nel tuo sito o applicativo web genera una <strong>chiave API</strong> di sola lettura del progetto e usa la libreria React <strong>graph-italia-components</strong> (oppure le API REST o il client <strong>graph-italia-cli</strong>) indicando la chiave e l'identificativo dell'elemento."
             ]
         },
-        "integrate": {
-            "title": "Salva e integra nel tuo sito",
+        "sharePrivate": {
+            "title": "Salva, condividi e integra",
             "items": [
                 "Una volta ultimate le modifiche clicca su <strong>Salva</strong>: il tuo grafico comparirà nella lista dei tuoi progetti personali in <strong>Area privata</strong>.",
-                "Su questa istanza i grafici e le dashboard non hanno un link pubblico e non si possono incorporare con un iframe: restano visibili solo a te e a chi collabora al progetto.",
+                "Per lavorarci con i colleghi crea un'<strong>organizzazione</strong> (menu utente → <strong>Organizzazioni</strong>), invita i membri via email e trasferisci il progetto: tutti vedono e modificano gli stessi elementi, e tu ne resti proprietario.",
+                "Su questa istanza la pubblicazione è disattivata: grafici e dashboard non hanno un link pubblico e restano visibili solo a chi accede al progetto.",
                 "Per mostrarli nel tuo sito o applicativo web genera una <strong>chiave API</strong> di sola lettura del progetto e usa la libreria React <strong>graph-italia-components</strong> (oppure le API REST o il client <strong>graph-italia-cli</strong>) indicando la chiave e l'identificativo dell'elemento."
             ]
         },
         "dashboard": {
-            "title": "Componi una dashboard",
-            "items": [
-                "Una dashboard è un raccoglitore di più grafici e blocchi di testo in un'unica pagina: puoi trascinare gli elementi negli spazi della griglia, regolare le altezze e larghezze e scrivere i testi.",
-                "La dashboard può essere condivisa con un link pubblico."
-            ]
-        },
-        "dashboardPrivate": {
             "title": "Componi una dashboard",
             "items": [
                 "Una dashboard è un raccoglitore di più grafici e blocchi di testo in un'unica pagina: puoi trascinare gli elementi negli spazi della griglia, regolare le altezze e larghezze e scrivere i testi.",
@@ -79,8 +66,7 @@
         "api": {
             "title": "Informazioni per chi sviluppa",
             "items": [
-                "Dal menù è possibile generare una <strong>chiave API</strong> (in sola lettura o lettura/scrittura) per usare le API REST del progetto.",
-                "Le <strong>sorgenti dati</strong> sono dei dataset che possono essere riutilizzati e aggiornati anche tramite API: sono utili per alimentare dati da uno script o da un sistema esterno."
+                "Dal menù è possibile generare una <strong>chiave API</strong> (in sola lettura o lettura/scrittura) per usare le API REST del progetto."
             ]
         }
     },

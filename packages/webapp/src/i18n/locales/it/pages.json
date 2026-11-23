@@ -596,6 +596,7 @@
             "dashboardsEmpty": "Non hai ancora creato dashboard. Usa \"Crea nuovo\" per iniziare.",
             "datasources": "File sorgente dati",
             "chartsDescription": "Qui trovi l'elenco dei tuoi progetti per tipologia. Puoi modificare la visibilità, copiare il link o il codice embed per la pubblicazione e modificarlo.",
+            "chartsDescriptionPrivate": "Qui trovi l'elenco dei tuoi elementi per tipologia: aprili per modificarli o eliminarli.",
             "dashboardsDescription": "Le dashboard sono un raccoglitore di più grafici e blocchi di testo in un'unica pagina.",
             "datasourcesDescription": "Elenco dei file CSV o URL utilizzati come sorgente dati, possono essere aggiornati anche tramite API REST."
         },
@@ -668,7 +669,7 @@
                     },
                     "dash": {
                         "label": "Dashboard",
-                        "description": "Una griglia componibile di grafici e blocchi di testo, da condividere o incorporare in altri siti."
+                        "description": "Una griglia componibile di grafici, mappe, KPI e blocchi di testo in un'unica pagina."
                     },
                     "datasource": {
                         "label": "Sorgente dati",
@@ -979,7 +980,7 @@
             "kpi": "Gruppi KPI",
             "dashboard": "Dashboard",
             "sorgenti-dati": "Dataset",
-            "condivisione": "Pubblicare e condividere",
+            "condivisione": "Condividere e integrare",
             "organizzazioni": "Progetti e organizzazioni",
             "api": "API REST",
             "strumenti": "Strumenti"

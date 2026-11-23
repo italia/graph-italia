@@ -1,9 +1,35 @@
-# Pubblicare e condividere
+# Condividere e integrare
+
+## Condividere con il tuo team
+
+Per lavorare insieme ad altre persone sugli stessi grafici usa le **organizzazioni** (**menu utente → Organizzazioni**):
+
+1. crea un'organizzazione: ne diventi amministratore (ruolo ADMIN);
+2. nella scheda **Membri** clicca su **Aggiungi membro** e invita i colleghi con il loro indirizzo email, scegliendo il ruolo: **ADMIN** può gestire membri e progetti dell'organizzazione, **USER** lavora sui progetti;
+3. nella scheda **Progetti** clicca su **Trasferisci progetto** e scegli uno dei tuoi progetti personali.
+
+Da quel momento tutti i membri trovano il progetto nel selettore dell'Area Privata e ne vedono e modificano grafici, mappe, gruppi KPI, dashboard e dataset.
+
+- Resti **proprietario** del progetto: trasferirlo all'organizzazione significa condividerlo, non cederlo;
+- puoi **revocare** l'associazione in qualsiasi momento, e il progetto torna personale;
+- le API key restano legate al progetto, quindi chi le usa vede gli stessi elementi del team.
+
+Ruoli e permessi sono spiegati in [Progetti e organizzazioni](/docs/organizzazioni).
 
 <!-- publishing:off -->
-## Integrare grafici e dashboard nel tuo sito
+## La pubblicazione su questa istanza
 
-Su questa istanza la **pubblicazione pubblica è disattivata**: gli elementi non hanno un link pubblico (`/display/...`), non si possono incorporare con un iframe (`/embed/...`) e nell'editor non c'è l'impostazione di visibilità. Restano riservati a te e a chi collabora ai tuoi progetti.
+Graph Italia può rendere pubblici grafici e dashboard. Chi gestisce un'istanza attiva o disattiva questa funzione con un'impostazione del server (`ENABLE_PUBLIC_PUBLISHING`): **su questa istanza la pubblicazione è disattivata**.
+
+In pratica ogni elemento è come se fosse sempre **privato**:
+
+- lo vedono solo le persone che accedono al progetto, cioè tu e, se il progetto è associato a un'organizzazione, i suoi membri;
+- nell'editor non c'è l'impostazione di visibilità e nelle liste non ci sono link pubblici né codici da incorporare.
+
+Graph Italia è software open source: chi lo installa sulla propria infrastruttura può attivare la pubblicazione. Come fare è spiegato nel [README del progetto](https://github.com/italia/graph-italia#pubblicazione-pubblica-link-e-embed).
+<!-- /publishing -->
+
+## Integrare grafici e dashboard nel tuo sito
 
 Per mostrare un grafico o una dashboard nel tuo sito o applicativo web:
 
@@ -25,34 +51,7 @@ import { ChartProvider } from "graph-italia-components";
 - Una chiave usata nel browser è visibile a chi visita la pagina e permette di leggere **tutti** gli elementi del progetto: usa sempre una chiave READONLY e raccogli in un progetto dedicato solo ciò che vuoi mostrare;
 - per non esporre la chiave, fai le chiamate dal tuo server e passa al browser solo i dati;
 - puoi revocare una chiave in qualsiasi momento dalla pagina **API Key**.
-<!-- /publishing -->
 <!-- publishing:on -->
-## Visibilità degli elementi
-
-Per ogni elemento che crei, puoi impostare la visibilità nella sezione **Informazioni** dell'editor. Gli elementi possono essere:
-
-- **Pubblici**: chiunque abbia il link può vederli e possono essere incorporati in altri siti;
-- **Privati**: visibili solo nella tua Area Privata, il link pubblico risponde con un avviso e i pulsanti di condivisione non sono disponibili.
-
-## Come condividere un link pubblico
-
-Nella colonna **Condividi** della lista trovi il link diretto alla pagina di visualizzazione: `/display/charts/...` per i grafici e `/display/dashboards/...` per le dashboard.
-
-## Come incorporare un elemento in un altro sito (embed)
-
-Il pulsante con l'icona del codice genera un **iframe** pronto da incollare nel tuo sito:
-
-```html
-<iframe width="600" height="400" src="https://.../embed/charts/ID" frameborder="0" allowfullscreen></iframe>
-```
-
-- L'embed è essenziale: solo la visualizzazione, senza testata e piè di pagina;
-- il tema segue le preferenze del visitatore (chiaro/scuro); puoi forzarlo con `?theme=light` o `?theme=dark` in coda all'URL;
-- regola `width` e `height` alle esigenze della tua pagina.
-
-## Integrare con la libreria componenti
-
-In alternativa al link pubblico e all'iframe, puoi mostrare anche gli elementi privati nel tuo sito con la libreria React `graph-italia-components` e una **API key** di sola lettura del progetto (vedi [API REST](/docs/api)).
 
 ## Aggiornamento dei dati
 

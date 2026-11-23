@@ -5,18 +5,18 @@ import { useUserStore } from "../lib/store/user_store";
 import { HOME_ROUTE } from "../router";
 
 // Section keys, in order, picked for what this instance offers: SPID/CIE-only
-// sign-in, and API-key integration instead of public links and iframes when
-// publishing is off. The account step is skipped for logged-in users: telling
-// them to sign in is noise, and the final CTA points to their private area.
+// sign-in, and a note that publishing is off when it is. Public links, embeds
+// and the visibility switch are not covered here (see the README). The account
+// step is skipped for logged-in users: telling them to sign in is noise, and
+// the final CTA points to their private area.
 function guideSteps(loggedIn: boolean): string[] {
-  const publishing = isPublishingEnabled();
   return [
     ...(loggedIn ? [] : [isPasswordAuthEnabled() ? "account" : "accountSpid"]),
     "create",
     "data",
-    publishing ? "configure" : "configurePrivate",
-    publishing ? "publish" : "integrate",
-    publishing ? "dashboard" : "dashboardPrivate",
+    "configure",
+    isPublishingEnabled() ? "share" : "sharePrivate",
+    "dashboard",
     "api",
   ];
 }

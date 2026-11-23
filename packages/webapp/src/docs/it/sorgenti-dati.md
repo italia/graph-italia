@@ -4,7 +4,12 @@ I dataset sono le sorgenti dati riutilizzabili del progetto: un catalogo di tabe
 
 ## Come usare i dataset
 
+<!-- publishing:on -->
 - Nella sezione dedicata trovi tutti i dataset del progetto, con nome, descrizione e visibilità. Potrai consultarli e modificarli in una tabella editabile senza dover modificare i grafici in cui sono stati richiamati;
+<!-- /publishing -->
+<!-- publishing:off -->
+- Nella sezione dedicata trovi tutti i dataset del progetto, con nome e descrizione. Potrai consultarli e modificarli in una tabella editabile senza dover modificare i grafici in cui sono stati richiamati;
+<!-- /publishing -->
 - in alternativa, potrai **leggerli e aggiornarli via API REST**: un sistema esterno (uno script programmato, un gestionale) può mantenere aggiornato il dataset con una API key in lettura/scrittura (vedi [API](/docs/api)).
 
 ## Tipologie di sorgente dei dataset
@@ -20,5 +25,10 @@ I dataset sono le sorgenti dati riutilizzabili del progetto: un catalogo di tabe
 
 ## Limitazioni
 
-- La copia dei dati di una sorgente remota non si aggiorna automaticamente (l'aggiornamento a 24 ore vale per i grafici collegati direttamente a un URL);
+<!-- publishing:on -->
+- La copia dei dati di una sorgente remota non si aggiorna automaticamente (l'aggiornamento a 24 ore vale per i grafici pubblici collegati direttamente a un URL);
+<!-- /publishing -->
+<!-- publishing:off -->
+- La copia dei dati di una sorgente remota non si aggiorna automaticamente;
+<!-- /publishing -->
 - i grafici non si collegano ancora a una sorgente dal loro editor: per ora la sorgente è un catalogo consultabile e un punto di accesso via API.

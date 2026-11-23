@@ -41,5 +41,5 @@ Puoi verificare un file GeoJSON con l'anteprima disponibile su **/geo** prima di
 Come ogni grafico, una mappa pubblica ha un link di visualizzazione e un codice embed. Vale anche l'aggiornamento automatico dei dati remoti (vedi [Caricare i dati](/docs/caricare-dati)).
 <!-- /publishing -->
 <!-- publishing:off -->
-Come ogni grafico, una mappa si integra nel tuo sito con la libreria componenti e una API key del progetto (vedi [Pubblicare e condividere](/docs/condivisione)).
+Come ogni grafico, una mappa si integra nel tuo sito con la libreria componenti e una API key del progetto (vedi [Condividere e integrare](/docs/condivisione)).
 <!-- /publishing -->
