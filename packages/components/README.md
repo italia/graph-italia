@@ -116,7 +116,7 @@ From `graph-italia-components` (see `src/index.ts`):
 | Export | Kind | Description |
 |---|---|---|
 | `RenderChart` | Component | Renders a single chart from a `FieldDataType` — dispatches internally to bar/line, pie, geo map, cluster map, or KPI/KPI-group based on `chart`. No chrome (no title, tabs, download buttons). |
-| `ChartWrapper` | Component | Wraps `RenderChart` with the full chart UI: title/subtitle, tabs (Grafico / Tabella dati / Info), CSV/PNG download buttons, share button, markdown footer/source text, "Powered by" badge. This is what the webapp editor and public chart pages use. |
+| `ChartWrapper` | Component | Wraps `RenderChart` with the full chart UI: title/subtitle, tabs (Grafico / Tabella dati / Info — the data table tab is left out when there is no table to show: KPI, KPI groups, point maps, empty data), CSV/PNG download buttons, share button, markdown footer/source text, "Powered by" badge. This is what the webapp editor and public chart pages use. |
 | `RenderDashboard` | Component | Renders a full dashboard (`DashboardData` — an array of chart "slots" with grid positions) as a responsive `react-grid-layout` grid, each slot as bare `RenderChart` or full `ChartWrapper`. |
 | `DataTable` | Component | Standalone data-grid view of a chart's tabular data (`react-data-table-component` under the hood) — sorting, column show/hide, reordering, CSV export. Used internally by `ChartWrapper`'s "Tabella dati" tab, also usable on its own. |
 | `KpiItem` | Component | Renders one KPI tile (title, value, prefix/suffix, up/down flow indicator, footer text) from a `KpiItemType`. |

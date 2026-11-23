@@ -76,7 +76,6 @@ export default function ChartWrapper(props: ChartWrapperProps) {
     poweredByLabel,
   } = info;
 
-  const tabs = [labelTabChart, labelTabData, labelTabInfo];
   const downloadDataText = `${labelDownloadData || "Download"} CSV`;
   const { config, chart } = data;
   const [echartInstance, setEchartInstance] = useState<EChartsType | null>(
@@ -87,6 +86,15 @@ export default function ChartWrapper(props: ChartWrapperProps) {
   const chartType = data.chart || "bar";
   const hasData = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup") && Array.isArray(data.data) && data.data.length > 0;
   const hasPic = !(chartType == "cmap" || chartType == "kpi" || chartType == "kpiGroup");
+
+  // The data table tab is left out when there is no table to show (KPI,
+  // KPI groups, point maps, empty data): an empty panel only confuses.
+  // `n` keeps the tab/panel ids (tab1/tab2/tab3) stable either way.
+  const tabs = [
+    { n: 1, label: labelTabChart },
+    ...(hasData ? [{ n: 2, label: labelTabData }] : []),
+    { n: 3, label: labelTabInfo },
+  ];
 
 
   const tableData = hasData && showDataTransposed && data.data ? transposeData(data.data) : data.data;
@@ -130,8 +138,9 @@ export default function ChartWrapper(props: ChartWrapperProps) {
 
       <div className="cw-tabs">
         <div className="cw-tablist" role="tablist" aria-label={`tablist-${id}`}>
-          {tabs.map((name, i) => {
-            const tabId = `tab${i + 1}-${id}`;
+          {tabs.map(({ n, label }) => {
+            const i = n - 1;
+            const tabId = `tab${n}-${id}`;
             return (
               <button
                 key={`${id}-tab_${i}`}
@@ -146,7 +155,7 @@ export default function ChartWrapper(props: ChartWrapperProps) {
                 }}
                 onClick={() => setActiveTab(i)}
               >
-                {name}
+                {label}
               </button>
             );
           })}
@@ -183,15 +192,17 @@ export default function ChartWrapper(props: ChartWrapperProps) {
           </div>
 
 
-          <div
-            id={`tab2-${id}-content`}
-            role="tabpanel"
-            aria-labelledby={`tab2-${id}`}
-            aria-hidden={activeTab !== 1}
-            className={`cw-tabpanel ${activeTab === 1 ? "is-active" : ""}`}
-          >
-            {hasData && <DataTable id={id} data={tableData as any[]} poweredByLabel="" />}
-          </div>
+          {hasData && (
+            <div
+              id={`tab2-${id}-content`}
+              role="tabpanel"
+              aria-labelledby={`tab2-${id}`}
+              aria-hidden={activeTab !== 1}
+              className={`cw-tabpanel ${activeTab === 1 ? "is-active" : ""}`}
+            >
+              <DataTable id={id} data={tableData as any[]} poweredByLabel="" />
+            </div>
+          )}
 
 
           <div
