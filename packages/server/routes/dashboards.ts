@@ -3,6 +3,7 @@ import { describeRoute, resolver, validator as zValidator } from "hono-openapi";
 import * as z from "zod";
 import db from "../lib/db";
 import { logger } from "../lib/logger";
+import { copyName } from "../lib/copyName";
 import { canModify, canRead, checkAuth, requireAuth } from "../lib/middlewares";
 import { isPublicPublishingEnabled, sanitizePublish } from "../lib/publishing";
 import type { AppVariables } from "../types";
@@ -173,6 +174,46 @@ router.post(
 			return c.json(result, 201);
 		} catch (err) {
 			logger.error("Dashboard create error", err instanceof Error ? err : undefined);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
+
+const duplicateSchema = z.object({
+	name: z.string().trim().min(1).max(255).optional(),
+});
+
+/** Duplicate :ID — same layout and charts, text blocks copied. */
+router.post(
+	"/:id/duplicate",
+	describeRoute({
+		description: "Duplicate a dashboard in its project: same slots and charts, text blocks copied. The copy is named after `name`, or '<title> copy <UTC timestamp>'. Requires READWRITE access.",
+		responses: {
+			201: { description: "Created copy", content: { "application/json": { schema: resolver(dashboardSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errSchema) } } },
+			403: { description: "Write access required", content: { "application/json": { schema: resolver(errSchema) } } },
+			404: { description: "Not Found", content: { "application/json": { schema: resolver(errSchema) } } },
+			500: { description: "Internal error", content: { "application/json": { schema: resolver(errSchema) } } },
+		},
+	}),
+	requireAuth,
+	zValidator("param", detailSchema),
+	zValidator("json", duplicateSchema),
+	async (c) => {
+		try {
+			const { id } = c.req.valid("param");
+			const { name } = c.req.valid("json");
+			const source = await db.dashboardDb.findById(id);
+			if (!source || !(await canRead(c, source.projectId))) return c.json({ error: "Not Found" }, 404);
+			if (!(await canModify(c, source.projectId))) return c.json({ error: "Write access required" }, 403);
+
+			const { publish } = sanitizePublish({ publish: source.publish });
+			const copy = await db.duplicateDashboard(id, { name: name ?? copyName(source.name), publish });
+			if (!copy) return c.json({ error: "Not Found" }, 404);
+			logger.info("Dashboard duplicated", { dashboardId: copy.id, sourceId: id, projectId: source.projectId });
+			return c.json(copy, 201);
+		} catch (err) {
+			logger.error("Dashboard duplicate error", err instanceof Error ? err : undefined);
 			return c.json({ error: "Internal error" }, 500);
 		}
 	},

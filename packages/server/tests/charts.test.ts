@@ -78,6 +78,10 @@ mock.module("../lib/db/projectDb", () => ({
 	),
 }));
 
+const duplicateChartMock = mock(async (id: string, opts: { name: string; publish: boolean }) =>
+	id === CHART_ID ? { ...CHART, id: "chart-copy", ...opts } : null,
+);
+
 mock.module("../lib/db", () => ({
 	default: {
 		// List
@@ -92,6 +96,8 @@ mock.module("../lib/db", () => ({
 		deleteChart: mock(async () => CHART),
 		// Publish
 		publishChart: mock(async (_id: string, publish: boolean) => ({ ...CHART, publish })),
+		// Duplicate
+		duplicateChart: duplicateChartMock,
 		// Needed by canUserModifyProject path via db (not used since we mock projectDb directly)
 		canUserModifyProject: mock(async () => true),
 	},
@@ -358,6 +364,55 @@ describe("POST /charts/publish/:id — toggle publish", () => {
 		const res = await app.request("/charts/publish/nonexistent", {
 			method: "POST",
 			headers: userHeaders(),
+		});
+		expect(res.status).toBe(404);
+	});
+});
+
+describe("POST /charts/:id/duplicate", () => {
+	test("user session → 201, copy named as requested", async () => {
+		duplicateChartMock.mockClear();
+		const res = await app.request(`/charts/${CHART_ID}/duplicate`, {
+			method: "POST",
+			...withJson(userHeaders(), { name: "Test Chart copy 2026-11-23 16:10:05" }),
+		});
+		expect(res.status).toBe(201);
+		const body = await res.json() as Record<string, unknown>;
+		expect(body.id).toBe("chart-copy");
+		expect(duplicateChartMock).toHaveBeenCalledWith(CHART_ID, {
+			name: "Test Chart copy 2026-11-23 16:10:05",
+			publish: false,
+		});
+	});
+
+	test("no name → '<title> copy <UTC timestamp>'", async () => {
+		duplicateChartMock.mockClear();
+		const res = await app.request(`/charts/${CHART_ID}/duplicate`, {
+			method: "POST",
+			...withJson(apiKeyHeaders(READWRITE_KEY), {}),
+		});
+		expect(res.status).toBe(201);
+		const [, opts] = duplicateChartMock.mock.calls[0]!;
+		expect(opts.name).toMatch(/^Test Chart copy \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+	});
+
+	test("READONLY API key → 403", async () => {
+		const res = await app.request(`/charts/${CHART_ID}/duplicate`, {
+			method: "POST",
+			...withJson(apiKeyHeaders(READONLY_KEY), {}),
+		});
+		expect(res.status).toBe(403);
+	});
+
+	test("no credentials → 401", async () => {
+		const res = await app.request(`/charts/${CHART_ID}/duplicate`, { method: "POST", ...withJson({}, {}) });
+		expect(res.status).toBe(401);
+	});
+
+	test("unknown chart → 404", async () => {
+		const res = await app.request("/charts/nonexistent/duplicate", {
+			method: "POST",
+			...withJson(userHeaders(), {}),
 		});
 		expect(res.status).toBe(404);
 	});

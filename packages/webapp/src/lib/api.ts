@@ -206,6 +206,17 @@ export async function upsertChart(payload: any, id?: string) {
   });
 }
 
+/**
+ * Duplicates a chart, map or KPI group in its project (POST /charts/:id/duplicate).
+ * Returns the copy, or null while the same duplicate is already in flight.
+ */
+export async function duplicateChart(id: string, name: string) {
+  return withMutationGuard(`duplicate:chart:${id}`, async () => {
+    const response = await axios.post(`${getServerUrlWithApi()}/charts/${id}/duplicate`, { name });
+    return response.data as { id: string; name: string };
+  });
+}
+
 /** Delete */
 export async function deleteChart(id: string) {
   const response = await axios.delete(`${getServerUrlWithApi()}/charts/${id}`);
@@ -541,6 +552,17 @@ export async function deleteDashaboard(id: string) {
   );
   console.log("response status", response.status);
   return response.status === 204;
+}
+
+/**
+ * Duplicates a dashboard: same layout and charts, text blocks copied
+ * (POST /dashboards/:id/duplicate). Null while the same duplicate is in flight.
+ */
+export async function duplicateDashboard(id: string, name: string) {
+  return withMutationGuard(`duplicate:dashboard:${id}`, async () => {
+    const response = await axios.post(`${getServerUrlWithApi()}/dashboards/${id}/duplicate`, { name });
+    return response.data as { id: string; name: string };
+  });
 }
 
 export async function createDashboard(payload: {

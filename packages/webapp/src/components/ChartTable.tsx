@@ -7,6 +7,7 @@ import {
   FaChartBar,
   FaChartLine,
   FaChartPie,
+  FaClone,
   FaCopy,
   FaEye,
   FaLink,
@@ -48,6 +49,7 @@ type CharTableProps = {
   list: FieldDataType[] | [];
   handleLoadChart: (item: FieldDataType) => void;
   handleDeleteChart: (id: string) => void;
+  handleDuplicateChart: (item: FieldDataType) => void;
 };
 
 registerDarkTheme();
@@ -55,6 +57,7 @@ registerDarkTheme();
 export default function ChartTable({
   list,
   handleDeleteChart,
+  handleDuplicateChart,
 }: CharTableProps) {
   const { t } = useTranslation("components", {
     keyPrefix: "components.chartTable",
@@ -361,6 +364,15 @@ export default function ChartTable({
           >
             <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
           </a>
+          <button
+            type="button"
+            aria-label={t("actions.duplicate", { defaultValue: "Duplica" })}
+            title={t("actions.duplicate", { defaultValue: "Duplica" })}
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={() => handleDuplicateChart(row)}
+          >
+            <FaClone fill={actionColor} size={actionSize} aria-hidden="true" />
+          </button>
           <button
             type="button"
             aria-label={t("actions.delete", { defaultValue: "Elimina" })}

@@ -640,6 +640,18 @@
             }
         },
         "modals": {
+            "duplicate": {
+                "titleChart": "Duplicate chart",
+                "titleDashboard": "Duplicate dashboard",
+                "descriptionChart": "A copy of “{{name}}” will be created in the same project, with the same data and settings.",
+                "descriptionDashboard": "A copy of “{{name}}” will be created in the same project, with the same layout. Charts stay those of the original, text blocks are copied.",
+                "confirm": "Duplicate",
+                "form": {
+                    "name": {
+                        "label": "Title of the copy"
+                    }
+                }
+            },
             "createNew": {
                 "title": "Create new",
                 "description": "What would you like to create?",
@@ -769,7 +781,9 @@
             "dashboardDeleteError": "Error deleting dashboard",
             "datasourceDeleted": "Data source deleted",
             "datasourceDeleteError": "Error deleting data source",
-            "createError": "Error while creating"
+            "createError": "Error while creating",
+            "duplicated": "Created the copy “{{name}}”",
+            "duplicateError": "Error while duplicating"
         },
         "createDialog": {
             "defaultNames": {

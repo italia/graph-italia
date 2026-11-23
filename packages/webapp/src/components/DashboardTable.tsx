@@ -3,6 +3,7 @@ import { useCallback, useRef } from "react";
 import DataTable, { type TableColumn } from "react-data-table-component";
 import {
   FaArrowUpRightFromSquare,
+  FaClone,
   FaCopy,
   FaPenToSquare,
   FaShareNodes,
@@ -36,6 +37,7 @@ registerDarkTheme();
 type DashboardTableProps = {
   list: FieldDataType[];
   handleDeleteDashboard: (id: string) => void;
+  handleDuplicateDashboard: (item: FieldDataType) => void;
   handleEditDashboard: (item: FieldDataType) => void;
   handleViewDashboard: (id: string) => void;
 };
@@ -43,6 +45,7 @@ type DashboardTableProps = {
 export default function DashboardTable({
   list,
   handleDeleteDashboard,
+  handleDuplicateDashboard,
   handleEditDashboard,
 }: DashboardTableProps) {
   const { t } = useTranslation("components", {
@@ -224,6 +227,15 @@ export default function DashboardTable({
               <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
             </a>
           )}
+          <button
+            type="button"
+            aria-label={t("actions.duplicate", { defaultValue: "Duplica" })}
+            title={t("actions.duplicate", { defaultValue: "Duplica" })}
+            className="btn btn-ghost btn-xs btn-square"
+            onClick={() => handleDuplicateDashboard(row)}
+          >
+            <FaClone fill={actionColor} size={actionSize} aria-hidden="true" />
+          </button>
           <button
             type="button"
             aria-label={t("actions.delete", { defaultValue: "Elimina" })}

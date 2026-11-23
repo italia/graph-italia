@@ -2,6 +2,7 @@ import * as apiKeyDb from "./apiKeyDb";
 import * as chartDb from "./chartDb";
 import * as dashboardDb from "./dashboardDb";
 import * as dataSourceDb from "./dataSourceDb";
+import * as duplicateDb from "./duplicateDb";
 import * as kpiGroupDb from "./kpiGroupDb";
 import * as orgDb from "./orgDb";
 import * as projectDb from "./projectDb";
@@ -15,6 +16,7 @@ const db = {
 	...chartDb,
 	...dashboardDb,
 	...dataSourceDb,
+	...duplicateDb,
 	...kpiGroupDb,
 	...orgDb,
 	...projectDb,

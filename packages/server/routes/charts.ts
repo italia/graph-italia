@@ -6,6 +6,7 @@ import db from "../lib/db";
 import { checkAuth, requireAuth, canModify, canRead } from "../lib/middlewares";
 import { isPublicPublishingEnabled, sanitizePublish } from "../lib/publishing";
 import { logger } from "../lib/logger";
+import { copyName } from "../lib/copyName";
 import type { AppVariables, ParsedToken } from "../types";
 import {
 	validator as zValidator,
@@ -237,6 +238,47 @@ router.post(
 			return c.json(result, 201);
 		} catch (err) {
 			logger.error("Chart create error", err instanceof Error ? err : undefined);
+			return c.json({ error: "Internal error" }, 500);
+		}
+	},
+);
+
+const duplicateSchema = z.object({
+	name: z.string().trim().min(1).max(255).optional(),
+});
+
+/** Duplicate :ID — copy in the same project, data source links included. */
+router.post(
+	"/:id/duplicate",
+	describeRoute({
+		description: "Duplicate a chart (chart, map or KPI group) in its project. The copy is named after `name`, or '<title> copy <UTC timestamp>'. Requires READWRITE access.",
+		responses: {
+			201: { description: "Created copy", content: { "application/json": { schema: resolver(chartSchema) } } },
+			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			403: { description: "Write access required", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			404: { description: "Not Found", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+			500: { description: "Internal error", content: { "application/json": { schema: resolver(errorMessageSchema) } } },
+		},
+	}),
+	requireAuth,
+	chartCreateLimiter,
+	zValidator("param", detailSchema),
+	zValidator("json", duplicateSchema),
+	async (c) => {
+		try {
+			const { id } = c.req.valid("param");
+			const { name } = c.req.valid("json");
+			const source = await db.findChartById(id);
+			if (!source || !(await canRead(c, source.projectId))) return c.json({ error: "Not Found" }, 404);
+			if (!(await canModify(c, source.projectId))) return c.json({ error: "Write access required" }, 403);
+
+			const { publish } = sanitizePublish({ publish: source.publish });
+			const copy = await db.duplicateChart(id, { name: name ?? copyName(source.name), publish });
+			if (!copy) return c.json({ error: "Not Found" }, 404);
+			logger.info("Chart duplicated", { chartId: copy.id, sourceId: id, projectId: source.projectId });
+			return c.json(copy, 201);
+		} catch (err) {
+			logger.error("Chart duplicate error", err instanceof Error ? err : undefined);
 			return c.json({ error: "Internal error" }, 500);
 		}
 	},

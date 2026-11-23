@@ -51,9 +51,9 @@ All paths below are relative to `ROUTES_PREFIX` (`/api` by default). Auth column
 |---|---|---|---|
 | `/auth/*` | `routes/auth.ts` | mixed | Register, login, logout, email verification (PIN + link), password recovery/reset, resend verification, `GET /auth/user` (current session). Rate-limited to 10 req/min. |
 | `/apikeys` | `routes/apikeys.ts` | session | Create/list/revoke/reinstate API keys for the caller's projects, view per-key usage logs. |
-| `/charts` | `routes/charts.ts` | session\|key (public for `/charts/show/:id`) | CRUD for charts, publish toggle, `GET /charts/show/:id` (public, published-only — 404 when public publishing is off, see below). |
+| `/charts` | `routes/charts.ts` | session\|key (public for `/charts/show/:id`) | CRUD for charts, publish toggle, `POST /charts/:id/duplicate` (copy in the same project, data source links included), `GET /charts/show/:id` (public, published-only — 404 when public publishing is off, see below). |
 | `/charts/kpi-group` | `routes/kpi-group.ts` | session\|key (create is session-only) | KPI-group chart CRUD — a chart made of multiple KPI tiles sharing one data source. |
-| `/dashboards` | `routes/dashboards.ts` | session\|key (public for `/dashboards/show/:id`) | CRUD for dashboards, slot layout updates, `GET /dashboards/show/:id` (public, published-only — 404 when public publishing is off, see below). |
+| `/dashboards` | `routes/dashboards.ts` | session\|key (public for `/dashboards/show/:id`) | CRUD for dashboards, slot layout updates, `POST /dashboards/:id/duplicate` (same slots and charts, text blocks copied), `GET /dashboards/show/:id` (public, published-only — 404 when public publishing is off, see below). |
 | `/datasources` | `routes/datasources.ts` | session\|key | CRUD for data sources (CSV/remote URL), link/unlink charts to a data source. |
 | `/hints` | `routes/hints.ts` | session | OpenAI-backed chart suggestions from uploaded data. |
 | `/orgs` | `routes/orgs.ts` | session | Org CRUD, membership management, org↔project associations. |

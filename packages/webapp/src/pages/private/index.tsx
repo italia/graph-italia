@@ -22,6 +22,7 @@ import DashboardTable from "../../components/DashboardTable.tsx";
 import DataSourceTable from "../../components/DataSourceTable.tsx";
 import GenericDialog from "../../components/layout/GenericDialog.tsx";
 import * as api from "../../lib/api.ts";
+import { copyName } from "../../lib/copyName.ts";
 import useChartsStoreState from "../../lib/store/chartListStore.ts";
 import useDashboardsStoreState from "../../lib/dashboardListStore.ts";
 import useDatasourceListStore from "../../lib/store/datasourceListStore.ts";
@@ -215,6 +216,38 @@ function Home() {
   function handleDeleteChart(id?: string) {
     if (!id) return;
     setPendingDeleteId(id);
+  }
+
+  // "Duplica" in the lists opens a confirmation dialog that proposes
+  // "<title> copy <local timestamp>" as the copy's title; the user can edit it.
+  type PendingDuplicate = { kind: "chart" | "dashboard"; id: string; source: string; name: string };
+  const [pendingDuplicate, setPendingDuplicate] = useState<PendingDuplicate | null>(null);
+  const [isDuplicating, setIsDuplicating] = useState(false);
+
+  function requestDuplicate(kind: PendingDuplicate["kind"], item: { id?: string; name?: string }) {
+    if (!item.id) return;
+    setPendingDuplicate({ kind, id: item.id, source: item.name ?? "", name: copyName(item.name) });
+  }
+
+  async function confirmDuplicate() {
+    if (!pendingDuplicate || isDuplicating) return;
+    const name = pendingDuplicate.name.trim();
+    if (!name) return;
+    setIsDuplicating(true);
+    try {
+      const copy = pendingDuplicate.kind === "chart"
+        ? await api.duplicateChart(pendingDuplicate.id, name)
+        : await api.duplicateDashboard(pendingDuplicate.id, name);
+      if (!copy) return; // same duplicate already in flight
+      await (pendingDuplicate.kind === "chart" ? fetchCharts() : fetchDashboards());
+      setPendingDuplicate(null);
+      toast.success(t("toasts.duplicated", { name: copy.name, defaultValue: "Creata la copia «{{name}}»" }));
+    } catch (error) {
+      console.error(error);
+      toast.error(t("toasts.duplicateError", "Errore durante la duplicazione"));
+    } finally {
+      setIsDuplicating(false);
+    }
   }
 
   function confirmDeleteChart() {
@@ -545,6 +578,7 @@ function Home() {
                   list={list as FieldDataType[]}
                   handleLoadChart={handleLoadChart}
                   handleDeleteChart={handleDeleteChart}
+                  handleDuplicateChart={(item) => requestDuplicate("chart", item)}
                 />
               </div>
             </section>
@@ -575,6 +609,7 @@ function Home() {
                       handleDeleteDashboard={(id) =>
                         setPendingDeleteDashboardId(id)
                       }
+                      handleDuplicateDashboard={(item) => requestDuplicate("dashboard", item)}
                       handleEditDashboard={(item) =>
                         navigate(ROUTES.editDashboard(item.id ?? ""))
                       }
@@ -797,6 +832,64 @@ function Home() {
         </div>
       </GenericDialog>
 
+
+      {/* Duplicate chart / dashboard: confirm and choose the copy's title */}
+      <GenericDialog
+        toggle={!!pendingDuplicate}
+        title={
+          pendingDuplicate?.kind === "dashboard"
+            ? t("modals.duplicate.titleDashboard", "Duplica dashboard")
+            : t("modals.duplicate.titleChart", "Duplica grafico")
+        }
+        description={
+          pendingDuplicate?.kind === "dashboard"
+            ? t("modals.duplicate.descriptionDashboard", {
+                name: pendingDuplicate?.source,
+                defaultValue:
+                  "Verrà creata una copia di «{{name}}» nello stesso progetto, con la stessa disposizione. I grafici restano quelli dell'originale, i blocchi di testo vengono copiati.",
+              })
+            : t("modals.duplicate.descriptionChart", {
+                name: pendingDuplicate?.source,
+                defaultValue: "Verrà creata una copia di «{{name}}» nello stesso progetto, con gli stessi dati e la stessa configurazione.",
+              })
+        }
+        labels={{ cancel: t("modals.cancel"), confirm: t("modals.duplicate.confirm", "Duplica") }}
+        confirmCb={confirmDuplicate}
+        confirmDisabled={!pendingDuplicate?.name.trim() || isDuplicating}
+        cancelCb={() => {
+          if (!isDuplicating) setPendingDuplicate(null);
+        }}
+      >
+        <form
+          className="form-control w-full py-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            confirmDuplicate();
+          }}
+        >
+          <label htmlFor="duplicate-name-input" className="label">
+            <span className="label-text font-semibold">
+              {t("modals.duplicate.form.name.label", "Titolo della copia")}
+            </span>
+          </label>
+          <input
+            id="duplicate-name-input"
+            type="text"
+            required
+            maxLength={255}
+            className="input input-bordered w-full"
+            value={pendingDuplicate?.name ?? ""}
+            onChange={(e) =>
+              setPendingDuplicate((prev) => (prev ? { ...prev, name: e.target.value } : prev))
+            }
+          />
+          {isDuplicating && (
+            <div className="flex justify-center mt-4">
+              <span className="loading loading-spinner" aria-hidden="true"></span>
+            </div>
+          )}
+        </form>
+      </GenericDialog>
 
       <GenericDialog
         toggle={!!pendingDeleteId}

@@ -68,6 +68,10 @@ mock.module("../lib/db/projectDb", () => ({
 	canUserModifyProject: mock(async (userId: string, projectId: string) => userId === USER_ID && projectId === PROJECT_ID),
 }));
 
+const duplicateDashboardMock = mock(async (id: string, opts: { name: string; publish: boolean }) =>
+	id === DASH_ID ? { ...DASH, id: "dash-copy", ...opts } : null,
+);
+
 mock.module("../lib/db", () => ({
 	default: {
 		// List
@@ -89,6 +93,7 @@ mock.module("../lib/db", () => ({
 			toDelete: [],
 		})),
 		updateSlots: mock(async () => DASH_WITH_SLOTS),
+		duplicateDashboard: duplicateDashboardMock,
 	},
 }));
 
@@ -270,6 +275,43 @@ describe("DELETE /dashboards/:id — delete", () => {
 
 	test("nonexistent dashboard returns 404", async () => {
 		const res = await app.request("/dashboards/nonexistent", { method: "DELETE", headers: userHeaders() });
+		expect(res.status).toBe(404);
+	});
+});
+
+describe("POST /dashboards/:id/duplicate", () => {
+	test("user session → 201, copy named as requested", async () => {
+		duplicateDashboardMock.mockClear();
+		const res = await app.request(`/dashboards/${DASH_ID}/duplicate`, {
+			method: "POST",
+			...withJson(userHeaders(), { name: "Dash copy 2026-11-23 16:10:05" }),
+		});
+		expect(res.status).toBe(201);
+		const body = await res.json() as Record<string, unknown>;
+		expect(body.id).toBe("dash-copy");
+		expect(duplicateDashboardMock).toHaveBeenCalledWith(DASH_ID, expect.objectContaining({
+			name: "Dash copy 2026-11-23 16:10:05",
+		}));
+	});
+
+	test("READONLY API key → 403", async () => {
+		const res = await app.request(`/dashboards/${DASH_ID}/duplicate`, {
+			method: "POST",
+			...withJson(apiKeyHeaders(READONLY_KEY), {}),
+		});
+		expect(res.status).toBe(403);
+	});
+
+	test("no credentials → 401", async () => {
+		const res = await app.request(`/dashboards/${DASH_ID}/duplicate`, { method: "POST", ...withJson({}, {}) });
+		expect(res.status).toBe(401);
+	});
+
+	test("unknown dashboard → 404", async () => {
+		const res = await app.request("/dashboards/nonexistent/duplicate", {
+			method: "POST",
+			...withJson(userHeaders(), {}),
+		});
 		expect(res.status).toBe(404);
 	});
 });

@@ -13,7 +13,7 @@ export const TABLE_COL = {
   source: "130px",
   date: "170px",
   share: "120px",
-  actions: "160px",
+  actions: "190px",
 };
 
 // `width` in react-data-table-component pins min-width AND max-width, so every
