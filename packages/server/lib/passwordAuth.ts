@@ -20,6 +20,21 @@ export function isPasswordAuthEnabled(): boolean {
 	return process.env.ENABLE_PASSWORD_AUTH !== "false";
 }
 
+/**
+ * Admin password login (POST /auth/admin/login): lets administrators sign in
+ * with email and password even when ENABLE_PASSWORD_AUTH="false", e.g. accounts
+ * not linked to a SPID/CIE identity. Only ADMIN accounts (role in the DB or
+ * listed in ADMIN_EMAILS) get a session; everyone else gets the same answer as
+ * a wrong password. The webapp page (/login/admin) is not linked anywhere, but
+ * the role check is what protects it, not the URL.
+ *
+ * Defaults to enabled; set ENABLE_ADMIN_PASSWORD_LOGIN="false" to make the
+ * endpoint answer 404.
+ */
+export function isAdminPasswordLoginEnabled(): boolean {
+	return process.env.ENABLE_ADMIN_PASSWORD_LOGIN !== "false";
+}
+
 /** Rejects the request with 403 when email/password authentication is off. */
 export const requirePasswordAuth = createMiddleware(async (c, next) => {
 	if (!isPasswordAuthEnabled()) {

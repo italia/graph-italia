@@ -1,5 +1,5 @@
 import * as bcrypt from "bcrypt";
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import {
 	describeRoute,
 	resolver,
@@ -11,10 +11,10 @@ import { sendActivationEmail, sendResetPasswordEmail } from "../lib/email";
 
 import { clearAccessTokenCookie, generateTokens, setAccessTokenCookie } from "../lib/jwt";
 import { logger } from "../lib/logger";
-import { withAdminEmails } from "../lib/adminEmails";
+import { isAdminAccount, withAdminEmails } from "../lib/adminEmails";
 import { IpaUnavailableError, resolvePa } from "../lib/ipa";
 import { checkAuth, requireUser } from "../lib/middlewares";
-import { requirePasswordAuth } from "../lib/passwordAuth";
+import { isAdminPasswordLoginEnabled, requirePasswordAuth } from "../lib/passwordAuth";
 import { rateLimit, tryConsume } from "../lib/rateLimit";
 import type { ParsedToken } from "../types";
 
@@ -239,6 +239,74 @@ const loginIpRateLimit = rateLimit({
 	max: 500,
 });
 
+/**
+ * Email/password sign-in shared by /login and /admin/login. With `adminOnly`
+ * the session is issued only to ADMIN accounts (DB role or ADMIN_EMAILS);
+ * anyone else gets the same answer as a wrong password, so the endpoint does
+ * not reveal which accounts are administrators.
+ */
+async function passwordLogin(
+	c: Context,
+	{ email, password }: { email: string; password: string },
+	{ adminOnly }: { adminOnly: boolean },
+) {
+	try {
+		// Per-account guard: caps attempts for the same email even if the
+		// attacker rotates IPs.
+		const perEmail = tryConsume("auth:login:email", email.toLowerCase(), {
+			windowMs: 15 * 60 * 1000,
+			max: 10,
+		});
+		if (!perEmail.ok) {
+			c.header("Retry-After", `${perEmail.retryAfterSec}`);
+			logger.warn("Login rate-limited by email", {
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+				retryAfterSec: perEmail.retryAfterSec,
+				adminOnly,
+			});
+			return c.json({ error: { message: "Too many attempts. Try again later." } }, 429);
+		}
+
+		const existingUser = await db.findUserByEmail(email);
+		if (!existingUser) {
+			return c.json({ error: { message: "Invalid credentials." } }, 401);
+		}
+
+		// Accounts created through SPID/CIE-only signup have no password.
+		const passwordMatch = existingUser.password !== null
+			&& await bcrypt.compare(password, existingUser.password);
+		if (!passwordMatch) {
+			return c.json({ error: { message: "Invalid credentials." } }, 401);
+		}
+
+		if (adminOnly && !isAdminAccount(existingUser)) {
+			logger.warn("Admin login refused: not an administrator", { userId: existingUser.id });
+			return c.json({ error: { message: "Invalid credentials." } }, 401);
+		}
+
+		if (!existingUser.verified) {
+			logger.warn("Login attempt for unverified user", {
+				userId: existingUser.id,
+				email: email.replace(/(.{2}).*@/, "$1***@"),
+			});
+			return c.json({ error: { message: "Please verify your email before logging in." } }, 401);
+		}
+
+		const { accessToken } = generateTokens(await withAdminEmails(existingUser));
+		setAccessTokenCookie(c, accessToken);
+
+		logger.info(adminOnly ? "Admin logged in with password" : "User logged in", {
+			userId: existingUser.id,
+			email: email.replace(/(.{2}).*@/, "$1***@"),
+		});
+
+		return c.json({ auth: true });
+	} catch (error) {
+		logger.error("Login failed", error instanceof Error ? error : undefined);
+		return c.json({ error: { message: "Login failed" } }, 500);
+	}
+}
+
 router.post("/login",
 	describeRoute({
 		description: "Authenticate with email and password. Sets an access_token cookie on success.",
@@ -250,59 +318,21 @@ router.post("/login",
 		},
 	}),
 	loginIpRateLimit,
-	zValidator("json", loginSchema), async (c) => {
-		try {
-			const { email, password } = c.req.valid("json");
+	zValidator("json", loginSchema),
+	(c) => passwordLogin(c, c.req.valid("json"), { adminOnly: false }));
 
-			// Per-account guard: caps attempts for the same email even if the
-			// attacker rotates IPs.
-			const perEmail = tryConsume("auth:login:email", email.toLowerCase(), {
-				windowMs: 15 * 60 * 1000,
-				max: 10,
-			});
-			if (!perEmail.ok) {
-				c.header("Retry-After", `${perEmail.retryAfterSec}`);
-				logger.warn("Login rate-limited by email", {
-					email: email.replace(/(.{2}).*@/, "$1***@"),
-					retryAfterSec: perEmail.retryAfterSec,
-				});
-				return c.json({ error: { message: "Too many attempts. Try again later." } }, 429);
-			}
-
-			const existingUser = await db.findUserByEmail(email);
-			if (!existingUser) {
-				return c.json({ error: { message: "Invalid credentials." } }, 401);
-			}
-
-			// Accounts created through SPID/CIE-only signup have no password.
-			const passwordMatch = existingUser.password !== null
-				&& await bcrypt.compare(password, existingUser.password);
-			if (!passwordMatch) {
-				return c.json({ error: { message: "Invalid credentials." } }, 401);
-			}
-
-			if (!existingUser.verified) {
-				logger.warn("Login attempt for unverified user", {
-					userId: existingUser.id,
-					email: email.replace(/(.{2}).*@/, "$1***@"),
-				});
-				return c.json({ error: { message: "Please verify your email before logging in." } }, 401);
-			}
-
-			const { accessToken } = generateTokens(await withAdminEmails(existingUser));
-			setAccessTokenCookie(c, accessToken);
-
-			logger.info("User logged in", {
-				userId: existingUser.id,
-				email: email.replace(/(.{2}).*@/, "$1***@"),
-			});
-
-			return c.json({ auth: true });
-		} catch (error) {
-			logger.error("Login failed", error instanceof Error ? error : undefined);
-			return c.json({ error: { message: "Login failed" } }, 500);
-		}
-	});
+// ADMIN LOGIN — email/password for administrators, also when the instance is
+// SPID/CIE-only (see isAdminPasswordLoginEnabled). Kept out of the OpenAPI
+// spec: it is a recovery path for operators, not part of the public API.
+router.post("/admin/login",
+	describeRoute({ hide: true }),
+	async (c, next) => {
+		if (!isAdminPasswordLoginEnabled()) return c.json({ error: "Not found" }, 404);
+		await next();
+	},
+	loginIpRateLimit,
+	zValidator("json", loginSchema),
+	(c) => passwordLogin(c, c.req.valid("json"), { adminOnly: true }));
 
 // RECOVER ACCOUNT
 

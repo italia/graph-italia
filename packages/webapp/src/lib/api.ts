@@ -218,6 +218,15 @@ export async function deleteChart(id: string) {
 
 /** AUTH CALLS */
 
+/**
+ * Administrator email/password login (POST /auth/admin/login): works also on
+ * SPID/CIE-only instances, and only for ADMIN accounts. Resolves on success,
+ * throws the axios error otherwise (401 invalid, 404 disabled, 429 throttled).
+ */
+export async function adminLogin({ email, password }: { email: string; password: string }) {
+  await axios.post(`${getServerUrlWithApi()}/auth/admin/login`, { email, password });
+}
+
 /** Login */
 export async function login({
   email,

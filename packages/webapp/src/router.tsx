@@ -1,6 +1,7 @@
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AboutPage from "./pages/about";
+import AdminLoginPage from "./pages/auth/AdminLoginPage";
 import AuthPage from "./pages/auth/AuthPage";
 import OidcSignupPage from "./pages/auth/OidcSignupPage";
 import RecoverPage from "./pages/auth/RecoverPage";
@@ -52,6 +53,8 @@ export const ROUTES = {
   dataProcessor: "/nomina-responsabile-trattamento",
   // Auth
   login: "/login",
+  // Admin email/password sign-in, also on SPID/CIE-only instances. Not linked anywhere.
+  adminLogin: "/login/admin",
   oidcSignup: "/oidc/signup",
   recoverPassword: "/recover-password",
   changePassword: "/change-password",
@@ -290,6 +293,10 @@ const routes = [
   {
     path: "/login",
     element: <AuthPage />,
+  },
+  {
+    path: ROUTES.adminLogin,
+    element: <AdminLoginPage />,
   },
   {
     path: "/oidc/signup",

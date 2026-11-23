@@ -21,6 +21,11 @@ export function getAdminEmails(): Set<string> {
 	);
 }
 
+/** True when `user` is an administrator: ADMIN role, or listed in ADMIN_EMAILS (granted at sign-in). */
+export function isAdminAccount(user: Pick<User, "role" | "email">): boolean {
+	return user.role === "ADMIN" || getAdminEmails().has(user.email.toLowerCase());
+}
+
 /** Promotes `user` to ADMIN if listed in ADMIN_EMAILS; call it right before issuing a session. */
 export async function withAdminEmails(user: User): Promise<User> {
 	if (user.role === "ADMIN" || !getAdminEmails().has(user.email.toLowerCase())) return user;

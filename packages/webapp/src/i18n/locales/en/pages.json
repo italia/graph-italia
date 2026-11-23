@@ -33,6 +33,17 @@
             "title": "Registration complete",
             "body": "We sent you an email with the link to activate your account. Once activated you can log in with your email and the password you chose.",
             "cta": "Go to login"
+        },
+        "adminLogin": {
+            "title": "Administrator sign-in",
+            "description": "Email and password sign-in reserved to administrator accounts. Everyone else signs in with SPID or CIE.",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Sign in",
+            "invalid": "Invalid credentials.",
+            "unavailable": "Password sign-in for administrators is not enabled on this instance.",
+            "tooMany": "Too many attempts. Try again later.",
+            "error": "Sign-in failed. Try again."
         }
     },
     "charts": {

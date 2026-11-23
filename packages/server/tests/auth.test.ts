@@ -22,6 +22,7 @@ process.env["JWT_SECRET"] = JWT_SECRET;
 // whatever the developer is trying out; the SPID/CIE-only suites set it themselves.
 delete process.env["ENABLE_PASSWORD_AUTH"];
 delete process.env["ADMIN_EMAILS"];
+delete process.env["ENABLE_ADMIN_PASSWORD_LOGIN"];
 process.env["APP_URL"] = "http://localhost:3000";
 
 const USER_ID        = "user-verified";
@@ -30,6 +31,8 @@ const NO_CODE_ID     = "user-nocode";
 const USER_EMAIL     = "verified@test.com";
 const UNVERIFIED_EMAIL = "unverified@test.com";
 const NEW_EMAIL      = "new@test.com"; // does not exist in DB
+const ADMIN_EMAIL    = "admin@test.com";
+const NO_PWD_ADMIN_EMAIL = "spid-admin@test.com"; // ADMIN created through SPID/CIE
 const CORRECT_PASSWORD = "P@ssw0rd1!";
 const VALID_PIN      = "123456";
 
@@ -43,6 +46,20 @@ const DB_USER = {
 	role: "USER",
 	createdAt: new Date(),
 	updatedAt: new Date(),
+};
+
+const DB_ADMIN = {
+	...DB_USER,
+	id: "user-admin",
+	email: ADMIN_EMAIL,
+	role: "ADMIN",
+};
+
+const DB_ADMIN_NO_PASSWORD = {
+	...DB_ADMIN,
+	id: "user-admin-nopwd",
+	email: NO_PWD_ADMIN_EMAIL,
+	password: null,
 };
 
 const DB_USER_UNVERIFIED = {
@@ -116,6 +133,8 @@ mock.module("../lib/db", () => ({
 		findUserByEmail: mock(async (email: string) => {
 			if (email === USER_EMAIL) return DB_USER;
 			if (email === UNVERIFIED_EMAIL) return DB_USER_UNVERIFIED;
+			if (email === ADMIN_EMAIL) return DB_ADMIN;
+			if (email === NO_PWD_ADMIN_EMAIL) return DB_ADMIN_NO_PASSWORD;
 			return null;
 		}),
 		findUserById: mock(async (id: string) => {
@@ -440,6 +459,61 @@ describe("ENABLE_PASSWORD_AUTH=false — SPID/CIE only", () => {
 	test("POST /auth/logout still works → 200", async () => {
 		const res = await app.request("/auth/logout", { method: "POST" });
 		expect(res.status).toBe(200);
+	});
+});
+
+describe("POST /auth/admin/login — admins only, also on SPID/CIE-only instances", () => {
+	beforeAll(() => { process.env["ENABLE_PASSWORD_AUTH"] = "false"; });
+	afterAll(() => {
+		delete process.env["ENABLE_PASSWORD_AUTH"];
+		delete process.env["ADMIN_EMAILS"];
+		delete process.env["ENABLE_ADMIN_PASSWORD_LOGIN"];
+	});
+
+	const adminLogin = (email: string, password = CORRECT_PASSWORD) =>
+		app.request("/auth/admin/login", { method: "POST", ...withJson({}, { email, password }) });
+
+	test("ADMIN with the right password → 200 and session cookie", async () => {
+		const res = await adminLogin(ADMIN_EMAIL);
+		expect(res.status).toBe(200);
+		expect(res.headers.get("set-cookie")).toContain("access_token=");
+	});
+
+	test("the regular /auth/login stays closed → 403", async () => {
+		const res = await app.request("/auth/login", {
+			method: "POST",
+			...withJson({}, { email: ADMIN_EMAIL, password: CORRECT_PASSWORD }),
+		});
+		expect(res.status).toBe(403);
+	});
+
+	test("non-admin with the right password gets the wrong-password answer → 401", async () => {
+		const res = await adminLogin(USER_EMAIL);
+		expect(res.status).toBe(401);
+		expect(res.headers.get("set-cookie")).toBeNull();
+		const wrong = await adminLogin(ADMIN_EMAIL, "Wr0ng!pass");
+		expect(await res.json()).toEqual(await wrong.json());
+	});
+
+	test("unknown email and admin without password → 401", async () => {
+		expect((await adminLogin(NEW_EMAIL)).status).toBe(401);
+		expect((await adminLogin(NO_PWD_ADMIN_EMAIL)).status).toBe(401);
+	});
+
+	test("email listed in ADMIN_EMAILS counts as admin → 200", async () => {
+		process.env["ADMIN_EMAILS"] = "verified@test.com";
+		setUserRoleMock.mockClear();
+		const res = await adminLogin(USER_EMAIL);
+		expect(res.status).toBe(200);
+		expect(setUserRoleMock).toHaveBeenCalledWith(USER_ID, "ADMIN");
+		delete process.env["ADMIN_EMAILS"];
+	});
+
+	test("ENABLE_ADMIN_PASSWORD_LOGIN=false → 404", async () => {
+		process.env["ENABLE_ADMIN_PASSWORD_LOGIN"] = "false";
+		const res = await adminLogin(ADMIN_EMAIL);
+		expect(res.status).toBe(404);
+		delete process.env["ENABLE_ADMIN_PASSWORD_LOGIN"];
 	});
 });
 

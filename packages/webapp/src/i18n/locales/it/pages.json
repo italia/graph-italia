@@ -33,6 +33,17 @@
             "title": "Registrazione completata",
             "body": "Ti abbiamo inviato un'email con il link per attivare il tuo account. Dopo l'attivazione potrai accedere con la tua email e la password scelta.",
             "cta": "Vai all'accesso"
+        },
+        "adminLogin": {
+            "title": "Accesso amministratori",
+            "description": "Accesso con email e password riservato agli account amministratore. Tutti gli altri utenti accedono con SPID o CIE.",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Accedi",
+            "invalid": "Credenziali non valide.",
+            "unavailable": "L'accesso con password per gli amministratori non è attivo su questa istanza.",
+            "tooMany": "Troppi tentativi. Riprova più tardi.",
+            "error": "Accesso non riuscito. Riprova."
         }
     },
     "charts": {
