@@ -283,6 +283,51 @@ describe("PUT /charts/:id — update", () => {
 	});
 });
 
+// ── wrapper ───────────────────────────────────────────────────────────────────
+
+describe("chart wrapper settings", () => {
+	const wrapper = {
+		enabled: true,
+		title: "",
+		text: "**Nota** metodologica",
+		sourceTextInfo: "[ISTAT](https://www.istat.it)",
+		enableDownloadData: true,
+		enableDownloadImage: false,
+		enableShare: true,
+	};
+	const createPayload = { chart: "bar", name: "Con wrapper", description: "Vendite per regione", wrapper };
+
+	test("saved on create and on update", async () => {
+		const created = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), createPayload) });
+		expect(created.status).toBe(201);
+		expect(((await created.json()) as { wrapper: unknown }).wrapper).toEqual(wrapper);
+
+		const off = { ...wrapper, enabled: false };
+		const updated = await app.request(`/charts/${CHART_ID}`, { method: "PUT", ...withJson(userHeaders(), { wrapper: off }) });
+		expect(updated.status).toBe(200);
+		expect(((await updated.json()) as { wrapper: unknown }).wrapper).toEqual(off);
+	});
+
+	test("unknown keys are dropped", async () => {
+		const res = await app.request(`/charts/${CHART_ID}`, {
+			method: "PUT",
+			...withJson(userHeaders(), { wrapper: { enabled: true, labelShare: "Share", foo: 1 } }),
+		});
+		expect(res.status).toBe(200);
+		expect(((await res.json()) as { wrapper: unknown }).wrapper).toEqual({ enabled: true });
+	});
+
+	test.each([
+		["no enabled flag", { title: "x" }],
+		["a flag that is not a boolean", { enabled: true, enableShare: "yes" }],
+		["a text over 10,000 characters", { enabled: true, text: "x".repeat(10_001) }],
+		["null", null],
+	])("rejects %s with 400", async (_label, bad) => {
+		const res = await app.request(`/charts/${CHART_ID}`, { method: "PUT", ...withJson(userHeaders(), { wrapper: bad }) });
+		expect(res.status).toBe(400);
+	});
+});
+
 // ── DELETE /:id ───────────────────────────────────────────────────────────────
 
 describe("DELETE /charts/:id — delete", () => {

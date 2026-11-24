@@ -134,6 +134,49 @@
                                     "label": "Show the description on the chart page",
                                     "hint": "When off, the description stays available to assistive technology but is not shown under the title."
                                 }
+                            },
+                            "wrapper": {
+                                "legend": "Chart wrapper",
+                                "enabled": {
+                                    "label": "Show with wrapper",
+                                    "hint": "On the chart page it adds the Chart, Data table and Info tabs, the data source and the download buttons."
+                                },
+                                "fields": {
+                                    "title": {
+                                        "label": "Wrapper title",
+                                        "hint": "When empty, the chart title is used.",
+                                        "placeholder": "Chart title"
+                                    },
+                                    "subTitle": {
+                                        "label": "Wrapper description",
+                                        "hint": "Shown under the title. When empty, the chart description is used.",
+                                        "placeholder": "Chart description"
+                                    },
+                                    "text": {
+                                        "label": "Info tab text",
+                                        "hint": "Methodology or context notes. Supports markdown.",
+                                        "placeholder": "For example: data are updated every month…"
+                                    },
+                                    "sourceTextInfo": {
+                                        "label": "Data source",
+                                        "hint": "Shown under the chart. Supports markdown, for example [ISTAT](https://www.istat.it).",
+                                        "placeholder": "[ISTAT](https://www.istat.it)"
+                                    },
+                                    "chartFooterText": {
+                                        "label": "Note under the chart",
+                                        "hint": "Short text shown under the chart, in the Chart tab. Supports markdown.",
+                                        "placeholder": "For example: values in thousands of euros"
+                                    }
+                                },
+                                "flags": {
+                                    "heading": "Buttons and features",
+                                    "showHeading": "Show title and description",
+                                    "enableDownloadData": "Data download button (CSV)",
+                                    "enableDownloadImage": "Image download button (PNG)",
+                                    "enableShare": "Share button (copies the page link)",
+                                    "showDataTransposed": "Data table and CSV with rows and columns swapped",
+                                    "showPoweredBy": "Show the “Generato con Graph Italia” credit"
+                                }
                             }
                         }
                     },
@@ -981,6 +1024,10 @@
         },
         "previewNotice": "Public publishing is disabled on this instance: you are viewing an authenticated preview, not a public page.",
         "privatePreviewNotice": "This item is not public: you are viewing a preview reserved to you and the people working on the project.",
+        "share": {
+            "copied": "Page link copied to the clipboard",
+            "error": "Could not copy the link"
+        },
         "download": {
             "label": "Download the chart",
             "png": "Download PNG",

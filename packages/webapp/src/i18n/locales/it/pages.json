@@ -134,6 +134,49 @@
                                     "label": "Mostra la descrizione nella pagina del grafico",
                                     "hint": "Se disattivata, la descrizione resta disponibile alle tecnologie assistive ma non viene mostrata sotto il titolo."
                                 }
+                            },
+                            "wrapper": {
+                                "legend": "Wrapper del grafico",
+                                "enabled": {
+                                    "label": "Mostra con wrapper",
+                                    "hint": "Nella pagina del grafico aggiunge le schede Grafico, Tabella dati e Info, la fonte dei dati e i pulsanti di download."
+                                },
+                                "fields": {
+                                    "title": {
+                                        "label": "Titolo del wrapper",
+                                        "hint": "Se vuoto, si usa il titolo del grafico.",
+                                        "placeholder": "Titolo del grafico"
+                                    },
+                                    "subTitle": {
+                                        "label": "Descrizione del wrapper",
+                                        "hint": "Mostrata sotto il titolo. Se vuota, si usa la descrizione del grafico.",
+                                        "placeholder": "Descrizione del grafico"
+                                    },
+                                    "text": {
+                                        "label": "Testo della scheda Info",
+                                        "hint": "Note metodologiche o di contesto. Supporta il markdown.",
+                                        "placeholder": "Ad esempio: i dati sono aggiornati ogni mese…"
+                                    },
+                                    "sourceTextInfo": {
+                                        "label": "Fonte dei dati",
+                                        "hint": "Mostrata sotto il grafico. Supporta il markdown, ad esempio [ISTAT](https://www.istat.it).",
+                                        "placeholder": "[ISTAT](https://www.istat.it)"
+                                    },
+                                    "chartFooterText": {
+                                        "label": "Nota sotto il grafico",
+                                        "hint": "Testo breve mostrato sotto il grafico, nella scheda Grafico. Supporta il markdown.",
+                                        "placeholder": "Ad esempio: valori in migliaia di euro"
+                                    }
+                                },
+                                "flags": {
+                                    "heading": "Pulsanti e funzionalità",
+                                    "showHeading": "Mostra titolo e descrizione",
+                                    "enableDownloadData": "Pulsante di download dei dati (CSV)",
+                                    "enableDownloadImage": "Pulsante di download dell'immagine (PNG)",
+                                    "enableShare": "Pulsante Condividi (copia il link della pagina)",
+                                    "showDataTransposed": "Tabella dati e CSV con righe e colonne scambiate",
+                                    "showPoweredBy": "Mostra «Generato con Graph Italia»"
+                                }
                             }
                         }
                     },
@@ -982,6 +1025,10 @@
         },
         "previewNotice": "La pubblicazione è disattivata su questa istanza: stai vedendo un'anteprima riservata, non una pagina pubblica.",
         "privatePreviewNotice": "Questo elemento non è pubblico: stai vedendo un'anteprima riservata a te e a chi collabora al progetto.",
+        "share": {
+            "copied": "Link della pagina copiato negli appunti",
+            "error": "Impossibile copiare il link"
+        },
         "download": {
             "label": "Scarica il grafico",
             "png": "Scarica PNG",

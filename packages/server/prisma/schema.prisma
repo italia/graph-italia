@@ -225,6 +225,9 @@ model Chart {
   config      Json?
   data        Json?
   dataSource  Json?
+  // ChartWrapper settings for the display page (tabs, texts, buttons); null =
+  // no wrapper. Shape: chartWrapperSchema in routes/charts.ts
+  wrapper     Json?
   publish     Boolean @default(false)
 
   remoteUrl String?

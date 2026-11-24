@@ -33,6 +33,8 @@ import { defaultConfig } from "../../lib/constants.ts";
 import type { DataTransformRecipe } from "../../types.ts";
 import stepMachine from "../../lib/stepMachine.ts";
 import * as api from "../../lib/api.ts";
+import ChartWrapperSettingsForm from "../../components/ChartWrapperSettings";
+import { DEFAULT_WRAPPER, withWrapperDefaults, type ChartWrapperSettings } from "../../lib/chartWrapper";
 import useStoreState from "../../lib/store/storeState.ts";
 import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
@@ -74,6 +76,8 @@ function EditChartPage() {
   // chart's text alternative. Kept apart from `config` because ChartOptions
   // rebuilds config from its own form.
   const [showDescription, setShowDescription] = useState(true);
+  // ChartWrapper settings for the display page, saved in the chart's `wrapper`
+  const [wrapper, setWrapper] = useState<ChartWrapperSettings>(DEFAULT_WRAPPER);
   const descriptionMissing = chartDescription.trim().length === 0;
   const [isSaving, setIsSaving] = useState(false);
   const { settings } = useSettingsStore();
@@ -128,6 +132,7 @@ function EditChartPage() {
             setChartPublish(api.isPublishingEnabled() ? (chartData.publish ?? true) : false);
             setDataTransform(chartData.config?.dataTransform ?? null);
             setShowDescription(chartData.config?.showDescription !== false);
+            setWrapper(withWrapperDefaults(chartData.wrapper));
 
             // Go to config step only if chart already has data loaded
             const hasExistingData =
@@ -201,6 +206,7 @@ function EditChartPage() {
       // time so it can't be dropped along the way
       config: { ...config, ...(dataTransform ? { dataTransform } : {}), showDescription },
       data,
+      wrapper,
       isRemote,
       remoteUrl,
     };
@@ -452,6 +458,15 @@ function EditChartPage() {
                     <p id="chart_show_description_hint" className="text-sm text-base-content/70">
                       {t(`body.options.setup.form.fields.showDescription.hint`)}
                     </p>
+                    <ChartWrapperSettingsForm
+                      value={wrapper}
+                      onChange={(value) => {
+                        setHasUnsavedChanges(true);
+                        setWrapper(value);
+                      }}
+                      chartName={chartName || getDefaultName()}
+                      chartDescription={chartDescription}
+                    />
                   </div>
                 </div>
               </div>

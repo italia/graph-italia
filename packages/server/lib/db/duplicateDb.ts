@@ -19,6 +19,7 @@ function copyChart(tx: Tx, source: Chart, overrides: { name?: string | null; pub
 			config: json(source.config),
 			data: json(source.data),
 			dataSource: json(source.dataSource),
+			wrapper: json(source.wrapper),
 			remoteUrl: source.remoteUrl,
 			isRemote: source.isRemote,
 			publish: overrides.publish,

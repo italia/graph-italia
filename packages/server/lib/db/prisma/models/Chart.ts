@@ -58,6 +58,7 @@ export type ChartCountAggregateOutputType = {
   config: number
   data: number
   dataSource: number
+  wrapper: number
   publish: number
   remoteUrl: number
   isRemote: number
@@ -102,6 +103,7 @@ export type ChartCountAggregateInputType = {
   config?: true
   data?: true
   dataSource?: true
+  wrapper?: true
   publish?: true
   remoteUrl?: true
   isRemote?: true
@@ -191,6 +193,7 @@ export type ChartGroupByOutputType = {
   config: runtime.JsonValue | null
   data: runtime.JsonValue | null
   dataSource: runtime.JsonValue | null
+  wrapper: runtime.JsonValue | null
   publish: boolean
   remoteUrl: string | null
   isRemote: boolean
@@ -228,6 +231,7 @@ export type ChartWhereInput = {
   config?: Prisma.JsonNullableFilter<"Chart">
   data?: Prisma.JsonNullableFilter<"Chart">
   dataSource?: Prisma.JsonNullableFilter<"Chart">
+  wrapper?: Prisma.JsonNullableFilter<"Chart">
   publish?: Prisma.BoolFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolFilter<"Chart"> | boolean
@@ -247,6 +251,7 @@ export type ChartOrderByWithRelationInput = {
   config?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrderInput | Prisma.SortOrder
   dataSource?: Prisma.SortOrderInput | Prisma.SortOrder
+  wrapper?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isRemote?: Prisma.SortOrder
@@ -269,6 +274,7 @@ export type ChartWhereUniqueInput = Prisma.AtLeast<{
   config?: Prisma.JsonNullableFilter<"Chart">
   data?: Prisma.JsonNullableFilter<"Chart">
   dataSource?: Prisma.JsonNullableFilter<"Chart">
+  wrapper?: Prisma.JsonNullableFilter<"Chart">
   publish?: Prisma.BoolFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolFilter<"Chart"> | boolean
@@ -288,6 +294,7 @@ export type ChartOrderByWithAggregationInput = {
   config?: Prisma.SortOrderInput | Prisma.SortOrder
   data?: Prisma.SortOrderInput | Prisma.SortOrder
   dataSource?: Prisma.SortOrderInput | Prisma.SortOrder
+  wrapper?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isRemote?: Prisma.SortOrder
@@ -310,6 +317,7 @@ export type ChartScalarWhereWithAggregatesInput = {
   config?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
   data?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
   dataSource?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
+  wrapper?: Prisma.JsonNullableWithAggregatesFilter<"Chart">
   publish?: Prisma.BoolWithAggregatesFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableWithAggregatesFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolWithAggregatesFilter<"Chart"> | boolean
@@ -326,6 +334,7 @@ export type ChartCreateInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -344,6 +353,7 @@ export type ChartUncheckedCreateInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -362,6 +372,7 @@ export type ChartUpdateInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -380,6 +391,7 @@ export type ChartUncheckedUpdateInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -398,6 +410,7 @@ export type ChartCreateManyInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -414,6 +427,7 @@ export type ChartUpdateManyMutationInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -429,6 +443,7 @@ export type ChartUncheckedUpdateManyInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -455,6 +470,7 @@ export type ChartCountOrderByAggregateInput = {
   config?: Prisma.SortOrder
   data?: Prisma.SortOrder
   dataSource?: Prisma.SortOrder
+  wrapper?: Prisma.SortOrder
   publish?: Prisma.SortOrder
   remoteUrl?: Prisma.SortOrder
   isRemote?: Prisma.SortOrder
@@ -572,6 +588,7 @@ export type ChartCreateWithoutProjectInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -589,6 +606,7 @@ export type ChartUncheckedCreateWithoutProjectInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -635,6 +653,7 @@ export type ChartScalarWhereInput = {
   config?: Prisma.JsonNullableFilter<"Chart">
   data?: Prisma.JsonNullableFilter<"Chart">
   dataSource?: Prisma.JsonNullableFilter<"Chart">
+  wrapper?: Prisma.JsonNullableFilter<"Chart">
   publish?: Prisma.BoolFilter<"Chart"> | boolean
   remoteUrl?: Prisma.StringNullableFilter<"Chart"> | string | null
   isRemote?: Prisma.BoolFilter<"Chart"> | boolean
@@ -651,6 +670,7 @@ export type ChartCreateWithoutSourceLinkInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -668,6 +688,7 @@ export type ChartUncheckedCreateWithoutSourceLinkInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -701,6 +722,7 @@ export type ChartUpdateWithoutSourceLinkInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -718,6 +740,7 @@ export type ChartUncheckedUpdateWithoutSourceLinkInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -735,6 +758,7 @@ export type ChartCreateWithoutSlotInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -752,6 +776,7 @@ export type ChartUncheckedCreateWithoutSlotInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -785,6 +810,7 @@ export type ChartUpdateWithoutSlotInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -802,6 +828,7 @@ export type ChartUncheckedUpdateWithoutSlotInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -819,6 +846,7 @@ export type ChartCreateManyProjectInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: boolean
   remoteUrl?: string | null
   isRemote?: boolean
@@ -834,6 +862,7 @@ export type ChartUpdateWithoutProjectInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -851,6 +880,7 @@ export type ChartUncheckedUpdateWithoutProjectInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -868,6 +898,7 @@ export type ChartUncheckedUpdateManyWithoutProjectInput = {
   config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   data?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   dataSource?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  wrapper?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
   remoteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRemote?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -923,6 +954,7 @@ export type ChartSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   config?: boolean
   data?: boolean
   dataSource?: boolean
+  wrapper?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -943,6 +975,7 @@ export type ChartSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   config?: boolean
   data?: boolean
   dataSource?: boolean
+  wrapper?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -960,6 +993,7 @@ export type ChartSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   config?: boolean
   data?: boolean
   dataSource?: boolean
+  wrapper?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -977,6 +1011,7 @@ export type ChartSelectScalar = {
   config?: boolean
   data?: boolean
   dataSource?: boolean
+  wrapper?: boolean
   publish?: boolean
   remoteUrl?: boolean
   isRemote?: boolean
@@ -985,7 +1020,7 @@ export type ChartSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ChartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "chart" | "config" | "data" | "dataSource" | "publish" | "remoteUrl" | "isRemote" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["chart"]>
+export type ChartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "chart" | "config" | "data" | "dataSource" | "wrapper" | "publish" | "remoteUrl" | "isRemote" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["chart"]>
 export type ChartInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   slot?: boolean | Prisma.Chart$slotArgs<ExtArgs>
@@ -1014,6 +1049,7 @@ export type $ChartPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     config: runtime.JsonValue | null
     data: runtime.JsonValue | null
     dataSource: runtime.JsonValue | null
+    wrapper: runtime.JsonValue | null
     publish: boolean
     remoteUrl: string | null
     isRemote: boolean
@@ -1453,6 +1489,7 @@ export interface ChartFieldRefs {
   readonly config: Prisma.FieldRef<"Chart", 'Json'>
   readonly data: Prisma.FieldRef<"Chart", 'Json'>
   readonly dataSource: Prisma.FieldRef<"Chart", 'Json'>
+  readonly wrapper: Prisma.FieldRef<"Chart", 'Json'>
   readonly publish: Prisma.FieldRef<"Chart", 'Boolean'>
   readonly remoteUrl: Prisma.FieldRef<"Chart", 'String'>
   readonly isRemote: Prisma.FieldRef<"Chart", 'Boolean'>

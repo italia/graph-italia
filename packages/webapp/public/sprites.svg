@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- Icons referenced by ChartWrapper buttons (graph-italia-components): <use href="/sprites.svg#it-…"> -->
+  <symbol id="it-download" viewBox="0 0 24 24">
+    <path d="M12.5 3v11.3l4.1-4.2.8.8-5.4 5.4-5.4-5.4.8-.8 4.1 4.2V3h1zM5 19h14v1H5z" fill="currentColor"/>
+  </symbol>
+  <symbol id="it-share" viewBox="0 0 24 24">
+    <path d="M17 15a3 3 0 0 0-2.3 1.1l-5.3-2.9a3 3 0 0 0 0-2.4l5.3-2.9A3 3 0 1 0 14 6c0 .3 0 .6.1.8L8.8 9.7a3 3 0 1 0 0 4.6l5.3 2.9A3 3 0 1 0 17 15zm0-11a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM7 14a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm10 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/>
+  </symbol>
+</svg>

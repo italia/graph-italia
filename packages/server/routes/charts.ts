@@ -40,6 +40,29 @@ const detailSchema = z.object({
 const DESCRIPTION_REQUIRED = "Description is required: it is used as the chart's text alternative";
 const requiresDescription = (chart: string | undefined) => chart !== "text";
 
+// ChartWrapper settings for the display page (packages/components ChartWrapper).
+// Empty or missing texts fall back on the chart: title → name, subTitle →
+// description. Turning the wrapper off keeps the rest, so it can come back.
+const WRAPPER_TEXT_MAX = 10_000;
+const wrapperText = z.string().max(WRAPPER_TEXT_MAX).optional();
+export const chartWrapperSchema = z.object({
+	enabled: z.boolean(),
+	title: wrapperText,
+	subTitle: wrapperText,
+	/** Markdown of the "Info" tab. */
+	text: wrapperText,
+	/** Markdown after the "Data source" label. */
+	sourceTextInfo: wrapperText,
+	/** Markdown under the chart. */
+	chartFooterText: wrapperText,
+	showHeading: z.boolean().optional(),
+	enableDownloadData: z.boolean().optional(),
+	enableDownloadImage: z.boolean().optional(),
+	enableShare: z.boolean().optional(),
+	showDataTransposed: z.boolean().optional(),
+	showPoweredBy: z.boolean().optional(),
+});
+
 const createChartSchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
@@ -47,6 +70,7 @@ const createChartSchema = z.object({
 	config: z.unknown().optional(),
 	data: z.unknown().optional(),
 	dataSource: z.unknown().optional(),
+	wrapper: chartWrapperSchema.optional(),
 	remoteUrl: z.string().nullable().optional(),
 	isRemote: z.boolean().optional(),
 	publish: z.boolean().optional(),
@@ -65,6 +89,7 @@ const updateChartSchema = z.object({
 	config: z.unknown().optional(),
 	data: z.unknown().optional(),
 	dataSource: z.unknown().optional(),
+	wrapper: chartWrapperSchema.optional(),
 	publish: z.boolean().optional(),
 	remoteUrl: z.string().nullable().optional(),
 	isRemote: z.boolean().optional(),
@@ -85,6 +110,7 @@ const chartSchema = z.object({
 	description: z.string().nullable(),
 	chart: z.string(),
 	dataSource: z.unknown().optional(),
+	wrapper: chartWrapperSchema.nullable().optional(),
 	config: z.unknown().nullable(),
 	data: z.unknown().nullable(),
 	isRemote: z.boolean().nullable(),

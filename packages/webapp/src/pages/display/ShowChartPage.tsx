@@ -1,4 +1,4 @@
-import { ColorSchemeProvider, RenderChart } from "graph-italia-components";
+import { ChartWrapper, ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-italia-components";
 import type { EChartsType } from "echarts";
 import { useState } from "react";
 import toast from "../../lib/toast";
@@ -13,6 +13,7 @@ import * as api from "../../lib/api";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { publicChartErrorMessage } from "../embed/EmbedChartPage";
 import { useChartA11yProps } from "../../hooks/useChartA11yProps";
+import { toWrapperProps, type ChartWrapperSettings } from "../../lib/chartWrapper";
 
 function ShowChartPage() {
   const { id } = useParams();
@@ -27,8 +28,18 @@ function ShowChartPage() {
     | (React.ComponentProps<typeof RenderChart> & {
         name?: string;
         description?: string;
+        wrapper?: ChartWrapperSettings | null;
       })
     | undefined;
+  const wrapper = chart?.wrapper?.enabled ? chart.wrapper : null;
+
+  // Share button of the wrapper: copies this page's link.
+  function sharePage() {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => toast.success(t("publicChart.share.copied")))
+      .catch(() => toast.error(t("publicChart.share.error")));
+  }
   return (
     <Layout>
       {/* Aligned to the header gutters; min-height fills the space between
@@ -69,49 +80,65 @@ function ShowChartPage() {
                 {chart.name ? `${chart.name}: Graph Italia` : "Graph Italia"}
               </title>
             </Helmet>
-            {chart.name && (
-              <h1 className="text-2xl font-bold mb-1">{chart.name}</h1>
-            )}
-            {chart.description && (chart.config as { showDescription?: boolean } | undefined)?.showDescription !== false && (
-              <p className="text-base-content/70 mb-4">{chart.description}</p>
-            )}
-            <ColorSchemeProvider scheme={scheme}>
-              <RenderChart {...chart} {...chartA11y} getInstance={setInstance} />
-            </ColorSchemeProvider>
-            {/* Export as image or vector, for documents and presentations (#79) */}
-            {instance && (
-              <div
-                role="group"
-                aria-label={t("publicChart.download.label")}
-                className="mt-4 flex flex-wrap gap-2"
-              >
-                <button
-                  type="button"
-                  className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    try {
-                      downloadChartPng(instance, chart.name ?? "");
-                    } catch {
-                      toast.error(t("publicChart.download.error"));
-                    }
-                  }}
-                >
-                  {t("publicChart.download.png")}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline btn-sm"
-                  onClick={() => {
-                    try {
-                      downloadChartSvg(instance, chart.name ?? "");
-                    } catch {
-                      toast.error(t("publicChart.download.error"));
-                    }
-                  }}
-                >
-                  {t("publicChart.download.svg")}
-                </button>
-              </div>
+            {wrapper ? (
+              <>
+                {/* The wrapper shows its own heading (or none): the page keeps
+                    its h1 for assistive tech. */}
+                <h1 className="sr-only">{wrapper.title?.trim() || chart.name}</h1>
+                <ColorSchemeProvider scheme={scheme}>
+                  <ChartWrapper
+                    data={{ ...(chart as unknown as FieldDataType), ...chartA11y }}
+                    {...toWrapperProps(wrapper, sharePage)}
+                  />
+                </ColorSchemeProvider>
+              </>
+            ) : (
+              <>
+                {chart.name && (
+                  <h1 className="text-2xl font-bold mb-1">{chart.name}</h1>
+                )}
+                {chart.description && (chart.config as { showDescription?: boolean } | undefined)?.showDescription !== false && (
+                  <p className="text-base-content/70 mb-4">{chart.description}</p>
+                )}
+                <ColorSchemeProvider scheme={scheme}>
+                  <RenderChart {...chart} {...chartA11y} getInstance={setInstance} />
+                </ColorSchemeProvider>
+                {/* Export as image or vector, for documents and presentations (#79) */}
+                {instance && (
+                  <div
+                    role="group"
+                    aria-label={t("publicChart.download.label")}
+                    className="mt-4 flex flex-wrap gap-2"
+                  >
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={() => {
+                        try {
+                          downloadChartPng(instance, chart.name ?? "");
+                        } catch {
+                          toast.error(t("publicChart.download.error"));
+                        }
+                      }}
+                    >
+                      {t("publicChart.download.png")}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={() => {
+                        try {
+                          downloadChartSvg(instance, chart.name ?? "");
+                        } catch {
+                          toast.error(t("publicChart.download.error"));
+                        }
+                      }}
+                    >
+                      {t("publicChart.download.svg")}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
