@@ -16,13 +16,10 @@ import { useChartA11yProps } from "../../hooks/useChartA11yProps";
 
 function ShowChartPage() {
   const { id } = useParams();
-  const previewMode = !api.isPublishingEnabled();
   const { t } = useTranslation("pages");
   const chartA11y = useChartA11yProps();
-  const { data, error, isLoading } = useSWR(
-    `${id}`,
-    previewMode ? api.getChart : api.showChart,
-  );
+  const { data: read, error, isLoading } = useSWR(`${id}`, api.readChartForDisplay);
+  const data = read?.data;
   const { settings } = useSettingsStore();
   const scheme = settings?.preferredTheme ?? "light";
   const [instance, setInstance] = useState<EChartsType | null>(null);
@@ -37,9 +34,13 @@ function ShowChartPage() {
       {/* Aligned to the header gutters; min-height fills the space between
           header and footer so the chart sits vertically centered */}
       <div className="px-4 lg:px-10 py-10 min-h-[calc(100dvh-230px)] flex flex-col justify-center">
-        {previewMode && (
+        {read?.preview && (
           <div role="status" className="alert alert-info mb-4">
-            <span>{t("publicChart.previewNotice")}</span>
+            <span>
+              {api.isPublishingEnabled()
+                ? t("publicChart.privatePreviewNotice")
+                : t("publicChart.previewNotice")}
+            </span>
           </div>
         )}
         {isLoading && <Loading />}

@@ -478,7 +478,7 @@ function EditKpiGroupPage() {
             {kpiGroup.dataSource.length > 0 ? (
 
               <>
-                {isPublishingEnabled() && publish && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t("header.preview.actions.viewChart.label", { defaultValue: "Apri il gruppo KPI" })}</NewTabLink></div>}
+                {id && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t("header.preview.actions.viewChart.label", { defaultValue: "Apri il gruppo KPI" })}</NewTabLink></div>}
                 <ThemeSwitcherComponent
                   currentTheme={previewScheme}
                   handleChange={(value: ChartColorScheme) =>

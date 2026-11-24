@@ -981,6 +981,7 @@
             "private": "Questo grafico non è pubblico: chi lo ha creato non lo ha ancora pubblicato."
         },
         "previewNotice": "La pubblicazione è disattivata su questa istanza: stai vedendo un'anteprima riservata, non una pagina pubblica.",
+        "privatePreviewNotice": "Questo elemento non è pubblico: stai vedendo un'anteprima riservata a te e a chi collabora al progetto.",
         "download": {
             "label": "Scarica il grafico",
             "png": "Scarica PNG",

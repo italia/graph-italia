@@ -607,7 +607,7 @@ function EditChartPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {api.isPublishingEnabled() && chartPublish && id && (
+                    {id && (
                       <div className="w-full flex flex-wrap items-center justify-end gap-3">
                         {hasUnsavedChanges ? (
                           <>

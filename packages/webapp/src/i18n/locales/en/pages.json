@@ -980,6 +980,7 @@
             "private": "This chart is not public: its author has not published it yet."
         },
         "previewNotice": "Public publishing is disabled on this instance: you are viewing an authenticated preview, not a public page.",
+        "privatePreviewNotice": "This item is not public: you are viewing a preview reserved to you and the people working on the project.",
         "download": {
             "label": "Download the chart",
             "png": "Download PNG",

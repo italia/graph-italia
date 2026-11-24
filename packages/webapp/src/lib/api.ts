@@ -513,6 +513,41 @@ export async function showDashboard(id: string) {
   throw new Error("Server error");
 }
 
+// 401 from a publish-gated public read: the item exists but is not published.
+const isUnpublished = (err: unknown) =>
+  (err as { response?: { status?: number } })?.response?.status === 401;
+
+/**
+ * Reads for the /display pages, which the private area always links to. With
+ * public publishing on they use the public endpoint; a private item answers 401
+ * there, so they fall back to the authenticated read, which works for the owner
+ * and the project members: they can preview what they have not published.
+ * Anyone else still gets the public 401. With publishing off there is no public
+ * read at all. `preview` tells the page to say it is not a public page.
+ */
+async function readForDisplay<T>(
+  id: string,
+  publicRead: (id: string) => Promise<T>,
+  privateRead: (id: string) => Promise<T>,
+): Promise<{ data: T; preview: boolean }> {
+  if (!isPublishingEnabled()) return { data: await privateRead(id), preview: true };
+  try {
+    return { data: await publicRead(id), preview: false };
+  } catch (err) {
+    if (!isUnpublished(err)) throw err;
+    try {
+      return { data: await privateRead(id), preview: true };
+    } catch {
+      throw err;
+    }
+  }
+}
+
+export const readChartForDisplay = (id: string) => readForDisplay(id, showChart, getChart);
+
+export const readDashboardForDisplay = (id: string) =>
+  readForDisplay<DashboardDetail>(id, showDashboard, findDashboardById);
+
 export async function updateSlots(
   id: string,
   body: {

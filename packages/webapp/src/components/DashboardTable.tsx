@@ -214,19 +214,18 @@ export default function DashboardTable({
               aria-hidden="true"
             />
           </button>
-          {/* A private dashboard's public URL always answers 401: no link */}
-          {row.publish && (
-            <a
-              href={ROUTES.viewDashboard(row.id ?? "")}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t("actions.view", { defaultValue: "Apri dashboard pubblicata" })}
-              title={t("actions.view", { defaultValue: "Apri dashboard pubblicata" })}
-              className="btn btn-ghost btn-xs btn-square"
-            >
-              <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
-            </a>
-          )}
+          {/* Always linked, public or not: a private dashboard opens as a
+              preview for project members (readDashboardForDisplay). */}
+          <a
+            href={ROUTES.viewDashboard(row.id ?? "")}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
+            title={t("actions.view", { defaultValue: "Apri in nuova scheda" })}
+            className="btn btn-ghost btn-xs btn-square"
+          >
+            <FaArrowUpRightFromSquare fill={actionColor} size={actionSize} aria-hidden="true" />
+          </a>
           <button
             type="button"
             aria-label={t("actions.duplicate", { defaultValue: "Duplica" })}

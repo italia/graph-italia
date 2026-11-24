@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-italia-components";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
@@ -100,8 +101,9 @@ function segmentLayout(
 function DashboardViewPage() {
   const chartA11y = useChartA11yProps();
   const { id } = useParams();
-  const { load, layout, charts, name, description, isLoading, loaded, error } =
+  const { load, layout, charts, name, description, isLoading, loaded, preview, error } =
     useDashboardViewStore();
+  const { t } = useTranslation("pages");
 
   React.useEffect(() => {
     if (id) load(id);
@@ -155,11 +157,12 @@ function DashboardViewPage() {
     <Layout>
       <div className="px-4 lg:px-10 py-6">
 
-        {!isPublishingEnabled() && (
+        {preview && (
           <div role="status" className="alert alert-info mb-4">
             <span>
-              Public publishing is disabled on this instance — you're viewing an
-              authenticated preview, not a public page.
+              {isPublishingEnabled()
+                ? t("publicChart.privatePreviewNotice")
+                : t("publicChart.previewNotice")}
             </span>
           </div>
         )}

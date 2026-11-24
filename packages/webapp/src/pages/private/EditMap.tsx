@@ -436,7 +436,7 @@ export default function EditMapPage() {
               <div>
                 {state.matches("config") && chart ? (
                   <>
-                    {api.isPublishingEnabled() && chartPublish && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t(`header.preview.actions.viewChart.label`)}</NewTabLink></div>}
+                    {id && <div className="w-full flex align-center justify-end"><NewTabLink href={ROUTES.viewChart(id)} className="btn btn-outline">{t(`header.preview.actions.viewChart.label`)}</NewTabLink></div>}
                     <ThemeSwitcherComponent
                       currentTheme={previewScheme}
                       handleChange={(value: ChartColorScheme) =>

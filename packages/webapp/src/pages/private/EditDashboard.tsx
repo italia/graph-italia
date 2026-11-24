@@ -613,7 +613,7 @@ function DashboardEditPage() {
                     </button>
                   </div>
 
-                  {api.isPublishingEnabled() && publish && (
+                  {id && (
                     <NewTabLink href={ROUTES.viewDashboard(id)} className="btn btn-outline">
                       {t(`slots.actions.viewChart.label`)}
                     </NewTabLink>
