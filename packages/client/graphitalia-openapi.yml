@@ -24,6 +24,220 @@
       url: "https://graph.developers.italia.it"
       description: "Production server"
   paths: 
+    /api/oidc/callback: 
+      get: 
+        operationId: "getApiOidcCallback"
+        description: "Endpoint that gets the code from the ID provider and exchanges it for tokens"
+        responses: 
+          302: 
+            description: "Redirect to the application URL or to the signup page"
+          500: 
+            description: "OIDC token exchange failed"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/oidc/login: 
+      get: 
+        operationId: "getApiOidcLogin"
+        description: "Starts the OIDC flow and, once authenticated, issues the application session"
+        responses: 
+          302: 
+            description: "Redirect to the application URL or to the signup page"
+          401: 
+            description: "Unauthorized: OIDC session required, missing sub"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/oidc/signup/status: 
+      get: 
+        operationId: "getApiOidcSignupStatus"
+        description: "Reports whether the OIDC user is already registered and whether their email is known and verified"
+        responses: 
+          200: 
+            description: "Signup state for the OIDC user"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    registered: 
+                      type: "boolean"
+                    email: 
+                      type: "string"
+                    emailFromIdp: 
+                      type: "boolean"
+                    emailVerified: 
+                      type: "boolean"
+                    given_name: 
+                      type: "string"
+                    family_name: 
+                      type: "string"
+          401: 
+            description: "Unauthorized: OIDC session required, missing sub"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/oidc/signup/email/send: 
+      post: 
+        operationId: "postApiOidcSignupEmailSend"
+        description: "Mails a verification code to the email typed by an OIDC user whose identity provider sent none"
+        responses: 
+          200: 
+            description: "Code sent"
+          400: 
+            description: "Invalid email, or email already provided by the identity provider"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          401: 
+            description: "Unauthorized: OIDC session required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          429: 
+            description: "Too many requests"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/oidc/signup/email/verify: 
+      post: 
+        operationId: "postApiOidcSignupEmailVerify"
+        description: "Checks the email verification code; logs in when the email already belongs to an account"
+        responses: 
+          200: 
+            description: "Email verified"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    auth: 
+                      type: "boolean"
+                    email: 
+                      type: "string"
+          400: 
+            description: "Code invalid or expired"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          401: 
+            description: "Unauthorized: OIDC session required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          429: 
+            description: "Too many requests"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/oidc/signup: 
+      post: 
+        operationId: "postApiOidcSignup"
+        description: "Completes OIDC signup: creates the account for the verified email, links sub and logs in"
+        responses: 
+          200: 
+            description: "User registered via OIDC"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    auth: 
+                      type: "boolean"
+          400: 
+            description: "No verified email, invalid request body, or PA not found in IndicePA"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          401: 
+            description: "Unauthorized: OIDC session required, missing sub"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          503: 
+            description: "List of IndicePA public administrations not available: the PA cannot be verified"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+    /api/oidc/logout: 
+      get: 
+        operationId: "getApiOidcLogout"
+        description: "Endpoint that logs the users out"
+        responses: 
+          302: 
+            description: "Redirect to the application URL"
     /api/admin/users: 
       get: 
         operationId: "getApiAdminUsers"
@@ -125,12 +339,98 @@
               type: "string"
               minLength: 1
             required: true
+    /api/admin/users/{id}/role: 
+      patch: 
+        operationId: "patchApiAdminUsersByIdRole"
+        description: "Change a user's role (USER/ADMIN). Admin only. The role travels in the session token, so the change applies at the user's next sign-in."
+        responses: 
+          200: 
+            description: "Role changed"
+          400: 
+            description: "Cannot change your own role, or would remove the last admin"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "User not found"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+              minLength: 1
+            required: true
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  role: 
+                    type: "string"
+                    enum: 
+                      - "USER"
+                      - "ADMIN"
+                required: 
+                  - "role"
+    /api/admin/users/duplicates: 
+      get: 
+        operationId: "getApiAdminUsersDuplicates"
+        description: "List groups of accounts whose emails differ only by case. Admin only."
+        responses: 
+          200: 
+            description: "Duplicate groups (empty when there are none)"
+    /api/admin/users/merge: 
+      post: 
+        operationId: "postApiAdminUsersMerge"
+        description: "Merge accounts sharing the same email (case-insensitive) into keepId: projects, memberships and SPID/CIE identities move to it, the others are deleted. Admin only."
+        responses: 
+          200: 
+            description: "Accounts merged"
+          400: 
+            description: "Invalid merge (different emails, unknown users, or your own account would be deleted)"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  keepId: 
+                    type: "string"
+                    minLength: 1
+                  mergeIds: 
+                    minItems: 1
+                    type: "array"
+                    items: 
+                      type: "string"
+                      minLength: 1
+                required: 
+                  - "keepId"
+                  - "mergeIds"
     /api/auth/user: 
       get: 
         operationId: "getApiAuthUser"
-        description: "If the user is authenticated, returns the user information along with current token."
+        description: "If the user is authenticated (valid session cookie), returns the current user. Used by the SPA to hydrate auth state on load."
         responses: 
-          201: 
+          200: 
             description: "Successful response"
             content: 
               application/json: 
@@ -176,7 +476,7 @@
                   required: 
                     - "uid"
           400: 
-            description: "Missing email or password"
+            description: "Missing email or password, or PA not found in IndicePA"
             content: 
               application/json: 
                 schema: 
@@ -208,7 +508,19 @@
                       type: "string"
                   required: 
                     - "error"
+          503: 
+            description: "List of IndicePA public administrations not available: the PA cannot be verified"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -217,10 +529,13 @@
                   email: 
                     type: "string"
                     format: "email"
-                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    pattern: "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                   password: 
                     type: "string"
                     minLength: 8
+                  pa: 
+                    type: "string"
+                    minLength: 1
                 required: 
                   - "email"
                   - "password"
@@ -274,6 +589,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -282,7 +598,7 @@
                   email: 
                     type: "string"
                     format: "email"
-                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    pattern: "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                   password: 
                     type: "string"
                 required: 
@@ -311,6 +627,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -319,7 +636,7 @@
                   email: 
                     type: "string"
                     format: "email"
-                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    pattern: "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                 required: 
                   - "email"
     /api/auth/resend: 
@@ -345,6 +662,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -353,12 +671,12 @@
                   email: 
                     type: "string"
                     format: "email"
-                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    pattern: "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                 required: 
                   - "email"
     /api/auth/logout: 
-      get: 
-        operationId: "getApiAuthLogout"
+      post: 
+        operationId: "postApiAuthLogout"
         description: "Clear the access_token cookie and log the user out."
         responses: 
           200: 
@@ -417,6 +735,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -499,6 +818,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -545,6 +865,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -581,11 +902,9 @@
                       expire: 
                         type: "number"
                       revokedAt: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       projectId: 
                         type: "string"
                       createdAt: 
@@ -646,11 +965,9 @@
                     expire: 
                       type: "number"
                     revokedAt: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     projectId: 
                       type: "string"
                     createdAt: 
@@ -689,6 +1006,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -778,11 +1096,9 @@
                     expire: 
                       type: "number"
                     revokedAt: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     projectId: 
                       type: "string"
                     createdAt: 
@@ -862,11 +1178,9 @@
                     expire: 
                       type: "number"
                     revokedAt: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     projectId: 
                       type: "string"
                     createdAt: 
@@ -949,17 +1263,13 @@
                       timestamp: 
                         type: "string"
                       apiKeyId: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       projectName: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                     required: 
                       - "id"
                       - "method"
@@ -1035,20 +1345,54 @@
                       projectId: 
                         type: "string"
                       name: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       description: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       chart: 
                         type: "string"
                       dataSource: {}
+                      wrapper: 
+                        anyOf: 
+                          - 
+                            type: "object"
+                            properties: 
+                              enabled: 
+                                type: "boolean"
+                              title: 
+                                type: "string"
+                                maxLength: 10000
+                              subTitle: 
+                                type: "string"
+                                maxLength: 10000
+                              text: 
+                                type: "string"
+                                maxLength: 10000
+                              sourceTextInfo: 
+                                type: "string"
+                                maxLength: 10000
+                              chartFooterText: 
+                                type: "string"
+                                maxLength: 10000
+                              showHeading: 
+                                type: "boolean"
+                              enableDownloadData: 
+                                type: "boolean"
+                              enableDownloadImage: 
+                                type: "boolean"
+                              enableShare: 
+                                type: "boolean"
+                              showDataTransposed: 
+                                type: "boolean"
+                              showPoweredBy: 
+                                type: "boolean"
+                            required: 
+                              - "enabled"
+                          - 
+                            type: "null"
                       config: 
                         anyOf: 
                           - {}
@@ -1060,17 +1404,13 @@
                           - 
                             type: "null"
                       isRemote: 
-                        anyOf: 
-                          - 
-                            type: "boolean"
-                          - 
-                            type: "null"
+                        type: 
+                          - "boolean"
+                          - "null"
                       remoteUrl: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       publish: 
                         type: "boolean"
                       createdAt: 
@@ -1127,20 +1467,54 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     chart: 
                       type: "string"
                     dataSource: {}
+                    wrapper: 
+                      anyOf: 
+                        - 
+                          type: "object"
+                          properties: 
+                            enabled: 
+                              type: "boolean"
+                            title: 
+                              type: "string"
+                              maxLength: 10000
+                            subTitle: 
+                              type: "string"
+                              maxLength: 10000
+                            text: 
+                              type: "string"
+                              maxLength: 10000
+                            sourceTextInfo: 
+                              type: "string"
+                              maxLength: 10000
+                            chartFooterText: 
+                              type: "string"
+                              maxLength: 10000
+                            showHeading: 
+                              type: "boolean"
+                            enableDownloadData: 
+                              type: "boolean"
+                            enableDownloadImage: 
+                              type: "boolean"
+                            enableShare: 
+                              type: "boolean"
+                            showDataTransposed: 
+                              type: "boolean"
+                            showPoweredBy: 
+                              type: "boolean"
+                          required: 
+                            - "enabled"
+                        - 
+                          type: "null"
                     config: 
                       anyOf: 
                         - {}
@@ -1152,17 +1526,13 @@
                         - 
                           type: "null"
                     isRemote: 
-                      anyOf: 
-                        - 
-                          type: "boolean"
-                        - 
-                          type: "null"
+                      type: 
+                        - "boolean"
+                        - "null"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
                       type: "boolean"
                     createdAt: 
@@ -1216,6 +1586,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -1230,22 +1601,52 @@
                   config: {}
                   data: {}
                   dataSource: {}
-                  remoteUrl: 
-                    anyOf: 
-                      - 
+                  wrapper: 
+                    type: "object"
+                    properties: 
+                      enabled: 
+                        type: "boolean"
+                      title: 
                         type: "string"
-                      - 
-                        type: "null"
+                        maxLength: 10000
+                      subTitle: 
+                        type: "string"
+                        maxLength: 10000
+                      text: 
+                        type: "string"
+                        maxLength: 10000
+                      sourceTextInfo: 
+                        type: "string"
+                        maxLength: 10000
+                      chartFooterText: 
+                        type: "string"
+                        maxLength: 10000
+                      showHeading: 
+                        type: "boolean"
+                      enableDownloadData: 
+                        type: "boolean"
+                      enableDownloadImage: 
+                        type: "boolean"
+                      enableShare: 
+                        type: "boolean"
+                      showDataTransposed: 
+                        type: "boolean"
+                      showPoweredBy: 
+                        type: "boolean"
+                    required: 
+                      - "enabled"
+                  remoteUrl: 
+                    type: 
+                      - "string"
+                      - "null"
                   isRemote: 
                     type: "boolean"
                   publish: 
                     type: "boolean"
                   preview: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   projectId: 
                     type: "string"
                 required: 
@@ -1266,20 +1667,54 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     chart: 
                       type: "string"
                     dataSource: {}
+                    wrapper: 
+                      anyOf: 
+                        - 
+                          type: "object"
+                          properties: 
+                            enabled: 
+                              type: "boolean"
+                            title: 
+                              type: "string"
+                              maxLength: 10000
+                            subTitle: 
+                              type: "string"
+                              maxLength: 10000
+                            text: 
+                              type: "string"
+                              maxLength: 10000
+                            sourceTextInfo: 
+                              type: "string"
+                              maxLength: 10000
+                            chartFooterText: 
+                              type: "string"
+                              maxLength: 10000
+                            showHeading: 
+                              type: "boolean"
+                            enableDownloadData: 
+                              type: "boolean"
+                            enableDownloadImage: 
+                              type: "boolean"
+                            enableShare: 
+                              type: "boolean"
+                            showDataTransposed: 
+                              type: "boolean"
+                            showPoweredBy: 
+                              type: "boolean"
+                          required: 
+                            - "enabled"
+                        - 
+                          type: "null"
                     config: 
                       anyOf: 
                         - {}
@@ -1291,17 +1726,13 @@
                         - 
                           type: "null"
                     isRemote: 
-                      anyOf: 
-                        - 
-                          type: "boolean"
-                        - 
-                          type: "null"
+                      type: 
+                        - "boolean"
+                        - "null"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
                       type: "boolean"
                     createdAt: 
@@ -1376,20 +1807,54 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     chart: 
                       type: "string"
                     dataSource: {}
+                    wrapper: 
+                      anyOf: 
+                        - 
+                          type: "object"
+                          properties: 
+                            enabled: 
+                              type: "boolean"
+                            title: 
+                              type: "string"
+                              maxLength: 10000
+                            subTitle: 
+                              type: "string"
+                              maxLength: 10000
+                            text: 
+                              type: "string"
+                              maxLength: 10000
+                            sourceTextInfo: 
+                              type: "string"
+                              maxLength: 10000
+                            chartFooterText: 
+                              type: "string"
+                              maxLength: 10000
+                            showHeading: 
+                              type: "boolean"
+                            enableDownloadData: 
+                              type: "boolean"
+                            enableDownloadImage: 
+                              type: "boolean"
+                            enableShare: 
+                              type: "boolean"
+                            showDataTransposed: 
+                              type: "boolean"
+                            showPoweredBy: 
+                              type: "boolean"
+                          required: 
+                            - "enabled"
+                        - 
+                          type: "null"
                     config: 
                       anyOf: 
                         - {}
@@ -1401,17 +1866,13 @@
                         - 
                           type: "null"
                     isRemote: 
-                      anyOf: 
-                        - 
-                          type: "boolean"
-                        - 
-                          type: "null"
+                      type: 
+                        - "boolean"
+                        - "null"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
                       type: "boolean"
                     createdAt: 
@@ -1486,20 +1947,54 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     chart: 
                       type: "string"
                     dataSource: {}
+                    wrapper: 
+                      anyOf: 
+                        - 
+                          type: "object"
+                          properties: 
+                            enabled: 
+                              type: "boolean"
+                            title: 
+                              type: "string"
+                              maxLength: 10000
+                            subTitle: 
+                              type: "string"
+                              maxLength: 10000
+                            text: 
+                              type: "string"
+                              maxLength: 10000
+                            sourceTextInfo: 
+                              type: "string"
+                              maxLength: 10000
+                            chartFooterText: 
+                              type: "string"
+                              maxLength: 10000
+                            showHeading: 
+                              type: "boolean"
+                            enableDownloadData: 
+                              type: "boolean"
+                            enableDownloadImage: 
+                              type: "boolean"
+                            enableShare: 
+                              type: "boolean"
+                            showDataTransposed: 
+                              type: "boolean"
+                            showPoweredBy: 
+                              type: "boolean"
+                          required: 
+                            - "enabled"
+                        - 
+                          type: "null"
                     config: 
                       anyOf: 
                         - {}
@@ -1511,17 +2006,13 @@
                         - 
                           type: "null"
                     isRemote: 
-                      anyOf: 
-                        - 
-                          type: "boolean"
-                        - 
-                          type: "null"
+                      type: 
+                        - "boolean"
+                        - "null"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
                       type: "boolean"
                     createdAt: 
@@ -1582,6 +2073,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -1596,24 +2088,54 @@
                   config: {}
                   data: {}
                   dataSource: {}
+                  wrapper: 
+                    type: "object"
+                    properties: 
+                      enabled: 
+                        type: "boolean"
+                      title: 
+                        type: "string"
+                        maxLength: 10000
+                      subTitle: 
+                        type: "string"
+                        maxLength: 10000
+                      text: 
+                        type: "string"
+                        maxLength: 10000
+                      sourceTextInfo: 
+                        type: "string"
+                        maxLength: 10000
+                      chartFooterText: 
+                        type: "string"
+                        maxLength: 10000
+                      showHeading: 
+                        type: "boolean"
+                      enableDownloadData: 
+                        type: "boolean"
+                      enableDownloadImage: 
+                        type: "boolean"
+                      enableShare: 
+                        type: "boolean"
+                      showDataTransposed: 
+                        type: "boolean"
+                      showPoweredBy: 
+                        type: "boolean"
+                    required: 
+                      - "enabled"
                   publish: 
                     type: "boolean"
                   remoteUrl: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   isRemote: 
                     type: "boolean"
                   id: 
                     type: "string"
                   preview: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   slots: 
                     anyOf: 
                       - 
@@ -1638,20 +2160,54 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     chart: 
                       type: "string"
                     dataSource: {}
+                    wrapper: 
+                      anyOf: 
+                        - 
+                          type: "object"
+                          properties: 
+                            enabled: 
+                              type: "boolean"
+                            title: 
+                              type: "string"
+                              maxLength: 10000
+                            subTitle: 
+                              type: "string"
+                              maxLength: 10000
+                            text: 
+                              type: "string"
+                              maxLength: 10000
+                            sourceTextInfo: 
+                              type: "string"
+                              maxLength: 10000
+                            chartFooterText: 
+                              type: "string"
+                              maxLength: 10000
+                            showHeading: 
+                              type: "boolean"
+                            enableDownloadData: 
+                              type: "boolean"
+                            enableDownloadImage: 
+                              type: "boolean"
+                            enableShare: 
+                              type: "boolean"
+                            showDataTransposed: 
+                              type: "boolean"
+                            showPoweredBy: 
+                              type: "boolean"
+                          required: 
+                            - "enabled"
+                        - 
+                          type: "null"
                     config: 
                       anyOf: 
                         - {}
@@ -1663,17 +2219,13 @@
                         - 
                           type: "null"
                     isRemote: 
-                      anyOf: 
-                        - 
-                          type: "boolean"
-                        - 
-                          type: "null"
+                      type: 
+                        - "boolean"
+                        - "null"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
                       type: "boolean"
                     createdAt: 
@@ -1733,6 +2285,170 @@
             schema: 
               type: "string"
             required: true
+    /api/charts/{id}/duplicate: 
+      post: 
+        operationId: "postApiChartsByIdDuplicate"
+        description: "Duplicate a chart (chart, map or KPI group) in its project. The copy is named after `name`, or '<title> copy <UTC timestamp>'. Requires READWRITE access."
+        responses: 
+          201: 
+            description: "Created copy"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      type: 
+                        - "string"
+                        - "null"
+                    description: 
+                      type: 
+                        - "string"
+                        - "null"
+                    chart: 
+                      type: "string"
+                    dataSource: {}
+                    wrapper: 
+                      anyOf: 
+                        - 
+                          type: "object"
+                          properties: 
+                            enabled: 
+                              type: "boolean"
+                            title: 
+                              type: "string"
+                              maxLength: 10000
+                            subTitle: 
+                              type: "string"
+                              maxLength: 10000
+                            text: 
+                              type: "string"
+                              maxLength: 10000
+                            sourceTextInfo: 
+                              type: "string"
+                              maxLength: 10000
+                            chartFooterText: 
+                              type: "string"
+                              maxLength: 10000
+                            showHeading: 
+                              type: "boolean"
+                            enableDownloadData: 
+                              type: "boolean"
+                            enableDownloadImage: 
+                              type: "boolean"
+                            enableShare: 
+                              type: "boolean"
+                            showDataTransposed: 
+                              type: "boolean"
+                            showPoweredBy: 
+                              type: "boolean"
+                          required: 
+                            - "enabled"
+                        - 
+                          type: "null"
+                    config: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    data: 
+                      anyOf: 
+                        - {}
+                        - 
+                          type: "null"
+                    isRemote: 
+                      type: 
+                        - "boolean"
+                        - "null"
+                    remoteUrl: 
+                      type: 
+                        - "string"
+                        - "null"
+                    publish: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "chart"
+                    - "config"
+                    - "data"
+                    - "isRemote"
+                    - "remoteUrl"
+                    - "publish"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                    minLength: 1
+                    maxLength: 255
     /api/charts/publish/{id}: 
       post: 
         operationId: "postApiChartsPublishById"
@@ -1849,6 +2565,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -1930,6 +2647,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -2048,17 +2766,13 @@
                         id: 
                           type: "string"
                         name: 
-                          anyOf: 
-                            - 
-                              type: "string"
-                            - 
-                              type: "null"
+                          type: 
+                            - "string"
+                            - "null"
                         description: 
-                          anyOf: 
-                            - 
-                              type: "string"
-                            - 
-                              type: "null"
+                          type: 
+                            - "string"
+                            - "null"
                         config: {}
                         dataSource: 
                           type: "array"
@@ -2163,18 +2877,18 @@
                       projectId: 
                         type: "string"
                       name: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       description: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       publish: 
+                        type: "boolean"
+                      wrapCharts: 
+                        type: "boolean"
+                      singleColumn: 
                         type: "boolean"
                       createdAt: 
                         type: "string"
@@ -2186,6 +2900,8 @@
                       - "name"
                       - "description"
                       - "publish"
+                      - "wrapCharts"
+                      - "singleColumn"
                       - "createdAt"
                       - "updatedAt"
           401: 
@@ -2226,18 +2942,18 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
+                      type: "boolean"
+                    wrapCharts: 
+                      type: "boolean"
+                    singleColumn: 
                       type: "boolean"
                     createdAt: 
                       type: "string"
@@ -2249,6 +2965,8 @@
                     - "name"
                     - "description"
                     - "publish"
+                    - "wrapCharts"
+                    - "singleColumn"
                     - "createdAt"
                     - "updatedAt"
           401: 
@@ -2285,6 +3003,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -2297,21 +3016,21 @@
                   config: {}
                   data: {}
                   remoteUrl: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   isRemote: 
                     type: "boolean"
                   publish: 
                     type: "boolean"
+                  wrapCharts: 
+                    type: "boolean"
+                  singleColumn: 
+                    type: "boolean"
                   preview: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   projectId: 
                     type: "string"
     /api/dashboards/{id}: 
@@ -2331,18 +3050,18 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
+                      type: "boolean"
+                    wrapCharts: 
+                      type: "boolean"
+                    singleColumn: 
                       type: "boolean"
                     createdAt: 
                       type: "string"
@@ -2354,6 +3073,8 @@
                     - "name"
                     - "description"
                     - "publish"
+                    - "wrapCharts"
+                    - "singleColumn"
                     - "createdAt"
                     - "updatedAt"
           401: 
@@ -2455,7 +3176,7 @@
             required: true
       put: 
         operationId: "putApiDashboardsById"
-        description: "Update dashboard metadata (name, description, publish state). Requires READWRITE access."
+        description: "Update dashboard metadata (name, description, publish state, wrapCharts, singleColumn). Requires READWRITE access."
         responses: 
           200: 
             description: "Updated dashboard"
@@ -2469,18 +3190,18 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
+                      type: "boolean"
+                    wrapCharts: 
+                      type: "boolean"
+                    singleColumn: 
                       type: "boolean"
                     createdAt: 
                       type: "string"
@@ -2492,6 +3213,8 @@
                     - "name"
                     - "description"
                     - "publish"
+                    - "wrapCharts"
+                    - "singleColumn"
                     - "createdAt"
                     - "updatedAt"
           401: 
@@ -2546,6 +3269,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -2559,22 +3283,22 @@
                   data: {}
                   publish: 
                     type: "boolean"
+                  wrapCharts: 
+                    type: "boolean"
+                  singleColumn: 
+                    type: "boolean"
                   remoteUrl: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   isRemote: 
                     type: "boolean"
                   id: 
                     type: "string"
                   preview: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   slots: 
                     type: "array"
                     items: 
@@ -2609,18 +3333,18 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
+                      type: "boolean"
+                    wrapCharts: 
+                      type: "boolean"
+                    singleColumn: 
                       type: "boolean"
                     createdAt: 
                       type: "string"
@@ -2632,6 +3356,8 @@
                     - "name"
                     - "description"
                     - "publish"
+                    - "wrapCharts"
+                    - "singleColumn"
                     - "createdAt"
                     - "updatedAt"
           401: 
@@ -2674,13 +3400,13 @@
             schema: 
               type: "string"
             required: true
-    /api/dashboards/{id}/slots: 
-      put: 
-        operationId: "putApiDashboardsByIdSlots"
-        description: "Replace all chart slots for a dashboard. Requires READWRITE access."
+    /api/dashboards/{id}/duplicate: 
+      post: 
+        operationId: "postApiDashboardsByIdDuplicate"
+        description: "Duplicate a dashboard in its project: same slots and charts, text blocks copied. The copy is named after `name`, or '<title> copy <UTC timestamp>'. Requires READWRITE access."
         responses: 
-          200: 
-            description: "Updated dashboard"
+          201: 
+            description: "Created copy"
             content: 
               application/json: 
                 schema: 
@@ -2691,18 +3417,18 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     publish: 
+                      type: "boolean"
+                    wrapCharts: 
+                      type: "boolean"
+                    singleColumn: 
                       type: "boolean"
                     createdAt: 
                       type: "string"
@@ -2714,6 +3440,8 @@
                     - "name"
                     - "description"
                     - "publish"
+                    - "wrapCharts"
+                    - "singleColumn"
                     - "createdAt"
                     - "updatedAt"
           401: 
@@ -2768,6 +3496,113 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  name: 
+                    type: "string"
+                    minLength: 1
+                    maxLength: 255
+    /api/dashboards/{id}/slots: 
+      put: 
+        operationId: "putApiDashboardsByIdSlots"
+        description: "Replace all chart slots for a dashboard. Requires READWRITE access."
+        responses: 
+          200: 
+            description: "Updated dashboard"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    id: 
+                      type: "string"
+                    projectId: 
+                      type: "string"
+                    name: 
+                      type: 
+                        - "string"
+                        - "null"
+                    description: 
+                      type: 
+                        - "string"
+                        - "null"
+                    publish: 
+                      type: "boolean"
+                    wrapCharts: 
+                      type: "boolean"
+                    singleColumn: 
+                      type: "boolean"
+                    createdAt: 
+                      type: "string"
+                    updatedAt: 
+                      type: "string"
+                  required: 
+                    - "id"
+                    - "projectId"
+                    - "name"
+                    - "description"
+                    - "publish"
+                    - "wrapCharts"
+                    - "singleColumn"
+                    - "createdAt"
+                    - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          403: 
+            description: "Write access required"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Not Found"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          500: 
+            description: "Internal error"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        parameters: 
+          - 
+            in: "path"
+            name: "id"
+            schema: 
+              type: "string"
+            required: true
+        requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -2811,17 +3646,13 @@
                       projectId: 
                         type: "string"
                       name: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       description: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       data: {}
                       rules: 
                         anyOf: 
@@ -2833,11 +3664,9 @@
                       isTrasposed: 
                         type: "boolean"
                       remoteUrl: 
-                        anyOf: 
-                          - 
-                            type: "string"
-                          - 
-                            type: "null"
+                        type: 
+                          - "string"
+                          - "null"
                       isRemote: 
                         type: "boolean"
                       createdAt: 
@@ -2895,17 +3724,13 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     data: {}
                     rules: 
                       anyOf: 
@@ -2917,11 +3742,9 @@
                     isTrasposed: 
                       type: "boolean"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     isRemote: 
                       type: "boolean"
                     createdAt: 
@@ -2975,6 +3798,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -2991,11 +3815,9 @@
                   isTrasposed: 
                     type: "boolean"
                   remoteUrl: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   isRemote: 
                     type: "boolean"
                   projectId: 
@@ -3019,17 +3841,13 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     data: {}
                     rules: 
                       anyOf: 
@@ -3041,11 +3859,9 @@
                     isTrasposed: 
                       type: "boolean"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     isRemote: 
                       type: "boolean"
                     createdAt: 
@@ -3065,6 +3881,17 @@
                     - "isRemote"
                     - "createdAt"
                     - "updatedAt"
+          401: 
+            description: "Unauthorized"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
           404: 
             description: "Not Found"
             content: 
@@ -3110,17 +3937,13 @@
                     projectId: 
                       type: "string"
                     name: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     description: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     data: {}
                     rules: 
                       anyOf: 
@@ -3132,11 +3955,9 @@
                     isTrasposed: 
                       type: "boolean"
                     remoteUrl: 
-                      anyOf: 
-                        - 
-                          type: "string"
-                        - 
-                          type: "null"
+                      type: 
+                        - "string"
+                        - "null"
                     isRemote: 
                       type: "boolean"
                     createdAt: 
@@ -3208,6 +4029,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -3224,11 +4046,9 @@
                   isTrasposed: 
                     type: "boolean"
                   remoteUrl: 
-                    anyOf: 
-                      - 
-                        type: "string"
-                      - 
-                        type: "null"
+                    type: 
+                      - "string"
+                      - "null"
                   isRemote: 
                     type: "boolean"
                   projectId: 
@@ -3423,6 +4243,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -3519,6 +4340,17 @@
                       type: "string"
                   required: 
                     - "error"
+    /api/ipa/enti: 
+      get: 
+        operationId: "getApiIpaEnti"
+        description: "Enti di IndicePA per il campo «PA di appartenenza», dal file data/ipa-enti.json: { updatedAt, types, enti: [codiceIPA, denominazione, indice in types][] }."
+        responses: 
+          200: 
+            description: "Elenco degli enti"
+          304: 
+            description: "Elenco invariato (If-None-Match)"
+          503: 
+            description: "File degli enti non disponibile"
     /api/orgs: 
       get: 
         operationId: "getApiOrgs"
@@ -3593,6 +4425,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -3721,6 +4554,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -3887,6 +4721,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -3895,7 +4730,7 @@
                   email: 
                     type: "string"
                     format: "email"
-                    pattern: "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    pattern: "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                   role: 
                     default: "USER"
                     type: "string"
@@ -4010,6 +4845,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -4063,6 +4899,90 @@
             schema: 
               type: "string"
             required: true
+    /api/oscar/pa-verification: 
+      post: 
+        operationId: "postApiOscarPaVerification"
+        description: "Callback of the Oscar service with the outcome of a PA membership check: the payload we sent plus `verified`. Bearer: HS256 JWT signed with OSCAR_KEY (iss \"oscar\", aud \"graph-italia\"). Only when ENABLE_OSCAR_PA_VERIFICATION is true."
+        responses: 
+          200: 
+            description: "Outcome saved"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    paVerified: 
+                      type: "number"
+                  required: 
+                    - "paVerified"
+          400: 
+            description: "Invalid payload"
+          401: 
+            description: "Missing or invalid bearer"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          404: 
+            description: "Feature disabled, or unknown user"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+          409: 
+            description: "The user's PA has changed since the request"
+            content: 
+              application/json: 
+                schema: 
+                  type: "object"
+                  properties: 
+                    error: 
+                      type: "string"
+                  required: 
+                    - "error"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  userId: 
+                    type: "string"
+                    minLength: 1
+                  firstName: 
+                    type: "string"
+                  lastName: 
+                    type: "string"
+                  pa: 
+                    type: "object"
+                    properties: 
+                      code: 
+                        type: "string"
+                        minLength: 1
+                      name: 
+                        type: "string"
+                    required: 
+                      - "code"
+                      - "name"
+                  verified: 
+                    type: "boolean"
+                required: 
+                  - "userId"
+                  - "firstName"
+                  - "lastName"
+                  - "pa"
+                  - "verified"
     /api/projects: 
       get: 
         operationId: "getApiProjects"
@@ -4165,6 +5085,7 @@
                   required: 
                     - "error"
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -4351,6 +5272,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -4517,6 +5439,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -4599,6 +5522,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 
@@ -4692,6 +5616,7 @@
               type: "string"
             required: true
         requestBody: 
+          required: true
           content: 
             application/json: 
               schema: 

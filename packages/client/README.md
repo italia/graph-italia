@@ -114,13 +114,16 @@ Calling `getGraphItaliaAPI(axiosInstance)` returns an object with one method per
 
 | Area | Functions |
 |---|---|
-| **Admin** (session, ADMIN role) | `getApiAdminUsers`, `deleteApiAdminUsersById`, `postApiAdminUsersByIdActivate`, `postApiAdminUsersByIdResendActivation`, `postApiAdminUsersByIdResetPassword` |
+| **Admin** (session, ADMIN role) | `getApiAdminUsers`, `deleteApiAdminUsersById`, `postApiAdminUsersByIdActivate`, `postApiAdminUsersByIdResendActivation`, `postApiAdminUsersByIdResetPassword`, `patchApiAdminUsersByIdRole`, `getApiAdminUsersDuplicates`, `postApiAdminUsersMerge` |
 | **Auth** | `getApiAuthUser`, `postApiAuthRegister`, `postApiAuthLogin`, `postApiAuthRecover`, `postApiAuthResend`, `getApiAuthLogout`, `postApiAuthVerify`, `getApiAuthConfirmByUidByCode`, `postApiAuthResetPassword`, `putApiAuthPwd` |
 | **API keys** (session only) | `getApiApikeys`, `postApiApikeys`, `deleteApiApikeysById`, `patchApiApikeysByIdRevoke`, `patchApiApikeysByIdReinstate`, `getApiApikeysByIdLogs` |
-| **Charts** | `getApiCharts`, `postApiCharts`, `getApiChartsById`, `deleteApiChartsById`, `putApiChartsById`, `getApiChartsShowById` (public), `postApiChartsPublishById`, `postApiChartsKpiGroup` (session only), `putApiChartsKpiGroupById`, `getApiChartsKpiGroupById` |
-| **Dashboards** | `getApiDashboards`, `postApiDashboards`, `getApiDashboardsById`, `deleteApiDashboardsById`, `putApiDashboardsById`, `getApiDashboardsShowById` (public), `putApiDashboardsByIdSlots` |
+| **Charts** | `getApiCharts`, `postApiCharts`, `getApiChartsById`, `deleteApiChartsById`, `putApiChartsById`, `getApiChartsShowById` (public), `postApiChartsPublishById`, `postApiChartsKpiGroup` (session only), `putApiChartsKpiGroupById`, `getApiChartsKpiGroupById`, `postApiChartsByIdDuplicate`. A chart carries its ChartWrapper settings in `wrapper` (`null` when never set); type `"text"` is a dashboard markdown block (`config.content`) |
+| **Dashboards** | `getApiDashboards`, `postApiDashboards`, `getApiDashboardsById`, `deleteApiDashboardsById`, `putApiDashboardsById`, `getApiDashboardsShowById` (public), `putApiDashboardsByIdSlots`, `postApiDashboardsByIdDuplicate`. A dashboard carries `wrapCharts` (every chart wrapped) and `singleColumn` |
 | **Data sources** | `getApiDatasources`, `postApiDatasources`, `getApiDatasourcesById`, `putApiDatasourcesById`, `deleteApiDatasourcesById`, `getApiDatasourcesByIdLinks`, `postApiDatasourcesByIdLinks`, `deleteApiDatasourcesByIdLinksByChartId` |
 | **AI hints** (session only) | `postApiHints` |
+| **SPID/CIE (OIDC)** — browser flow, not for API clients | `getApiOidcLogin`, `getApiOidcCallback`, `getApiOidcLogout`, `getApiOidcSignupStatus`, `postApiOidcSignupEmailSend`, `postApiOidcSignupEmailVerify`, `postApiOidcSignup` |
+| **IndicePA** (public) | `getApiIpaEnti` |
+| **Oscar** (Oscar's callback, HS256 bearer) | `postApiOscarPaVerification` |
 | **Orgs** (session only) | `getApiOrgs`, `postApiOrgs`, `getApiOrgsByOrgId`, `putApiOrgsByOrgId`, `deleteApiOrgsByOrgId`, `getApiOrgsByOrgIdMembers`, `postApiOrgsByOrgIdMembers`, `getApiOrgsByOrgIdProjects`, `putApiOrgsByOrgIdMembersByUserId`, `deleteApiOrgsByOrgIdMembersByUserId` |
 | **Projects** (session only) | `getApiProjects`, `postApiProjects`, `getApiProjectsPersonal`, `getApiProjectsByProjectId`, `putApiProjectsByProjectId`, `deleteApiProjectsByProjectId`, `getApiProjectsByProjectIdMembers`, `postApiProjectsByProjectIdMembers`, `putApiProjectsByProjectIdMembersByUserId`, `deleteApiProjectsByProjectIdMembersByUserId`, `postApiProjectsByProjectIdOrgs`, `deleteApiProjectsByProjectIdOrgsByOrgId` |
 
