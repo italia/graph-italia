@@ -5,6 +5,7 @@ import RenderChart from "./RenderChart";
 import ChartWrapper from "./chartwrapper/ChartWrapper";
 import type { ChartWrapperProps } from "./chartwrapper/ChartWrapper";
 import { isWrappable } from "../lib/utils";
+import { shouldWrap, wrapperInfo } from "../lib/wrapperSettings";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -31,6 +32,10 @@ export interface DashboardData {
   name?: string;
   description?: string;
   publish?: boolean;
+  /** Saved "show every chart with wrapper" switch of the dashboard. */
+  wrapCharts?: boolean;
+  /** Saved single-column layout of the dashboard. */
+  singleColumn?: boolean;
   slots: DashboardSlot[];
 }
 
@@ -44,21 +49,28 @@ export interface RenderDashboardProps {
   showHeading?: boolean;
   /**
    * When true, renders each chart inside ChartWrapper (tabs, download,
-   * data table, info panel) instead of a bare RenderChart. Defaults to false.
+   * data table, info panel) instead of a bare RenderChart; false never.
+   * When omitted, a chart is wrapped if its saved settings turn the wrapper
+   * on, or the dashboard's wrapCharts does. Text blocks are never wrapped.
    */
   withWrapper?: boolean;
-  /** When true, renders the PoweredBy footer on each chart. Defaults to false. */
+  /**
+   * When true, renders the PoweredBy footer on each chart. When omitted, the
+   * chart's saved wrapper settings decide (off by default).
+   */
   showPoweredBy?: boolean;
   /**
    * When true, the data table tab and the data download of each chart use a
    * transposed version of the chart data. The chart itself always renders
-   * the data untransposed. Defaults to false.
+   * the data untransposed. When omitted, the chart's saved wrapper settings
+   * decide (off by default).
    */
   showDataTransposed?: boolean;
   /**
    * When true, every slot takes the full width, one below the other in reading
    * order, whatever the container width. Use it where the grid does not fit,
-   * e.g. inside padded or narrow containers. Defaults to false.
+   * e.g. inside padded or narrow containers. When omitted, the dashboard's
+   * saved singleColumn decides (off by default).
    */
   singleColumn?: boolean;
   /**
@@ -142,10 +154,10 @@ export function RenderDashboard({
   rowHeight = 380,
   margin = 16,
   showHeading = true,
-  withWrapper = false,
-  showPoweredBy = false,
-  showDataTransposed = false,
-  singleColumn = false,
+  withWrapper,
+  showPoweredBy,
+  showDataTransposed,
+  singleColumn: singleColumnProp,
   wrapperLabels = {},
   wrapperFuncts = {},
 }: RenderDashboardProps) {
@@ -166,7 +178,10 @@ export function RenderDashboard({
 
   const slotHeight = (h: number) => rowHeight * h + margin * (h - 1);
   // Text blocks are never wrapped, whatever withWrapper says.
-  const wraps = (chart?: FieldDataType) => withWrapper && isWrappable(chart?.chart);
+  const wraps = (chart?: FieldDataType) =>
+    shouldWrap(chart, withWrapper, { wrapCharts: data.wrapCharts === true }) &&
+    isWrappable(chart?.chart);
+  const singleColumn = singleColumnProp ?? data.singleColumn === true;
   const slotStyle = (chart?: FieldDataType): React.CSSProperties => ({
     overflow: wraps(chart) ? "visible" : "hidden",
     borderRadius: 8,
@@ -179,12 +194,7 @@ export function RenderDashboard({
     return wraps(chart) ? (
       <ChartWrapper
         data={chart}
-        info={{
-          text: chart.description ?? "",
-          title: chart.name ?? "",
-          subTitle: "",
-          ...wrapperLabels,
-        }}
+        info={wrapperInfo(chart, wrapperLabels)}
         rowHeight={chartHeight}
         hFactor={1}
         showPoweredBy={showPoweredBy}

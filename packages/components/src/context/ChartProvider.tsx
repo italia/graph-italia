@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import RenderChart from "../components/RenderChart";
 import ChartWrapper from "../components/chartwrapper/ChartWrapper";
 import type { FieldDataType, InfosType } from "../types";
+import { shouldWrap } from "../lib/wrapperSettings";
 import { ColorSchemeProvider } from "./ColorSchemeContext";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -21,22 +22,27 @@ export interface ChartProviderProps {
   rowHeight?: number;
   /** Optional label shown in the PoweredBy footer. */
   poweredByLabel?: string;
-  /** When true, renders the PoweredBy footer. Defaults to false. */
+  /**
+   * When true, renders the PoweredBy footer. When omitted, the chart's saved
+   * wrapper settings decide (off by default).
+   */
   showPoweredBy?: boolean;
   /**
    * When true, renders the chart inside ChartWrapper (tabs, download,
-   * data table, info panel). Defaults to true.
+   * data table, info panel); false never. When omitted, the chart's saved
+   * wrapper settings decide (off by default). Text blocks are never wrapped.
    */
   withWrapper?: boolean;
   /**
    * When true, the data table tab and the data download use a transposed
    * version of the chart data (rows/columns swapped). The chart itself
-   * always renders the data untransposed. Defaults to false.
+   * always renders the data untransposed. When omitted, the chart's saved
+   * wrapper settings decide (off by default).
    */
   showDataTransposed?: boolean;
   /**
-   * Extra info passed to ChartWrapper when withWrapper is true.
-   * The chart's name and description are used as defaults for title/subTitle.
+   * Extra info passed to ChartWrapper, on top of the chart's saved wrapper
+   * texts. Title and subTitle default to the chart's name and description.
    */
   wrapperInfo?: Partial<InfosType>;
   /**
@@ -146,7 +152,7 @@ function ChartContent({
   showDataTransposed,
 }: {
   chart: FieldDataType;
-  withWrapper: boolean;
+  withWrapper?: boolean;
   wrapperInfo: Partial<InfosType>;
   hFactor?: number;
   rowHeight?: number;
@@ -154,11 +160,11 @@ function ChartContent({
   showPoweredBy?: boolean;
   showDataTransposed?: boolean;
 }) {
-  if (withWrapper) {
+  if (shouldWrap(chart, withWrapper)) {
+    // Title and subTitle are left to ChartWrapper: the chart's saved wrapper
+    // texts, else its name and description.
     const info: InfosType = {
       text: "",
-      title: chart.name ?? "",
-      subTitle: chart.description ?? "",
       poweredByLabel,
       ...wrapperInfo,
     };
@@ -214,9 +220,9 @@ export function ChartProvider({
   hFactor,
   rowHeight,
   poweredByLabel,
-  showPoweredBy = false,
-  withWrapper = false,
-  showDataTransposed = false,
+  showPoweredBy,
+  withWrapper,
+  showDataTransposed,
   wrapperInfo = {},
   detectUserPrefColorsSchema = false,
   loadingElement,

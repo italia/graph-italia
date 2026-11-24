@@ -288,6 +288,12 @@ import { DashboardGridProvider } from "graph-italia-components";
 <DashboardGridProvider apiKey="dv_..." endpoint="https://..." dashboardId="..." singleColumn />
 ```
 
+**Settings saved in the Graph Italia editor.** Charts and dashboards carry what their authors chose in the editor, and the components apply it below your props:
+
+- A chart's `wrapper` (`ChartWrapperSettings`): `ChartWrapper` takes its title, subtitle, Info tab text, data source and footer note, and its `showHeading`, `enableDownloadData`, `enableDownloadImage`, `showDataTransposed` and `showPoweredBy`. Empty title and subtitle fall back on the chart's name and description. What you pass wins: non-empty `info`/`wrapperInfo`/`wrapperLabels` texts and labels, explicit flags. `enableShare` is not applied: the share button follows your `shareFunction`, since only your page knows the link to share.
+- Whether to wrap: an explicit `withWrapper` decides. When you leave it out, `ChartProvider`, `RenderDashboard` and `RenderGridDashboard` wrap a chart whose saved wrapper is on, or every chart of a dashboard saved with `wrapCharts`. `DashboardProvider` and `DashboardGridProvider` keep wrapping every chart by default. Text blocks are never wrapped.
+- A dashboard's `singleColumn` applies when you leave the prop out.
+
 Both `ChartProvider`/`DashboardProvider`/`DashboardGridProvider` accept `loadingElement`/`errorElement` overrides for custom loading/error UI, and internally wrap their content in `ColorSchemeProvider` when `detectUserPrefColorsSchema` is set — you don't need to add your own provider in that case. If you're driving the scheme yourself (e.g. from your host app's own theme state), wrap them in your own `<ColorSchemeProvider scheme={...}>` instead and leave `detectUserPrefColorsSchema` off.
 
 The API key must be `dv_`-prefixed and is sent as `Authorization: Bearer <apiKey>` to `{endpoint}{routePrefix}/charts/{chartId}` or `/dashboards/{dashboardId}` (`routePrefix` defaults to `/api`). See the `packages/client` README for how API keys, roles, and scopes work on the server side.

@@ -20,6 +20,33 @@ export type FieldDataType = {
   isRemote?: boolean;
   updatedAt?: string;
   createdAt?: string;
+  /** ChartWrapper settings saved with the chart in the Graph Italia editor. */
+  wrapper?: ChartWrapperSettings | null;
+};
+
+/**
+ * ChartWrapper settings saved with a chart (`wrapper` on the server). When
+ * present, ChartWrapper uses them below its own props: empty title and
+ * subTitle fall back on the chart name and description.
+ */
+export type ChartWrapperSettings = {
+  /** The author's choice to show the chart with its wrapper. */
+  enabled: boolean;
+  title?: string;
+  subTitle?: string;
+  /** Markdown of the "Info" tab. */
+  text?: string;
+  /** Markdown after the "Data source" label. */
+  sourceTextInfo?: string;
+  /** Markdown under the chart. */
+  chartFooterText?: string;
+  showHeading?: boolean;
+  enableDownloadData?: boolean;
+  enableDownloadImage?: boolean;
+  /** Not applied by the library: the share button follows the host's shareFunction. */
+  enableShare?: boolean;
+  showDataTransposed?: boolean;
+  showPoweredBy?: boolean;
 };
 
 export type Step = {

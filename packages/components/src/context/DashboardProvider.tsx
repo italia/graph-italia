@@ -26,19 +26,29 @@ export interface DashboardProviderProps {
    * the user's prefers-color-scheme media query. Defaults to false.
    */
   detectUserPrefColorsSchema?: boolean;
+  /**
+   * Renders every chart inside ChartWrapper. Defaults to true; false renders
+   * bare charts. Text blocks are never wrapped. Each chart's saved wrapper
+   * settings (texts, buttons) are applied below these props.
+   */
   withWrapper?: boolean;
-  /** When true, renders the PoweredBy footer on each chart. Defaults to false. */
+  /**
+   * When true, renders the PoweredBy footer on each chart. When omitted, the
+   * chart's saved wrapper settings decide (off by default).
+   */
   showPoweredBy?: boolean;
   /**
    * When true, the data table tab and the data download of each chart use a
    * transposed version of the chart data. The chart itself always renders
-   * the data untransposed. Defaults to false.
+   * the data untransposed. When omitted, the chart's saved wrapper settings
+   * decide (off by default).
    */
   showDataTransposed?: boolean;
   /**
    * When true, every slot takes the full width, one below the other in reading
    * order, whatever the container width. Use it where the grid does not fit,
-   * e.g. inside padded or narrow containers. Defaults to false.
+   * e.g. inside padded or narrow containers. When omitted, the dashboard's
+   * saved singleColumn decides (off by default).
    */
   singleColumn?: boolean;
   /**
@@ -174,9 +184,9 @@ export function DashboardProvider({
   showHeading,
   detectUserPrefColorsSchema = false,
   withWrapper = true,
-  showPoweredBy = false,
-  showDataTransposed = false,
-  singleColumn = false,
+  showPoweredBy,
+  showDataTransposed,
+  singleColumn,
   wrapperLabels = {},
   wrapperFuncts = {},
   loadingElement,
