@@ -244,6 +244,14 @@ const dashboard: DashboardData = {
 <RenderDashboard data={dashboard} withWrapper showPoweredBy />
 ```
 
+#### Text blocks — the `"text"` chart type
+
+Dashboards can hold markdown text blocks: charts of type `"text"` with the markdown in `config.content` and no data. `RenderChart` renders them as a `TextBlock` (GitHub-flavored markdown, `.dv-text-block`), with headings shifted two levels down so that `# Title` becomes an `<h3>` under the dashboard's `<h2>`. They are **never wrapped**: `ChartWrapper` renders a text chart bare, and `withWrapper` on `RenderDashboard` / `RenderGridDashboard` / `DashboardGridProvider` skips text slots.
+
+```tsx
+<RenderChart id="note-1" chart="text" name="Nota" config={{ content: "## Nota\n\nDati **provvisori**." } as ChartConfigType} />
+```
+
 ### 3. Fetch-and-render against a Graph Italia server — `ChartProvider` / `DashboardProvider` / `DashboardGridProvider`
 
 For embedding a chart/dashboard by ID with an API key, no manual `fetch` needed — these components own the request lifecycle (loading/error states, abort-on-unmount) and hand off to the components above once the data arrives.

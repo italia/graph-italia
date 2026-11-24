@@ -40,6 +40,19 @@ const detailSchema = z.object({
 const DESCRIPTION_REQUIRED = "Description is required: it is used as the chart's text alternative";
 const requiresDescription = (chart: string | undefined) => chart !== "text";
 
+// A "text" chart (dashboard text block) is markdown in config.content: no
+// data, never shown inside the ChartWrapper (packages/components TextBlock).
+const TEXT_CONTENT_REQUIRED = 'A "text" chart needs its markdown in config.content';
+const TEXT_CONTENT_MAX = 50_000;
+function checkTextContent(config: unknown, ctx: z.RefinementCtx) {
+	const content = (config as { content?: unknown } | null | undefined)?.content;
+	if (typeof content !== "string") {
+		ctx.addIssue({ code: "custom", path: ["config", "content"], message: TEXT_CONTENT_REQUIRED });
+	} else if (content.length > TEXT_CONTENT_MAX) {
+		ctx.addIssue({ code: "custom", path: ["config", "content"], message: `config.content is longer than ${TEXT_CONTENT_MAX} characters` });
+	}
+}
+
 // ChartWrapper settings for the display page (packages/components ChartWrapper).
 // Empty or missing texts fall back on the chart: title → name, subTitle →
 // description. Turning the wrapper off keeps the rest, so it can come back.
@@ -80,6 +93,7 @@ const createChartSchema = z.object({
 	if (requiresDescription(value.chart) && !value.description?.trim()) {
 		ctx.addIssue({ code: "custom", path: ["description"], message: DESCRIPTION_REQUIRED });
 	}
+	if (value.chart === "text") checkTextContent(value.config, ctx);
 });
 
 const updateChartSchema = z.object({
@@ -101,6 +115,8 @@ const updateChartSchema = z.object({
 	if (value.description !== undefined && requiresDescription(value.chart) && !value.description.trim()) {
 		ctx.addIssue({ code: "custom", path: ["description"], message: DESCRIPTION_REQUIRED });
 	}
+	// Partial update: the content is checked when the config is sent
+	if (value.chart === "text" && value.config !== undefined) checkTextContent(value.config, ctx);
 });
 
 const chartSchema = z.object({

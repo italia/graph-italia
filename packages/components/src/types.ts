@@ -47,6 +47,8 @@ export type ChartConfigType = {
   /** When false the description stays the text alternative of the chart but is
       not rendered as visible subtitle. */
   showDescription?: boolean;
+  /** Markdown of a "text" chart (dashboard text block). */
+  content?: string;
   colors: [] | string[];
   direction: string;
   h: number;

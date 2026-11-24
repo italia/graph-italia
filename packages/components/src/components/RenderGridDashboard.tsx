@@ -3,6 +3,7 @@ import type { FieldDataType, InfosType } from "../types";
 import RenderChart from "./RenderChart";
 import ChartWrapper from "./chartwrapper/ChartWrapper";
 import type { WrapperFuncts } from "./RenderDashboard";
+import { isWrappable } from "../lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -169,20 +170,22 @@ export function RenderGridDashboard({
           const colSpan = singleColumn ? 12 : toColSpan(settings.w, bp);
           const slotHeight =
             rowHeight * settings.h + margin * (settings.h - 1);
+          // Text blocks are never wrapped, whatever withWrapper says.
+          const wrap = withWrapper && isWrappable(chart.chart);
           return (
             <div
               key={settings.i}
               style={{
                 gridColumn: `span ${colSpan}`,
                 minWidth: 0,
-                overflow: withWrapper ? "visible" : "hidden",
+                overflow: wrap ? "visible" : "hidden",
                 borderRadius: 8,
                 border: "1px solid rgba(128,128,128,0.15)",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                ...(withWrapper ? { minHeight: slotHeight } : { height: slotHeight }),
+                ...(wrap ? { minHeight: slotHeight } : { height: slotHeight }),
               }}
             >
-              {withWrapper ? (
+              {wrap ? (
                 <ChartWrapper
                   data={chart}
                   info={{

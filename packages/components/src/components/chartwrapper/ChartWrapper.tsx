@@ -1,7 +1,7 @@
 import type { EChartsType } from "echarts";
 import React, { useEffect, useRef, useState } from "react";
 import { dataToCSV, downloadCSV, downloadPng } from "../../lib/downloadUtils";
-import { transposeData } from "../../lib/utils";
+import { isWrappable, transposeData } from "../../lib/utils";
 import { FieldDataType, InfosType } from "../../types";
 import DataTable from "../dataTable/DataTable";
 import RenderChart from "../RenderChart";
@@ -37,7 +37,18 @@ export type ChartWrapperProps = {
    */
   showDataTransposed?: boolean;
 };
+/**
+ * Chart with tabs (chart, data table, info), source and download buttons.
+ * Types that are never wrapped (a "text" block) render as a bare RenderChart.
+ */
 export default function ChartWrapper(props: ChartWrapperProps) {
+  if (!isWrappable(props.data.chart)) {
+    return <RenderChart {...props.data} hFactor={props.hFactor ?? 1} rowHeight={props.rowHeight} />;
+  }
+  return <WrappedChart {...props} />;
+}
+
+function WrappedChart(props: ChartWrapperProps) {
 
   const resolvedTheme = useResolvedTheme();
   const {

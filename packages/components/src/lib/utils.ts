@@ -1,5 +1,15 @@
 import type { ChartConfigType } from "../types";
 
+/**
+ * Chart types never shown inside ChartWrapper: a "text" block has no data,
+ * picture or info to put in tabs and buttons.
+ */
+const NEVER_WRAPPED = new Set(["text"]);
+
+export function isWrappable(chart?: string) {
+  return !NEVER_WRAPPED.has(chart ?? "");
+}
+
 export function isNumeric(s: string) {
   /^[+-]?\d+(\.\d+)?$/.test(s);
 }

@@ -1,0 +1,62 @@
+/* Markdown text block ("text" chart type). Colors follow the host page. */
+.dv-text-block {
+  padding: 16px;
+  line-height: 1.6;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.dv-text-block > :first-child {
+  margin-top: 0;
+}
+
+.dv-text-block > :last-child {
+  margin-bottom: 0;
+}
+
+.dv-text-block h3,
+.dv-text-block h4,
+.dv-text-block h5,
+.dv-text-block h6 {
+  margin: 1em 0 0.5em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.dv-text-block p,
+.dv-text-block ul,
+.dv-text-block ol,
+.dv-text-block table,
+.dv-text-block blockquote {
+  margin: 0 0 0.75em;
+}
+
+.dv-text-block ul,
+.dv-text-block ol {
+  padding-left: 1.5em;
+}
+
+.dv-text-block a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.graph-italia-dark .dv-text-block a,
+.graph-italia-dark.dv-text-block a {
+  color: #8fc4ff;
+}
+
+.dv-text-block table {
+  border-collapse: collapse;
+}
+
+.dv-text-block th,
+.dv-text-block td {
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  padding: 4px 8px;
+}
+
+.dv-text-block blockquote {
+  padding-left: 1em;
+  border-left: 3px solid rgba(128, 128, 128, 0.35);
+}

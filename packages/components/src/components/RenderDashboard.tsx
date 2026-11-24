@@ -4,6 +4,7 @@ import type { FieldDataType, InfosType } from "../types";
 import RenderChart from "./RenderChart";
 import ChartWrapper from "./chartwrapper/ChartWrapper";
 import type { ChartWrapperProps } from "./chartwrapper/ChartWrapper";
+import { isWrappable } from "../lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -164,16 +165,18 @@ export function RenderDashboard({
   }, [data.slots]);
 
   const slotHeight = (h: number) => rowHeight * h + margin * (h - 1);
-  const slotStyle: React.CSSProperties = {
-    overflow: withWrapper ? "visible" : "hidden",
+  // Text blocks are never wrapped, whatever withWrapper says.
+  const wraps = (chart?: FieldDataType) => withWrapper && isWrappable(chart?.chart);
+  const slotStyle = (chart?: FieldDataType): React.CSSProperties => ({
+    overflow: wraps(chart) ? "visible" : "hidden",
     borderRadius: 8,
     border: "1px solid rgba(128,128,128,0.15)",
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-  };
+  });
 
   function renderSlot(chart: FieldDataType | undefined, chartHeight: number) {
     if (!chart) return null;
-    return withWrapper ? (
+    return wraps(chart) ? (
       <ChartWrapper
         data={chart}
         info={{
@@ -229,9 +232,9 @@ export function RenderDashboard({
               <div
                 key={item.i}
                 style={{
-                  ...slotStyle,
+                  ...slotStyle(chartMap[item.i]),
                   minWidth: 0,
-                  ...(withWrapper ? { minHeight: slotHeight(item.h) } : { height: slotHeight(item.h) }),
+                  ...(wraps(chartMap[item.i]) ? { minHeight: slotHeight(item.h) } : { height: slotHeight(item.h) }),
                 }}
               >
                 {renderSlot(chartMap[item.i], slotHeight(item.h))}
@@ -249,7 +252,7 @@ export function RenderDashboard({
           isResizable={false}
         >
           {items.map((item) => (
-            <div key={item.i} style={slotStyle}>
+            <div key={item.i} style={slotStyle(chartMap[item.i])}>
               {renderSlot(chartMap[item.i], slotHeight(item.h))}
             </div>
           ))}

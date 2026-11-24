@@ -243,6 +243,28 @@ describe("POST /charts — create", () => {
 		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { chart: "text", name: "dashboard-text-1", config: { content: "# Titolo" } }) });
 		expect(res.status).toBe(201);
 	});
+
+	test("an empty text block is fine", async () => {
+		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { chart: "text", name: "dashboard-text-2", config: { content: "" } }) });
+		expect(res.status).toBe(201);
+	});
+
+	test.each([
+		["no config", {}],
+		["no content", { config: {} }],
+		["a content that is not a string", { config: { content: 42 } }],
+		["a content over 50,000 characters", { config: { content: "x".repeat(50_001) } }],
+	])("a text block with %s returns 400", async (_label, extra) => {
+		const res = await app.request("/charts", { method: "POST", ...withJson(userHeaders(), { chart: "text", name: "t", ...extra }) });
+		expect(res.status).toBe(400);
+	});
+
+	test("update of a text block: content checked only when config is sent", async () => {
+		const rename = await app.request(`/charts/${CHART_ID}`, { method: "PUT", ...withJson(userHeaders(), { chart: "text", name: "renamed" }) });
+		expect(rename.status).toBe(200);
+		const bad = await app.request(`/charts/${CHART_ID}`, { method: "PUT", ...withJson(userHeaders(), { chart: "text", config: { content: null } }) });
+		expect(bad.status).toBe(400);
+	});
 });
 
 // ── PUT /:id ──────────────────────────────────────────────────────────────────

@@ -7,6 +7,7 @@ import BasicChart from "./charts/BasicChart";
 import GeoMapChart from "./charts/GeoMapChart";
 import PieChart from "./charts/PieChart";
 import KpiGroup from "./kpi/KpiGroup";
+import TextBlock from "./text/TextBlock";
 import ClusterMap from "./maps/ClusterMap";
 
 type RenderProps = FieldDataType & {
@@ -182,6 +183,13 @@ function RenderChart(props: RenderProps) {
             )}
             {(props.chart === "kpi" || props.chart === "kpiGroup") && (
               <KpiGroup
+                data={props}
+                rowHeight={rowHeight}
+                hFactor={hFactor}
+              />
+            )}
+            {props.chart === "text" && (
+              <TextBlock
                 data={props}
                 rowHeight={rowHeight}
                 hFactor={hFactor}
