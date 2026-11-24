@@ -33,6 +33,10 @@ interface DashboardViewSelectors {
   // Not a public page: publishing is off, or the dashboard is private and the
   // viewer reads it as a project member (see readDashboardForDisplay).
   preview: boolean;
+  /** Every chart shown with its ChartWrapper (Dashboard.wrapCharts). */
+  wrapCharts: boolean;
+  /** One slot per row, full width, in reading order (Dashboard.singleColumn). */
+  singleColumn: boolean;
   error?: {
     message: string;
   };
@@ -46,6 +50,8 @@ const useDashboardViewStore = create<DashboardViewState>((set) => ({
   isLoading: true,
   loaded: false,
   preview: false,
+  wrapCharts: false,
+  singleColumn: false,
   layout: [],
   charts: {},
   load: async (id: string) => {
@@ -76,6 +82,8 @@ const useDashboardViewStore = create<DashboardViewState>((set) => ({
           isLoading: false,
           loaded: true,
           preview,
+          wrapCharts: data.wrapCharts === true,
+          singleColumn: data.singleColumn === true,
           id,
         });
       }

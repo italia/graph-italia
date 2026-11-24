@@ -260,6 +260,13 @@ model Dashboard {
   name        String?
   description String? @default("")
   publish     Boolean @default(false)
+  // Show every chart of the dashboard with its ChartWrapper, using the chart's
+  // own wrapper settings (Chart.wrapper) or the defaults
+  wrapCharts  Boolean @default(false)
+  // Every slot full width, one below the other in reading order, keeping its
+  // height: for dashboards shown inside a narrow container (singleColumn prop
+  // of the components library)
+  singleColumn Boolean @default(false)
 
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String

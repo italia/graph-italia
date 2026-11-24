@@ -32,6 +32,10 @@ interface DashboardEditSelectors {
   name: string;
   description: string;
   publish: boolean;
+  /** Show every chart with its ChartWrapper on the display page. */
+  wrapCharts: boolean;
+  /** One slot per row, full width, in reading order, on the display page. */
+  singleColumn: boolean;
   layout: TLayoutItem[];
   charts: TChartMap;
   texts: TTextMap;
@@ -65,6 +69,8 @@ interface DashboardEditActions {
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setPublish: (publish: boolean) => void;
+  setWrapCharts: (wrapCharts: boolean) => void;
+  setSingleColumn: (singleColumn: boolean) => void;
 }
 
 type DashboardEditState = DashboardEditSelectors & DashboardEditActions;
@@ -89,6 +95,8 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   name: '',
   description: '',
   publish: isPublishingEnabled(),
+  wrapCharts: false,
+  singleColumn: false,
   breakpoint: 'lg',
   layout: [],
   show: false,
@@ -104,6 +112,8 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   setName: (name) => set({ name }),
   setDescription: (description) => set({ description }),
   setPublish: (publish) => set({ publish }),
+  setWrapCharts: (wrapCharts) => set({ wrapCharts }),
+  setSingleColumn: (singleColumn) => set({ singleColumn }),
   setLayout: (layout) => set({ layout }),
   addItem: () => {
     const { layout } = get();
@@ -220,7 +230,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
           }
         }
 
-        const { name, description, publish } = data;
+        const { name, description, publish, wrapCharts = false, singleColumn = false } = data;
 
         set({
           charts,
@@ -230,6 +240,8 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
           name,
           description,
           publish: isPublishingEnabled() ? publish : false,
+          wrapCharts,
+          singleColumn,
           isLoading: false,
           loaded: true,
           id,
@@ -247,7 +259,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
   },
   save: async () => {
 
-    const { layout, charts, texts, removedTextChartIds, id, name, description, publish } = get();
+    const { layout, charts, texts, removedTextChartIds, id, name, description, publish, wrapCharts, singleColumn } = get();
     const publishValue = isPublishingEnabled() ? publish : false;
 
     // Persist text blocks first: each one is stored as a chart of type "text"
@@ -272,7 +284,7 @@ const useDashboardEditStore = create<DashboardEditState>()((set, get) => ({
     }
     set({ texts: nextTexts });
 
-    await updateDashboard(id!, { name, description, publish: publishValue });
+    await updateDashboard(id!, { name, description, publish: publishValue, wrapCharts, singleColumn });
 
     const body = {
       // A slot row requires a chartId: slots still without content stay in

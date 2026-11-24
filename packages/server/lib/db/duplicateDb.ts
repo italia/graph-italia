@@ -74,6 +74,8 @@ export async function duplicateDashboard(
 				name,
 				description: source.description,
 				publish,
+				wrapCharts: source.wrapCharts,
+				singleColumn: source.singleColumn,
 			},
 		});
 

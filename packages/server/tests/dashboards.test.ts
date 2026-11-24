@@ -226,6 +226,23 @@ describe("PUT /dashboards/:id — update", () => {
 		const res = await app.request("/dashboards/nonexistent", { method: "PUT", ...withJson(userHeaders(), payload) });
 		expect(res.status).toBe(404);
 	});
+
+	test("saves wrapCharts, the switch that shows every chart with its wrapper", async () => {
+		const res = await app.request(`/dashboards/${DASH_ID}`, { method: "PUT", ...withJson(userHeaders(), { wrapCharts: true }) });
+		expect(res.status).toBe(200);
+		expect(((await res.json()) as { wrapCharts: boolean }).wrapCharts).toBe(true);
+	});
+
+	test("saves singleColumn, the one-slot-per-row layout", async () => {
+		const res = await app.request(`/dashboards/${DASH_ID}`, { method: "PUT", ...withJson(userHeaders(), { singleColumn: true }) });
+		expect(res.status).toBe(200);
+		expect(((await res.json()) as { singleColumn: boolean }).singleColumn).toBe(true);
+	});
+
+	test("wrapCharts must be a boolean (400)", async () => {
+		const res = await app.request(`/dashboards/${DASH_ID}`, { method: "PUT", ...withJson(userHeaders(), { wrapCharts: "yes" }) });
+		expect(res.status).toBe(400);
+	});
 });
 
 describe("PUT /dashboards/:id/slots — update slots", () => {

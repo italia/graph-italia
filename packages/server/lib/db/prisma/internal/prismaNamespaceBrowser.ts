@@ -259,6 +259,8 @@ export const DashboardScalarFieldEnum = {
   name: 'name',
   description: 'description',
   publish: 'publish',
+  wrapCharts: 'wrapCharts',
+  singleColumn: 'singleColumn',
   projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

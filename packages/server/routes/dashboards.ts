@@ -32,6 +32,8 @@ const dashboardSchema = z.object({
 	name: z.string().nullable(),
 	description: z.string().nullable(),
 	publish: z.boolean(),
+	wrapCharts: z.boolean(),
+	singleColumn: z.boolean(),
 	createdAt: z.string(),
 	updatedAt: z.string(),
 });
@@ -44,6 +46,8 @@ const createDashboardSchema = z.object({
 	remoteUrl: z.string().nullable().optional(),
 	isRemote: z.boolean().optional(),
 	publish: z.boolean().optional(),
+	wrapCharts: z.boolean().optional(),
+	singleColumn: z.boolean().optional(),
 	preview: z.string().nullable().optional(),
 	projectId: z.string().optional(),
 });
@@ -54,6 +58,8 @@ const updateDashboardSchema = z.object({
 	config: z.unknown().optional(),
 	data: z.unknown().optional(),
 	publish: z.boolean().optional(),
+	wrapCharts: z.boolean().optional(),
+	singleColumn: z.boolean().optional(),
 	remoteUrl: z.string().nullable().optional(),
 	isRemote: z.boolean().optional(),
 	id: z.string().optional(),
@@ -308,7 +314,7 @@ router.put(
 router.put(
 	"/:id",
 	describeRoute({
-		description: "Update dashboard metadata (name, description, publish state). Requires READWRITE access.",
+		description: "Update dashboard metadata (name, description, publish state, wrapCharts, singleColumn). Requires READWRITE access.",
 		responses: {
 			200: { description: "Updated dashboard", content: { "application/json": { schema: resolver(dashboardSchema) } } },
 			401: { description: "Unauthorized", content: { "application/json": { schema: resolver(errSchema) } } },

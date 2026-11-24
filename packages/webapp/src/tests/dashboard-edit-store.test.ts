@@ -105,3 +105,51 @@ describe("dashboard-edit store — text slots", () => {
     expect(useDashboardEditStore.getState().removedTextChartIds).toEqual([]);
   });
 });
+
+describe("dashboard-edit store — wrapCharts", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useDashboardEditStore.setState(initialState, true);
+  });
+
+  it("loads the saved switch and saves it back", async () => {
+    vi.mocked(api.findDashboardById).mockResolvedValue({
+      name: "Dash",
+      description: "",
+      publish: false,
+      wrapCharts: true,
+      slots: [],
+    });
+    await useDashboardEditStore.getState().load("dash-1");
+    expect(useDashboardEditStore.getState().wrapCharts).toBe(true);
+
+    useDashboardEditStore.getState().setWrapCharts(false);
+    await useDashboardEditStore.getState().save();
+    expect(api.updateDashboard).toHaveBeenCalledWith("dash-1", expect.objectContaining({ wrapCharts: false }));
+  });
+
+  it("is off for dashboards saved before the switch existed", async () => {
+    vi.mocked(api.findDashboardById).mockResolvedValue({ name: "Old", description: "", publish: false, slots: [] });
+    await useDashboardEditStore.getState().load("dash-1");
+    expect(useDashboardEditStore.getState().wrapCharts).toBe(false);
+  });
+});
+
+describe("dashboard-edit store — singleColumn", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useDashboardEditStore.setState(initialState, true);
+  });
+
+  it("loads the saved switch and saves it back, off for older dashboards", async () => {
+    vi.mocked(api.findDashboardById).mockResolvedValue({ name: "Dash", description: "", publish: false, singleColumn: true, slots: [] });
+    await useDashboardEditStore.getState().load("dash-1");
+    expect(useDashboardEditStore.getState().singleColumn).toBe(true);
+    await useDashboardEditStore.getState().save();
+    expect(api.updateDashboard).toHaveBeenCalledWith("dash-1", expect.objectContaining({ singleColumn: true }));
+
+    vi.mocked(api.findDashboardById).mockResolvedValue({ name: "Old", description: "", publish: false, slots: [] });
+    await useDashboardEditStore.getState().load("dash-2");
+    expect(useDashboardEditStore.getState().singleColumn).toBe(false);
+  });
+});

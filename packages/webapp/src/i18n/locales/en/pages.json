@@ -264,6 +264,14 @@
                                 "description": {
                                     "label": "Dashboard Description",
                                     "placeholder": "Add a description"
+                                },
+                                "wrapCharts": {
+                                    "label": "Show every chart with wrapper",
+                                    "hint": "On the dashboard page every chart gets the Chart, Data table and Info tabs and the buttons, with the chart's own wrapper settings (or the defaults), even when the wrapper is off in the chart. To leave room for the chart, use slots at least two rows tall."
+                                },
+                                "singleColumn": {
+                                    "label": "Single column (for narrow containers)",
+                                    "hint": "On the dashboard page every item takes the full width, one below the other in reading order, keeping its height. When off, the dashboard uses the full-page grid."
                                 }
                             }
                         }

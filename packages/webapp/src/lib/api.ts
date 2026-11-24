@@ -466,6 +466,10 @@ export interface DashboardDetail {
   name: string;
   description: string;
   publish: boolean;
+  /** Show every chart with its ChartWrapper on the display page. */
+  wrapCharts?: boolean;
+  /** One slot per row, full width, in reading order, on the display page. */
+  singleColumn?: boolean;
   slots: {
     settings: {
       i: `item-${number}`;
@@ -572,7 +576,7 @@ export async function updateSlots(
 
 export async function updateDashboard(
   id: string,
-  body: { name: string, description: string, publish: boolean }
+  body: { name: string, description: string, publish: boolean, wrapCharts: boolean, singleColumn: boolean }
 ) {
   const response = await axios.put(
     `${getServerUrlWithApi()}/dashboards/${id}`,

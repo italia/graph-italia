@@ -29,6 +29,8 @@ export type DashboardMinAggregateOutputType = {
   name: string | null
   description: string | null
   publish: boolean | null
+  wrapCharts: boolean | null
+  singleColumn: boolean | null
   projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -39,6 +41,8 @@ export type DashboardMaxAggregateOutputType = {
   name: string | null
   description: string | null
   publish: boolean | null
+  wrapCharts: boolean | null
+  singleColumn: boolean | null
   projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +53,8 @@ export type DashboardCountAggregateOutputType = {
   name: number
   description: number
   publish: number
+  wrapCharts: number
+  singleColumn: number
   projectId: number
   createdAt: number
   updatedAt: number
@@ -61,6 +67,8 @@ export type DashboardMinAggregateInputType = {
   name?: true
   description?: true
   publish?: true
+  wrapCharts?: true
+  singleColumn?: true
   projectId?: true
   createdAt?: true
   updatedAt?: true
@@ -71,6 +79,8 @@ export type DashboardMaxAggregateInputType = {
   name?: true
   description?: true
   publish?: true
+  wrapCharts?: true
+  singleColumn?: true
   projectId?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +91,8 @@ export type DashboardCountAggregateInputType = {
   name?: true
   description?: true
   publish?: true
+  wrapCharts?: true
+  singleColumn?: true
   projectId?: true
   createdAt?: true
   updatedAt?: true
@@ -164,6 +176,8 @@ export type DashboardGroupByOutputType = {
   name: string | null
   description: string | null
   publish: boolean
+  wrapCharts: boolean
+  singleColumn: boolean
   projectId: string
   createdAt: Date
   updatedAt: Date
@@ -195,6 +209,8 @@ export type DashboardWhereInput = {
   name?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolFilter<"Dashboard"> | boolean
+  wrapCharts?: Prisma.BoolFilter<"Dashboard"> | boolean
+  singleColumn?: Prisma.BoolFilter<"Dashboard"> | boolean
   projectId?: Prisma.StringFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
@@ -207,6 +223,8 @@ export type DashboardOrderByWithRelationInput = {
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
+  wrapCharts?: Prisma.SortOrder
+  singleColumn?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -222,6 +240,8 @@ export type DashboardWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolFilter<"Dashboard"> | boolean
+  wrapCharts?: Prisma.BoolFilter<"Dashboard"> | boolean
+  singleColumn?: Prisma.BoolFilter<"Dashboard"> | boolean
   projectId?: Prisma.StringFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
@@ -234,6 +254,8 @@ export type DashboardOrderByWithAggregationInput = {
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   publish?: Prisma.SortOrder
+  wrapCharts?: Prisma.SortOrder
+  singleColumn?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -250,6 +272,8 @@ export type DashboardScalarWhereWithAggregatesInput = {
   name?: Prisma.StringNullableWithAggregatesFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolWithAggregatesFilter<"Dashboard"> | boolean
+  wrapCharts?: Prisma.BoolWithAggregatesFilter<"Dashboard"> | boolean
+  singleColumn?: Prisma.BoolWithAggregatesFilter<"Dashboard"> | boolean
   projectId?: Prisma.StringWithAggregatesFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Dashboard"> | Date | string
@@ -260,6 +284,8 @@ export type DashboardCreateInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutDashboardInput
@@ -271,6 +297,8 @@ export type DashboardUncheckedCreateInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -282,6 +310,8 @@ export type DashboardUpdateInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutDashboardNestedInput
@@ -293,6 +323,8 @@ export type DashboardUncheckedUpdateInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -304,6 +336,8 @@ export type DashboardCreateManyInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -314,6 +348,8 @@ export type DashboardUpdateManyMutationInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -323,6 +359,8 @@ export type DashboardUncheckedUpdateManyInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -343,6 +381,8 @@ export type DashboardCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   publish?: Prisma.SortOrder
+  wrapCharts?: Prisma.SortOrder
+  singleColumn?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -353,6 +393,8 @@ export type DashboardMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   publish?: Prisma.SortOrder
+  wrapCharts?: Prisma.SortOrder
+  singleColumn?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -363,6 +405,8 @@ export type DashboardMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   publish?: Prisma.SortOrder
+  wrapCharts?: Prisma.SortOrder
+  singleColumn?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -434,6 +478,8 @@ export type DashboardCreateWithoutProjectInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   slots?: Prisma.SlotCreateNestedManyWithoutDashboardInput
@@ -444,6 +490,8 @@ export type DashboardUncheckedCreateWithoutProjectInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   slots?: Prisma.SlotUncheckedCreateNestedManyWithoutDashboardInput
@@ -483,6 +531,8 @@ export type DashboardScalarWhereInput = {
   name?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   description?: Prisma.StringNullableFilter<"Dashboard"> | string | null
   publish?: Prisma.BoolFilter<"Dashboard"> | boolean
+  wrapCharts?: Prisma.BoolFilter<"Dashboard"> | boolean
+  singleColumn?: Prisma.BoolFilter<"Dashboard"> | boolean
   projectId?: Prisma.StringFilter<"Dashboard"> | string
   createdAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Dashboard"> | Date | string
@@ -493,6 +543,8 @@ export type DashboardCreateWithoutSlotsInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutDashboardInput
@@ -503,6 +555,8 @@ export type DashboardUncheckedCreateWithoutSlotsInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -529,6 +583,8 @@ export type DashboardUpdateWithoutSlotsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutDashboardNestedInput
@@ -539,6 +595,8 @@ export type DashboardUncheckedUpdateWithoutSlotsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -549,6 +607,8 @@ export type DashboardCreateManyProjectInput = {
   name?: string | null
   description?: string | null
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -558,6 +618,8 @@ export type DashboardUpdateWithoutProjectInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   slots?: Prisma.SlotUpdateManyWithoutDashboardNestedInput
@@ -568,6 +630,8 @@ export type DashboardUncheckedUpdateWithoutProjectInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   slots?: Prisma.SlotUncheckedUpdateManyWithoutDashboardNestedInput
@@ -578,6 +642,8 @@ export type DashboardUncheckedUpdateManyWithoutProjectInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publish?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wrapCharts?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  singleColumn?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -618,6 +684,8 @@ export type DashboardSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   name?: boolean
   description?: boolean
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -631,6 +699,8 @@ export type DashboardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   description?: boolean
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -642,6 +712,8 @@ export type DashboardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   description?: boolean
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -653,12 +725,14 @@ export type DashboardSelectScalar = {
   name?: boolean
   description?: boolean
   publish?: boolean
+  wrapCharts?: boolean
+  singleColumn?: boolean
   projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DashboardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "publish" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["dashboard"]>
+export type DashboardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "publish" | "wrapCharts" | "singleColumn" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["dashboard"]>
 export type DashboardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   slots?: boolean | Prisma.Dashboard$slotsArgs<ExtArgs>
@@ -682,6 +756,8 @@ export type $DashboardPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     name: string | null
     description: string | null
     publish: boolean
+    wrapCharts: boolean
+    singleColumn: boolean
     projectId: string
     createdAt: Date
     updatedAt: Date
@@ -1114,6 +1190,8 @@ export interface DashboardFieldRefs {
   readonly name: Prisma.FieldRef<"Dashboard", 'String'>
   readonly description: Prisma.FieldRef<"Dashboard", 'String'>
   readonly publish: Prisma.FieldRef<"Dashboard", 'Boolean'>
+  readonly wrapCharts: Prisma.FieldRef<"Dashboard", 'Boolean'>
+  readonly singleColumn: Prisma.FieldRef<"Dashboard", 'Boolean'>
   readonly projectId: Prisma.FieldRef<"Dashboard", 'String'>
   readonly createdAt: Prisma.FieldRef<"Dashboard", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Dashboard", 'DateTime'>

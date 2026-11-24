@@ -264,6 +264,14 @@
                                 "description": {
                                     "label": "Descrizione dashboard",
                                     "placeholder": "Aggiungi una descrizione"
+                                },
+                                "wrapCharts": {
+                                    "label": "Mostra tutti i grafici con wrapper",
+                                    "hint": "Nella pagina della dashboard ogni grafico avrà le schede Grafico, Tabella dati e Info e i pulsanti, con le impostazioni del wrapper del grafico (o quelle predefinite), anche se nel grafico il wrapper è spento. Per lasciare spazio al grafico, usa slot alti almeno due righe."
+                                },
+                                "singleColumn": {
+                                    "label": "Una colonna (per contenitori stretti)",
+                                    "hint": "Nella pagina della dashboard ogni elemento occupa tutta la larghezza, uno sotto l'altro nell'ordine di lettura, con la sua altezza. Spento, la dashboard usa la griglia a tutta pagina."
                                 }
                             }
                         }

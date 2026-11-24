@@ -384,9 +384,13 @@ function DashboardEditPage() {
     reload,
     save,
     publish,
+    wrapCharts,
+    singleColumn,
     setName,
     setDescription,
     setPublish,
+    setWrapCharts,
+    setSingleColumn,
   } = useDashboardEditStore();
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -567,6 +571,46 @@ function DashboardEditPage() {
                           )}
                           className="input textarea input-bordered w-full text-base bg-base-100 placeholder:text-base-content/65"
                         />
+                        <div className="mt-4 flex items-center gap-4">
+                          <input
+                            id="dashboard_wrap_charts"
+                            type="checkbox"
+                            role="switch"
+                            checked={wrapCharts}
+                            aria-describedby="dashboard_wrap_charts_hint"
+                            onChange={() => setWrapCharts(!wrapCharts)}
+                            className="toggle toggle-sm toggle-primary cursor-pointer"
+                          />
+                          <label
+                            htmlFor="dashboard_wrap_charts"
+                            className="text-base text-base-content/70 cursor-pointer"
+                          >
+                            {t(`body.options.setup.form.fields.wrapCharts.label`)}
+                          </label>
+                        </div>
+                        <p id="dashboard_wrap_charts_hint" className="text-sm text-base-content/70">
+                          {t(`body.options.setup.form.fields.wrapCharts.hint`)}
+                        </p>
+                        <div className="mt-4 flex items-center gap-4">
+                          <input
+                            id="dashboard_single_column"
+                            type="checkbox"
+                            role="switch"
+                            checked={singleColumn}
+                            aria-describedby="dashboard_single_column_hint"
+                            onChange={() => setSingleColumn(!singleColumn)}
+                            className="toggle toggle-sm toggle-primary cursor-pointer"
+                          />
+                          <label
+                            htmlFor="dashboard_single_column"
+                            className="text-base text-base-content/70 cursor-pointer"
+                          >
+                            {t(`body.options.setup.form.fields.singleColumn.label`)}
+                          </label>
+                        </div>
+                        <p id="dashboard_single_column_hint" className="text-sm text-base-content/70">
+                          {t(`body.options.setup.form.fields.singleColumn.hint`)}
+                        </p>
                       </div>
                     </div>
                   </div>

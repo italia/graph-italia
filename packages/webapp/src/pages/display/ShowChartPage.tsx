@@ -13,6 +13,7 @@ import * as api from "../../lib/api";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { publicChartErrorMessage } from "../embed/EmbedChartPage";
 import { useChartA11yProps } from "../../hooks/useChartA11yProps";
+import { useCopyLink } from "../../hooks/useCopyLink";
 import { toWrapperProps, type ChartWrapperSettings } from "../../lib/chartWrapper";
 
 function ShowChartPage() {
@@ -32,14 +33,7 @@ function ShowChartPage() {
       })
     | undefined;
   const wrapper = chart?.wrapper?.enabled ? chart.wrapper : null;
-
-  // Share button of the wrapper: copies this page's link.
-  function sharePage() {
-    navigator.clipboard
-      .writeText(window.location.href)
-      .then(() => toast.success(t("publicChart.share.copied")))
-      .catch(() => toast.error(t("publicChart.share.error")));
-  }
+  const copyLink = useCopyLink();
   return (
     <Layout>
       {/* Aligned to the header gutters; min-height fills the space between
@@ -87,8 +81,9 @@ function ShowChartPage() {
                 <h1 className="sr-only">{wrapper.title?.trim() || chart.name}</h1>
                 <ColorSchemeProvider scheme={scheme}>
                   <ChartWrapper
-                    data={{ ...(chart as unknown as FieldDataType), ...chartA11y }}
-                    {...toWrapperProps(wrapper, sharePage)}
+                    // ChartWrapper reads config.h: a chart saved without config must not break the page
+                    data={{ ...(chart as unknown as FieldDataType), config: (chart.config ?? {}) as FieldDataType["config"], ...chartA11y }}
+                    {...toWrapperProps(wrapper, () => copyLink(window.location.href))}
                   />
                 </ColorSchemeProvider>
               </>

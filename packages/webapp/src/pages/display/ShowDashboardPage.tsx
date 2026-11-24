@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-italia-components";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ChartWrapper, ColorSchemeProvider, RenderChart, type FieldDataType } from "graph-italia-components";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -7,15 +7,22 @@ import Layout from "../../components/layout";
 import Loading from "../../components/layout/Loading";
 import TextSlot from "../../components/TextSlot";
 import type { TLayoutItem } from "../../lib/store/dashboard-edit.store";
+import { toSingleColumn } from "../../lib/dashboardLayout";
 import useDashboardViewStore from "../../lib/store/dashboard-view.store";
 import { useSettingsStore } from "../../lib/store/settings_store";
 import { isPublishingEnabled } from "../../lib/api";
 import { useChartA11yProps } from "../../hooks/useChartA11yProps";
+import { useCopyLink } from "../../hooks/useCopyLink";
+import { toWrapperProps, withWrapperDefaults, type ChartWrapperSettings } from "../../lib/chartWrapper";
+import { ROUTES } from "../../router";
 
 const TOTAL_COLS = 12;
 const ALL_COLS = { lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 };
 const BREAKPOINTS = { lg: 1200, md: 768, sm: 480, xs: 320, xxs: 0 };
 const ROW_HEIGHT = 380;
+// Rows of a grid with at least one wrapped chart: the wrapper's heading, tabs
+// and buttons take room from the chart.
+const WRAPPED_ROW_HEIGHT = ROW_HEIGHT + 120;
 const MARGIN = 16;
 const TABBAR = 40;
 
@@ -98,12 +105,76 @@ function segmentLayout(
   return segments;
 }
 
+// Below this the chart panel of a wrapped slot stops shrinking and the slot scrolls.
+const MIN_WRAPPER_PANEL = 120;
+
+/**
+ * A chart shown with its ChartWrapper inside a dashboard slot. The slot height
+ * is fixed by the grid, while the wrapper adds heading, tabs and buttons whose
+ * height depends on texts, buttons and width: measure them and give the chart
+ * panel what is left. Should the content still be taller, the slot scrolls.
+ */
+function WrappedSlotChart({
+  chart,
+  wrapper,
+  scheme,
+  onShare,
+  a11y,
+}: {
+  chart: FieldDataType;
+  wrapper: ChartWrapperSettings;
+  scheme: React.ComponentProps<typeof ColorSchemeProvider>["scheme"];
+  onShare: () => void;
+  a11y: ReturnType<typeof useChartA11yProps>;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [panel, setPanel] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => {
+      const container = el.querySelector<HTMLElement>(".cw-container");
+      const panels = el.querySelector<HTMLElement>(".cw-panels");
+      if (!container || !panels) return;
+      // scrollHeight: .cw-container has max-height 100%, so source and buttons
+      // overflow it instead of making it taller.
+      const chrome = container.scrollHeight - panels.offsetHeight;
+      const next = Math.max(MIN_WRAPPER_PANEL, Math.floor(el.clientHeight - chrome));
+      setPanel((current) => (current !== null && Math.abs(current - next) <= 1 ? current : next));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    const container = el.querySelector(".cw-container");
+    if (container) observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    // Direct child of the grid item, which has the slot height: what is
+    // measured here is the room the slot offers.
+    <div ref={ref} className="h-full overflow-y-auto">
+      <ColorSchemeProvider scheme={scheme}>
+        <ChartWrapper
+          // ChartWrapper reads config.h: a chart saved without config must not break the page
+          data={{ ...chart, config: chart.config ?? ({} as FieldDataType["config"]), ...a11y }}
+          {...toWrapperProps(wrapper, onShare)}
+          rowHeight={panel ?? MIN_WRAPPER_PANEL}
+          hFactor={1}
+        />
+      </ColorSchemeProvider>
+    </div>
+  );
+}
+
 function DashboardViewPage() {
   const chartA11y = useChartA11yProps();
   const { id } = useParams();
-  const { load, layout, charts, name, description, isLoading, loaded, preview, error } =
+  const { load, layout, charts, name, description, isLoading, loaded, preview, wrapCharts, singleColumn, error } =
     useDashboardViewStore();
   const { t } = useTranslation("pages");
+  const copyLink = useCopyLink();
 
   React.useEffect(() => {
     if (id) load(id);
@@ -115,29 +186,52 @@ function DashboardViewPage() {
   const segments = useMemo(
     () =>
       segmentLayout(
-        layout,
+        singleColumn ? toSingleColumn(layout) : layout,
         (item) =>
           (charts[item.i] as { chart?: string } | undefined)?.chart === "text" &&
           item.w >= 3,
       ),
-    [layout, charts],
+    [layout, charts, singleColumn],
   );
 
-  function renderSlot(item: TLayoutItem) {
-    const currentChart = charts[item.i] as FieldDataType & {
-      chart?: string;
-      config?: { content?: string };
-    };
-    const chartHeight = ((ROW_HEIGHT * item.h) - (MARGIN * (item.h)) - TABBAR);
+  type SlotChart = FieldDataType & {
+    chart?: string;
+    config?: { content?: string };
+    wrapper?: ChartWrapperSettings | null;
+  };
+
+  // Wrapper settings of a slot's chart, or null when it is shown bare. The
+  // dashboard switch wraps every chart, with the chart's own settings (even
+  // when its wrapper is off) or the defaults; text blocks are never wrapped.
+  function slotWrapper(chart: SlotChart | undefined): ChartWrapperSettings | null {
+    if (!chart || chart.chart === "text") return null;
+    if (wrapCharts) return withWrapperDefaults({ ...chart.wrapper, enabled: true });
+    return chart.wrapper?.enabled ? chart.wrapper : null;
+  }
+
+  function renderSlot(item: TLayoutItem, rowHeight: number) {
+    const currentChart = charts[item.i] as SlotChart;
+    const chartHeight = ((rowHeight * item.h) - (MARGIN * (item.h)) - TABBAR);
+    const wrapper = slotWrapper(currentChart);
 
     return (
       <div
         key={item.i}
         className="overflow-hidden rounded-lg bg-base-100 border border-base-200 shadow-sm"
       >
-        {currentChart && (
-          currentChart.chart === "text" ? (
+        {currentChart &&
+          (currentChart.chart === "text" ? (
             <TextSlot content={currentChart.config?.content ?? ""} />
+          ) : wrapper ? (
+            <WrappedSlotChart
+              chart={currentChart}
+              wrapper={wrapper}
+              scheme={scheme}
+              onShare={() =>
+                copyLink(`${window.location.origin}${ROUTES.viewChart(currentChart.id ?? "")}`)
+              }
+              a11y={chartA11y}
+            />
           ) : (
             <ColorSchemeProvider scheme={scheme}>
               <RenderChart
@@ -147,9 +241,30 @@ function DashboardViewPage() {
                 {...chartA11y}
               />
             </ColorSchemeProvider>
-          )
-        )}
+          ))}
       </div>
+    );
+  }
+
+  function renderGrid(items: TLayoutItem[], index: number) {
+    // One row height per grid: taller when any of its charts is wrapped
+    const rowHeight = items.some((item) => slotWrapper(charts[item.i] as SlotChart))
+      ? WRAPPED_ROW_HEIGHT
+      : ROW_HEIGHT;
+    return (
+      <ResponsiveGrid
+        key={`grid-${index}`}
+        layouts={buildLayouts(items)}
+        breakpoints={BREAKPOINTS}
+        cols={ALL_COLS}
+        rowHeight={rowHeight}
+        margin={[MARGIN, MARGIN]}
+        containerPadding={[0, 0]}
+        isDraggable={false}
+        isResizable={false}
+      >
+        {items.map((item) => renderSlot(item, rowHeight))}
+      </ResponsiveGrid>
     );
   }
 
@@ -196,19 +311,7 @@ function DashboardViewPage() {
                     />
                   </div>
                 ) : (
-                  <ResponsiveGrid
-                    key={`grid-${index}`}
-                    layouts={buildLayouts(segment.items)}
-                    breakpoints={BREAKPOINTS}
-                    cols={ALL_COLS}
-                    rowHeight={ROW_HEIGHT}
-                    margin={[MARGIN, MARGIN]}
-                    containerPadding={[0, 0]}
-                    isDraggable={false}
-                    isResizable={false}
-                  >
-                    {segment.items.map((item) => renderSlot(item))}
-                  </ResponsiveGrid>
+                  renderGrid(segment.items, index)
                 ),
               )}
             </div>
