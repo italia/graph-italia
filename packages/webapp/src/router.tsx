@@ -305,7 +305,7 @@ const routes = [
   {
     path: "/verify/:uid",
     element: (
-      <PasswordAuthGate>
+      <PasswordAuthGate recovery="resetLink">
         <VerifyPage />
       </PasswordAuthGate>
     ),
@@ -313,7 +313,7 @@ const routes = [
   {
     path: "/recover-password",
     element: (
-      <PasswordAuthGate>
+      <PasswordAuthGate recovery="page">
         <RecoverPage action={"recover"} />
       </PasswordAuthGate>
     ),
@@ -321,7 +321,7 @@ const routes = [
   {
     path: "/change-password",
     element: (
-      <PasswordAuthGate>
+      <PasswordAuthGate recovery="page">
         <RecoverPage action={"change"} />
       </PasswordAuthGate>
     ),

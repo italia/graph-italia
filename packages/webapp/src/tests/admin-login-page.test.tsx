@@ -32,6 +32,8 @@ function renderPage() {
       <Routes>
         <Route path="/login/admin" element={<AdminLoginPage />} />
         <Route path="/admin" element={<p>pannello admin</p>} />
+        <Route path="/private/home" element={<p>area privata</p>} />
+        <Route path="/recover-password" element={<p>recupero password</p>} />
       </Routes>
     </MemoryRouter>,
     { resources: itResources },
@@ -49,20 +51,34 @@ describe("AdminLoginPage", () => {
     vi.clearAllMocks();
   });
 
-  it("signs the admin in and opens the admin panel", async () => {
+  it("signs an admin in and opens the admin panel", async () => {
     api.adminLogin.mockResolvedValue(undefined);
     api.getUser.mockResolvedValue({ userId: "u1", role: "ADMIN" });
     renderPage();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Accesso amministratori");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Accesso con email e password");
     submit();
     expect(await screen.findByText("pannello admin")).toBeInTheDocument();
     expect(api.adminLogin).toHaveBeenCalledWith({ email: "admin@test.it", password: "P@ssw0rd1!" });
     expect(setUser).toHaveBeenCalledWith({ userId: "u1", role: "ADMIN" });
   });
 
+  it("signs any other account in and opens the private area", async () => {
+    api.adminLogin.mockResolvedValue(undefined);
+    api.getUser.mockResolvedValue({ userId: "u2", role: "USER" });
+    renderPage();
+    submit("utente@test.it");
+    expect(await screen.findByText("area privata")).toBeInTheDocument();
+  });
+
+  it("links to password recovery", async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("link", { name: "Password dimenticata?" }));
+    expect(await screen.findByText("recupero password")).toBeInTheDocument();
+  });
+
   it.each([
     [401, "Credenziali non valide."],
-    [404, "L'accesso con password per gli amministratori non è attivo su questa istanza."],
+    [404, "L'accesso con email e password non è attivo su questa istanza."],
     [429, "Troppi tentativi. Riprova più tardi."],
   ])("shows a message on HTTP %i", async (status, text) => {
     api.adminLogin.mockRejectedValue({ response: { status } });

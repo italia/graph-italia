@@ -14,7 +14,12 @@ import { logger } from "../lib/logger";
 import { isAdminAccount, withAdminEmails } from "../lib/adminEmails";
 import { IpaUnavailableError, resolvePa } from "../lib/ipa";
 import { checkAuth, requireUser } from "../lib/middlewares";
-import { isAdminPasswordLoginEnabled, requirePasswordAuth } from "../lib/passwordAuth";
+import {
+	isAdminPasswordLoginAdminsOnly,
+	isAdminPasswordLoginEnabled,
+	requirePasswordAuth,
+	requirePasswordRecovery,
+} from "../lib/passwordAuth";
 import { rateLimit, tryConsume } from "../lib/rateLimit";
 import type { ParsedToken } from "../types";
 
@@ -31,11 +36,16 @@ const router = new Hono();
 // Apply auth check middleware to all routes
 router.use("*", checkAuth);
 
-// Everything that involves a password or its email lifecycle is off when the
-// instance requires SPID/CIE (ENABLE_PASSWORD_AUTH="false"). /user and /logout
-// are session endpoints shared with the OIDC flow and stay available.
-for (const path of ["/register", "/login", "/recover", "/resend", "/verify", "/confirm/*", "/reset-password", "/pwd"]) {
+// Signup, login and activation are off when the instance requires SPID/CIE
+// (ENABLE_PASSWORD_AUTH="false"). Recovery and password change stay available
+// while the hidden login is enabled (isPasswordRecoveryEnabled), so a forgotten
+// password does not lock anyone out. /user and /logout are session endpoints
+// shared with the OIDC flow and stay available.
+for (const path of ["/register", "/login", "/resend", "/verify", "/confirm/*"]) {
 	router.use(path, requirePasswordAuth);
+}
+for (const path of ["/recover", "/reset-password", "/pwd"]) {
+	router.use(path, requirePasswordRecovery);
 }
 
 // GET CURRENT USER INFO
@@ -295,7 +305,7 @@ async function passwordLogin(
 		const { accessToken } = generateTokens(await withAdminEmails(existingUser));
 		setAccessTokenCookie(c, accessToken);
 
-		logger.info(adminOnly ? "Admin logged in with password" : "User logged in", {
+		logger.info("User logged in", {
 			userId: existingUser.id,
 			email: email.replace(/(.{2}).*@/, "$1***@"),
 		});
@@ -321,9 +331,10 @@ router.post("/login",
 	zValidator("json", loginSchema),
 	(c) => passwordLogin(c, c.req.valid("json"), { adminOnly: false }));
 
-// ADMIN LOGIN — email/password for administrators, also when the instance is
-// SPID/CIE-only (see isAdminPasswordLoginEnabled). Kept out of the OpenAPI
-// spec: it is a recovery path for operators, not part of the public API.
+// HIDDEN LOGIN — email/password also when the instance is SPID/CIE-only (see
+// isAdminPasswordLoginEnabled); restricted to administrators only with
+// ADMIN_PASSWORD_LOGIN_ADMINS_ONLY="true". Kept out of the OpenAPI spec: it is
+// a fallback for operators, not part of the public API.
 router.post("/admin/login",
 	describeRoute({ hide: true }),
 	async (c, next) => {
@@ -332,7 +343,7 @@ router.post("/admin/login",
 	},
 	loginIpRateLimit,
 	zValidator("json", loginSchema),
-	(c) => passwordLogin(c, c.req.valid("json"), { adminOnly: true }));
+	(c) => passwordLogin(c, c.req.valid("json"), { adminOnly: isAdminPasswordLoginAdminsOnly() }));
 
 // RECOVER ACCOUNT
 

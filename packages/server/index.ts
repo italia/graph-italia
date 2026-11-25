@@ -21,7 +21,7 @@ import oscarRoutes from "./routes/oscar.ts";
 // Observability
 import { httpLogger, logStartup, logger } from "./lib/logger.ts";
 import { isPublicPublishingEnabled } from "./lib/publishing.ts";
-import { isPasswordAuthEnabled } from "./lib/passwordAuth.ts";
+import { isPasswordAuthEnabled, isPasswordRecoveryEnabled } from "./lib/passwordAuth.ts";
 import { metricsMiddleware, metricsRouter } from "./lib/metrics.ts";
 import { apiKeyUsageLogger } from "./lib/middlewares.ts";
 
@@ -142,6 +142,7 @@ app.get("/", (c) => c.json({
 app.get("/config", (c) => c.json({
 	publicPublishing: isPublicPublishingEnabled(),
 	passwordAuth: isPasswordAuthEnabled(),
+	passwordRecovery: isPasswordRecoveryEnabled(),
 }));
 
 // Deep health check for k8s readiness probes (verifies database connection)

@@ -121,12 +121,14 @@ export const getServerUrlWithApi = (): string => {
 // synchronous and sees the same value the server does.
 let publishingEnabled: boolean | null = null;
 let passwordAuthEnabled: boolean | null = null;
+let passwordRecoveryEnabled: boolean | null = null;
 
 export async function loadInstanceConfig(): Promise<void> {
   try {
     const response = await axios.get(`${getServerUrlWithApi()}/config`);
     publishingEnabled = response.data?.publicPublishing === true;
     passwordAuthEnabled = response.data?.passwordAuth === true;
+    passwordRecoveryEnabled = response.data?.passwordRecovery === true;
   } catch (error) {
     // Fail closed: an instance we cannot ask is treated as "no public surface"
     // and "SPID/CIE only", so a config blip never exposes a publish toggle or a
@@ -134,12 +136,20 @@ export async function loadInstanceConfig(): Promise<void> {
     console.warn("Could not read instance config, assuming publishing and password auth are off", error);
     publishingEnabled = false;
     passwordAuthEnabled = false;
+    passwordRecoveryEnabled = false;
   }
 }
 
 export const isPublishingEnabled = (): boolean => publishingEnabled === true;
 
 export const isPasswordAuthEnabled = (): boolean => passwordAuthEnabled === true;
+
+/**
+ * Password recovery and change (server: isPasswordRecoveryEnabled): on with
+ * email/password auth, and on SPID/CIE-only instances while the hidden login
+ * (/login/admin) is enabled.
+ */
+export const isPasswordRecoveryEnabled = (): boolean => passwordRecoveryEnabled === true;
 // let headers: HeadersInit | undefined = { 'Content-Type': 'application/json' };
 
 /** getSuggestions */

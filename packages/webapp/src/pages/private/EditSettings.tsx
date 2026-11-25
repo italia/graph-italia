@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { FaCheck, FaLock } from "react-icons/fa6";
 import ChangePasswordForm from "../../components/auth/ChangePasswordForm";
 import Layout from "../../components/layout/index.tsx";
-import { isPasswordAuthEnabled } from "../../lib/api";
+import { isPasswordRecoveryEnabled } from "../../lib/api";
 
 export default function EditSettingsPage() {
   const { t } = useTranslation("pages", { keyPrefix: "settings" });
@@ -26,8 +26,8 @@ export default function EditSettingsPage() {
         </div>
       </div>
 
-      {!isPasswordAuthEnabled() ? (
-        // SPID/CIE-only instance: the account has no password to manage.
+      {!isPasswordRecoveryEnabled() ? (
+        // SPID/CIE-only instance without the hidden login: no password to manage.
         <div className="px-8 max-w-2xl">
           <div role="status" className="alert alert-info">
             <span>{t("oidcOnly", "L'accesso avviene tramite SPID/CIE: non c'è una password da gestire.")}</span>

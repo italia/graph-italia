@@ -23,6 +23,7 @@ process.env["JWT_SECRET"] = JWT_SECRET;
 delete process.env["ENABLE_PASSWORD_AUTH"];
 delete process.env["ADMIN_EMAILS"];
 delete process.env["ENABLE_ADMIN_PASSWORD_LOGIN"];
+delete process.env["ADMIN_PASSWORD_LOGIN_ADMINS_ONLY"];
 process.env["APP_URL"] = "http://localhost:3000";
 
 const USER_ID        = "user-verified";
@@ -441,14 +442,34 @@ describe("ENABLE_PASSWORD_AUTH=false — SPID/CIE only", () => {
 	test.each([
 		["POST", "/auth/register", { email: NEW_EMAIL, password: CORRECT_PASSWORD }],
 		["POST", "/auth/login", { email: USER_EMAIL, password: CORRECT_PASSWORD }],
-		["POST", "/auth/recover", { email: USER_EMAIL }],
 		["POST", "/auth/resend", { email: UNVERIFIED_EMAIL }],
 		["POST", "/auth/verify", { uid: UNVERIFIED_ID, code: VALID_PIN }],
-		["POST", "/auth/reset-password", { uid: USER_ID, code: VALID_PIN, password: "NewP@ss1!" }],
-		["PUT", "/auth/pwd", { password: "NewP@ss1!" }],
 	])("%s %s → 403", async (method, path, body) => {
 		const res = await app.request(path, { method, ...withJson(userHeaders(), body) });
 		expect(res.status).toBe(403);
+	});
+
+	// Recovery and password change follow the hidden login (enabled by
+	// default): without them a forgotten password would lock the account out.
+	const recoveryRoutes = [
+		["POST", "/auth/recover", { email: USER_EMAIL }, 200],
+		["POST", "/auth/reset-password", { uid: USER_ID, code: VALID_PIN, password: "NewP@ss1!" }, 200],
+		["PUT", "/auth/pwd", { password: "NewP@ss1!" }, 204],
+	] as const;
+
+	test.each(recoveryRoutes)("%s %s stays available with the hidden login → %i", async (method, path, body, status) => {
+		const res = await app.request(path, { method, ...withJson(userHeaders(), body) });
+		expect(res.status).toBe(status);
+	});
+
+	test.each(recoveryRoutes)("%s %s → 403 when the hidden login is off too", async (method, path, body) => {
+		process.env["ENABLE_ADMIN_PASSWORD_LOGIN"] = "false";
+		try {
+			const res = await app.request(path, { method, ...withJson(userHeaders(), body) });
+			expect(res.status).toBe(403);
+		} finally {
+			delete process.env["ENABLE_ADMIN_PASSWORD_LOGIN"];
+		}
 	});
 
 	test("GET /auth/confirm/:uid/:code → 403", async () => {
@@ -462,12 +483,13 @@ describe("ENABLE_PASSWORD_AUTH=false — SPID/CIE only", () => {
 	});
 });
 
-describe("POST /auth/admin/login — admins only, also on SPID/CIE-only instances", () => {
+describe("POST /auth/admin/login — hidden login, also on SPID/CIE-only instances", () => {
 	beforeAll(() => { process.env["ENABLE_PASSWORD_AUTH"] = "false"; });
 	afterAll(() => {
 		delete process.env["ENABLE_PASSWORD_AUTH"];
 		delete process.env["ADMIN_EMAILS"];
 		delete process.env["ENABLE_ADMIN_PASSWORD_LOGIN"];
+		delete process.env["ADMIN_PASSWORD_LOGIN_ADMINS_ONLY"];
 	});
 
 	const adminLogin = (email: string, password = CORRECT_PASSWORD) =>
@@ -487,12 +509,25 @@ describe("POST /auth/admin/login — admins only, also on SPID/CIE-only instance
 		expect(res.status).toBe(403);
 	});
 
-	test("non-admin with the right password gets the wrong-password answer → 401", async () => {
+	test("any account with the right password → 200 (no admin check by default)", async () => {
+		const res = await adminLogin(USER_EMAIL);
+		expect(res.status).toBe(200);
+		expect(res.headers.get("set-cookie")).toContain("access_token=");
+	});
+
+	test("wrong password → 401", async () => {
+		expect((await adminLogin(USER_EMAIL, "Wr0ng!pass")).status).toBe(401);
+	});
+
+	test("ADMIN_PASSWORD_LOGIN_ADMINS_ONLY=true: non-admin gets the wrong-password answer → 401", async () => {
+		process.env["ADMIN_PASSWORD_LOGIN_ADMINS_ONLY"] = "true";
 		const res = await adminLogin(USER_EMAIL);
 		expect(res.status).toBe(401);
 		expect(res.headers.get("set-cookie")).toBeNull();
 		const wrong = await adminLogin(ADMIN_EMAIL, "Wr0ng!pass");
 		expect(await res.json()).toEqual(await wrong.json());
+		expect((await adminLogin(ADMIN_EMAIL)).status).toBe(200);
+		delete process.env["ADMIN_PASSWORD_LOGIN_ADMINS_ONLY"];
 	});
 
 	test("unknown email and admin without password → 401", async () => {
@@ -500,13 +535,15 @@ describe("POST /auth/admin/login — admins only, also on SPID/CIE-only instance
 		expect((await adminLogin(NO_PWD_ADMIN_EMAIL)).status).toBe(401);
 	});
 
-	test("email listed in ADMIN_EMAILS counts as admin → 200", async () => {
+	test("ADMIN_PASSWORD_LOGIN_ADMINS_ONLY=true: email listed in ADMIN_EMAILS counts as admin → 200", async () => {
+		process.env["ADMIN_PASSWORD_LOGIN_ADMINS_ONLY"] = "true";
 		process.env["ADMIN_EMAILS"] = "verified@test.com";
 		setUserRoleMock.mockClear();
 		const res = await adminLogin(USER_EMAIL);
 		expect(res.status).toBe(200);
 		expect(setUserRoleMock).toHaveBeenCalledWith(USER_ID, "ADMIN");
 		delete process.env["ADMIN_EMAILS"];
+		delete process.env["ADMIN_PASSWORD_LOGIN_ADMINS_ONLY"];
 	});
 
 	test("ENABLE_ADMIN_PASSWORD_LOGIN=false → 404", async () => {

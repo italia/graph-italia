@@ -35,13 +35,14 @@
             "cta": "Go to login"
         },
         "adminLogin": {
-            "title": "Administrator sign-in",
-            "description": "Email and password sign-in reserved to administrator accounts. Everyone else signs in with SPID or CIE.",
+            "title": "Sign in with email and password",
+            "description": "Email and password sign-in, for when you cannot use SPID or CIE. If you forgot your password you can reset it: we will email you a link.",
             "email": "Email",
             "password": "Password",
             "submit": "Sign in",
+            "forgotPassword": "Forgot your password?",
             "invalid": "Invalid credentials.",
-            "unavailable": "Password sign-in for administrators is not enabled on this instance.",
+            "unavailable": "Email and password sign-in is not enabled on this instance.",
             "tooMany": "Too many attempts. Try again later.",
             "error": "Sign-in failed. Try again."
         }

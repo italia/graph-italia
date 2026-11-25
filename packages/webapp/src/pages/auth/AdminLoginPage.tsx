@@ -2,18 +2,19 @@ import { AxiosError } from "axios";
 import { useState, type FormEvent } from "react";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "../../components/layout";
 import * as api from "../../lib/api";
 import { broadcastAuth } from "../../lib/authChannel";
 import { useUserStore } from "../../lib/store/user_store";
-import { ROUTES } from "../../router";
+import { HOME_ROUTE, ROUTES } from "../../router";
 
 /**
- * Email/password sign-in for administrators (ROUTES.adminLogin). It stays
- * available when the instance is SPID/CIE-only, so admins whose account is not
- * linked to a SPID/CIE identity can still get in. The page is linked from
- * nowhere and not indexed; the server is what restricts it to ADMIN accounts.
+ * Hidden email/password sign-in (ROUTES.adminLogin). It stays available when
+ * the instance is SPID/CIE-only — a way in when SPID/CIE is down, or for
+ * accounts not linked to a SPID/CIE identity — together with password
+ * recovery. Linked from nowhere and not indexed; the server decides who may
+ * sign in (any account, or only admins with ADMIN_PASSWORD_LOGIN_ADMINS_ONLY).
  */
 export default function AdminLoginPage() {
   const { t } = useTranslation("pages", { keyPrefix: "auth.adminLogin" });
@@ -30,9 +31,10 @@ export default function AdminLoginPage() {
     setSubmitting(true);
     try {
       await api.adminLogin({ email, password });
-      setUser(await api.getUser());
+      const user = await api.getUser();
+      setUser(user);
       broadcastAuth("login"); // let other open tabs pick up the new session
-      navigate(ROUTES.admin);
+      navigate(user?.role === "ADMIN" ? ROUTES.admin : HOME_ROUTE);
     } catch (error) {
       const status = (error as AxiosError).response?.status;
       setMessage(
@@ -101,6 +103,11 @@ export default function AdminLoginPage() {
                   {t("submit")}
                 </button>
               </form>
+              <p className="mt-6 text-sm">
+                <Link to={ROUTES.recoverPassword} className="link link-primary font-semibold">
+                  {t("forgotPassword")}
+                </Link>
+              </p>
             </div>
           </div>
         </div>

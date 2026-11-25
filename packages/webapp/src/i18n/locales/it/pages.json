@@ -35,13 +35,14 @@
             "cta": "Vai all'accesso"
         },
         "adminLogin": {
-            "title": "Accesso amministratori",
-            "description": "Accesso con email e password riservato agli account amministratore. Tutti gli altri utenti accedono con SPID o CIE.",
+            "title": "Accesso con email e password",
+            "description": "Accesso con email e password, per quando non puoi usare SPID o CIE. Se non ricordi la password puoi reimpostarla: ti invieremo un'email con il link.",
             "email": "Email",
             "password": "Password",
             "submit": "Accedi",
+            "forgotPassword": "Password dimenticata?",
             "invalid": "Credenziali non valide.",
-            "unavailable": "L'accesso con password per gli amministratori non è attivo su questa istanza.",
+            "unavailable": "L'accesso con email e password non è attivo su questa istanza.",
             "tooMany": "Troppi tentativi. Riprova più tardi.",
             "error": "Accesso non riuscito. Riprova."
         }
