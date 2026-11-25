@@ -14,6 +14,7 @@ import SampleWrapperBar from "./SampleWrapperBar";
 import SampleWrapperGeomap from "./SampleWrapperGeomap";
 import SampleWrapperLine from "./SampleWrapperLine";
 import SampleWrapperPie from "./SampleWrapperPie";
+import SampleSavedWrapper from "./SampleSavedWrapper";
 // import SampleChartProvider from "./SampleChartProvider";
 // import SampleDashboardProvider from "./SampleDashboardProvider";
 import SampleDashboardGridProvider from "./SampleDashboardGridProvider";
@@ -81,6 +82,10 @@ export default function App() {
             <h4>Geo Map con ChartWrapper</h4>
             <SampleWrapperGeomap />
           </div>
+        </div>
+        <div style={{ marginTop: 50 }}>
+          <h3>Impostazioni wrapper salvate</h3>
+          <SampleSavedWrapper />
         </div>
         <div style={{ marginTop: 50 }}>
           <h3>Table</h3>
